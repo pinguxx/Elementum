@@ -56,21 +56,28 @@ function getCachedTemplate(strings) {
 
   let htmlString = '';
   const partMeta = [];
+  let stripLeadingQuote = null;
 
   for (let i = 0; i < strings.length - 1; i++) {
-    const str = strings[i];
-    htmlString += str;
+    let str = strings[i];
+    if (stripLeadingQuote && str.startsWith(stripLeadingQuote)) {
+      str = str.slice(1);
+      stripLeadingQuote = null;
+    }
 
-    // Check if interpolation is inside an HTML tag attribute
-    const lastOpenTag = str.lastIndexOf('<');
-    const lastCloseTag = str.lastIndexOf('>');
+    // Check if interpolation is inside an HTML tag attribute using accumulated HTML
+    const tempHtml = htmlString + str;
+    const lastOpenTag = tempHtml.lastIndexOf('<');
+    const lastCloseTag = tempHtml.lastIndexOf('>');
     const isInsideTag = lastOpenTag > lastCloseTag;
 
     if (isInsideTag) {
       // Find attribute name preceding '='
-      const match = str.match(/([@.?a-zA-Z0-9_\-]+)\s*=\s*["']?$/);
+      const match = str.match(/([@.?a-zA-Z0-9_\-]+)\s*=\s*(["']?)$/);
       if (match) {
         const rawName = match[1];
+        stripLeadingQuote = match[2] || null;
+
         let type = 'attr';
         let name = rawName;
 
@@ -86,22 +93,27 @@ function getCachedTemplate(strings) {
         }
 
         const markerAttr = `${ATTR_PREFIX}${i}`;
-        htmlString += `"" ${markerAttr}=""`;
+        // Cleanly substitute the attribute name and '=' with markerAttr=""
+        const cleanStr = str.slice(0, match.index) + `${markerAttr}=""`;
+        htmlString += cleanStr;
         partMeta.push({ index: i, type, name, markerAttr });
       } else {
-        // Plain attribute or value
         const markerAttr = `${ATTR_PREFIX}${i}`;
-        htmlString += `"" ${markerAttr}=""`;
+        htmlString += str + ` ${markerAttr}=""`;
         partMeta.push({ index: i, type: 'attr', name: 'data-attr', markerAttr });
       }
     } else {
       // Child node position
-      htmlString += MARKER;
+      htmlString += str + MARKER;
       partMeta.push({ index: i, type: 'node' });
     }
   }
 
-  htmlString += strings[strings.length - 1];
+  let lastStr = strings[strings.length - 1];
+  if (stripLeadingQuote && lastStr.startsWith(stripLeadingQuote)) {
+    lastStr = lastStr.slice(1);
+  }
+  htmlString += lastStr;
 
   const tpl = document.createElement('template');
   tpl.innerHTML = htmlString;
@@ -231,7 +243,12 @@ export function render(result, container, abortSignal) {
           }
         } else if (meta.type === 'prop') {
           const updateProp = (v) => {
-            el[meta.name] = resolveValue(v);
+            const resolved = resolveValue(v);
+            if (isSignal(el[meta.name])) {
+              el[meta.name].value = resolved;
+            } else {
+              el[meta.name] = resolved;
+            }
           };
           if (isReactive(val)) {
             effect(() => updateProp(val), { signal: abortSignal });
