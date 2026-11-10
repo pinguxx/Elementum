@@ -1,0 +1,27 @@
+{
+  "name": "@wc/elementum",
+  "version": "0.1.0",
+  "description": "Ultra-lightweight, signal-driven, frameworkless Web Components for modern design systems",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./tokens.css": "./src/tokens.css",
+    "./custom-elements.json": "./custom-elements.json"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "mcp": "node mcp/server.js"
+  },
+  "keywords": [
+    "web-components",
+    "custom-elements",
+    "signals",
+    "shadow-dom",
+    "figma",
+    "design-system",
+    "mcp"
+  ],
+  "author": "",
+  "license": "MIT"
+}

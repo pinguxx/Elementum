@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "Elementum Design System Custom Elements Manifest",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-button.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElButton",
+          "tagName": "el-button",
+          "description": "Frameworkless, signal-driven button component with 1:1 Figma variant parity.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "variant",
+              "description": "Visual style variant matching Figma component property.",
+              "type": { "text": "'primary' | 'secondary' | 'danger' | 'ghost'" },
+              "default": "'primary'"
+            },
+            {
+              "name": "size",
+              "description": "Button dimensions matching Figma size property.",
+              "type": { "text": "'sm' | 'md' | 'lg'" },
+              "default": "'md'"
+            },
+            {
+              "name": "disabled",
+              "description": "Whether the button is interactive.",
+              "type": { "text": "boolean" },
+              "default": "false"
+            }
+          ],
+          "slots": [
+            {
+              "name": "",
+              "description": "Primary button label text."
+            },
+            {
+              "name": "prefix",
+              "description": "Icon or element placed before the label."
+            },
+            {
+              "name": "suffix",
+              "description": "Icon or badge placed after the label."
+            }
+          ],
+          "events": [
+            {
+              "name": "click",
+              "description": "Fired when user clicks the button (suppressed if disabled)."
+            }
+          ],
+          "cssParts": [
+            {
+              "name": "button",
+              "description": "The internal native <button> element inside the shadow root."
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "el-button",
+          "declaration": {
+            "name": "ElButton",
+            "module": "src/components/el-button.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-badge.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElBadge",
+          "tagName": "el-badge",
+          "description": "Minimal status indicator and notification badge.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "variant",
+              "description": "Badge color variant.",
+              "type": { "text": "'default' | 'success' | 'danger'" },
+              "default": "'default'"
+            },
+            {
+              "name": "count",
+              "description": "Count or short text to display.",
+              "type": { "text": "string" }
+            }
+          ],
+          "slots": [
+            {
+              "name": "",
+              "description": "Badge content or label."
+            }
+          ],
+          "cssParts": [
+            {
+              "name": "badge",
+              "description": "The internal badge <span> wrapper."
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "el-badge",
+          "declaration": {
+            "name": "ElBadge",
+            "module": "src/components/el-badge.js"
+          }
+        }
+      ]
+    }
+  ]
+}

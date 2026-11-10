@@ -1,0 +1,69 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "color": {
+    "brand": {
+      "primary": {
+        "$value": "#2563eb",
+        "$type": "color",
+        "$description": "Primary action color from Figma"
+      },
+      "primary-hover": {
+        "$value": "#1d4ed8",
+        "$type": "color"
+      },
+      "secondary": {
+        "$value": "#4b5563",
+        "$type": "color"
+      },
+      "danger": {
+        "$value": "#dc2626",
+        "$type": "color"
+      },
+      "success": {
+        "$value": "#16a34a",
+        "$type": "color"
+      }
+    },
+    "surface": {
+      "base": {
+        "$value": "#ffffff",
+        "$type": "color"
+      },
+      "muted": {
+        "$value": "#f3f4f6",
+        "$type": "color"
+      },
+      "border": {
+        "$value": "#e5e7eb",
+        "$type": "color"
+      }
+    },
+    "text": {
+      "base": {
+        "$value": "#111827",
+        "$type": "color"
+      },
+      "muted": {
+        "$value": "#6b7280",
+        "$type": "color"
+      },
+      "inverse": {
+        "$value": "#ffffff",
+        "$type": "color"
+      }
+    }
+  },
+  "spacing": {
+    "xs": { "$value": "4px", "$type": "dimension" },
+    "sm": { "$value": "8px", "$type": "dimension" },
+    "md": { "$value": "16px", "$type": "dimension" },
+    "lg": { "$value": "24px", "$type": "dimension" },
+    "xl": { "$value": "32px", "$type": "dimension" }
+  },
+  "radius": {
+    "sm": { "$value": "4px", "$type": "dimension" },
+    "md": { "$value": "8px", "$type": "dimension" },
+    "lg": { "$value": "16px", "$type": "dimension" },
+    "full": { "$value": "9999px", "$type": "dimension" }
+  }
+}

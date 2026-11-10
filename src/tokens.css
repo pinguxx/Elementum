@@ -1,0 +1,36 @@
+/**
+ * Elementum Design Tokens
+ * Exported from Figma Variables (tokens/figma-tokens.json)
+ */
+
+:root {
+  /* Brand Colors */
+  --el-color-primary: #2563eb;
+  --el-color-primary-hover: #1d4ed8;
+  --el-color-secondary: #4b5563;
+  --el-color-danger: #dc2626;
+  --el-color-success: #16a34a;
+
+  /* Surfaces */
+  --el-surface-base: #ffffff;
+  --el-surface-muted: #f3f4f6;
+  --el-surface-border: #e5e7eb;
+
+  /* Typography Colors */
+  --el-text-base: #111827;
+  --el-text-muted: #6b7280;
+  --el-text-inverse: #ffffff;
+
+  /* Spacing */
+  --el-spacing-xs: 4px;
+  --el-spacing-sm: 8px;
+  --el-spacing-md: 16px;
+  --el-spacing-lg: 24px;
+  --el-spacing-xl: 32px;
+
+  /* Radii */
+  --el-radius-sm: 4px;
+  --el-radius-md: 8px;
+  --el-radius-lg: 16px;
+  --el-radius-full: 9999px;
+}
