@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@wc/elementum - Micro-Signal Web Components</title>
+  <link rel="stylesheet" href="./src/tokens.css" />
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--el-surface-muted, #f8fafc);
+      color: var(--el-text-base, #0f172a);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+
+    .hero-box {
+      background: var(--el-surface-base, #ffffff);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      border-radius: var(--el-radius-lg, 16px);
+      padding: 48px;
+      max-width: 640px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    }
+
+    .badge-wrap {
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 2.25rem;
+      margin: 0 0 12px 0;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+    }
+
+    .subtitle {
+      font-size: 1.125rem;
+      color: var(--el-text-muted, #64748b);
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .card-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      border-radius: var(--el-radius-md, 8px);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      background: var(--el-surface-muted, #f8fafc);
+    }
+
+    .card-link:hover {
+      transform: translateY(-2px);
+      border-color: var(--el-color-primary, #2563eb);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+    }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .card-title {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 4px;
+      color: var(--el-text-base, #1e293b);
+    }
+
+    .card-desc {
+      font-size: 0.8125rem;
+      color: var(--el-text-muted, #64748b);
+    }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+  </style>
+  <script type="module" src="./src/index.js"></script>
+</head>
+<body>
+  <div class="hero-box">
+    <div class="badge-wrap">
+      <el-badge variant="success" count="Elementum v0.1.0"></el-badge>
+    </div>
+    <h1>@wc/elementum</h1>
+    <p class="subtitle">
+      Ultra-lightweight, signal-driven, frameworkless Web Components with 1:1 Figma token synchronization.
+    </p>
+
+    <div class="cards-grid">
+      <a href="./examples/app.html" class="card-link">
+        <span class="card-icon">✈️</span>
+        <span class="card-title">Skyline Travel App</span>
+        <span class="card-desc">Full dashboard with forms, modals, tabs, and toasts</span>
+      </a>
+
+      <a href="./examples/index.html" class="card-link">
+        <span class="card-icon">🧩</span>
+        <span class="card-title">Component Showcase</span>
+        <span class="card-desc">Interactive catalog of buttons, datepickers, signals</span>
+      </a>
+    </div>
+
+    <div class="footer-links">
+      <el-theme-switch></el-theme-switch>
+      <el-button variant="ghost" size="sm" onclick="window.open('https://github.com/pinguxx/Elementum', '_blank')">
+        GitHub Repository ↗
+      </el-button>
+    </div>
+  </div>
+</body>
+</html>

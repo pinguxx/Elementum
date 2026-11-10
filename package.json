@@ -4,8 +4,12 @@
   "description": "Ultra-lightweight, signal-driven, frameworkless Web Components for modern design systems",
   "type": "module",
   "main": "./src/index.js",
+  "types": "./src/index.d.ts",
   "exports": {
-    ".": "./src/index.js",
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    },
     "./tokens.css": "./src/tokens.css",
     "./custom-elements.json": "./custom-elements.json"
   },

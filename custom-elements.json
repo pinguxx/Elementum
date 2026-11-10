@@ -234,6 +234,96 @@
           "superclass": { "name": "Elementum", "module": "src/index.js" }
         }
       ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-switch.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElSwitch",
+          "tagName": "el-switch",
+          "description": "Form-associated accessible toggle switch with keyboard support and token styling.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "attributes": [
+            { "name": "checked", "type": { "text": "boolean" }, "default": "false" },
+            { "name": "disabled", "type": { "text": "boolean" }, "default": "false" },
+            { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'" }
+          ],
+          "events": [
+            { "name": "change", "description": "Fired on toggle: detail: { checked, value }" }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-tooltip.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElTooltip",
+          "tagName": "el-tooltip",
+          "description": "Accessible lightweight tooltip anchored to wrapped trigger element.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "attributes": [
+            { "name": "content", "type": { "text": "string" } },
+            { "name": "placement", "type": { "text": "'top' | 'bottom' | 'left' | 'right'" }, "default": "'top'" },
+            { "name": "delay", "type": { "text": "number" }, "default": "150" }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-accordion.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElAccordion",
+          "tagName": "el-accordion",
+          "description": "Accordion container coordinating multiple or single disclosure expansion.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "attributes": [
+            { "name": "multiple", "type": { "text": "boolean" }, "default": "false" }
+          ],
+          "events": [
+            { "name": "change", "description": "Fired when active item changes: detail: { value, open }" }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "ElAccordionItem",
+          "tagName": "el-accordion-item",
+          "description": "Accessible disclosure item for accordion panel.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "attributes": [
+            { "name": "title", "type": { "text": "string" } },
+            { "name": "value", "type": { "text": "string" } },
+            { "name": "open", "type": { "text": "boolean" } }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-table.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElTable",
+          "tagName": "el-table",
+          "description": "Fine-grained reactive data table with column sorting and row selection.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "attributes": [
+            { "name": "selectable", "type": { "text": "boolean" }, "default": "false" }
+          ],
+          "events": [
+            { "name": "sort", "description": "Fired when sort column changes: detail: { key, direction }" },
+            { "name": "selectionchange", "description": "Fired when row selection changes: detail: { selected }" }
+          ]
+        }
+      ]
     }
   ]
 }

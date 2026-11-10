@@ -18,3 +18,7 @@ export { ElTabs, ElTab } from './components/el-tabs.js';
 export { ElSelect } from './components/el-select.js';
 export { ElToaster, toast } from './components/el-toast.js';
 export { ElThemeSwitch } from './components/el-theme-switch.js';
+export { ElSwitch } from './components/el-switch.js';
+export { ElTooltip } from './components/el-tooltip.js';
+export { ElAccordion, ElAccordionItem } from './components/el-accordion.js';
+export { ElTable } from './components/el-table.js';

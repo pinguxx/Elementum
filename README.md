@@ -73,15 +73,26 @@ Elementum runs directly in any modern browser without Webpack, Vite, or Babel.
 | **Dialog / Modal** | `<el-dialog>` | Native `<dialog>` modal with backdrop blur, overscroll containment, and light-dismiss. |
 | **Tabs** | `<el-tabs>`, `<el-tab>` | W3C accessible tablist with keyboard arrow navigation. |
 | **Select** | `<el-select>` | Form-associated custom dropdown selection. |
+| **Switch** | `<el-switch>` | Form-associated toggle switch with keyboard navigation (<kbd>Space</kbd>/<kbd>Enter</kbd>). |
+| **Tooltip** | `<el-tooltip>` | Lightweight tooltip bubble with top/bottom/left/right placement. |
+| **Accordion** | `<el-accordion>`, `<el-accordion-item>` | W3C accessible disclosure accordion supporting single or multi-expand. |
+| **Table** | `<el-table>` | Signal-driven data grid with column sorting and multi-row selection. |
 | **Theme Switch** | `<el-theme-switch>` | Toggles between Light ☀️ and Dark 🌙 mode with `localStorage` persistence. |
 | **Toast** | `<el-toaster>` | Viewport overlay for programmatic notifications (`toast.success()`, `toast.error()`). |
 
 ---
 
-## Interactive Examples
+## Interactive Examples & Live Demo
 
+- **[GitHub Pages Live Demo](https://pinguxx.github.io/Elementum/)**: Interactive portal deploying both showcase apps to the web.
 - **[examples/app.html](file:///c:/dev/Elementum/examples/app.html)**: Complete **Skyline Travel** booking dashboard demonstrating native form validation, confirmation modal dialogs, toast notifications, tabs, and theme toggling.
 - **[examples/index.html](file:///c:/dev/Elementum/examples/index.html)**: Component showcase with standalone controls and live signal-reactive counter.
+
+---
+
+## Framework Integration
+
+`@wc/elementum` works natively in vanilla HTML, React 19, Vue 3, Svelte 5, and Next.js. See **[docs/framework-integration.md](file:///c:/dev/Elementum/docs/framework-integration.md)** for complete setup instructions and TypeScript configuration.
 
 ---
 
@@ -91,13 +102,18 @@ Elementum runs directly in any modern browser without Webpack, Vite, or Babel.
 Elementum/
 ├── .github/
 │   ├── dependabot.yml       # Automated weekly dependencies & actions updates
-│   └── workflows/ci.yml     # Multi-node, multi-OS CI test workflow
+│   └── workflows/
+│       ├── ci.yml           # Multi-node, multi-OS CI test workflow
+│       └── pages.yml        # Automated GitHub Pages live deployment
+├── docs/
+│   └── framework-integration.md # React 19, Vue 3, Svelte 5, and Next.js guide
 ├── src/
 │   ├── signal.js            # Micro-signals (~80 lines: signal, computed, effect)
 │   ├── template.js          # Tagged template engine (html, css, surgical DOM parts)
 │   ├── elementum.js         # Base class with Shadow DOM, styles, and formAssociated
 │   ├── tokens.css           # Light & Dark CSS custom properties from Figma
 │   ├── index.js             # Public library exports
+│   ├── index.d.ts           # Complete TypeScript ambient definitions
 │   └── components/
 │       ├── el-button.js     # Reference button matching Figma variants
 │       ├── el-badge.js      # Reference badge component
@@ -108,16 +124,31 @@ Elementum/
 │       ├── el-dialog.js     # Native modal dialog with backdrop containment
 │       ├── el-tabs.js       # Accessible W3C tabs with keyboard navigation
 │       ├── el-select.js     # Form-associated custom select
+│       ├── el-switch.js     # Form-associated toggle switch
+│       ├── el-tooltip.js    # Accessible anchored tooltip
+│       ├── el-accordion.js  # Accessible disclosure accordion
+│       ├── el-table.js      # Reactive data table with sorting and selection
 │       ├── el-toast.js      # Programmatic toast notification system
 │       └── el-theme-switch.js # Light / Dark mode toggle
-├── figma/
-│   └── el-button.figma.js   # Official Figma Code Connect configuration
+├── figma/                   # Official Figma Code Connect configurations
+│   ├── el-button.figma.js
+│   ├── el-input.figma.js
+│   ├── el-badge.figma.js
+│   ├── el-switch.figma.js
+│   └── el-datepicker.figma.js
 ├── tokens/
 │   └── figma-tokens.json    # W3C design tokens export from Figma
 ├── tools/
 │   └── sync-tokens.js       # CLI to compile figma-tokens.json into tokens.css
 ├── custom-elements.json     # W3C Custom Elements Manifest (for agents & Storybook)
 ├── examples/
+│   ├── app.html             # Full travel booking mini-app
+│   └── index.html           # Component showcase
+├── index.html               # Live documentation and demo portal
+├── mcp/
+│   └── server.js            # Model Context Protocol server for AI coding agents
+└── test/                    # Node.js automated test runner suite
+```
 │   ├── app.html             # Full travel booking mini-app
 │   └── index.html           # Component showcase
 ├── mcp/

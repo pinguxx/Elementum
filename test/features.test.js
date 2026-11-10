@@ -30,7 +30,7 @@ test('Tokens sync utility produces valid tokens.css with dark mode rules', async
   assert.ok(content.includes('prefers-color-scheme: dark'));
 });
 
-test('Custom elements manifest lists all 10 components', () => {
+test('Custom elements manifest lists all component primitives', () => {
   const manifestPath = path.join(rootDir, 'custom-elements.json');
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 
@@ -48,7 +48,12 @@ test('Custom elements manifest lists all 10 components', () => {
     'el-tab',
     'el-select',
     'el-theme-switch',
-    'el-toaster'
+    'el-toaster',
+    'el-switch',
+    'el-tooltip',
+    'el-accordion',
+    'el-accordion-item',
+    'el-table'
   ];
 
   for (const exp of expected) {
