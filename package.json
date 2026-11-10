@@ -10,7 +10,7 @@
     "./custom-elements.json": "./custom-elements.json"
   },
   "scripts": {
-    "test": "node --test test/*.test.js",
+    "test": "node --test --experimental-test-coverage test/*.test.js",
     "mcp": "node mcp/server.js",
     "tokens:sync": "node tools/sync-tokens.js"
   },
@@ -24,5 +24,8 @@
     "mcp"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "happy-dom": "^21.0.4"
+  }
 }

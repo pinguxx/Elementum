@@ -289,6 +289,12 @@ export function render(result, container, abortSignal) {
     }
   });
 
-  container.innerHTML = '';
-  container.appendChild(fragment);
+  if ('replaceChildren' in container) {
+    container.replaceChildren(fragment);
+  } else {
+    while (container.firstChild) {
+      container.removeChild(container.firstChild);
+    }
+    container.appendChild(fragment);
+  }
 }

@@ -84,7 +84,7 @@ export class Elementum extends BaseElement {
           }
         }
 
-        if (sheets.length > 0 && 'adoptedStyleSheets' in Document.prototype) {
+        if (sheets.length > 0 && typeof Document !== 'undefined' && 'adoptedStyleSheets' in Document.prototype) {
           this.shadowRoot.adoptedStyleSheets = sheets;
         }
 
