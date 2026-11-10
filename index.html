@@ -109,28 +109,32 @@
     </div>
     <h1>@wc/elementum</h1>
     <p class="subtitle">
-      Ultra-lightweight, signal-driven, frameworkless Web Components with 1:1 Figma token synchronization.
+      Ultra-lightweight, signal-driven, frameworkless Web Components with 1:1 Figma token synchronization. Includes all 15 native component primitives.
     </p>
 
     <div class="cards-grid">
       <a href="./examples/app.html" class="card-link">
         <span class="card-icon">✈️</span>
         <span class="card-title">Skyline Travel App</span>
-        <span class="card-desc">Full dashboard with forms, modals, tabs, and toasts</span>
+        <span class="card-desc">Full dashboard with forms, modals, tabs, accordions, and reactive tables</span>
       </a>
 
       <a href="./examples/index.html" class="card-link">
         <span class="card-icon">🧩</span>
         <span class="card-title">Component Showcase</span>
-        <span class="card-desc">Interactive catalog of buttons, datepickers, signals</span>
+        <span class="card-desc">Interactive catalog of all 15 components with live signal reactivity</span>
       </a>
     </div>
 
     <div class="footer-links">
-      <el-theme-switch></el-theme-switch>
-      <el-button variant="ghost" size="sm" onclick="window.open('https://github.com/pinguxx/Elementum', '_blank')">
-        GitHub Repository ↗
-      </el-button>
+      <el-tooltip content="Toggle Light / Dark theme" placement="bottom">
+        <el-theme-switch></el-theme-switch>
+      </el-tooltip>
+      <el-tooltip content="View Source Code on GitHub" placement="bottom">
+        <el-button variant="ghost" size="sm" onclick="window.open('https://github.com/pinguxx/Elementum', '_blank')">
+          GitHub Repository ↗
+        </el-button>
+      </el-tooltip>
     </div>
   </div>
 </body>

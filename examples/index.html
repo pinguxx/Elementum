@@ -9,67 +9,97 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       margin: 0;
-      padding: 40px;
-      background-color: #f8fafc;
-      color: #0f172a;
+      padding: 40px 20px;
+      background-color: var(--el-surface-muted, #f8fafc);
+      color: var(--el-text-base, #0f172a);
+      transition: background-color 0.2s ease, color 0.2s ease;
     }
+
     .container {
-      max-width: 900px;
+      max-width: 960px;
       margin: 0 auto;
-      background: white;
-      padding: 32px;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      background: var(--el-surface-base, #ffffff);
+      padding: 40px;
+      border-radius: var(--el-radius-lg, 16px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
     }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
     h1 {
-      margin-top: 0;
-      color: #1e293b;
+      margin: 0;
+      color: var(--el-text-base, #1e293b);
       display: flex;
       align-items: center;
       gap: 12px;
+      font-size: 1.75rem;
     }
-    .tag {
-      font-size: 0.8rem;
-      background: #e0e7ff;
-      color: #4338ca;
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-weight: 600;
-    }
+
     section {
-      margin: 32px 0;
-      padding-top: 24px;
-      border-top: 1px solid #e2e8f0;
+      margin: 36px 0;
+      padding-top: 28px;
+      border-top: 1px solid var(--el-surface-border, #e2e8f0);
     }
+
+    section h2 {
+      margin-top: 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--el-text-base, #1e293b);
+    }
+
+    section p {
+      color: var(--el-text-muted, #64748b);
+      font-size: 0.9375rem;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
     .row {
       display: flex;
       align-items: center;
       gap: 16px;
       flex-wrap: wrap;
-      margin-top: 12px;
     }
+
     .card {
-      background: #f1f5f9;
-      border-radius: 8px;
-      padding: 20px;
-      margin-top: 12px;
+      background: var(--el-surface-muted, #f1f5f9);
+      border-radius: var(--el-radius-md, 8px);
+      padding: 24px;
+      margin-top: 16px;
     }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      max-width: 320px;
+      gap: 8px;
     }
+
     label {
       font-weight: 600;
       font-size: 0.875rem;
-      color: #334155;
+      color: var(--el-text-base, #334155);
     }
+
     .result-pill {
       display: inline-block;
       margin-top: 12px;
       padding: 6px 12px;
-      background: #e2e8f0;
+      background: var(--el-surface-border, #e2e8f0);
       border-radius: 6px;
       font-family: monospace;
       font-size: 0.875rem;
@@ -78,69 +108,32 @@
   <script type="module" src="../src/index.js"></script>
 </head>
 <body>
+  <!-- Global Toaster Component -->
+  <el-toaster></el-toaster>
+
   <div class="container">
-    <h1>
-      @wc/elementum
-      <span class="tag">Design System Showcase</span>
-    </h1>
-    <p>
-      Ultra-lightweight, signal-driven Custom Elements powered by Shadow DOM,
-      Constructable Stylesheets, and Figma design tokens.
-    </p>
-
-    <!-- SECTION 1: Composite Datepicker Component -->
-    <section>
-      <h2>1. Complex Composite Component: &lt;el-datepicker&gt;</h2>
-      <p>
-        Composed of <strong>&lt;el-dropdown&gt;</strong> (tethered popover with light-dismiss),
-        <strong>&lt;el-input&gt;</strong> (with prefix & suffix slots),
-        <strong>&lt;el-calendar&gt;</strong> (accessible 42-day month grid with month traversal),
-        and <strong>&lt;el-button&gt;</strong> (quick actions "Today" & "Clear").
-      </p>
-
-      <div class="card">
-        <div class="form-group">
-          <label for="event-date">Booking or Event Date:</label>
-          <el-datepicker id="event-date" placeholder="Pick a departure date"></el-datepicker>
-          <div class="result-pill" id="date-output">Selected: (none)</div>
-        </div>
+    <div class="header-bar">
+      <div>
+        <h1>
+          @wc/elementum
+          <el-badge variant="success" count="All 15 Elements"></el-badge>
+        </h1>
+        <p style="margin: 6px 0 0 0; color: var(--el-text-muted, #64748b);">
+          Fine-grained reactive Web Component catalog powered by micro-signals and Shadow DOM.
+        </p>
       </div>
-    </section>
-
-    <!-- SECTION 2: Form Inputs & Standalone Dropdown -->
-    <section>
-      <h2>2. Individual Composed Primitives</h2>
-      <div class="row">
-        <!-- Input Primitive -->
-        <div class="form-group" style="flex: 1; min-width: 240px;">
-          <label>Standalone &lt;el-input&gt; with Prefix & Suffix:</label>
-          <el-input placeholder="Search documents...">
-            <span slot="prefix">🔍</span>
-            <el-badge slot="suffix" count="Cmd+K"></el-badge>
-          </el-input>
-        </div>
-
-        <!-- Standalone Dropdown Primitive -->
-        <div class="form-group" style="flex: 1; min-width: 240px;">
-          <label>Standalone &lt;el-dropdown&gt; Menu:</label>
-          <el-dropdown>
-            <el-button slot="trigger" variant="secondary">
-              Options Menu ▾
-            </el-button>
-            <div style="display: flex; flex-direction: column; gap: 4px;">
-              <el-button variant="ghost" size="sm" style="width: 100%; text-align: left;">Account Settings</el-button>
-              <el-button variant="ghost" size="sm" style="width: 100%; text-align: left;">Invite Teammates</el-button>
-              <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 4px 0;" />
-              <el-button variant="danger" size="sm" style="width: 100%; text-align: left;">Sign Out</el-button>
-            </div>
-          </el-dropdown>
-        </div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <el-theme-switch></el-theme-switch>
+        <el-button variant="secondary" size="sm" onclick="location.href='./app.html'">
+          View Travel App ✈️
+        </el-button>
       </div>
-    </section>
+    </div>
 
-    <!-- SECTION 3: Figma Color Variants & Sizes -->
+    <!-- 1. BUTTONS & BADGES -->
     <section>
-      <h2>3. Buttons & Badges (Figma Variants)</h2>
+      <h2>1. Buttons & Badges (Figma Parity)</h2>
+      <p>Interactive buttons with 1:1 Figma variants, sizes, and slot projection.</p>
       <div class="row">
         <el-button variant="primary">Primary Action</el-button>
         <el-button variant="secondary">Secondary Action</el-button>
@@ -159,15 +152,155 @@
           Large with Badge
           <el-badge slot="suffix" variant="success" count="Pro"></el-badge>
         </el-button>
+        <el-badge variant="default" count="Default"></el-badge>
+        <el-badge variant="danger" count="High Priority"></el-badge>
       </div>
     </section>
 
-    <!-- SECTION 4: Signal-Driven Reactive Component -->
+    <!-- 2. FORM CONTROLS -->
     <section>
-      <h2>4. Fine-Grained Signal Reactivity (Live Component)</h2>
+      <h2>2. Form Controls (&lt;el-input&gt;, &lt;el-select&gt;, &lt;el-switch&gt;, &lt;el-datepicker&gt;)</h2>
+      <p>Form-Associated Custom Elements (FACE) with native submission and reset support.</p>
+      <div class="card">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="demo-input">Text Input with Prefix:</label>
+            <el-input id="demo-input" placeholder="Enter keywords...">
+              <span slot="prefix">🔍</span>
+            </el-input>
+          </div>
+
+          <div class="form-group">
+            <label for="demo-select">Select Dropdown:</label>
+            <el-select id="demo-select" value="dev">
+              <option value="design">Product Design</option>
+              <option value="dev">Software Engineering</option>
+              <option value="ops">DevOps & Cloud</option>
+            </el-select>
+          </div>
+
+          <div class="form-group">
+            <label for="demo-dp">Composite Datepicker:</label>
+            <el-datepicker id="demo-dp" placeholder="Choose a date"></el-datepicker>
+          </div>
+
+          <div class="form-group">
+            <label>Toggle Switches (&lt;el-switch&gt;):</label>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 4px;">
+              <el-switch size="sm">Small Switch</el-switch>
+              <el-switch size="md" checked>Medium Switch (Checked)</el-switch>
+              <el-switch size="lg">Large Switch</el-switch>
+            </div>
+          </div>
+        </div>
+        <div class="result-pill" id="form-output">Date Selected: (none)</div>
+      </div>
+    </section>
+
+    <!-- 3. FLOATING POPOVERS & TOOLTIPS -->
+    <section>
+      <h2>3. Popovers & Tooltips (&lt;el-tooltip&gt;, &lt;el-dropdown&gt;, &lt;el-dialog&gt;, &lt;el-toaster&gt;)</h2>
+      <p>Accessible floating bubbles, anchor tooltips, dialogs, and notifications.</p>
+
+      <div class="row">
+        <!-- Tooltip Placements -->
+        <el-tooltip content="Tooltip anchored on Top" placement="top">
+          <el-button variant="secondary">Hover Top</el-button>
+        </el-tooltip>
+
+        <el-tooltip content="Tooltip anchored on Bottom" placement="bottom">
+          <el-button variant="secondary">Hover Bottom</el-button>
+        </el-tooltip>
+
+        <el-tooltip content="Tooltip on Left" placement="left">
+          <el-button variant="secondary">Hover Left</el-button>
+        </el-tooltip>
+
+        <el-tooltip content="Tooltip on Right" placement="right">
+          <el-button variant="secondary">Hover Right</el-button>
+        </el-tooltip>
+
+        <!-- Dropdown Popover -->
+        <el-dropdown>
+          <el-button slot="trigger" variant="primary">
+            Actions Menu ▾
+          </el-button>
+          <div style="display: flex; flex-direction: column; gap: 4px; min-width: 160px;">
+            <el-button variant="ghost" size="sm" style="width: 100%; text-align: left;" id="btn-toast-info">Trigger Info Toast</el-button>
+            <el-button variant="ghost" size="sm" style="width: 100%; text-align: left;" id="btn-toast-success">Trigger Success Toast</el-button>
+            <hr style="border: none; border-top: 1px solid var(--el-surface-border, #e5e7eb); margin: 4px 0;" />
+            <el-button variant="danger" size="sm" style="width: 100%; text-align: left;" id="btn-toast-error">Trigger Error Toast</el-button>
+          </div>
+        </el-dropdown>
+
+        <!-- Modal Dialog Trigger -->
+        <el-button variant="secondary" id="btn-open-modal">
+          Open Native &lt;el-dialog&gt;
+        </el-button>
+      </div>
+
+      <!-- Sample Modal Dialog -->
+      <el-dialog id="demo-modal" title="Native Dialog Modal">
+        <p>This modal wraps the native browser <code>&lt;dialog&gt;</code> element with backdrop blur and overscroll containment.</p>
+        <p>Press <kbd>Escape</kbd> or click the button below to close.</p>
+        <div slot="footer">
+          <el-button variant="primary" id="btn-close-modal">Got it!</el-button>
+        </div>
+      </el-dialog>
+    </section>
+
+    <!-- 4. NAVIGATION & DISCLOSURES -->
+    <section>
+      <h2>4. Navigation & Disclosures (&lt;el-tabs&gt;, &lt;el-accordion&gt;)</h2>
+      <p>W3C accessible tabs and disclosure accordions supporting single or multi-expand.</p>
+
+      <el-tabs value="features">
+        <el-tab label="Overview" value="overview">
+          <div class="card" style="margin-top: 0;">
+            <p style="margin: 0;">Elementum eliminates framework runtime overhead while providing a complete Figma-aligned design system.</p>
+          </div>
+        </el-tab>
+        <el-tab label="Accordion & FAQs" value="features">
+          <div class="card" style="margin-top: 0;">
+            <el-accordion multiple>
+              <el-accordion-item title="What makes Elementum different from React or Vue?" open>
+                Elementum relies on browser-native Custom Elements and fine-grained micro-signals (~80 lines). Updates mutate only the exact bound text or attribute nodes without Virtual DOM diffing.
+              </el-accordion-item>
+              <el-accordion-item title="Does it work with standard HTML <form> elements?">
+                Yes! Form controls implement Form-Associated Custom Elements (<code>static formAssociated = true</code>) to submit, reset, and validate natively with <code>FormData</code>.
+              </el-accordion-item>
+              <el-accordion-item title="Can I use it with Figma Tokens?">
+                Yes, <code>tokens/figma-tokens.json</code> compiles automatically into <code>src/tokens.css</code> with full light and dark mode rules.
+              </el-accordion-item>
+            </el-accordion>
+          </div>
+        </el-tab>
+      </el-tabs>
+    </section>
+
+    <!-- 5. REACTIVE DATA TABLE -->
+    <section>
+      <h2>5. Fine-Grained Reactive Data Table (&lt;el-table&gt;)</h2>
+      <p>Data grid with reactive column sorting and multi-row selection.</p>
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 0.875rem; color: var(--el-text-muted, #64748b);" id="table-selection-status">
+            0 rows selected
+          </span>
+          <el-button size="sm" variant="secondary" id="btn-add-row">
+            ➕ Add Row
+          </el-button>
+        </div>
+        <el-table id="demo-table" selectable></el-table>
+      </div>
+    </section>
+
+    <!-- 6. LIVE MICRO-SIGNALS -->
+    <section>
+      <h2>6. Micro-Signals Reactive Counter (Live Component)</h2>
       <p>
-        Clicking the button updates <strong>only the signal-bound text node</strong>.
-        The host component does not re-render, and DOM focus is never lost.
+        Clicking the button mutates <strong>only the signal-bound text node</strong>.
+        The host component never re-renders, preserving full DOM focus.
       </p>
       <div class="card">
         <demo-counter></demo-counter>
@@ -176,15 +309,70 @@
   </div>
 
   <script type="module">
-    import { Elementum, html, css, signal, computed } from '../src/index.js';
+    import { Elementum, html, css, signal, computed, toast } from '../src/index.js';
 
-    // Hook up Datepicker change listener for demonstration
-    const datepicker = document.getElementById('event-date');
-    const dateOutput = document.getElementById('date-output');
-    datepicker.addEventListener('change', (e) => {
-      dateOutput.textContent = `Selected: ${e.detail.value || '(none)'}`;
+    // 1. Datepicker listener
+    const dp = document.getElementById('demo-dp');
+    const formOutput = document.getElementById('form-output');
+    dp?.addEventListener('change', (e) => {
+      formOutput.textContent = `Date Selected: ${e.detail.value || '(none)'}`;
     });
 
+    // 2. Toaster triggers
+    document.getElementById('btn-toast-info')?.addEventListener('click', () => {
+      toast.info('Here is an informative notification.');
+    });
+    document.getElementById('btn-toast-success')?.addEventListener('click', () => {
+      toast.success('Record saved successfully!');
+    });
+    document.getElementById('btn-toast-error')?.addEventListener('click', () => {
+      toast.error('Failed to complete action.');
+    });
+
+    // 3. Modal controls
+    const modal = document.getElementById('demo-modal');
+    document.getElementById('btn-open-modal')?.addEventListener('click', () => {
+      modal?.showModal();
+    });
+    document.getElementById('btn-close-modal')?.addEventListener('click', () => {
+      modal?.close();
+    });
+
+    // 4. Data Table setup
+    const table = document.getElementById('demo-table');
+    const selectionStatus = document.getElementById('table-selection-status');
+    if (table) {
+      table.columns.value = [
+        { key: 'name', label: 'Framework / Library', sortable: true },
+        { key: 'size', label: 'Bundle Size', sortable: true, width: '130px' },
+        { key: 'reactivity', label: 'Reactivity Model', sortable: true, width: '180px' },
+        { key: 'standards', label: 'W3C Native', sortable: true, width: '120px' },
+      ];
+      table.data.value = [
+        { name: 'Elementum', size: '~3.2 kB', reactivity: 'Micro-Signals', standards: 'Yes (FACE)' },
+        { name: 'React 19', size: '~45 kB', reactivity: 'Virtual DOM', standards: 'Synthetic' },
+        { name: 'Vue 3', size: '~33 kB', reactivity: 'Proxy Signals', standards: 'Wrapper' },
+        { name: 'Svelte 5', size: '~12 kB', reactivity: 'Runes / Compiler', standards: 'Wrapper' },
+      ];
+
+      table.addEventListener('selectionchange', (e) => {
+        const count = e.detail.selected.length;
+        selectionStatus.textContent = `${count} row(s) selected`;
+      });
+    }
+
+    document.getElementById('btn-add-row')?.addEventListener('click', () => {
+      if (table) {
+        const id = table.data.value.length + 1;
+        table.data.value = [
+          ...table.data.value,
+          { name: `Custom System ${id}`, size: `~${id * 2} kB`, reactivity: 'Fine-Grained', standards: 'Yes' }
+        ];
+        toast.info(`Added row: Custom System ${id}`);
+      }
+    });
+
+    // 5. Live Counter custom element
     class DemoCounter extends Elementum {
       count = signal(0);
       isHigh = computed(() => this.count.value >= 5);
@@ -193,8 +381,8 @@
       reset = () => (this.count.value = 0);
 
       static styles = css`
-        :host { display: block; }
-        .stats { margin-bottom: 12px; font-weight: 500; }
+        :host { display: block; font-family: inherit; }
+        .stats { margin-bottom: 12px; font-weight: 500; font-size: 1rem; }
         .highlight { color: #dc2626; font-weight: bold; }
       `;
 
@@ -203,7 +391,7 @@
           <div class="stats">
             Current Count: <strong>${this.count}</strong>
             <span class=${() => (this.isHigh.value ? 'highlight' : '')}>
-              ${() => (this.isHigh.value ? ' (High Activity!)' : '')}
+              ${() => (this.isHigh.value ? ' (High Activity Triggered!)' : '')}
             </span>
           </div>
           <div style="display: flex; gap: 8px;">
@@ -218,7 +406,9 @@
       }
     }
 
-    customElements.define('demo-counter', DemoCounter);
+    if (!customElements.get('demo-counter')) {
+      customElements.define('demo-counter', DemoCounter);
+    }
   </script>
 </body>
 </html>

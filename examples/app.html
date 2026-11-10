@@ -115,10 +115,14 @@
       <el-badge variant="success" count="Elementum v0.1.0"></el-badge>
     </div>
     <div style="display: flex; align-items: center; gap: 16px;">
-      <el-theme-switch></el-theme-switch>
-      <el-button variant="ghost" size="sm" id="btn-github">
-        GitHub Repo ↗
-      </el-button>
+      <el-tooltip content="Toggle Light / Dark mode" placement="bottom">
+        <el-theme-switch></el-theme-switch>
+      </el-tooltip>
+      <el-tooltip content="View Elementum on GitHub" placement="bottom">
+        <el-button variant="ghost" size="sm" id="btn-github">
+          GitHub Repo ↗
+        </el-button>
+      </el-tooltip>
     </div>
   </header>
 
@@ -163,6 +167,24 @@
                   <option value="business">Business Class</option>
                   <option value="first">First Class</option>
                 </el-select>
+              </div>
+            </div>
+
+            <!-- Preferences with el-switch and el-tooltip -->
+            <div style="margin-bottom: 24px; padding-top: 8px; border-top: 1px dashed var(--el-surface-border, #e2e8f0);">
+              <label style="font-weight: 600; font-size: 0.875rem; color: var(--el-text-base, #334155); margin-bottom: 12px; display: block;">
+                Flight Preferences & Options:
+              </label>
+              <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+                <el-tooltip content="Show only non-stop flights" placement="top">
+                  <el-switch id="f-direct" name="direct">Direct flights only</el-switch>
+                </el-tooltip>
+                <el-tooltip content="100% refund up to 24h before departure" placement="top">
+                  <el-switch id="f-insurance" name="insurance" checked>Travel Protection (+$35)</el-switch>
+                </el-tooltip>
+                <el-tooltip content="Fund certified carbon offset initiatives" placement="top">
+                  <el-switch id="f-carbon" name="carbon">Carbon Neutral (+$12)</el-switch>
+                </el-tooltip>
               </div>
             </div>
 
@@ -227,7 +249,37 @@
             <el-button variant="primary" id="btn-cars">Search Cars</el-button>
           </div>
         </el-tab>
+
+        <!-- TAB 4: MY TRIPS -->
+        <el-tab label="My Bookings 📋" value="trips">
+          <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <span style="font-size: 0.9375rem; color: var(--el-text-muted, #64748b);">
+              Sort columns or select bookings to manage:
+            </span>
+            <div style="display: flex; gap: 8px;">
+              <el-button size="sm" variant="secondary" id="btn-cancel-trip">Cancel Selected</el-button>
+              <el-button size="sm" variant="primary" id="btn-download-trip">Download Itinerary</el-button>
+            </div>
+          </div>
+          <el-table id="trips-table" selectable></el-table>
+        </el-tab>
       </el-tabs>
+    </div>
+
+    <!-- Frequently Asked Questions with el-accordion -->
+    <div style="margin-top: 32px;">
+      <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 16px;">Travel FAQs & Guidelines</h2>
+      <el-accordion>
+        <el-accordion-item title="Can I cancel or change my flight without penalty?">
+          Bookings with Travel Protection enabled may be cancelled up to 24 hours prior to scheduled departure for a 100% refund. Standard bookings receive future flight credits without change fees.
+        </el-accordion-item>
+        <el-accordion-item title="What are the standard baggage allowances?">
+          Economy passengers are permitted one personal item and one carry-on bag (up to 10kg). Premium Economy and Business Class include two complimentary checked bags up to 23kg each.
+        </el-accordion-item>
+        <el-accordion-item title="How does @wc/elementum power this app?">
+          All UI widgets in this view (tabs, dates, popovers, accordions, switches, and tables) run on native Custom Elements and micro-signals with zero framework build dependencies.
+        </el-accordion-item>
+      </el-accordion>
     </div>
   </main>
 
@@ -312,9 +364,57 @@
       toast.info('Booking cancelled.');
     });
 
+    // Setup Trips Data Table
+    const tripsTable = document.getElementById('trips-table');
+    if (tripsTable) {
+      tripsTable.columns.value = [
+        { key: 'flight', label: 'Flight #', sortable: true, width: '120px' },
+        { key: 'route', label: 'Route', sortable: true },
+        { key: 'date', label: 'Date', sortable: true, width: '130px' },
+        { key: 'class', label: 'Class', sortable: true, width: '120px' },
+        { key: 'price', label: 'Price', sortable: true, width: '100px' },
+        { key: 'status', label: 'Status', width: '110px' }
+      ];
+      tripsTable.data.value = [
+        { flight: 'SK-204', route: 'SFO ➔ HND', date: '2026-12-18', class: 'Business', price: '$1,850', status: 'Confirmed' },
+        { flight: 'SK-811', route: 'JFK ➔ LHR', date: '2026-11-28', class: 'Economy', price: '$640', status: 'Confirmed' },
+        { flight: 'SK-309', route: 'SEA ➔ CDG', date: '2027-01-15', class: 'Premium', price: '$1,120', status: 'Scheduled' },
+      ];
+    }
+
+    document.getElementById('btn-cancel-trip')?.addEventListener('click', () => {
+      const selected = tripsTable?.selected?.value || [];
+      if (selected.length === 0) {
+        toast.warning('Please select at least one booking to cancel.');
+        return;
+      }
+      tripsTable.data.value = tripsTable.data.value.filter((_, idx) => !selected.includes(idx));
+      tripsTable.selected.value = [];
+      toast.success(`Cancelled ${selected.length} booking(s).`);
+    });
+
+    document.getElementById('btn-download-trip')?.addEventListener('click', () => {
+      toast.info('Downloading PDF travel itinerary...');
+    });
+
     modalConfirm.addEventListener('click', () => {
       confirmModal.close();
       toast.success(`Success! Flight on ${currentBookingData.date} booked!`);
+
+      // Prepend to reactive data table!
+      if (tripsTable && currentBookingData) {
+        const randomNum = Math.floor(100 + Math.random() * 900);
+        const newTrip = {
+          flight: `SK-${randomNum}`,
+          route: `${currentBookingData.origin.split(' ')[0]} ➔ ${currentBookingData.destination.split(' ')[0]}`,
+          date: currentBookingData.date,
+          class: String(currentBookingData.cabin).toUpperCase(),
+          price: '$790',
+          status: 'Confirmed'
+        };
+        tripsTable.data.value = [newTrip, ...tripsTable.data.value];
+      }
+
       flightForm.reset();
     });
   </script>
