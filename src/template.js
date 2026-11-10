@@ -128,6 +128,62 @@ function isReactive(val) {
   return isSignal(val) || (typeof val === 'function' && !val._isEventHandler);
 }
 
+class NodePart {
+  constructor(startNode, abortSignal) {
+    this.startNode = startNode;
+    this.endNode = document.createComment('/part');
+    startNode.parentNode.insertBefore(this.endNode, startNode.nextSibling);
+    this.abortSignal = abortSignal;
+    this.nodes = [];
+  }
+
+  clear() {
+    for (const node of this.nodes) {
+      if (node.parentNode) {
+        node.parentNode.removeChild(node);
+      }
+    }
+    this.nodes = [];
+  }
+
+  commit(raw) {
+    const val = resolveValue(raw);
+    this.clear();
+
+    const parent = this.startNode.parentNode;
+    if (!parent) return;
+
+    if (val == null || val === false) {
+      return;
+    }
+
+    if (val instanceof TemplateResult) {
+      const fragment = document.createDocumentFragment();
+      render(val, fragment, this.abortSignal);
+      this.nodes = Array.from(fragment.childNodes);
+      parent.insertBefore(fragment, this.endNode);
+    } else if (Array.isArray(val)) {
+      const fragment = document.createDocumentFragment();
+      for (const item of val) {
+        const resolvedItem = resolveValue(item);
+        if (resolvedItem instanceof TemplateResult) {
+          const subFrag = document.createDocumentFragment();
+          render(resolvedItem, subFrag, this.abortSignal);
+          fragment.appendChild(subFrag);
+        } else if (resolvedItem != null && resolvedItem !== false) {
+          fragment.appendChild(document.createTextNode(String(resolvedItem)));
+        }
+      }
+      this.nodes = Array.from(fragment.childNodes);
+      parent.insertBefore(fragment, this.endNode);
+    } else {
+      const text = document.createTextNode(String(val));
+      this.nodes = [text];
+      parent.insertBefore(text, this.endNode);
+    }
+  }
+}
+
 export function render(result, container, abortSignal) {
   if (!result || !(result instanceof TemplateResult)) {
     container.textContent = '';
@@ -143,7 +199,7 @@ export function render(result, container, abortSignal) {
     const val = values[meta.index];
 
     if (meta.type === 'node') {
-      // Find comment markers
+      // Find next unattached comment marker
       const iterator = document.createNodeIterator(fragment, NodeFilter.SHOW_COMMENT);
       let commentNode;
       while ((commentNode = iterator.nextNode())) {
@@ -153,36 +209,13 @@ export function render(result, container, abortSignal) {
       }
 
       if (commentNode) {
-        const textNode = document.createTextNode('');
-        commentNode.parentNode.replaceChild(textNode, commentNode);
-
-        const updateText = (v) => {
-          const resolved = resolveValue(v);
-          if (resolved instanceof TemplateResult) {
-            textNode.textContent = '';
-            render(resolved, textNode.parentNode, abortSignal);
-          } else if (Array.isArray(resolved)) {
-            // Handle array of template results or strings
-            const span = document.createDocumentFragment();
-            resolved.forEach((item) => {
-              if (item instanceof TemplateResult) {
-                const subContainer = document.createElement('span');
-                render(item, subContainer, abortSignal);
-                span.appendChild(subContainer);
-              } else {
-                span.appendChild(document.createTextNode(String(item)));
-              }
-            });
-            textNode.parentNode.replaceChild(span, textNode);
-          } else {
-            textNode.data = resolved == null ? '' : String(resolved);
-          }
-        };
+        commentNode.textContent = 'part';
+        const part = new NodePart(commentNode, abortSignal);
 
         if (isReactive(val)) {
-          effect(() => updateText(val), { signal: abortSignal });
+          effect(() => part.commit(val), { signal: abortSignal });
         } else {
-          updateText(val);
+          part.commit(val);
         }
       }
     } else {

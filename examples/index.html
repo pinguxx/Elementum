@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Elementum Design System Showcase</title>
+  <title>@wc/elementum Component Showcase</title>
   <link rel="stylesheet" href="../src/tokens.css" />
   <style>
     body {
@@ -37,48 +37,110 @@
       font-weight: 600;
     }
     section {
-      margin: 28px 0;
-      padding-top: 20px;
+      margin: 32px 0;
+      padding-top: 24px;
       border-top: 1px solid #e2e8f0;
     }
     .row {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 16px;
       flex-wrap: wrap;
       margin-top: 12px;
     }
     .card {
       background: #f1f5f9;
       border-radius: 8px;
-      padding: 16px;
+      padding: 20px;
       margin-top: 12px;
     }
-    code {
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-width: 320px;
+    }
+    label {
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #334155;
+    }
+    .result-pill {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 6px 12px;
       background: #e2e8f0;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.85em;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 0.875rem;
     }
   </style>
-  <script type="module" src="../src/components/el-button.js"></script>
-  <script type="module" src="../src/components/el-badge.js"></script>
+  <script type="module" src="../src/index.js"></script>
 </head>
 <body>
   <div class="container">
     <h1>
-      Elementum
-      <span class="tag">Zero-Framework Web Components</span>
+      @wc/elementum
+      <span class="tag">Design System Showcase</span>
     </h1>
     <p>
       Ultra-lightweight, signal-driven Custom Elements powered by Shadow DOM,
       Constructable Stylesheets, and Figma design tokens.
     </p>
 
-    <!-- SECTION 1: Figma Variants -->
+    <!-- SECTION 1: Composite Datepicker Component -->
     <section>
-      <h2>1. Figma Color Variants</h2>
-      <p>Direct 1:1 match to Figma design system variant properties:</p>
+      <h2>1. Complex Composite Component: &lt;el-datepicker&gt;</h2>
+      <p>
+        Composed of <strong>&lt;el-dropdown&gt;</strong> (tethered popover with light-dismiss),
+        <strong>&lt;el-input&gt;</strong> (with prefix & suffix slots),
+        <strong>&lt;el-calendar&gt;</strong> (accessible 42-day month grid with month traversal),
+        and <strong>&lt;el-button&gt;</strong> (quick actions "Today" & "Clear").
+      </p>
+
+      <div class="card">
+        <div class="form-group">
+          <label for="event-date">Booking or Event Date:</label>
+          <el-datepicker id="event-date" placeholder="Pick a departure date"></el-datepicker>
+          <div class="result-pill" id="date-output">Selected: (none)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: Form Inputs & Standalone Dropdown -->
+    <section>
+      <h2>2. Individual Composed Primitives</h2>
+      <div class="row">
+        <!-- Input Primitive -->
+        <div class="form-group" style="flex: 1; min-width: 240px;">
+          <label>Standalone &lt;el-input&gt; with Prefix & Suffix:</label>
+          <el-input placeholder="Search documents...">
+            <span slot="prefix">🔍</span>
+            <el-badge slot="suffix" count="Cmd+K"></el-badge>
+          </el-input>
+        </div>
+
+        <!-- Standalone Dropdown Primitive -->
+        <div class="form-group" style="flex: 1; min-width: 240px;">
+          <label>Standalone &lt;el-dropdown&gt; Menu:</label>
+          <el-dropdown>
+            <el-button slot="trigger" variant="secondary">
+              Options Menu ▾
+            </el-button>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <el-button variant="ghost" size="sm" style="width: 100%; text-align: left;">Account Settings</el-button>
+              <el-button variant="ghost" size="sm" style="width: 100%; text-align: left;">Invite Teammates</el-button>
+              <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 4px 0;" />
+              <el-button variant="danger" size="sm" style="width: 100%; text-align: left;">Sign Out</el-button>
+            </div>
+          </el-dropdown>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: Figma Color Variants & Sizes -->
+    <section>
+      <h2>3. Buttons & Badges (Figma Variants)</h2>
       <div class="row">
         <el-button variant="primary">Primary Action</el-button>
         <el-button variant="secondary">Secondary Action</el-button>
@@ -86,15 +148,11 @@
         <el-button variant="ghost">Ghost Button</el-button>
         <el-button variant="primary" disabled>Disabled State</el-button>
       </div>
-    </section>
 
-    <!-- SECTION 2: Sizes & Slot Composition -->
-    <section>
-      <h2>2. Sizes & Embedded Slots (Prefix / Suffix)</h2>
-      <div class="row">
+      <div class="row" style="margin-top: 16px;">
         <el-button size="sm">Small</el-button>
         <el-button size="md">
-          <span slot="prefix">🚀</span>
+          <span slot="prefix">⚡</span>
           Medium with Prefix
         </el-button>
         <el-button size="lg" variant="secondary">
@@ -104,9 +162,9 @@
       </div>
     </section>
 
-    <!-- SECTION 3: Signal-Driven Reactive Component -->
+    <!-- SECTION 4: Signal-Driven Reactive Component -->
     <section>
-      <h2>3. Fine-Grained Signal Reactivity (Live Component)</h2>
+      <h2>4. Fine-Grained Signal Reactivity (Live Component)</h2>
       <p>
         Clicking the button updates <strong>only the signal-bound text node</strong>.
         The host component does not re-render, and DOM focus is never lost.
@@ -120,12 +178,19 @@
   <script type="module">
     import { Elementum, html, css, signal, computed } from '../src/index.js';
 
+    // Hook up Datepicker change listener for demonstration
+    const datepicker = document.getElementById('event-date');
+    const dateOutput = document.getElementById('date-output');
+    datepicker.addEventListener('change', (e) => {
+      dateOutput.textContent = `Selected: ${e.detail.value || '(none)'}`;
+    });
+
     class DemoCounter extends Elementum {
       count = signal(0);
       isHigh = computed(() => this.count.value >= 5);
 
       inc = () => this.count.value++;
-      reset = () => this.count.value = 0;
+      reset = () => (this.count.value = 0);
 
       static styles = css`
         :host { display: block; }
@@ -137,8 +202,8 @@
         return html`
           <div class="stats">
             Current Count: <strong>${this.count}</strong>
-            <span class=${() => this.isHigh.value ? 'highlight' : ''}>
-              ${() => this.isHigh.value ? ' (High Activity!)' : ''}
+            <span class=${() => (this.isHigh.value ? 'highlight' : '')}>
+              ${() => (this.isHigh.value ? ' (High Activity!)' : '')}
             </span>
           </div>
           <div style="display: flex; gap: 8px;">
