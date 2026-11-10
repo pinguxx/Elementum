@@ -6,6 +6,7 @@
 import { Elementum, html, css, signal } from '../index.js';
 
 export class ElInput extends Elementum {
+  static formAssociated = true;
   static observedAttributes = ['value', 'placeholder', 'disabled', 'readonly', 'type', 'size'];
 
   value = signal('');
@@ -14,6 +15,15 @@ export class ElInput extends Elementum {
   readonly = signal(false);
   type = signal('text');
   size = signal('md'); // 'sm' | 'md' | 'lg'
+
+  connected() {
+    this.setFormValue(this.value.value);
+  }
+
+  formReset() {
+    this.value.value = '';
+    this.setFormValue('');
+  }
 
   static styles = css`
     :host {
@@ -94,11 +104,13 @@ export class ElInput extends Elementum {
 
   #onInput = (e) => {
     this.value.value = e.target.value;
+    this.setFormValue(e.target.value);
     this.emit('input', { value: e.target.value });
   };
 
   #onChange = (e) => {
     this.value.value = e.target.value;
+    this.setFormValue(e.target.value);
     this.emit('change', { value: e.target.value });
   };
 
@@ -129,6 +141,6 @@ export class ElInput extends Elementum {
   }
 }
 
-if (!customElements.get('el-input')) {
+if (typeof customElements !== 'undefined' && !customElements.get('el-input')) {
   customElements.define('el-input', ElInput);
 }

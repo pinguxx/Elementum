@@ -266,6 +266,6 @@ export class ElCalendar extends Elementum {
   }
 }
 
-if (!customElements.get('el-calendar')) {
+if (typeof customElements !== 'undefined' && !customElements.get('el-calendar')) {
   customElements.define('el-calendar', ElCalendar);
 }

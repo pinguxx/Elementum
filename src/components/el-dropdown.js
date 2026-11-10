@@ -113,6 +113,6 @@ export class ElDropdown extends Elementum {
   }
 }
 
-if (!customElements.get('el-dropdown')) {
+if (typeof customElements !== 'undefined' && !customElements.get('el-dropdown')) {
   customElements.define('el-dropdown', ElDropdown);
 }

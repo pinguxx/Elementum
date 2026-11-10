@@ -13,3 +13,8 @@ export { ElInput } from './components/el-input.js';
 export { ElDropdown } from './components/el-dropdown.js';
 export { ElCalendar } from './components/el-calendar.js';
 export { ElDatepicker } from './components/el-datepicker.js';
+export { ElDialog } from './components/el-dialog.js';
+export { ElTabs, ElTab } from './components/el-tabs.js';
+export { ElSelect } from './components/el-select.js';
+export { ElToaster, toast } from './components/el-toast.js';
+export { ElThemeSwitch } from './components/el-theme-switch.js';

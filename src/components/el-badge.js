@@ -54,6 +54,6 @@ export class ElBadge extends Elementum {
   }
 }
 
-if (!customElements.get('el-badge')) {
+if (typeof customElements !== 'undefined' && !customElements.get('el-badge')) {
   customElements.define('el-badge', ElBadge);
 }

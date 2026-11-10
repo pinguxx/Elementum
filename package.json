@@ -11,7 +11,8 @@
   },
   "scripts": {
     "test": "node --test test/*.test.js",
-    "mcp": "node mcp/server.js"
+    "mcp": "node mcp/server.js",
+    "tokens:sync": "node tools/sync-tokens.js"
   },
   "keywords": [
     "web-components",

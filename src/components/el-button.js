@@ -116,6 +116,6 @@ export class ElButton extends Elementum {
   }
 }
 
-if (!customElements.get('el-button')) {
+if (typeof customElements !== 'undefined' && !customElements.get('el-button')) {
   customElements.define('el-button', ElButton);
 }

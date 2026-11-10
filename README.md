@@ -5,53 +5,38 @@
 `Elementum` is inspired by libraries like `uce`, modernizing the developer experience with standard browser primitives:
 - **Shadow DOM by default** with automatic Constructable Stylesheet adoption (`new CSSStyleSheet()`).
 - **Fine-grained micro-signals** (`signal`, `computed`, `effect`): state updates mutate **only the exact bound DOM text or attribute node**—the component never re-renders, preserving child component state and input focus.
-- **Zero build requirement**: Plain ES modules (`<script type="module">`), no Babel, decorators, or compile step needed.
+- **Form-Associated Custom Elements (FACE)**: `static formAssociated = true` enables native `<form>` submission, reset, and validation via `ElementInternals`.
+- **Zero build requirement**: Plain ES modules (`<script type="module">`), no Babel, decorators, or compile step needed. Runs in SSR / Node.js cleanly.
+- **Light & Dark Mode**: Built-in CSS custom property theme tokens with automatic `prefers-color-scheme` and `<el-theme-switch>`.
 - **Leak-free lifecycle**: Automatically tracks and tears down event listeners and signal subscriptions via `this.signal` (`AbortSignal`).
 - **Figma 1:1 Parity**: Direct mapping to Figma Component Variants and Figma Variables.
 - **AI Agent & MCP Ready**: Generates standard W3C `custom-elements.json` and includes a built-in MCP server for coding agents.
+- **CI/CD & Automation**: GitHub Actions multi-OS / multi-Node matrix test runner and Dependabot automated dependency updates.
 
 ---
 
-## Quick Start
+## Component Catalog
 
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <link rel="stylesheet" href="./src/tokens.css">
-  <script type="module">
-    import { Elementum, html, css, signal } from './src/index.js';
+| Component | Tag Name | Description |
+| :--- | :--- | :--- |
+| **Button** | `<el-button>` | 1:1 Figma variant parity (`primary`, `secondary`, `danger`, `ghost`, sizes `sm`/`md`/`lg`). |
+| **Badge** | `<el-badge>` | Status indicator pill (`default`, `success`, `danger`). |
+| **Input** | `<el-input>` | Form-associated input with `prefix` and `suffix` icon slots. |
+| **Dropdown** | `<el-dropdown>` | Popover container with light-dismiss (closes on outside click or <kbd>Esc</kbd>). |
+| **Calendar** | `<el-calendar>` | Standalone 42-day accessible month grid with traversal. |
+| **Datepicker** | `<el-datepicker>` | Form-associated composite datepicker combining input, dropdown, calendar, and quick actions. |
+| **Dialog / Modal** | `<el-dialog>` | Native `<dialog>` modal with backdrop blur, overscroll containment, and light-dismiss. |
+| **Tabs** | `<el-tabs>`, `<el-tab>` | W3C accessible tablist with keyboard arrow navigation. |
+| **Select** | `<el-select>` | Form-associated custom dropdown selection. |
+| **Theme Switch** | `<el-theme-switch>` | Toggles between Light ☀️ and Dark 🌙 mode with `localStorage` persistence. |
+| **Toast** | `<el-toaster>` | Viewport overlay for programmatic notifications (`toast.success()`, `toast.error()`). |
 
-    class MyCounter extends Elementum {
-      count = signal(0);
+---
 
-      static styles = css`
-        button {
-          background: var(--el-color-primary);
-          color: white;
-          padding: var(--el-spacing-sm) var(--el-spacing-md);
-          border-radius: var(--el-radius-md);
-          border: none;
-          cursor: pointer;
-        }
-      `;
+## Interactive Examples
 
-      render() {
-        return html`
-          <button @click=${() => this.count.value++}>
-            Count: ${this.count}
-          </button>
-        `;
-      }
-    }
-    customElements.define('my-counter', MyCounter);
-  </script>
-</head>
-<body>
-  <my-counter></my-counter>
-</body>
-</html>
-```
+- **[examples/app.html](file:///c:/dev/Elementum/examples/app.html)**: Complete **Skyline Travel** booking dashboard demonstrating native form validation, confirmation modal dialogs, toast notifications, tabs, and theme toggling.
+- **[examples/index.html](file:///c:/dev/Elementum/examples/index.html)**: Component showcase with standalone controls and live signal-reactive counter.
 
 ---
 
@@ -59,46 +44,59 @@
 
 ```
 Elementum/
+├── .github/
+│   ├── dependabot.yml       # Automated weekly dependencies & actions updates
+│   └── workflows/ci.yml     # Multi-node, multi-OS CI test workflow
 ├── src/
 │   ├── signal.js            # Micro-signals (~80 lines: signal, computed, effect)
-│   ├── template.js          # Tagged template engine (html, css, DOM parts)
-│   ├── elementum.js         # Base HTMLElement class with shadow DOM & styles
-│   ├── tokens.css           # CSS variables mapped from Figma Variables
-│   ├── index.js             # Public exports
+│   ├── template.js          # Tagged template engine (html, css, surgical DOM parts)
+│   ├── elementum.js         # Base class with Shadow DOM, styles, and formAssociated
+│   ├── tokens.css           # Light & Dark CSS custom properties from Figma
+│   ├── index.js             # Public library exports
 │   └── components/
 │       ├── el-button.js     # Reference button matching Figma variants
-│       └── el-badge.js      # Reference badge component
+│       ├── el-badge.js      # Reference badge component
+│       ├── el-input.js      # Form-associated input
+│       ├── el-dropdown.js   # Light-dismiss dropdown overlay
+│       ├── el-calendar.js   # Standalone calendar grid
+│       ├── el-datepicker.js # Composite datepicker
+│       ├── el-dialog.js     # Native modal dialog with backdrop containment
+│       ├── el-tabs.js       # Accessible W3C tabs with keyboard navigation
+│       ├── el-select.js     # Form-associated custom select
+│       ├── el-toast.js      # Programmatic toast notification system
+│       └── el-theme-switch.js # Light / Dark mode toggle
 ├── figma/
 │   └── el-button.figma.js   # Official Figma Code Connect configuration
 ├── tokens/
 │   └── figma-tokens.json    # W3C design tokens export from Figma
-├── custom-elements.json     # W3C Custom Elements Manifest (for agents & docs)
+├── tools/
+│   └── sync-tokens.js       # CLI to compile figma-tokens.json into tokens.css
+├── custom-elements.json     # W3C Custom Elements Manifest (for agents & Storybook)
 ├── examples/
-│   └── index.html           # Interactive demo showcase
+│   ├── app.html             # Full travel booking mini-app
+│   └── index.html           # Component showcase
 ├── mcp/
 │   └── server.js            # Model Context Protocol server for AI coding agents
-└── test/                    # Node test runner suite
+└── test/                    # Node.js automated test runner suite
 ```
 
 ---
 
-## Figma Integration
+## Figma Token Synchronization
 
-1. **Tokens**: Export Figma variables into [tokens/figma-tokens.json](file:///c:/dev/Elementum/tokens/figma-tokens.json) and compile to [src/tokens.css](file:///c:/dev/Elementum/src/tokens.css).
-2. **Code Connect**: Link Figma canvas components to code with [figma/el-button.figma.js](file:///c:/dev/Elementum/figma/el-button.figma.js).
+Synchronize design tokens from `tokens/figma-tokens.json` to `src/tokens.css`:
+
+```bash
+npm run tokens:sync
+```
 
 ---
 
 ## Agent MCP Server
 
-Elementum includes an MCP server to let agents query the design system:
+Run the built-in MCP server for AI coding agents:
 
 ```bash
 node mcp/server.js
 ```
-
-Exposed tools:
-- `list_components`: Lists all design system custom elements.
-- `get_component_doc`: Fetches attributes, slots, events, and CSS parts from `custom-elements.json`.
-- `list_tokens`: Returns design tokens by category.
-- `generate_snippet`: Produces compliant HTML markup for Figma variants.
+Exposed tools: `list_components`, `get_component_doc`, `list_tokens`, and `generate_snippet`.

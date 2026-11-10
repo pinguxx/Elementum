@@ -1,0 +1,132 @@
+/**
+ * <el-select>
+ * Form-associated select component with custom styling and design tokens.
+ */
+
+import { Elementum, html, css, signal } from '../index.js';
+
+export class ElSelect extends Elementum {
+  static formAssociated = true;
+  static observedAttributes = ['value', 'placeholder', 'disabled', 'name'];
+
+  value = signal('');
+  placeholder = signal('Select an option...');
+  disabled = signal(false);
+  name = signal('');
+  options = signal([]); // [{ label, value }]
+
+  static styles = css`
+    :host {
+      display: inline-block;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    .wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: var(--el-surface-base, #ffffff);
+      border: 1px solid var(--el-surface-border, #e5e7eb);
+      border-radius: var(--el-radius-md, 8px);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      height: 40px;
+      box-sizing: border-box;
+    }
+
+    .wrapper:focus-within {
+      border-color: var(--el-color-primary, #2563eb);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    select {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 0 var(--el-spacing-md, 16px);
+      padding-right: 32px;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      color: var(--el-text-base, #111827);
+      cursor: pointer;
+      appearance: none;
+    }
+
+    select:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .arrow {
+      position: absolute;
+      right: 12px;
+      pointer-events: none;
+      font-size: 0.75rem;
+      color: var(--el-text-muted, #6b7280);
+    }
+  `;
+
+  connected() {
+    this.#scanOptions();
+    this.setFormValue(this.value.value);
+
+    const observer = new MutationObserver(() => this.#scanOptions());
+    observer.observe(this, { childList: true, subtree: true });
+    this.signal.addEventListener('abort', () => observer.disconnect());
+  }
+
+  formReset() {
+    this.value.value = '';
+    this.setFormValue('');
+  }
+
+  #scanOptions() {
+    const rawOptions = Array.from(this.querySelectorAll('option')).map((opt) => ({
+      label: opt.textContent.trim(),
+      value: opt.value || opt.textContent.trim(),
+    }));
+    this.options.value = rawOptions;
+  }
+
+  #onChange = (e) => {
+    const val = e.target.value;
+    this.value.value = val;
+    this.setFormValue(val);
+    this.emit('change', { value: val });
+  };
+
+  render() {
+    return html`
+      <div class="wrapper" part="wrapper">
+        <select
+          part="select"
+          ?disabled=${this.disabled}
+          @change=${this.#onChange}
+        >
+          <option value="" disabled ?selected=${() => !this.value.value}>
+            ${this.placeholder}
+          </option>
+          ${() =>
+            this.options.value.map(
+              (opt) => html`
+                <option
+                  value=${opt.value}
+                  ?selected=${() => this.value.value === opt.value}
+                >
+                  ${opt.label}
+                </option>
+              `
+            )}
+        </select>
+        <span class="arrow">▼</span>
+      </div>
+    `;
+  }
+}
+
+if (typeof customElements !== 'undefined' && !customElements.get('el-select')) {
+  customElements.define('el-select', ElSelect);
+}

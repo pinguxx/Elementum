@@ -18,11 +18,21 @@ function getTodayString() {
 }
 
 export class ElDatepicker extends Elementum {
+  static formAssociated = true;
   static observedAttributes = ['value', 'placeholder', 'disabled'];
 
   value = signal('');
   placeholder = signal('Select date...');
   disabled = signal(false);
+
+  connected() {
+    this.setFormValue(this.value.value);
+  }
+
+  formReset() {
+    this.value.value = '';
+    this.setFormValue('');
+  }
 
   static styles = css`
     :host {
@@ -71,6 +81,7 @@ export class ElDatepicker extends Elementum {
   #onDateSelect = (e) => {
     const selected = e.detail.date;
     this.value.value = selected;
+    this.setFormValue(selected);
     this.emit('change', { value: selected });
     this.#getDropdown()?.close();
   };
@@ -78,6 +89,7 @@ export class ElDatepicker extends Elementum {
   #selectToday = () => {
     const today = getTodayString();
     this.value.value = today;
+    this.setFormValue(today);
     this.emit('change', { value: today });
     this.#getDropdown()?.close();
   };
@@ -85,6 +97,7 @@ export class ElDatepicker extends Elementum {
   #clear = (e) => {
     e?.stopPropagation();
     this.value.value = '';
+    this.setFormValue('');
     this.emit('change', { value: '' });
   };
 
@@ -146,6 +159,6 @@ export class ElDatepicker extends Elementum {
   }
 }
 
-if (!customElements.get('el-datepicker')) {
+if (typeof customElements !== 'undefined' && !customElements.get('el-datepicker')) {
   customElements.define('el-datepicker', ElDatepicker);
 }

@@ -1,9 +1,10 @@
 /**
  * Elementum Design Tokens
- * Exported from Figma Variables (tokens/figma-tokens.json)
+ * Auto-generated from tokens/figma-tokens.json
  */
 
-:root {
+:root,
+:root[data-theme="light"] {
   /* Brand Colors */
   --el-color-primary: #2563eb;
   --el-color-primary-hover: #1d4ed8;
@@ -33,4 +34,47 @@
   --el-radius-md: 8px;
   --el-radius-lg: 16px;
   --el-radius-full: 9999px;
+
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  /* Brand Colors */
+  --el-color-primary: #3b82f6;
+  --el-color-primary-hover: #60a5fa;
+  --el-color-secondary: #9ca3af;
+  --el-color-danger: #ef4444;
+  --el-color-success: #22c55e;
+
+  /* Surfaces (Dark Mode) */
+  --el-surface-base: #0f172a;
+  --el-surface-muted: #1e293b;
+  --el-surface-border: #334155;
+
+  /* Typography Colors (Dark Mode) */
+  --el-text-base: #f8fafc;
+  --el-text-muted: #94a3b8;
+  --el-text-inverse: #0f172a;
+
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    --el-color-primary: #3b82f6;
+    --el-color-primary-hover: #60a5fa;
+    --el-color-secondary: #9ca3af;
+    --el-color-danger: #ef4444;
+    --el-color-success: #22c55e;
+
+    --el-surface-base: #0f172a;
+    --el-surface-muted: #1e293b;
+    --el-surface-border: #334155;
+
+    --el-text-base: #f8fafc;
+    --el-text-muted: #94a3b8;
+    --el-text-inverse: #0f172a;
+
+    color-scheme: dark;
+  }
 }

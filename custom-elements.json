@@ -11,66 +11,20 @@
           "name": "ElButton",
           "tagName": "el-button",
           "description": "Frameworkless, signal-driven button component with 1:1 Figma variant parity.",
-          "superclass": {
-            "name": "Elementum",
-            "module": "src/index.js"
-          },
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
           "attributes": [
-            {
-              "name": "variant",
-              "description": "Visual style variant matching Figma component property.",
-              "type": { "text": "'primary' | 'secondary' | 'danger' | 'ghost'" },
-              "default": "'primary'"
-            },
-            {
-              "name": "size",
-              "description": "Button dimensions matching Figma size property.",
-              "type": { "text": "'sm' | 'md' | 'lg'" },
-              "default": "'md'"
-            },
-            {
-              "name": "disabled",
-              "description": "Whether the button is interactive.",
-              "type": { "text": "boolean" },
-              "default": "false"
-            }
+            { "name": "variant", "type": { "text": "'primary' | 'secondary' | 'danger' | 'ghost'" }, "default": "'primary'" },
+            { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'" },
+            { "name": "disabled", "type": { "text": "boolean" }, "default": "false" }
           ],
           "slots": [
-            {
-              "name": "",
-              "description": "Primary button label text."
-            },
-            {
-              "name": "prefix",
-              "description": "Icon or element placed before the label."
-            },
-            {
-              "name": "suffix",
-              "description": "Icon or badge placed after the label."
-            }
+            { "name": "", "description": "Primary button label text." },
+            { "name": "prefix", "description": "Icon or element placed before the label." },
+            { "name": "suffix", "description": "Icon or badge placed after the label." }
           ],
           "events": [
-            {
-              "name": "click",
-              "description": "Fired when user clicks the button (suppressed if disabled)."
-            }
-          ],
-          "cssParts": [
-            {
-              "name": "button",
-              "description": "The internal native <button> element inside the shadow root."
-            }
+            { "name": "click", "description": "Fired when user clicks the button." }
           ]
-        }
-      ],
-      "exports": [
-        {
-          "kind": "custom-element-definition",
-          "name": "el-button",
-          "declaration": {
-            "name": "ElButton",
-            "module": "src/components/el-button.js"
-          }
         }
       ]
     },
@@ -83,45 +37,11 @@
           "name": "ElBadge",
           "tagName": "el-badge",
           "description": "Minimal status indicator and notification badge.",
-          "superclass": {
-            "name": "Elementum",
-            "module": "src/index.js"
-          },
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
           "attributes": [
-            {
-              "name": "variant",
-              "description": "Badge color variant.",
-              "type": { "text": "'default' | 'success' | 'danger'" },
-              "default": "'default'"
-            },
-            {
-              "name": "count",
-              "description": "Count or short text to display.",
-              "type": { "text": "string" }
-            }
-          ],
-          "slots": [
-            {
-              "name": "",
-              "description": "Badge content or label."
-            }
-          ],
-          "cssParts": [
-            {
-              "name": "badge",
-              "description": "The internal badge <span> wrapper."
-            }
+            { "name": "variant", "type": { "text": "'default' | 'success' | 'danger'" }, "default": "'default'" },
+            { "name": "count", "type": { "text": "string" } }
           ]
-        }
-      ],
-      "exports": [
-        {
-          "kind": "custom-element-definition",
-          "name": "el-badge",
-          "declaration": {
-            "name": "ElBadge",
-            "module": "src/components/el-badge.js"
-          }
         }
       ]
     },
@@ -133,7 +53,7 @@
           "kind": "class",
           "name": "ElInput",
           "tagName": "el-input",
-          "description": "Accessible text/form input with prefix/suffix slots and design token styling.",
+          "description": "Form-associated text/form input with prefix/suffix slots and design token styling.",
           "superclass": { "name": "Elementum", "module": "src/index.js" },
           "attributes": [
             { "name": "value", "type": { "text": "string" } },
@@ -142,21 +62,10 @@
             { "name": "readonly", "type": { "text": "boolean" } },
             { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'" }
           ],
-          "slots": [
-            { "name": "prefix", "description": "Leading element or icon." },
-            { "name": "suffix", "description": "Trailing element or clear button." }
-          ],
           "events": [
-            { "name": "input", "description": "Fired on every character typed." },
+            { "name": "input", "description": "Fired on character typed." },
             { "name": "change", "description": "Fired on commit/blur." }
           ]
-        }
-      ],
-      "exports": [
-        {
-          "kind": "custom-element-definition",
-          "name": "el-input",
-          "declaration": { "name": "ElInput", "module": "src/components/el-input.js" }
         }
       ]
     },
@@ -173,21 +82,10 @@
           "attributes": [
             { "name": "open", "type": { "text": "boolean" }, "default": "false" }
           ],
-          "slots": [
-            { "name": "trigger", "description": "Trigger element that toggles the dropdown." },
-            { "name": "", "description": "Dropdown overlay content." }
-          ],
           "events": [
-            { "name": "open", "description": "Fired when dropdown opens." },
-            { "name": "close", "description": "Fired when dropdown closes." }
+            { "name": "open", "description": "Fired when opened." },
+            { "name": "close", "description": "Fired when closed." }
           ]
-        }
-      ],
-      "exports": [
-        {
-          "kind": "custom-element-definition",
-          "name": "el-dropdown",
-          "declaration": { "name": "ElDropdown", "module": "src/components/el-dropdown.js" }
         }
       ]
     },
@@ -202,18 +100,11 @@
           "description": "Standalone accessible calendar month-grid component.",
           "superclass": { "name": "Elementum", "module": "src/index.js" },
           "attributes": [
-            { "name": "value", "type": { "text": "string" }, "description": "Selected date formatted as YYYY-MM-DD" }
+            { "name": "value", "type": { "text": "string" } }
           ],
           "events": [
-            { "name": "select", "description": "Fired when a date cell is selected: detail.date" }
+            { "name": "select", "description": "Fired when date is selected." }
           ]
-        }
-      ],
-      "exports": [
-        {
-          "kind": "custom-element-definition",
-          "name": "el-calendar",
-          "declaration": { "name": "ElCalendar", "module": "src/components/el-calendar.js" }
         }
       ]
     },
@@ -225,23 +116,122 @@
           "kind": "class",
           "name": "ElDatepicker",
           "tagName": "el-datepicker",
-          "description": "Composite Datepicker combining <el-dropdown>, <el-input>, <el-calendar>, and <el-button>.",
+          "description": "Form-associated composite Datepicker combining dropdown, input, and calendar.",
           "superclass": { "name": "Elementum", "module": "src/index.js" },
           "attributes": [
-            { "name": "value", "type": { "text": "string" }, "description": "Selected date in YYYY-MM-DD format" },
+            { "name": "value", "type": { "text": "string" } },
             { "name": "placeholder", "type": { "text": "string" }, "default": "'Select date...'" },
             { "name": "disabled", "type": { "text": "boolean" }, "default": "false" }
           ],
           "events": [
-            { "name": "change", "description": "Fired when the user selects or clears a date: detail.value" }
+            { "name": "change", "description": "Fired when date changes: detail.value" }
           ]
         }
-      ],
-      "exports": [
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-dialog.js",
+      "declarations": [
         {
-          "kind": "custom-element-definition",
-          "name": "el-datepicker",
-          "declaration": { "name": "ElDatepicker", "module": "src/components/el-datepicker.js" }
+          "kind": "class",
+          "name": "ElDialog",
+          "tagName": "el-dialog",
+          "description": "Accessible modal dialog powered by native <dialog> with overscroll containment.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "attributes": [
+            { "name": "open", "type": { "text": "boolean" }, "default": "false" },
+            { "name": "title", "type": { "text": "string" } }
+          ],
+          "slots": [
+            { "name": "header", "description": "Dialog title or header." },
+            { "name": "", "description": "Dialog body content." },
+            { "name": "footer", "description": "Action buttons." }
+          ],
+          "events": [
+            { "name": "open", "description": "Fired when modal opens." },
+            { "name": "close", "description": "Fired when modal closes: detail.returnValue" }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-tabs.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElTabs",
+          "tagName": "el-tabs",
+          "description": "Accessible tablist and tab panel container with keyboard navigation.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "attributes": [
+            { "name": "value", "type": { "text": "string" }, "description": "Active tab value" }
+          ],
+          "events": [
+            { "name": "tabchange", "description": "Fired on tab change: detail.value" }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "ElTab",
+          "tagName": "el-tab",
+          "description": "Individual tab panel inside <el-tabs>.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "attributes": [
+            { "name": "label", "type": { "text": "string" } },
+            { "name": "value", "type": { "text": "string" } }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-select.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElSelect",
+          "tagName": "el-select",
+          "description": "Form-associated custom select dropdown with option list.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "attributes": [
+            { "name": "value", "type": { "text": "string" } },
+            { "name": "placeholder", "type": { "text": "string" } },
+            { "name": "disabled", "type": { "text": "boolean" } }
+          ],
+          "events": [
+            { "name": "change", "description": "Fired on selection change: detail.value" }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-theme-switch.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElThemeSwitch",
+          "tagName": "el-theme-switch",
+          "description": "Color theme toggle between Light and Dark mode with localStorage persistence.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "events": [
+            { "name": "themechange", "description": "Fired when theme toggles: detail.theme" }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-toast.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElToaster",
+          "tagName": "el-toaster",
+          "description": "Viewport overlay container rendering programmatic toast notifications.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" }
         }
       ]
     }

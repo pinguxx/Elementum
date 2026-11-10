@@ -6,11 +6,18 @@
 import { render, CSSResult } from './template.js';
 import { isSignal } from './signal.js';
 
-export class Elementum extends HTMLElement {
+const BaseElement = typeof HTMLElement !== 'undefined' ? HTMLElement : class {};
+
+export class Elementum extends BaseElement {
   /**
    * Set to false to disable Shadow DOM and render into Light DOM
    */
   static shadowRoot = true;
+
+  /**
+   * Set to true to participate in native HTML <form> submission & validation
+   */
+  static formAssociated = false;
 
   /**
    * CSSResult or array of CSSResults (created via css`...`)
@@ -19,9 +26,31 @@ export class Elementum extends HTMLElement {
 
   #abortController = null;
   #mounted = false;
+  internals = null;
 
   constructor() {
     super();
+    if (this.constructor.formAssociated && typeof this.attachInternals === 'function') {
+      this.internals = this.attachInternals();
+    }
+  }
+
+  setFormValue(value) {
+    if (this.internals && typeof this.internals.setFormValue === 'function') {
+      this.internals.setFormValue(value);
+    }
+  }
+
+  formResetCallback() {
+    if (typeof this.formReset === 'function') {
+      this.formReset();
+    }
+  }
+
+  formDisabledCallback(disabled) {
+    if (typeof this.formDisabled === 'function') {
+      this.formDisabled(disabled);
+    }
   }
 
   get signal() {

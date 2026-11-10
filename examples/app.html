@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skyline Travel - @wc/elementum Application Showcase</title>
+  <link rel="stylesheet" href="../src/tokens.css" />
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--el-surface-muted, #f8fafc);
+      color: var(--el-text-base, #0f172a);
+      transition: background-color 0.2s ease, color 0.2s ease;
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--el-surface-base, #ffffff);
+      border-bottom: 1px solid var(--el-surface-border, #e2e8f0);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--el-text-base, #1e293b);
+    }
+
+    .brand-icon {
+      font-size: 1.5rem;
+    }
+
+    main {
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+
+    .hero-card {
+      background: var(--el-surface-base, #ffffff);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      border-radius: var(--el-radius-lg, 16px);
+      padding: 32px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .hero-title {
+      margin-top: 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+
+    .hero-subtitle {
+      color: var(--el-text-muted, #64748b);
+      margin-top: -8px;
+      margin-bottom: 24px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field label {
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--el-text-base, #334155);
+    }
+
+    .actions-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      padding-top: 20px;
+      border-top: 1px solid var(--el-surface-border, #e2e8f0);
+    }
+
+    .summary-box {
+      background: var(--el-surface-muted, #f1f5f9);
+      border-radius: var(--el-radius-md, 8px);
+      padding: 16px;
+      margin-top: 12px;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+    }
+  </style>
+  <script type="module" src="../src/index.js"></script>
+</head>
+<body>
+  <!-- Global Toaster -->
+  <el-toaster></el-toaster>
+
+  <!-- Top Navbar -->
+  <header>
+    <div class="brand">
+      <span class="brand-icon">✈️</span>
+      <span>Skyline Travel</span>
+      <el-badge variant="success" count="Elementum v0.1.0"></el-badge>
+    </div>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <el-theme-switch></el-theme-switch>
+      <el-button variant="ghost" size="sm" @click=${() => window.open('https://github.com/pinguxx/Elementum', '_blank')}>
+        GitHub Repo ↗
+      </el-button>
+    </div>
+  </header>
+
+  <!-- Main Booking Application -->
+  <main>
+    <div class="hero-card">
+      <h1 class="hero-title">Book Your Next Journey</h1>
+      <p class="hero-subtitle">
+        Powered completely by @wc/elementum: fine-grained signals, Shadow DOM, and form-associated custom elements.
+      </p>
+
+      <!-- Tabs Component -->
+      <el-tabs value="flights" id="main-tabs">
+        <!-- TAB 1: FLIGHTS -->
+        <el-tab label="Flights ✈️" value="flights">
+          <form id="flight-form">
+            <div class="form-grid">
+              <div class="field">
+                <label for="f-origin">Departure City:</label>
+                <el-input id="f-origin" name="origin" placeholder="e.g. San Francisco (SFO)" value="San Francisco (SFO)">
+                  <span slot="prefix">🛫</span>
+                </el-input>
+              </div>
+
+              <div class="field">
+                <label for="f-dest">Destination City:</label>
+                <el-input id="f-dest" name="destination" placeholder="e.g. Tokyo (HND)" value="Tokyo (HND)">
+                  <span slot="prefix">🛬</span>
+                </el-input>
+              </div>
+
+              <div class="field">
+                <label for="f-date">Departure Date:</label>
+                <el-datepicker id="f-date" name="date" placeholder="Select date..."></el-datepicker>
+              </div>
+
+              <div class="field">
+                <label for="f-class">Cabin Class:</label>
+                <el-select id="f-class" name="cabin">
+                  <option value="economy">Economy Class</option>
+                  <option value="premium">Premium Economy</option>
+                  <option value="business">Business Class</option>
+                  <option value="first">First Class</option>
+                </el-select>
+              </div>
+            </div>
+
+            <div class="actions-bar">
+              <el-button type="reset" variant="secondary">Reset Form</el-button>
+              <el-button type="submit" variant="primary">
+                <span slot="prefix">🔍</span> Search & Review Booking
+              </el-button>
+            </div>
+          </form>
+        </el-tab>
+
+        <!-- TAB 2: HOTELS -->
+        <el-tab label="Hotels 🏨" value="hotels">
+          <div class="form-grid">
+            <div class="field">
+              <label>Destination City:</label>
+              <el-input placeholder="Where are you staying?">
+                <span slot="prefix">📍</span>
+              </el-input>
+            </div>
+
+            <div class="field">
+              <label>Check-in Date:</label>
+              <el-datepicker placeholder="Check-in"></el-datepicker>
+            </div>
+
+            <div class="field">
+              <label>Room Type:</label>
+              <el-select>
+                <option value="single">Standard Single</option>
+                <option value="double">Deluxe Double</option>
+                <option value="suite">Executive Suite</option>
+              </el-select>
+            </div>
+          </div>
+          <div class="actions-bar">
+            <el-button variant="primary" @click=${() => toast.info('Hotel search coming soon!')}>Search Hotels</el-button>
+          </div>
+        </el-tab>
+
+        <!-- TAB 3: CARS -->
+        <el-tab label="Rental Cars 🚗" value="cars">
+          <div class="form-grid">
+            <div class="field">
+              <label>Pick-up Airport:</label>
+              <el-input placeholder="Airport code or city">
+                <span slot="prefix">🚗</span>
+              </el-input>
+            </div>
+
+            <div class="field">
+              <label>Vehicle Class:</label>
+              <el-select>
+                <option value="compact">Compact / Sedan</option>
+                <option value="suv">SUV</option>
+                <option value="luxury">Luxury EV</option>
+              </el-select>
+            </div>
+          </div>
+          <div class="actions-bar">
+            <el-button variant="primary" @click=${() => toast.info('Rental car search coming soon!')}>Search Cars</el-button>
+          </div>
+        </el-tab>
+      </el-tabs>
+    </div>
+  </main>
+
+  <!-- Confirmation Modal Dialog -->
+  <el-dialog id="confirm-modal" title="Confirm Your Reservation">
+    <div id="modal-content">
+      <p>Please review your flight booking details before confirming:</p>
+      <div class="summary-box" id="booking-summary">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+    <div slot="footer">
+      <el-button variant="secondary" id="modal-cancel">Cancel</el-button>
+      <el-button variant="primary" id="modal-confirm">Confirm Booking</el-button>
+    </div>
+  </el-dialog>
+
+  <script type="module">
+    import { toast } from '../src/index.js';
+
+    const flightForm = document.getElementById('flight-form');
+    const confirmModal = document.getElementById('confirm-modal');
+    const bookingSummary = document.getElementById('booking-summary');
+    const modalCancel = document.getElementById('modal-cancel');
+    const modalConfirm = document.getElementById('modal-confirm');
+
+    let currentBookingData = null;
+
+    // Native <form> submission capturing Form-Associated Custom Elements!
+    flightForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(flightForm);
+      const origin = formData.get('origin');
+      const destination = formData.get('destination');
+      const date = formData.get('date');
+      const cabin = formData.get('cabin') || 'economy';
+
+      if (!date) {
+        toast.error('Please pick a departure date before continuing!');
+        return;
+      }
+
+      currentBookingData = { origin, destination, date, cabin };
+
+      bookingSummary.innerHTML = `
+        <strong>Route:</strong> ${origin} ➔ ${destination}<br/>
+        <strong>Date:</strong> ${date}<br/>
+        <strong>Cabin:</strong> ${cabin.toUpperCase()}
+      `;
+
+      confirmModal.showModal();
+    });
+
+    modalCancel.addEventListener('click', () => {
+      confirmModal.close();
+      toast.info('Booking cancelled.');
+    });
+
+    modalConfirm.addEventListener('click', () => {
+      confirmModal.close();
+      toast.success(`Success! Flight on ${currentBookingData.date} booked!`);
+      flightForm.reset();
+    });
+  </script>
+</body>
+</html>
