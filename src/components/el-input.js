@@ -3,7 +3,9 @@
  * Accessible text/form input with prefix/suffix slots and design token styling.
  */
 
-import { Elementum, html, css, signal } from '../index.js';
+import { Elementum } from '../elementum.js';
+import { html, css } from '../template.js';
+import { signal } from '../signal.js';
 
 export class ElInput extends Elementum {
   static formAssociated = true;

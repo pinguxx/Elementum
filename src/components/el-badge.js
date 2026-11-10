@@ -3,7 +3,9 @@
  * Minimal status indicator and notification badge.
  */
 
-import { Elementum, html, css, signal } from '../index.js';
+import { Elementum } from '../elementum.js';
+import { html, css } from '../template.js';
+import { signal } from '../signal.js';
 
 export class ElBadge extends Elementum {
   static observedAttributes = ['variant', 'count'];

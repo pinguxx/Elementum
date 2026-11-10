@@ -3,7 +3,9 @@
  * Accessible overlay container with light-dismiss, trigger slot, and anchor positioning.
  */
 
-import { Elementum, html, css, signal } from '../index.js';
+import { Elementum } from '../elementum.js';
+import { html, css } from '../template.js';
+import { signal } from '../signal.js';
 
 export class ElDropdown extends Elementum {
   static observedAttributes = ['open'];

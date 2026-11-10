@@ -4,7 +4,9 @@
  * Follows modern web guidance with overscroll containment and top-layer rendering.
  */
 
-import { Elementum, html, css, signal } from '../index.js';
+import { Elementum } from '../elementum.js';
+import { html, css } from '../template.js';
+import { signal } from '../signal.js';
 
 export class ElDialog extends Elementum {
   static observedAttributes = ['open', 'title'];

@@ -3,7 +3,9 @@
  * Form-associated select component with custom styling and design tokens.
  */
 
-import { Elementum, html, css, signal } from '../index.js';
+import { Elementum } from '../elementum.js';
+import { html, css } from '../template.js';
+import { signal } from '../signal.js';
 
 export class ElSelect extends Elementum {
   static formAssociated = true;

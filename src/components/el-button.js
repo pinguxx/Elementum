@@ -3,7 +3,9 @@
  * Frameworkless, signal-driven button component with 1:1 Figma variant parity.
  */
 
-import { Elementum, html, css, signal } from '../index.js';
+import { Elementum } from '../elementum.js';
+import { html, css } from '../template.js';
+import { signal } from '../signal.js';
 
 export class ElButton extends Elementum {
   static observedAttributes = ['variant', 'size', 'disabled'];

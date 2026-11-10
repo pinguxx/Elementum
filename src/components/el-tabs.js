@@ -3,7 +3,9 @@
  * Accessible tabs component following W3C design patterns with keyboard navigation.
  */
 
-import { Elementum, html, css, signal } from '../index.js';
+import { Elementum } from '../elementum.js';
+import { html, css } from '../template.js';
+import { signal } from '../signal.js';
 
 export class ElTab extends Elementum {
   static observedAttributes = ['label', 'value'];

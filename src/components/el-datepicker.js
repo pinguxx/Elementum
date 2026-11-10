@@ -3,7 +3,9 @@
  * Composite Datepicker combining <el-dropdown>, <el-input>, <el-calendar>, and <el-button>.
  */
 
-import { Elementum, html, css, signal } from '../index.js';
+import { Elementum } from '../elementum.js';
+import { html, css } from '../template.js';
+import { signal } from '../signal.js';
 import './el-dropdown.js';
 import './el-input.js';
 import './el-calendar.js';

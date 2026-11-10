@@ -116,7 +116,7 @@
     </div>
     <div style="display: flex; align-items: center; gap: 16px;">
       <el-theme-switch></el-theme-switch>
-      <el-button variant="ghost" size="sm" @click=${() => window.open('https://github.com/pinguxx/Elementum', '_blank')}>
+      <el-button variant="ghost" size="sm" id="btn-github">
         GitHub Repo ↗
       </el-button>
     </div>
@@ -200,7 +200,7 @@
             </div>
           </div>
           <div class="actions-bar">
-            <el-button variant="primary" @click=${() => toast.info('Hotel search coming soon!')}>Search Hotels</el-button>
+            <el-button variant="primary" id="btn-hotels">Search Hotels</el-button>
           </div>
         </el-tab>
 
@@ -224,7 +224,7 @@
             </div>
           </div>
           <div class="actions-bar">
-            <el-button variant="primary" @click=${() => toast.info('Rental car search coming soon!')}>Search Cars</el-button>
+            <el-button variant="primary" id="btn-cars">Search Cars</el-button>
           </div>
         </el-tab>
       </el-tabs>
@@ -247,6 +247,19 @@
 
   <script type="module">
     import { toast } from '../src/index.js';
+
+    // Hook up external link and mock action buttons
+    document.getElementById('btn-github')?.addEventListener('click', () => {
+      window.open('https://github.com/pinguxx/Elementum', '_blank');
+    });
+
+    document.getElementById('btn-hotels')?.addEventListener('click', () => {
+      toast.info('Hotel search coming soon!');
+    });
+
+    document.getElementById('btn-cars')?.addEventListener('click', () => {
+      toast.info('Rental car search coming soon!');
+    });
 
     const flightForm = document.getElementById('flight-form');
     const confirmModal = document.getElementById('confirm-modal');

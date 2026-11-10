@@ -3,7 +3,9 @@
  * Interactive toggle for switching between Light and Dark design system themes.
  */
 
-import { Elementum, html, css, signal } from '../index.js';
+import { Elementum } from '../elementum.js';
+import { html, css } from '../template.js';
+import { signal } from '../signal.js';
 
 export class ElThemeSwitch extends Elementum {
   theme = signal('light'); // 'light' | 'dark'

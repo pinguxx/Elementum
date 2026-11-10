@@ -3,7 +3,9 @@
  * Standalone accessible calendar month-grid component.
  */
 
-import { Elementum, html, css, signal, computed } from '../index.js';
+import { Elementum } from '../elementum.js';
+import { html, css } from '../template.js';
+import { signal, computed } from '../signal.js';
 
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',

@@ -3,7 +3,9 @@
  * Lightweight notification toast system with global programmatic API.
  */
 
-import { Elementum, html, css, signal } from '../index.js';
+import { Elementum } from '../elementum.js';
+import { html, css } from '../template.js';
+import { signal } from '../signal.js';
 
 class ToastManager {
   toasts = signal([]); // [{ id, message, variant, duration }]
