@@ -1,4 +1,4 @@
-import './setup.js';
+import '../test-helpers/setup.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { html, css, render, CSSResult } from '../src/template.js';

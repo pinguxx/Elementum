@@ -10,7 +10,7 @@
     "./custom-elements.json": "./custom-elements.json"
   },
   "scripts": {
-    "test": "node --test --experimental-test-coverage test/*.test.js",
+    "test": "node --test --experimental-test-coverage",
     "mcp": "node mcp/server.js",
     "tokens:sync": "node tools/sync-tokens.js"
   },
