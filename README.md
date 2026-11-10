@@ -82,9 +82,9 @@ Elementum runs directly in any modern browser without Webpack, Vite, or Babel.
 
 ---
 
-## Interactive Examples & Live Demo
+## Interactive Examples & Showcase
 
-- **[GitHub Pages Live Demo](https://pinguxx.github.io/Elementum/)**: Interactive portal deploying both showcase apps to the web.
+- **[index.html](file:///c:/dev/Elementum/index.html)**: Interactive landing portal directing to the applications. Run `npx serve .` to launch locally.
 - **[examples/app.html](file:///c:/dev/Elementum/examples/app.html)**: Complete **Skyline Travel** booking dashboard demonstrating native form validation, confirmation modal dialogs, toast notifications, tabs, and theme toggling.
 - **[examples/index.html](file:///c:/dev/Elementum/examples/index.html)**: Component showcase with standalone controls and live signal-reactive counter.
 
@@ -103,8 +103,7 @@ Elementum/
 ├── .github/
 │   ├── dependabot.yml       # Automated weekly dependencies & actions updates
 │   └── workflows/
-│       ├── ci.yml           # Multi-node, multi-OS CI test workflow
-│       └── pages.yml        # Automated GitHub Pages live deployment
+│       └── ci.yml           # Multi-node, multi-OS CI test workflow
 ├── docs/
 │   └── framework-integration.md # React 19, Vue 3, Svelte 5, and Next.js guide
 ├── src/
