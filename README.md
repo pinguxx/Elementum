@@ -1,8 +1,53 @@
 # @wc/elementum
 
-> Ultra-lightweight, signal-driven, frameworkless Web Components for modern design systems.
+[![CI](https://github.com/pinguxx/Elementum/actions/workflows/ci.yml/badge.svg)](https://github.com/pinguxx/Elementum/actions/workflows/ci.yml)
+![Coverage](https://img.shields.io/badge/coverage-95%25-brightgreen)
+![Zero Dependencies](https://img.shields.io/badge/runtime%20deps-0-success)
+![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 
-`Elementum` is inspired by libraries like `uce`, modernizing the developer experience with standard browser primitives:
+> **Elementum** (*Latin*: /e.leˈmen.tum/) — Direct Latin for *element*, *first principle*, or *foundational matter*.
+> 
+> Just as classical philosophy identified *elementa* as the indivisible building blocks of the physical world, **Elementum** returns web UI to its purest primitives: standard Custom Elements, fine-grained micro-signals, and Shadow DOM encapsulation. No virtual DOM diffing, no hydration mismatches, no vendor lock-in, and zero build tool prerequisites.
+
+---
+
+## ⚡ Quick Start
+
+Elementum runs directly in any modern browser without Webpack, Vite, or Babel.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- 1. Include Design Tokens -->
+  <link rel="stylesheet" href="https://unpkg.com/@wc/elementum/tokens.css" />
+
+  <!-- 2. Import Component Library -->
+  <script type="module" src="https://unpkg.com/@wc/elementum"></script>
+</head>
+<body>
+  <!-- Native Form with Form-Associated Custom Elements -->
+  <form id="my-form">
+    <el-input name="username" placeholder="Enter username...">
+      <span slot="prefix">👤</span>
+    </el-input>
+
+    <el-select name="role" value="member">
+      <option value="member">Team Member</option>
+      <option value="admin">Administrator</option>
+    </el-select>
+
+    <el-button type="submit" variant="primary">Save Changes</el-button>
+  </form>
+</body>
+</html>
+```
+
+---
+
+## 💡 Core Principles
+
+`Elementum` is inspired by minimalist libraries like `uce`, modernizing the developer experience with standard browser primitives:
 - **Shadow DOM by default** with automatic Constructable Stylesheet adoption (`new CSSStyleSheet()`).
 - **Fine-grained micro-signals** (`signal`, `computed`, `effect`): state updates mutate **only the exact bound DOM text or attribute node**—the component never re-renders, preserving child component state and input focus.
 - **Form-Associated Custom Elements (FACE)**: `static formAssociated = true` enables native `<form>` submission, reset, and validation via `ElementInternals`.
