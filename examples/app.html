@@ -274,10 +274,10 @@
       e.preventDefault();
 
       const formData = new FormData(flightForm);
-      const origin = formData.get('origin');
-      const destination = formData.get('destination');
-      const date = formData.get('date');
-      const cabin = formData.get('cabin') || 'economy';
+      const origin = formData.get('origin') || document.getElementById('f-origin')?.value?.value || document.getElementById('f-origin')?.value || 'San Francisco (SFO)';
+      const destination = formData.get('destination') || document.getElementById('f-dest')?.value?.value || document.getElementById('f-dest')?.value || 'Tokyo (HND)';
+      const date = formData.get('date') || document.getElementById('f-date')?.value?.value || document.getElementById('f-date')?.value;
+      const cabin = formData.get('cabin') || document.getElementById('f-class')?.value?.value || document.getElementById('f-class')?.value || 'economy';
 
       if (!date) {
         toast.error('Please pick a departure date before continuing!');

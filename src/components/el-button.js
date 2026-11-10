@@ -8,12 +8,14 @@ import { html, css } from '../template.js';
 import { signal } from '../signal.js';
 
 export class ElButton extends Elementum {
-  static observedAttributes = ['variant', 'size', 'disabled'];
+  static formAssociated = true;
+  static observedAttributes = ['variant', 'size', 'disabled', 'type'];
 
   // Figma Variant mappings as reactive signals
   variant = signal('primary'); // 'primary' | 'secondary' | 'danger' | 'ghost'
   size = signal('md');         // 'sm' | 'md' | 'lg'
   disabled = signal(false);
+  type = signal('button');     // 'button' | 'submit' | 'reset'
 
   static styles = css`
     :host {
@@ -107,6 +109,20 @@ export class ElButton extends Elementum {
           if (this.disabled.value) {
             e.preventDefault();
             e.stopPropagation();
+            return;
+          }
+
+          const btnType = this.getAttribute('type') || this.type.value;
+          if (btnType === 'submit') {
+            const form = this.internals?.form || this.closest('form');
+            if (form) {
+              form.requestSubmit();
+            }
+          } else if (btnType === 'reset') {
+            const form = this.internals?.form || this.closest('form');
+            if (form) {
+              form.reset();
+            }
           }
         }}
       >

@@ -98,12 +98,29 @@ export class Elementum extends BaseElement {
       this.root = this;
     }
 
-    // 3. User lifecycle hook
+    // 3. Sync initial HTML attributes into signals or properties
+    const observed = this.constructor.observedAttributes;
+    if (Array.isArray(observed)) {
+      for (const attr of observed) {
+        if (this.hasAttribute(attr)) {
+          const val = this.getAttribute(attr);
+          if (attr in this) {
+            if (isSignal(this[attr])) {
+              this[attr].value = val;
+            } else {
+              this[attr] = val;
+            }
+          }
+        }
+      }
+    }
+
+    // 4. User lifecycle hook
     if (typeof this.connected === 'function') {
       this.connected();
     }
 
-    // 4. Initial Render
+    // 5. Initial Render
     if (typeof this.render === 'function') {
       const templateResult = this.render();
       if (templateResult) {
