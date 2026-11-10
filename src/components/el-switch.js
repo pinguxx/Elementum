@@ -9,10 +9,11 @@ import { signal } from '../signal.js';
 
 export class ElSwitch extends Elementum {
   static formAssociated = true;
-  static observedAttributes = ['checked', 'disabled', 'name', 'value', 'size'];
+  static observedAttributes = ['checked', 'disabled', 'name', 'value', 'size', 'required'];
 
   checked = signal(false);
   disabled = signal(false);
+  required = signal(false);
   name = signal('');
   value = signal('on');
   size = signal('md'); // 'sm' | 'md' | 'lg'
@@ -113,7 +114,9 @@ export class ElSwitch extends Elementum {
   connected() {
     this.checked.value = this.hasAttribute('checked');
     this.disabled.value = this.hasAttribute('disabled');
+    this.required.value = this.hasAttribute('required');
     this.#syncForm();
+    this.validate();
 
     this.addEventListener('click', this.#onClick);
     this.addEventListener('keydown', this.#onKeyDown);
@@ -131,6 +134,10 @@ export class ElSwitch extends Elementum {
       this.checked.value = isChecked;
       this.setAttribute('aria-checked', String(isChecked));
       this.#syncForm();
+      this.validate();
+    } else if (name === 'required') {
+      this.required.value = newValue !== null && newValue !== 'false';
+      this.validate();
     } else if (name === 'disabled') {
       const isDisabled = newValue !== null && newValue !== 'false';
       this.disabled.value = isDisabled;
@@ -147,6 +154,18 @@ export class ElSwitch extends Elementum {
     this.checked.value = this.hasAttribute('checked');
     this.setAttribute('aria-checked', String(this.checked.value));
     this.#syncForm();
+    this.validate();
+  }
+
+  validate() {
+    if (this.required.value && !this.checked.value) {
+      this.setValidity({ valueMissing: true }, 'Please turn this switch on.');
+      this.setAttribute('aria-invalid', 'true');
+      return false;
+    }
+    this.setValidity({});
+    this.removeAttribute('aria-invalid');
+    return true;
   }
 
   #syncForm() {
@@ -162,6 +181,7 @@ export class ElSwitch extends Elementum {
     this.checked.value = !this.checked.value;
     this.setAttribute('aria-checked', String(this.checked.value));
     this.#syncForm();
+    this.validate();
     this.emit('change', { checked: this.checked.value, value: this.value.value });
   }
 

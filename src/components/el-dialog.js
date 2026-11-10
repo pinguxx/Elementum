@@ -94,6 +94,8 @@ export class ElDialog extends Elementum {
     }
   `;
 
+  #previousActiveElement = null;
+
   #getNativeDialog() {
     return this.root.querySelector('dialog');
   }
@@ -101,6 +103,9 @@ export class ElDialog extends Elementum {
   showModal() {
     const dlg = this.#getNativeDialog();
     if (dlg && !dlg.open) {
+      if (typeof document !== 'undefined' && document.activeElement) {
+        this.#previousActiveElement = document.activeElement;
+      }
       dlg.showModal();
       this.isOpen.value = true;
       this.emit('open');
@@ -113,6 +118,18 @@ export class ElDialog extends Elementum {
       dlg.close(returnValue);
       this.isOpen.value = false;
       this.emit('close', { returnValue });
+      this.#restoreFocus();
+    }
+  }
+
+  #restoreFocus() {
+    if (this.#previousActiveElement && typeof this.#previousActiveElement.focus === 'function') {
+      try {
+        this.#previousActiveElement.focus();
+      } catch {
+        // Ignore focus failures if detached
+      }
+      this.#previousActiveElement = null;
     }
   }
 
@@ -137,6 +154,7 @@ export class ElDialog extends Elementum {
     const returnValue = dlg.returnValue;
     dlg.returnValue = ''; // Reset per modern web guidance to prevent stale leaks
     this.emit('close', { returnValue });
+    this.#restoreFocus();
   };
 
   render() {

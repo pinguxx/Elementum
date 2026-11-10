@@ -9,22 +9,72 @@ import { signal } from '../signal.js';
 
 export class ElInput extends Elementum {
   static formAssociated = true;
-  static observedAttributes = ['value', 'placeholder', 'disabled', 'readonly', 'type', 'size'];
+  static observedAttributes = ['value', 'placeholder', 'disabled', 'readonly', 'type', 'size', 'required', 'pattern', 'minlength'];
 
   value = signal('');
   placeholder = signal('');
   disabled = signal(false);
   readonly = signal(false);
+  required = signal(false);
+  pattern = signal('');
+  minlength = signal(0);
   type = signal('text');
   size = signal('md'); // 'sm' | 'md' | 'lg'
 
   connected() {
+    this.required.value = this.hasAttribute('required');
     this.setFormValue(this.value.value);
+    this.validate();
   }
 
   formReset() {
-    this.value.value = '';
-    this.setFormValue('');
+    this.value.value = this.getAttribute('value') || '';
+    this.setFormValue(this.value.value);
+    this.validate();
+  }
+
+  attributeChanged(name, oldValue, newValue) {
+    if (name === 'required') {
+      this.required.value = newValue !== null && newValue !== 'false';
+      this.validate();
+    } else if (name === 'pattern') {
+      this.pattern.value = newValue || '';
+      this.validate();
+    } else if (name === 'minlength') {
+      this.minlength.value = Number(newValue) || 0;
+      this.validate();
+    }
+  }
+
+  validate() {
+    const val = String(this.value.value || '');
+    const inputEl = this.root?.querySelector?.('input');
+
+    if (this.required.value && !val.trim()) {
+      this.setValidity({ valueMissing: true }, 'Please fill out this field.', inputEl);
+      this.setAttribute('aria-invalid', 'true');
+      return false;
+    }
+
+    if (this.pattern.value && val) {
+      const reg = new RegExp(`^(?:${this.pattern.value})$`);
+      if (!reg.test(val)) {
+        this.setValidity({ patternMismatch: true }, 'Please match the requested format.', inputEl);
+        this.setAttribute('aria-invalid', 'true');
+        return false;
+      }
+    }
+
+    const min = Number(this.minlength.value);
+    if (min > 0 && val.length > 0 && val.length < min) {
+      this.setValidity({ tooShort: true }, `Please lengthen text to at least ${min} characters.`, inputEl);
+      this.setAttribute('aria-invalid', 'true');
+      return false;
+    }
+
+    this.setValidity({});
+    this.removeAttribute('aria-invalid');
+    return true;
   }
 
   static styles = css`
@@ -107,12 +157,14 @@ export class ElInput extends Elementum {
   #onInput = (e) => {
     this.value.value = e.target.value;
     this.setFormValue(e.target.value);
+    this.validate();
     this.emit('input', { value: e.target.value });
   };
 
   #onChange = (e) => {
     this.value.value = e.target.value;
     this.setFormValue(e.target.value);
+    this.validate();
     this.emit('change', { value: e.target.value });
   };
 

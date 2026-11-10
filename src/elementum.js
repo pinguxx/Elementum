@@ -27,6 +27,20 @@ export class Elementum extends BaseElement {
   #abortController = null;
   #mounted = false;
   internals = null;
+  #validity = {
+    valid: true,
+    valueMissing: false,
+    typeMismatch: false,
+    patternMismatch: false,
+    tooLong: false,
+    tooShort: false,
+    rangeUnderflow: false,
+    rangeOverflow: false,
+    stepMismatch: false,
+    badInput: false,
+    customError: false,
+  };
+  #validationMessage = '';
 
   constructor() {
     super();
@@ -38,6 +52,66 @@ export class Elementum extends BaseElement {
   setFormValue(value) {
     if (this.internals && typeof this.internals.setFormValue === 'function') {
       this.internals.setFormValue(value);
+    }
+  }
+
+  get validity() {
+    return this.internals?.validity || this.#validity;
+  }
+
+  get validationMessage() {
+    return this.internals?.validationMessage || this.#validationMessage;
+  }
+
+  get willValidate() {
+    return this.internals?.willValidate ?? true;
+  }
+
+  checkValidity() {
+    if (this.internals && typeof this.internals.checkValidity === 'function') {
+      return this.internals.checkValidity();
+    }
+    return this.validity.valid;
+  }
+
+  reportValidity() {
+    if (this.internals && typeof this.internals.reportValidity === 'function') {
+      return this.internals.reportValidity();
+    }
+    const isValid = this.checkValidity();
+    if (!isValid) {
+      this.dispatchEvent(new Event('invalid', { bubbles: false, cancelable: true }));
+    }
+    return isValid;
+  }
+
+  setValidity(flags = {}, message = '', anchor) {
+    const isInvalid = Object.values(flags).some(Boolean);
+    this.#validity = {
+      valid: !isInvalid,
+      valueMissing: !!flags.valueMissing,
+      typeMismatch: !!flags.typeMismatch,
+      patternMismatch: !!flags.patternMismatch,
+      tooLong: !!flags.tooLong,
+      tooShort: !!flags.tooShort,
+      rangeUnderflow: !!flags.rangeUnderflow,
+      rangeOverflow: !!flags.rangeOverflow,
+      stepMismatch: !!flags.stepMismatch,
+      badInput: !!flags.badInput,
+      customError: !!flags.customError,
+    };
+    this.#validationMessage = message || '';
+
+    if (this.internals && typeof this.internals.setValidity === 'function') {
+      this.internals.setValidity(flags, message, anchor);
+    }
+  }
+
+  setCustomValidity(message = '') {
+    if (message) {
+      this.setValidity({ customError: true }, message);
+    } else {
+      this.setValidity({});
     }
   }
 

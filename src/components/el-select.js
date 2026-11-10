@@ -9,12 +9,13 @@ import { signal } from '../signal.js';
 
 export class ElSelect extends Elementum {
   static formAssociated = true;
-  static observedAttributes = ['value', 'placeholder', 'disabled', 'name'];
+  static observedAttributes = ['value', 'placeholder', 'disabled', 'name', 'required'];
 
   value = signal('');
   placeholder = signal('');
   disabled = signal(false);
   name = signal('');
+  required = signal(false);
   options = signal([]); // [{ label, value }]
 
   static styles = css`
@@ -72,11 +73,13 @@ export class ElSelect extends Elementum {
   `;
 
   connected() {
+    this.required.value = this.hasAttribute('required');
     this.#scanOptions();
     if (!this.value.value && !this.hasAttribute('placeholder') && this.options.value.length > 0) {
       this.value.value = this.options.value[0].value;
     }
     this.setFormValue(this.value.value);
+    this.validate();
 
     const observer = new MutationObserver(() => {
       this.#scanOptions();
@@ -84,6 +87,7 @@ export class ElSelect extends Elementum {
         this.value.value = this.options.value[0].value;
         this.setFormValue(this.value.value);
       }
+      this.validate();
     });
     observer.observe(this, { childList: true, subtree: true });
     this.signal.addEventListener('abort', () => observer.disconnect());
@@ -93,12 +97,32 @@ export class ElSelect extends Elementum {
     const initial = this.getAttribute('value') || '';
     this.value.value = initial;
     this.setFormValue(initial);
+    this.validate();
   }
 
   attributeChanged(name, oldValue, newValue) {
     if (name === 'value') {
       this.setFormValue(newValue);
+      this.validate();
+    } else if (name === 'required') {
+      this.required.value = newValue !== null && newValue !== 'false';
+      this.validate();
     }
+  }
+
+  validate() {
+    const val = String(this.value.value || '');
+    const selectEl = this.root?.querySelector?.('select');
+
+    if (this.required.value && !val.trim()) {
+      this.setValidity({ valueMissing: true }, 'Please select an item in the list.', selectEl);
+      this.setAttribute('aria-invalid', 'true');
+      return false;
+    }
+
+    this.setValidity({});
+    this.removeAttribute('aria-invalid');
+    return true;
   }
 
   #scanOptions() {
@@ -113,6 +137,7 @@ export class ElSelect extends Elementum {
     const val = e.target.value;
     this.value.value = val;
     this.setFormValue(val);
+    this.validate();
     this.emit('change', { value: val });
   };
 

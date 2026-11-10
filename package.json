@@ -5,6 +5,15 @@
   "type": "module",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
+  "bin": {
+    "elementum-mcp": "./mcp/server.js"
+  },
+  "files": [
+    "src",
+    "custom-elements.json",
+    "tokens",
+    "mcp"
+  ],
   "exports": {
     ".": {
       "types": "./src/index.d.ts",

@@ -60,6 +60,9 @@
             { "name": "placeholder", "type": { "text": "string" } },
             { "name": "disabled", "type": { "text": "boolean" } },
             { "name": "readonly", "type": { "text": "boolean" } },
+            { "name": "required", "type": { "text": "boolean" }, "default": "false" },
+            { "name": "pattern", "type": { "text": "string" } },
+            { "name": "minlength", "type": { "text": "number" } },
             { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'" }
           ],
           "events": [
@@ -121,7 +124,8 @@
           "attributes": [
             { "name": "value", "type": { "text": "string" } },
             { "name": "placeholder", "type": { "text": "string" }, "default": "'Select date...'" },
-            { "name": "disabled", "type": { "text": "boolean" }, "default": "false" }
+            { "name": "disabled", "type": { "text": "boolean" }, "default": "false" },
+            { "name": "required", "type": { "text": "boolean" }, "default": "false" }
           ],
           "events": [
             { "name": "change", "description": "Fired when date changes: detail.value" }
@@ -198,7 +202,8 @@
           "attributes": [
             { "name": "value", "type": { "text": "string" } },
             { "name": "placeholder", "type": { "text": "string" } },
-            { "name": "disabled", "type": { "text": "boolean" } }
+            { "name": "disabled", "type": { "text": "boolean" } },
+            { "name": "required", "type": { "text": "boolean" }, "default": "false" }
           ],
           "events": [
             { "name": "change", "description": "Fired on selection change: detail.value" }
@@ -248,6 +253,7 @@
           "attributes": [
             { "name": "checked", "type": { "text": "boolean" }, "default": "false" },
             { "name": "disabled", "type": { "text": "boolean" }, "default": "false" },
+            { "name": "required", "type": { "text": "boolean" }, "default": "false" },
             { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'" }
           ],
           "events": [

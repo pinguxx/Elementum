@@ -54,6 +54,7 @@ Elementum runs directly in any modern browser without Webpack, Vite, or Babel.
 - **Zero build requirement**: Plain ES modules (`<script type="module">`), no Babel, decorators, or compile step needed. Runs in SSR / Node.js cleanly.
 - **Light & Dark Mode**: Built-in CSS custom property theme tokens with automatic `prefers-color-scheme` and `<el-theme-switch>`.
 - **Leak-free lifecycle**: Automatically tracks and tears down event listeners and signal subscriptions via `this.signal` (`AbortSignal`).
+- **WCAG 2.2 AA Compliant**: Built-in 24x24px minimum target sizes, high-contrast `:focus-visible` rings, dialog focus preservation, and HTML5 Constraint Validation API (`ElementInternals.setValidity`).
 - **Figma 1:1 Parity**: Direct mapping to Figma Component Variants and Figma Variables.
 - **AI Agent & MCP Ready**: Generates standard W3C `custom-elements.json` and includes a built-in MCP server for coding agents.
 - **CI/CD & Automation**: GitHub Actions multi-OS / multi-Node matrix test runner and Dependabot automated dependency updates.
@@ -140,6 +141,10 @@ Elementum/
 ├── tools/
 │   └── sync-tokens.js       # CLI to compile figma-tokens.json into tokens.css
 ├── custom-elements.json     # W3C Custom Elements Manifest (for agents & Storybook)
+├── AGENT_GUIDE.md           # Instructions for AI coding agents & developers
+├── docs/
+│   ├── theming.md           # Design tokens and ::part() customization guide
+│   └── framework-integration.md # React, Vue, Svelte, Angular integration
 ├── examples/
 │   ├── app.html             # Full travel booking mini-app
 │   └── index.html           # Component showcase
@@ -148,12 +153,24 @@ Elementum/
 │   └── server.js            # Model Context Protocol server for AI coding agents
 └── test/                    # Node.js automated test runner suite
 ```
-│   ├── app.html             # Full travel booking mini-app
-│   └── index.html           # Component showcase
-├── mcp/
-│   └── server.js            # Model Context Protocol server for AI coding agents
-└── test/                    # Node.js automated test runner suite
+
+---
+
+## Figma Token Synchronization
+
+Synchronize design tokens from `tokens/figma-tokens.json` to `src/tokens.css`:
+
+```bash
+npm run tokens:sync
 ```
+
+---
+
+## 🎨 Theming & Accessibility (WCAG 2.2)
+
+- **Theming Guide**: See [docs/theming.md](docs/theming.md) for the full catalog of design tokens and exposed CSS ::part() selectors.
+- **Agent Guide**: See [AGENT_GUIDE.md](AGENT_GUIDE.md) for guidelines on building, testing, and reviewing Elementum components.
+- **Framework Integration**: See [docs/framework-integration.md](docs/framework-integration.md) for React, Vue, Svelte, and Angular setup.
 
 ---
 
@@ -173,5 +190,14 @@ Run the built-in MCP server for AI coding agents:
 
 ```bash
 node mcp/server.js
+# Or via package bin
+npx elementum-mcp
 ```
-Exposed tools: `list_components`, `get_component_doc`, `list_tokens`, and `generate_snippet`.
+
+Exposed tools:
+- `list_components`: Lists all components in Elementum
+- `get_component_doc`: Retrieves attributes, slots, events, and CSS parts
+- `list_tokens`: Queries design tokens by category (color, spacing, radius)
+- `generate_snippet`: Generates valid HTML markup matching Figma variants
+- `scaffold_component`: Scaffolds standard boilerplate code for new components
+- `validate_accessibility`: Audits component markup against WCAG 2.2 rules

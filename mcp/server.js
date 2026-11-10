@@ -71,6 +71,36 @@ const TOOLS = [
       required: ['tag'],
     },
   },
+  {
+    name: 'scaffold_component',
+    description: 'Scaffolds standard boilerplate JavaScript code for a new Elementum Web Component adhering to design system standards.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        tag: { type: 'string', description: 'Component tag, e.g. "el-card"' },
+        name: { type: 'string', description: 'Component class name, e.g. "ElCard"' },
+        description: { type: 'string', description: 'Component description' },
+        formAssociated: { type: 'boolean', description: 'Whether the component associates with forms' },
+        attributes: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Observed attributes, e.g. ["variant", "disabled"]',
+        },
+      },
+      required: ['tag'],
+    },
+  },
+  {
+    name: 'validate_accessibility',
+    description: 'Audits Elementum component usage or HTML markup against WCAG 2.2 accessibility standards.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        markup: { type: 'string', description: 'HTML markup snippet to inspect' },
+      },
+      required: ['markup'],
+    },
+  },
 ];
 
 function handleToolCall(name, args) {
@@ -115,6 +145,194 @@ function handleToolCall(name, args) {
     const content = label || '';
     return {
       snippet: `<${tag}${attrStr}>${content}</${tag}>`,
+    };
+  }
+
+  if (name === 'scaffold_component') {
+    const tag = args.tag.toLowerCase();
+    const className =
+      args.name ||
+      tag
+        .split('-')
+        .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+        .join('');
+    const formAssociated = !!args.formAssociated;
+    const attrs = args.attributes || ['disabled', 'size'];
+    const observed = attrs.map((a) => `'${a}'`).join(', ');
+
+    const signalDefs = attrs
+      .map((a) => {
+        if (a === 'disabled') return `  disabled = signal(false);`;
+        if (a === 'size') return `  size = signal('md'); // 'sm' | 'md' | 'lg'`;
+        return `  ${a} = signal('');`;
+      })
+      .join('\n');
+
+    const formAssocCode = formAssociated ? `  static formAssociated = true;\n` : '';
+    const formCallbacks = formAssociated
+      ? `
+  connected() {
+    this.setFormValue(this.value?.value || '');
+    this.validate?.();
+  }
+
+  formReset() {
+    this.value.value = this.getAttribute('value') || '';
+    this.setFormValue(this.value.value);
+    this.validate?.();
+  }
+
+  validate() {
+    this.setValidity({});
+    return true;
+  }
+`
+      : '';
+
+    const code = `import { Elementum } from '../elementum.js';
+import { html, css } from '../template.js';
+import { signal } from '../signal.js';
+
+/**
+ * ${args.description || `${className} component`}
+ */
+export class ${className} extends Elementum {
+${formAssocCode}  static observedAttributes = [${observed}];
+
+${signalDefs}
+${formCallbacks}
+  static styles = css\`
+    :host {
+      display: inline-block;
+      box-sizing: border-box;
+      font-family: var(--el-font-sans, system-ui, sans-serif);
+    }
+
+    :host(:focus-visible) {
+      outline: 2px solid var(--el-color-primary, #2563eb);
+      outline-offset: 2px;
+    }
+
+    .container {
+      display: flex;
+      align-items: center;
+      padding: var(--el-spacing-sm, 8px) var(--el-spacing-md, 16px);
+      border-radius: var(--el-radius-md, 8px);
+      background: var(--el-surface-card, #ffffff);
+      border: 1px solid var(--el-surface-border, #e5e7eb);
+    }
+  \`;
+
+  render() {
+    return html\`
+      <div class="container" part="container">
+        <slot></slot>
+      </div>
+    \`;
+  }
+}
+
+if (typeof customElements !== 'undefined' && !customElements.get('${tag}')) {
+  customElements.define('${tag}', ${className});
+}
+`;
+    return {
+      tag,
+      className,
+      code,
+    };
+  }
+
+  if (name === 'validate_accessibility') {
+    const markup = args.markup || '';
+    const violations = [];
+    const warnings = [];
+    const passed = [];
+
+    // WCAG 4.1.2: Form elements must have accessible labels
+    const inputMatches = markup.match(/<el-input[^>]*>/gi) || [];
+    for (const match of inputMatches) {
+      const hasAriaLabel = /aria-label=/i.test(match);
+      const hasAriaLabelledby = /aria-labelledby=/i.test(match);
+      const hasId = /id=["']([^"']+)["']/i.test(match);
+      if (!hasAriaLabel && !hasAriaLabelledby && !hasId) {
+        violations.push({
+          criterion: 'WCAG 4.1.2 (Name, Role, Value)',
+          element: match,
+          message:
+            '<el-input> is missing an accessible name. Provide an aria-label, aria-labelledby, or an id associated with a <label for="...">.',
+        });
+      } else {
+        passed.push({
+          criterion: 'WCAG 4.1.2',
+          message: '<el-input> has accessible label attributes.',
+        });
+      }
+    }
+
+    // WCAG 4.1.2 / 1.1.1: Icon buttons or buttons with missing label
+    const buttonMatches = markup.match(/<el-button[^>]*>([\s\S]*?)<\/el-button>/gi) || [];
+    for (const match of buttonMatches) {
+      const tagOpen = match.match(/<el-button[^>]*>/i)?.[0] || '';
+      const textContent = match.replace(/<[^>]+>/g, '').trim();
+      const hasAriaLabel = /aria-label=/i.test(tagOpen);
+      if (!textContent && !hasAriaLabel) {
+        violations.push({
+          criterion: 'WCAG 1.1.1 (Non-text Content) / WCAG 4.1.2 (Name, Role, Value)',
+          element: tagOpen,
+          message: '<el-button> has no text content and is missing an aria-label.',
+        });
+      } else {
+        passed.push({
+          criterion: 'WCAG 4.1.2',
+          message: '<el-button> has accessible text or aria-label.',
+        });
+      }
+    }
+
+    // WCAG 1.1.1: Image without alt
+    const imgMatches = markup.match(/<img[^>]*>/gi) || [];
+    for (const match of imgMatches) {
+      if (!/alt=/i.test(match)) {
+        violations.push({
+          criterion: 'WCAG 1.1.1 (Non-text Content)',
+          element: match,
+          message: '<img> is missing an alt attribute. Provide descriptive alt text or alt="" for decorative images.',
+        });
+      }
+    }
+
+    // WCAG 2.5.8: Target Size Minimum (24x24px) / Text size
+    if (/font-size:\s*([0-9]+)px/i.test(markup)) {
+      const sizeMatch = markup.match(/font-size:\s*([0-9]+)px/i);
+      if (sizeMatch && Number(sizeMatch[1]) < 12) {
+        warnings.push({
+          criterion: 'WCAG 1.4.4 (Resize text)',
+          message: `Text size ${sizeMatch[1]}px may be too small for readability. Recommend >= 12px.`,
+        });
+      }
+    }
+
+    // WCAG 3.3.1: Error identification
+    if (
+      /aria-invalid="true"/i.test(markup) &&
+      !/aria-describedby=/i.test(markup) &&
+      !/aria-errormessage=/i.test(markup)
+    ) {
+      warnings.push({
+        criterion: 'WCAG 3.3.1 (Error Identification)',
+        message:
+          'Element has aria-invalid="true" but lacks aria-describedby or aria-errormessage linking to the validation error explanation.',
+      });
+    }
+
+    return {
+      valid: violations.length === 0,
+      violationsCount: violations.length,
+      warningsCount: warnings.length,
+      violations,
+      warnings,
+      passed,
     };
   }
 

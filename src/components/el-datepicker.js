@@ -21,19 +21,42 @@ function getTodayString() {
 
 export class ElDatepicker extends Elementum {
   static formAssociated = true;
-  static observedAttributes = ['value', 'placeholder', 'disabled'];
+  static observedAttributes = ['value', 'placeholder', 'disabled', 'required'];
 
   value = signal('');
   placeholder = signal('Select date...');
   disabled = signal(false);
+  required = signal(false);
 
   connected() {
+    this.required.value = this.hasAttribute('required');
     this.setFormValue(this.value.value);
+    this.validate();
   }
 
   formReset() {
-    this.value.value = '';
-    this.setFormValue('');
+    this.value.value = this.getAttribute('value') || '';
+    this.setFormValue(this.value.value);
+    this.validate();
+  }
+
+  attributeChanged(name, oldValue, newValue) {
+    if (name === 'required') {
+      this.required.value = newValue !== null && newValue !== 'false';
+      this.validate();
+    }
+  }
+
+  validate() {
+    const val = String(this.value.value || '');
+    if (this.required.value && !val.trim()) {
+      this.setValidity({ valueMissing: true }, 'Please select a date.');
+      this.setAttribute('aria-invalid', 'true');
+      return false;
+    }
+    this.setValidity({});
+    this.removeAttribute('aria-invalid');
+    return true;
   }
 
   static styles = css`
@@ -84,6 +107,7 @@ export class ElDatepicker extends Elementum {
     const selected = e.detail.date;
     this.value.value = selected;
     this.setFormValue(selected);
+    this.validate();
     this.emit('change', { value: selected });
     this.#getDropdown()?.close();
   };
@@ -92,6 +116,7 @@ export class ElDatepicker extends Elementum {
     const today = getTodayString();
     this.value.value = today;
     this.setFormValue(today);
+    this.validate();
     this.emit('change', { value: today });
     this.#getDropdown()?.close();
   };
@@ -100,6 +125,7 @@ export class ElDatepicker extends Elementum {
     e?.stopPropagation();
     this.value.value = '';
     this.setFormValue('');
+    this.validate();
     this.emit('change', { value: '' });
   };
 

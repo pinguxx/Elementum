@@ -73,6 +73,14 @@ export class Elementum extends HTMLElement {
   root: HTMLElement | ShadowRoot;
 
   get signal(): AbortSignal | undefined;
+  get validity(): ValidityState | undefined;
+  get validationMessage(): string;
+  get willValidate(): boolean;
+
+  checkValidity(): boolean;
+  reportValidity(): boolean;
+  setValidity(flags?: Partial<ValidityStateFlags>, message?: string, anchor?: HTMLElement): void;
+  setCustomValidity(message?: string): void;
 
   connected(): void;
   rendered(): void;
@@ -108,8 +116,12 @@ export class ElInput extends Elementum {
   placeholder: Signal<string>;
   disabled: Signal<boolean>;
   readonly: Signal<boolean>;
+  required: Signal<boolean>;
+  pattern: Signal<string>;
+  minlength: Signal<number>;
   type: Signal<string>;
   size: Signal<'sm' | 'md' | 'lg'>;
+  validate(): boolean;
 }
 
 export class ElDropdown extends Elementum {
@@ -131,6 +143,8 @@ export class ElDatepicker extends Elementum {
   value: Signal<string>;
   placeholder: Signal<string>;
   disabled: Signal<boolean>;
+  required: Signal<boolean>;
+  validate(): boolean;
 }
 
 export class ElDialog extends Elementum {
@@ -154,16 +168,20 @@ export class ElSelect extends Elementum {
   value: Signal<string>;
   placeholder: Signal<string>;
   disabled: Signal<boolean>;
+  required: Signal<boolean>;
   name: Signal<string>;
+  validate(): boolean;
 }
 
 export class ElSwitch extends Elementum {
   checked: Signal<boolean>;
   disabled: Signal<boolean>;
+  required: Signal<boolean>;
   name: Signal<string>;
   value: Signal<string>;
   size: Signal<'sm' | 'md' | 'lg'>;
   toggle(): void;
+  validate(): boolean;
 }
 
 export class ElTooltip extends Elementum {
