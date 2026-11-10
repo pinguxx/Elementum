@@ -12,7 +12,7 @@ export class ElSelect extends Elementum {
   static observedAttributes = ['value', 'placeholder', 'disabled', 'name'];
 
   value = signal('');
-  placeholder = signal('Select an option...');
+  placeholder = signal('');
   disabled = signal(false);
   name = signal('');
   options = signal([]); // [{ label, value }]
@@ -73,16 +73,32 @@ export class ElSelect extends Elementum {
 
   connected() {
     this.#scanOptions();
+    if (!this.value.value && !this.hasAttribute('placeholder') && this.options.value.length > 0) {
+      this.value.value = this.options.value[0].value;
+    }
     this.setFormValue(this.value.value);
 
-    const observer = new MutationObserver(() => this.#scanOptions());
+    const observer = new MutationObserver(() => {
+      this.#scanOptions();
+      if (!this.value.value && !this.hasAttribute('placeholder') && this.options.value.length > 0) {
+        this.value.value = this.options.value[0].value;
+        this.setFormValue(this.value.value);
+      }
+    });
     observer.observe(this, { childList: true, subtree: true });
     this.signal.addEventListener('abort', () => observer.disconnect());
   }
 
   formReset() {
-    this.value.value = '';
-    this.setFormValue('');
+    const initial = this.getAttribute('value') || '';
+    this.value.value = initial;
+    this.setFormValue(initial);
+  }
+
+  attributeChanged(name, oldValue, newValue) {
+    if (name === 'value') {
+      this.setFormValue(newValue);
+    }
   }
 
   #scanOptions() {
@@ -108,9 +124,14 @@ export class ElSelect extends Elementum {
           ?disabled=${this.disabled}
           @change=${this.#onChange}
         >
-          <option value="" disabled ?selected=${() => !this.value.value}>
-            ${this.placeholder}
-          </option>
+          ${() =>
+            this.placeholder.value
+              ? html`
+                  <option value="" disabled ?selected=${() => !this.value.value}>
+                    ${this.placeholder}
+                  </option>
+                `
+              : ''}
           ${() =>
             this.options.value.map(
               (opt) => html`

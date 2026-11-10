@@ -35,8 +35,59 @@ export class Signal {
     return this._value;
   }
 
+  valueOf() {
+    return this.value;
+  }
+
   toString() {
     return String(this.value);
+  }
+
+  [Symbol.toPrimitive](hint) {
+    if (hint === 'number') {
+      return Number(this.value);
+    }
+    return String(this.value);
+  }
+
+  toUpperCase() {
+    return String(this.value).toUpperCase();
+  }
+
+  toLowerCase() {
+    return String(this.value).toLowerCase();
+  }
+
+  trim() {
+    return String(this.value).trim();
+  }
+
+  slice(...args) {
+    return String(this.value).slice(...args);
+  }
+
+  substring(...args) {
+    return String(this.value).substring(...args);
+  }
+
+  includes(...args) {
+    return String(this.value).includes(...args);
+  }
+
+  indexOf(...args) {
+    return String(this.value).indexOf(...args);
+  }
+
+  startsWith(...args) {
+    return String(this.value).startsWith(...args);
+  }
+
+  endsWith(...args) {
+    return String(this.value).endsWith(...args);
+  }
+
+  get length() {
+    return String(this.value).length;
   }
 }
 

@@ -86,10 +86,19 @@ export class ElTabs extends Elementum {
   `;
 
   connected() {
+    if (this.hasAttribute('value')) {
+      this.activeTab.value = this.getAttribute('value');
+    }
     this.#scanTabs();
     const observer = new MutationObserver(() => this.#scanTabs());
     observer.observe(this, { childList: true });
     this.signal.addEventListener('abort', () => observer.disconnect());
+  }
+
+  attributeChanged(name, oldValue, newValue) {
+    if (name === 'value' && newValue !== oldValue) {
+      this.selectTab(newValue);
+    }
   }
 
   #scanTabs() {

@@ -178,6 +178,7 @@ test('<el-dialog> showModal, close, and cancel events', () => {
 
 test('<el-tabs> scans tabs and switches active tab', () => {
   const tabs = document.createElement('el-tabs');
+  tabs.setAttribute('value', 't2');
   tabs.innerHTML = `
     <el-tab label="Tab 1" value="t1">Content 1</el-tab>
     <el-tab label="Tab 2" value="t2">Content 2</el-tab>
@@ -185,20 +186,21 @@ test('<el-tabs> scans tabs and switches active tab', () => {
   document.body.appendChild(tabs);
 
   assert.equal(tabs.tabs.value.length, 2);
-  assert.equal(tabs.activeTab.value, 't1');
+  assert.equal(tabs.activeTab.value, 't2');
 
   let changed = '';
   tabs.addEventListener('tabchange', (e) => { changed = e.detail.value; });
 
-  tabs.selectTab('t2');
-  assert.equal(tabs.activeTab.value, 't2');
-  assert.equal(changed, 't2');
+  tabs.selectTab('t1');
+  assert.equal(tabs.activeTab.value, 't1');
+  assert.equal(changed, 't1');
 
   document.body.removeChild(tabs);
 });
 
 test('<el-select> scans options and handles change', () => {
   const select = document.createElement('el-select');
+  select.setAttribute('value', 'opt2');
   select.innerHTML = `
     <option value="opt1">Option 1</option>
     <option value="opt2">Option 2</option>
@@ -206,15 +208,16 @@ test('<el-select> scans options and handles change', () => {
   document.body.appendChild(select);
 
   assert.equal(select.options.value.length, 2);
-
-  const nativeSel = select.shadowRoot.querySelector('select');
-  nativeSel.value = 'opt2';
-  nativeSel.dispatchEvent(new Event('change'));
-
   assert.equal(select.value.value, 'opt2');
 
+  const nativeSel = select.shadowRoot.querySelector('select');
+  nativeSel.value = 'opt1';
+  nativeSel.dispatchEvent(new Event('change'));
+
+  assert.equal(select.value.value, 'opt1');
+
   select.formReset();
-  assert.equal(select.value.value, '');
+  assert.equal(select.value.value, 'opt2');
 
   document.body.removeChild(select);
 });

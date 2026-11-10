@@ -61,3 +61,26 @@ test('effect stops automatically on AbortSignal', () => {
   count.value = 99;
   assert.equal(observed, 10);
 });
+
+test('signal string conversion, primitive coercion, and string methods', () => {
+  const text = signal('  hello world  ');
+  assert.equal(String(text), '  hello world  ');
+  assert.equal(`${text}`, '  hello world  ');
+  assert.equal(text.trim(), 'hello world');
+  assert.equal(text.trim().toUpperCase(), 'HELLO WORLD');
+  assert.equal(text.toUpperCase(), '  HELLO WORLD  ');
+  assert.equal(text.toLowerCase(), '  hello world  ');
+  assert.equal(text.slice(2, 7), 'hello');
+  assert.equal(text.substring(2, 7), 'hello');
+  assert.equal(text.includes('world'), true);
+  assert.equal(text.indexOf('hello'), 2);
+  assert.equal(text.startsWith('  '), true);
+  assert.equal(text.endsWith('  '), true);
+  assert.equal(text.length, 15);
+  assert.equal(text.valueOf(), '  hello world  ');
+
+  const num = signal(42);
+  assert.equal(Number(num), 42);
+  assert.equal(+num, 42);
+  assert.equal(num.valueOf(), 42);
+});

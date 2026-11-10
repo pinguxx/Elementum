@@ -157,7 +157,7 @@
 
               <div class="field">
                 <label for="f-class">Cabin Class:</label>
-                <el-select id="f-class" name="cabin">
+                <el-select id="f-class" name="cabin" value="economy">
                   <option value="economy">Economy Class</option>
                   <option value="premium">Premium Economy</option>
                   <option value="business">Business Class</option>
@@ -269,15 +269,27 @@
 
     let currentBookingData = null;
 
+    function getFieldValue(formData, name, id, fallback = '') {
+      const formVal = formData.get(name);
+      if (typeof formVal === 'string' && formVal.trim().length > 0) return formVal.trim();
+      const el = document.getElementById(id);
+      if (el) {
+        const raw = (el.value && typeof el.value === 'object' && 'value' in el.value) ? el.value.value : el.value;
+        if (typeof raw === 'string' && raw.trim().length > 0) return raw.trim();
+        if (raw !== undefined && raw !== null && String(raw).trim().length > 0) return String(raw).trim();
+      }
+      return fallback;
+    }
+
     // Native <form> submission capturing Form-Associated Custom Elements!
     flightForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
       const formData = new FormData(flightForm);
-      const origin = formData.get('origin') || document.getElementById('f-origin')?.value?.value || document.getElementById('f-origin')?.value || 'San Francisco (SFO)';
-      const destination = formData.get('destination') || document.getElementById('f-dest')?.value?.value || document.getElementById('f-dest')?.value || 'Tokyo (HND)';
-      const date = formData.get('date') || document.getElementById('f-date')?.value?.value || document.getElementById('f-date')?.value;
-      const cabin = formData.get('cabin') || document.getElementById('f-class')?.value?.value || document.getElementById('f-class')?.value || 'economy';
+      const origin = getFieldValue(formData, 'origin', 'f-origin', 'San Francisco (SFO)');
+      const destination = getFieldValue(formData, 'destination', 'f-dest', 'Tokyo (HND)');
+      const date = getFieldValue(formData, 'date', 'f-date', '');
+      const cabin = getFieldValue(formData, 'cabin', 'f-class', 'economy');
 
       if (!date) {
         toast.error('Please pick a departure date before continuing!');
@@ -289,7 +301,7 @@
       bookingSummary.innerHTML = `
         <strong>Route:</strong> ${origin} ➔ ${destination}<br/>
         <strong>Date:</strong> ${date}<br/>
-        <strong>Cabin:</strong> ${cabin.toUpperCase()}
+        <strong>Cabin:</strong> ${String(cabin).toUpperCase()}
       `;
 
       confirmModal.showModal();
