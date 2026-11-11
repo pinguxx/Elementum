@@ -80,6 +80,11 @@ Elementum runs directly in any modern browser without Webpack, Vite, or Babel.
 | **Table** | `<el-table>` | Signal-driven data grid with column sorting and multi-row selection. |
 | **Theme Switch** | `<el-theme-switch>` | Toggles between Light ☀️ and Dark 🌙 mode with `localStorage` persistence. |
 | **Toast** | `<el-toaster>` | Viewport overlay for programmatic notifications (`toast.success()`, `toast.error()`). |
+| **Progress** | `<el-progress>` | Determinate & indeterminate animated progress bar (`role="progressbar"`). |
+| **Spinner** | `<el-spinner>` | Accessible SVG loading spinner (`role="status"`). |
+| **Avatar** | `<el-avatar>`, `<el-avatar-group>` | User avatar with image fallback, automatic initials, and status dot. |
+| **Drawer** | `<el-drawer>` | Slide-over drawer overlay (`left`, `right`, `top`, `bottom`) with focus trap. |
+| **Segmented** | `<el-segmented-control>` | Form-associated pill switcher with keyboard arrow navigation. |
 
 ---
 
@@ -129,17 +134,15 @@ Elementum/
 │       ├── el-accordion.js  # Accessible disclosure accordion
 │       ├── el-table.js      # Reactive data table with sorting and selection
 │       ├── el-toast.js      # Programmatic toast notification system
-│       └── el-theme-switch.js # Light / Dark mode toggle
-├── figma/                   # Official Figma Code Connect configurations
-│   ├── el-button.figma.js
-│   ├── el-input.figma.js
-│   ├── el-badge.figma.js
-│   ├── el-switch.figma.js
-│   └── el-datepicker.figma.js
-├── tokens/
-│   └── figma-tokens.json    # W3C design tokens export from Figma
+│       ├── el-theme-switch.js # Light / Dark mode toggle
+│       ├── el-progress.js   # Determinate & indeterminate progress bar
+│       ├── el-spinner.js    # Animated accessible SVG spinner
+│       ├── el-avatar.js     # User avatar & avatar group with fallback
+│       ├── el-drawer.js     # Accessible slide-over drawer overlay
+│       └── el-segmented-control.js # Form-associated pill switcher
 ├── tools/
-│   └── sync-tokens.js       # CLI to compile figma-tokens.json into tokens.css
+│   ├── sync-tokens.js       # CLI to compile figma-tokens.json into tokens.css
+│   └── create-component.js  # CLI to scaffold new components (npm run create)
 ├── custom-elements.json     # W3C Custom Elements Manifest (for agents & Storybook)
 ├── AGENT_GUIDE.md           # Instructions for AI coding agents & developers
 ├── docs/
@@ -156,21 +159,24 @@ Elementum/
 
 ---
 
-## Figma Token Synchronization
-
-Synchronize design tokens from `tokens/figma-tokens.json` to `src/tokens.css`:
-
-```bash
-npm run tokens:sync
-```
-
----
-
 ## 🎨 Theming & Accessibility (WCAG 2.2)
 
 - **Theming Guide**: See [docs/theming.md](docs/theming.md) for the full catalog of design tokens and exposed CSS ::part() selectors.
 - **Agent Guide**: See [AGENT_GUIDE.md](AGENT_GUIDE.md) for guidelines on building, testing, and reviewing Elementum components.
 - **Framework Integration**: See [docs/framework-integration.md](docs/framework-integration.md) for React, Vue, Svelte, and Angular setup.
+
+---
+
+## 🚀 Declarative Shadow DOM (DSD) SSR
+
+Elementum includes built-in server-side rendering support emitting standard `<template shadowrootmode="open">` for zero-CLS first paint in Next.js, Nuxt, Astro, and Node.js:
+
+```javascript
+import { renderComponentToDSD, ElButton } from '@wc/elementum';
+
+// Outputs HTML with Declarative Shadow DOM and encapsulated styles
+const html = renderComponentToDSD('el-button', ElButton, { variant: 'primary' }, 'Submit');
+```
 
 ---
 

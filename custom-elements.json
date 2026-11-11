@@ -330,6 +330,116 @@
           ]
         }
       ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-progress.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElProgress",
+          "tagName": "el-progress",
+          "description": "Accessible progress bar with determinate and indeterminate states and WCAG role='progressbar'.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "attributes": [
+            { "name": "value", "type": { "text": "number" }, "default": "0" },
+            { "name": "max", "type": { "text": "number" }, "default": "100" },
+            { "name": "variant", "type": { "text": "'primary' | 'success' | 'danger'" }, "default": "'primary'" },
+            { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'" },
+            { "name": "indeterminate", "type": { "text": "boolean" }, "default": "false" },
+            { "name": "striped", "type": { "text": "boolean" }, "default": "false" }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-spinner.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElSpinner",
+          "tagName": "el-spinner",
+          "description": "Smooth SVG loading spinner with accessible status role.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "attributes": [
+            { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'" },
+            { "name": "variant", "type": { "text": "'primary' | 'muted' | 'white'" }, "default": "'primary'" },
+            { "name": "label", "type": { "text": "string" }, "default": "'Loading'" }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-avatar.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElAvatar",
+          "tagName": "el-avatar",
+          "description": "User avatar with image fallback, automatic initials, and status indicator.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "attributes": [
+            { "name": "src", "type": { "text": "string" } },
+            { "name": "alt", "type": { "text": "string" } },
+            { "name": "name", "type": { "text": "string" } },
+            { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'" },
+            { "name": "shape", "type": { "text": "'circle' | 'square'" }, "default": "'circle'" },
+            { "name": "status", "type": { "text": "'online' | 'offline' | 'busy' | 'away'" } }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "ElAvatarGroup",
+          "tagName": "el-avatar-group",
+          "description": "Clustered avatar stack with overlapping borders.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-drawer.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElDrawer",
+          "tagName": "el-drawer",
+          "description": "Accessible slide-over drawer panel with backdrop light-dismiss and keyboard traps.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "attributes": [
+            { "name": "open", "type": { "text": "boolean" }, "default": "false" },
+            { "name": "placement", "type": { "text": "'left' | 'right' | 'top' | 'bottom'" }, "default": "'right'" },
+            { "name": "title", "type": { "text": "string" } }
+          ],
+          "events": [
+            { "name": "open", "description": "Fired when drawer opens." },
+            { "name": "close", "description": "Fired when drawer closes." }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-segmented-control.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElSegmentedControl",
+          "tagName": "el-segmented-control",
+          "description": "Form-associated pill segment switcher with arrow key navigation and ARIA radiogroup semantics.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "attributes": [
+            { "name": "value", "type": { "text": "string" } },
+            { "name": "disabled", "type": { "text": "boolean" }, "default": "false" },
+            { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'" }
+          ],
+          "events": [
+            { "name": "change", "description": "Fired on segment selection: detail.value" }
+          ]
+        }
+      ]
     }
   ]
 }

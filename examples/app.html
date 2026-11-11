@@ -115,6 +115,7 @@
       <el-badge variant="success" count="Elementum v0.1.0"></el-badge>
     </div>
     <div style="display: flex; align-items: center; gap: 16px;">
+      <el-avatar name="Sophia Taylor" status="online" size="sm" alt="User Profile"></el-avatar>
       <el-tooltip content="Toggle Light / Dark mode" placement="bottom">
         <el-theme-switch></el-theme-switch>
       </el-tooltip>
@@ -286,6 +287,10 @@
   <!-- Confirmation Modal Dialog -->
   <el-dialog id="confirm-modal" title="Confirm Your Reservation">
     <div id="modal-content">
+      <div style="margin-bottom: 16px;">
+        <span style="font-size: 0.8125rem; font-weight: 600; color: var(--el-text-muted, #64748b);">Booking Step 2 of 2: Final Confirmation</span>
+        <el-progress value="100" max="100" variant="success" size="sm" style="margin-top: 6px;"></el-progress>
+      </div>
       <p>Please review your flight booking details before confirming:</p>
       <div class="summary-box" id="booking-summary">
         <!-- Injected dynamically -->

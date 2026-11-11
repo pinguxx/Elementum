@@ -253,6 +253,60 @@ export const toast: ToastManager;
 
 export class ElToaster extends Elementum {}
 
+export class ElProgress extends Elementum {
+  value: Signal<number>;
+  max: Signal<number>;
+  variant: Signal<'primary' | 'success' | 'danger'>;
+  size: Signal<'sm' | 'md' | 'lg'>;
+  indeterminate: Signal<boolean>;
+  striped: Signal<boolean>;
+}
+
+export class ElSpinner extends Elementum {
+  size: Signal<'sm' | 'md' | 'lg'>;
+  variant: Signal<'primary' | 'muted' | 'white'>;
+  label: Signal<string>;
+}
+
+export class ElAvatar extends Elementum {
+  src: Signal<string>;
+  alt: Signal<string>;
+  name: Signal<string>;
+  size: Signal<'sm' | 'md' | 'lg'>;
+  shape: Signal<'circle' | 'square'>;
+  status: Signal<'online' | 'offline' | 'busy' | 'away' | ''>;
+}
+
+export class ElAvatarGroup extends Elementum {}
+
+export class ElDrawer extends Elementum {
+  isOpen: Signal<boolean>;
+  placement: Signal<'left' | 'right' | 'top' | 'bottom'>;
+  titleText: Signal<string>;
+  show(): void;
+  close(): void;
+}
+
+export class ElSegmentedControl extends Elementum {
+  value: Signal<string>;
+  disabled: Signal<boolean>;
+  size: Signal<'sm' | 'md' | 'lg'>;
+  name: Signal<string>;
+  selectOption(val: string): void;
+}
+
+// ==========================================
+// SSR (Declarative Shadow DOM)
+// ==========================================
+
+export function renderTemplateToString(templateResult: TemplateResult | any): string;
+export function renderComponentToDSD(
+  tagName: string,
+  ComponentClass: any,
+  attributes?: Record<string, any>,
+  lightDOMChildren?: string
+): string;
+
 // ==========================================
 // DOM & JSX Global Typings
 // ==========================================
@@ -276,6 +330,12 @@ declare global {
     'el-table': ElTable;
     'el-theme-switch': ElThemeSwitch;
     'el-toaster': ElToaster;
+    'el-progress': ElProgress;
+    'el-spinner': ElSpinner;
+    'el-avatar': ElAvatar;
+    'el-avatar-group': ElAvatarGroup;
+    'el-drawer': ElDrawer;
+    'el-segmented-control': ElSegmentedControl;
   }
 
   namespace JSX {
@@ -297,6 +357,12 @@ declare global {
       'el-table': any;
       'el-theme-switch': any;
       'el-toaster': any;
+      'el-progress': any;
+      'el-spinner': any;
+      'el-avatar': any;
+      'el-avatar-group': any;
+      'el-drawer': any;
+      'el-segmented-control': any;
     }
   }
 }

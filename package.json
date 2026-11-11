@@ -19,12 +19,14 @@
       "types": "./src/index.d.ts",
       "default": "./src/index.js"
     },
+    "./ssr": "./src/ssr.js",
     "./tokens.css": "./src/tokens.css",
     "./custom-elements.json": "./custom-elements.json"
   },
   "scripts": {
     "test": "node --test --experimental-test-coverage",
     "mcp": "node mcp/server.js",
+    "create": "node tools/create-component.js",
     "tokens:sync": "node tools/sync-tokens.js"
   },
   "keywords": [

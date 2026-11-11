@@ -227,6 +227,9 @@ npx elementum-mcp
 # Run tests and verify code coverage
 npm test
 
+# Scaffold a new component
+npm run create el-my-element [--form]
+
 # Generate tokens.css from tokens/figma-tokens.json
 npm run tokens:sync
 ```

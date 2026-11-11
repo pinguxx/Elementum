@@ -306,6 +306,72 @@
         <demo-counter></demo-counter>
       </div>
     </section>
+
+    <!-- SECTION 7: New Primitives -->
+    <section>
+      <h2>7. Progress, Spinners, Avatars, Drawers & Segmented Controls</h2>
+      <p>
+        Full WCAG 2.2 compliant visual primitives designed with tokens and smooth animations.
+      </p>
+
+      <div class="card">
+        <div style="display:flex; flex-direction:column; gap:24px;">
+          <div>
+            <h4 style="margin:0 0 12px 0;">Progress Bars & Spinners</h4>
+            <div style="display:flex; flex-direction:column; gap:12px; max-width:480px; margin-bottom:16px;">
+              <el-progress value="45" max="100" variant="primary"></el-progress>
+              <el-progress value="80" max="100" variant="success" striped></el-progress>
+              <el-progress indeterminate variant="danger"></el-progress>
+            </div>
+            <div class="row">
+              <el-spinner size="sm" variant="primary"></el-spinner>
+              <el-spinner size="md" variant="primary"></el-spinner>
+              <el-spinner size="lg" variant="primary"></el-spinner>
+            </div>
+          </div>
+
+          <div>
+            <h4 style="margin:0 0 12px 0;">Avatars & Avatar Group</h4>
+            <div class="row">
+              <el-avatar name="Grace Hopper" size="sm" status="online"></el-avatar>
+              <el-avatar name="Alan Turing" size="md" status="away"></el-avatar>
+              <el-avatar name="Ada Lovelace" size="lg" status="busy"></el-avatar>
+              <el-avatar name="Claude Shannon" size="md" shape="square"></el-avatar>
+
+              <el-avatar-group style="margin-left:24px;">
+                <el-avatar name="Alice Miller"></el-avatar>
+                <el-avatar name="Bob Vance"></el-avatar>
+                <el-avatar name="Charlie Day"></el-avatar>
+              </el-avatar-group>
+            </div>
+          </div>
+
+          <div>
+            <h4 style="margin:0 0 12px 0;">Segmented Controls & Drawer</h4>
+            <div class="row">
+              <el-segmented-control id="demo-seg" value="analytics">
+                <option value="overview">Overview</option>
+                <option value="analytics">Analytics</option>
+                <option value="reports">Reports</option>
+              </el-segmented-control>
+
+              <el-button variant="secondary" id="btn-open-drawer">
+                Open Side Drawer 📑
+              </el-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Side Drawer Component -->
+    <el-drawer id="demo-drawer" title="Project Details" placement="right">
+      <p>This is an accessible slide-over drawer panel supporting keyboard navigation, backdrop dismissal, and focus restoration.</p>
+      <el-progress value="68" variant="primary" style="margin-top:16px;"></el-progress>
+      <div slot="footer">
+        <el-button variant="primary" id="btn-close-drawer">Done</el-button>
+      </div>
+    </el-drawer>
   </div>
 
   <script type="module">
@@ -336,6 +402,14 @@
     });
     document.getElementById('btn-close-modal')?.addEventListener('click', () => {
       modal?.close();
+    });
+
+    const drawer = document.getElementById('demo-drawer');
+    document.getElementById('btn-open-drawer')?.addEventListener('click', () => {
+      drawer?.show();
+    });
+    document.getElementById('btn-close-drawer')?.addEventListener('click', () => {
+      drawer?.close();
     });
 
     // 4. Data Table setup

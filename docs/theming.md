@@ -126,6 +126,11 @@ Because Elementum components use Shadow DOM for encapsulation and performance, s
 | `<el-tooltip>` | `part="tooltip"` | Floating tooltip container popup |
 | `<el-accordion-item>` | `part="header"`, `part="content"` | Disclosure trigger bar and collapsible body |
 | `<el-table>` | `part="table"` | Native HTML `<table>` wrapper |
+| `<el-progress>` | `part="track"`, `part="bar"` | Outer progress track and dynamic progress fill bar |
+| `<el-spinner>` | `part="spinner"` | Animated SVG spinner icon |
+| `<el-avatar>` | `part="avatar"`, `part="initials"`, `part="status"` | Avatar container, fallback initials, and status dot |
+| `<el-drawer>` | `part="panel"`, `part="header"`, `part="body"`, `part="footer"` | Slide-over drawer container and sections |
+| `<el-segmented-control>` | `part="group"`, `part="segment"` | Pill switcher container and individual radio buttons |
 
 ---
 

@@ -22,3 +22,11 @@ export { ElSwitch } from './components/el-switch.js';
 export { ElTooltip } from './components/el-tooltip.js';
 export { ElAccordion, ElAccordionItem } from './components/el-accordion.js';
 export { ElTable } from './components/el-table.js';
+export { ElProgress } from './components/el-progress.js';
+export { ElSpinner } from './components/el-spinner.js';
+export { ElAvatar, ElAvatarGroup } from './components/el-avatar.js';
+export { ElDrawer } from './components/el-drawer.js';
+export { ElSegmentedControl } from './components/el-segmented-control.js';
+
+// Server-Side Rendering (Declarative Shadow DOM)
+export { renderTemplateToString, renderComponentToDSD } from './ssr.js';
