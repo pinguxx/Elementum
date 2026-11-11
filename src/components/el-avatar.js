@@ -42,11 +42,16 @@ export class ElAvatar extends Elementum {
 
   static styles = css`
     :host {
-      display: inline-block;
+      display: inline-flex;
       position: relative;
       vertical-align: middle;
       box-sizing: border-box;
       user-select: none;
+      border-radius: var(--el-radius-full, 9999px);
+    }
+
+    :host([shape="square"]) {
+      border-radius: var(--el-radius-md, 8px);
     }
 
     .avatar {
@@ -169,9 +174,22 @@ export class ElAvatarGroup extends Elementum {
       box-sizing: border-box;
     }
 
+    ::slotted(el-avatar) {
+      border-radius: var(--el-radius-full, 9999px);
+      position: relative;
+    }
+
+    ::slotted(el-avatar[shape="square"]) {
+      border-radius: var(--el-radius-md, 8px);
+    }
+
     ::slotted(el-avatar:not(:first-child)) {
       margin-left: var(--el-avatar-overlap, -10px);
       box-shadow: 0 0 0 2px var(--el-surface-card, #ffffff);
+    }
+
+    ::slotted(el-avatar:hover) {
+      z-index: 10;
     }
   `;
 
