@@ -165,3 +165,72 @@ test('<el-autocomplete> form association, validation, and reset', () => {
 
   form.remove();
 });
+
+test('<el-autocomplete multiple> renders inline chips, handles Backspace and remove events', async () => {
+  const form = document.createElement('form');
+  const ac = document.createElement('el-autocomplete');
+  ac.setAttribute('multiple', '');
+  ac.setAttribute('required', '');
+  ac.setAttribute('name', 'tags');
+  form.appendChild(ac);
+  document.body.appendChild(form);
+
+  ac.setData([
+    { id: 'react', label: 'React 19' },
+    { id: 'vue', label: 'Vue 3' },
+    { id: 'elementum', label: 'Elementum' }
+  ]);
+
+  // Initially required and empty
+  assert.equal(ac.checkValidity(), false);
+  assert.equal(ac.selectedItems.value.length, 0);
+
+  // Select first item
+  let selectEvent = null;
+  let removeEvent = null;
+  ac.addEventListener('select', (e) => (selectEvent = e.detail));
+  ac.addEventListener('remove', (e) => (removeEvent = e.detail));
+
+  ac.select(ac.data.value[0]); // React 19
+  assert.equal(ac.selectedItems.value.length, 1);
+  assert.deepEqual(ac.value.value, ['react']);
+  assert.equal(ac.checkValidity(), true);
+  assert.ok(selectEvent);
+  assert.equal(selectEvent.label, 'React 19');
+
+  // Verify inline chip rendered in Shadow DOM
+  const chips = Array.from(ac.root.querySelectorAll('el-chip'));
+  assert.equal(chips.length, 1);
+  assert.equal(chips[0].textContent.trim(), 'React 19');
+  assert.ok(chips[0].hasAttribute('removable'));
+
+  // Select second item
+  ac.select(ac.data.value[2]); // Elementum
+  assert.equal(ac.selectedItems.value.length, 2);
+  assert.deepEqual(ac.value.value, ['react', 'elementum']);
+
+  // Test Backspace on empty input removes last chip
+  const input = ac.root.querySelector('.combobox-input');
+  input.value = '';
+  const backspaceEvent = new KeyboardEvent('keydown', { key: 'Backspace', bubbles: true });
+  input.dispatchEvent(backspaceEvent);
+
+  assert.equal(ac.selectedItems.value.length, 1);
+  assert.deepEqual(ac.value.value, ['react']);
+  assert.ok(removeEvent);
+  assert.equal(removeEvent.item.id, 'elementum');
+
+  // Test removeItem directly
+  ac.removeItem(0);
+  assert.equal(ac.selectedItems.value.length, 0);
+  assert.equal(ac.checkValidity(), false);
+
+  // Test Clear button in multi-mode
+  ac.select(ac.data.value[1]);
+  assert.equal(ac.selectedItems.value.length, 1);
+  ac.clear();
+  assert.equal(ac.selectedItems.value.length, 0);
+  assert.deepEqual(ac.value.value, []);
+
+  form.remove();
+});

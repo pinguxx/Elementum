@@ -87,7 +87,7 @@ Elementum runs directly in any modern browser without Webpack, Vite, or Babel.
 | **Segmented** | `<el-segmented-control>` | Form-associated pill switcher with keyboard arrow navigation. |
 | **Pagination** | `<el-pagination>` | Accessible numeric page navigation with ellipsis windowing and `pagechange` events. |
 | **Chip / Pill** | `<el-chip>` | Interactive tag with `selectable` and `removable` dismiss modes (`role="button"`). |
-| **Autocomplete** | `<el-autocomplete>` | Form-associated combobox supporting static arrays and debounced remote URL endpoints with ARIA 1.2. |
+| **Autocomplete** | `<el-autocomplete>` | Form-associated combobox supporting single or multiselect (`multiple`) with inline chips, remote URL debouncing, and ARIA 1.2 / WCAG 2.2 accessibility. |
 
 ---
 

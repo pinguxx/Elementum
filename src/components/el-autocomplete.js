@@ -1,17 +1,21 @@
 import { Elementum } from '../elementum.js';
 import { html, css } from '../template.js';
 import { signal, effect } from '../signal.js';
+import './el-chip.js';
+import './el-spinner.js';
 
 /**
  * <el-autocomplete>
  * Form-associated combobox component supporting static data arrays,
- * remote URL queries with debouncing, flexible key mapping, and ARIA 1.2 accessibility.
+ * remote URL queries with debouncing, flexible key mapping, multi-select with inline chips,
+ * and ARIA 1.2 / WCAG 2.2 accessibility.
  *
  * @attr {string} name - Form submission field name
- * @attr {string} value - Form submission resolved value
+ * @attr {string|Array} value - Form submission resolved value
  * @attr {string} placeholder - Placeholder text
  * @attr {boolean} disabled - Whether the component is disabled
  * @attr {boolean} required - Whether selection is required
+ * @attr {boolean} multiple - Enable multi-selection with inline chips
  * @attr {string} url - Remote endpoint URL
  * @attr {string} query-param - Query param name for remote fetch (default: 'q')
  * @attr {number} debounce - Milliseconds to debounce remote queries (default: 250)
@@ -22,6 +26,7 @@ import { signal, effect } from '../signal.js';
  *
  * @fires change - Dispatched when value changes
  * @fires select - Dispatched when an option is selected with { item, value, label }
+ * @fires remove - Dispatched in multi-mode when a chip is removed
  * @fires clear - Dispatched when input is cleared
  */
 export class ElAutocomplete extends Elementum {
@@ -29,7 +34,7 @@ export class ElAutocomplete extends Elementum {
 
   static observedAttributes = [
     'name', 'value', 'placeholder', 'disabled', 'required',
-    'url', 'query-param', 'debounce', 'min-chars',
+    'multiple', 'url', 'query-param', 'debounce', 'min-chars',
     'label-key', 'value-key', 'size'
   ];
 
@@ -39,6 +44,7 @@ export class ElAutocomplete extends Elementum {
   placeholder = signal('Search or type...');
   disabled = signal(false);
   required = signal(false);
+  multiple = signal(false);
   url = signal('');
   queryParam = signal('q');
   debounce = signal(250);
@@ -54,6 +60,8 @@ export class ElAutocomplete extends Elementum {
   isLoading = signal(false);
   activeIndex = signal(-1);
   selectedItem = signal(null);
+  selectedItems = signal([]);
+  announcement = signal('');
 
   #debounceTimer = null;
   #abortController = null;
@@ -71,7 +79,9 @@ export class ElAutocomplete extends Elementum {
     .combobox-wrapper {
       position: relative;
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
+      gap: 4px;
       width: 100%;
       border: 1px solid var(--el-surface-border, #cbd5e1);
       border-radius: var(--el-radius-md, 8px);
@@ -79,6 +89,7 @@ export class ElAutocomplete extends Elementum {
       color: var(--el-text-primary, #0f172a);
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
       box-sizing: border-box;
+      padding: 3px 8px;
     }
 
     .combobox-wrapper:focus-within {
@@ -97,36 +108,40 @@ export class ElAutocomplete extends Elementum {
     /* Size variants */
     .size-sm {
       min-height: 32px;
-      padding: 0 8px;
       font-size: 0.8125rem;
     }
     .size-md {
       min-height: 40px;
-      padding: 0 12px;
       font-size: 0.875rem;
     }
     .size-lg {
       min-height: 48px;
-      padding: 0 16px;
       font-size: 1rem;
     }
 
     .prefix-area {
       display: inline-flex;
       align-items: center;
-      margin-right: 8px;
+      margin-right: 4px;
       color: var(--el-text-muted, #64748b);
     }
 
+    .chips-group {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
     .combobox-input {
-      flex: 1;
-      width: 100%;
+      flex: 1 1 80px;
+      min-width: 80px;
       border: none;
       background: transparent;
       color: inherit;
       font-family: inherit;
       font-size: inherit;
-      padding: 6px 0;
+      padding: 5px 0;
       outline: none;
     }
 
@@ -138,7 +153,7 @@ export class ElAutocomplete extends Elementum {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      margin-left: 8px;
+      margin-left: auto;
     }
 
     .btn-clear {
@@ -147,6 +162,8 @@ export class ElAutocomplete extends Elementum {
       justify-content: center;
       width: 24px;
       height: 24px;
+      min-width: 24px;
+      min-height: 24px;
       border: none;
       background: transparent;
       color: var(--el-text-muted, #64748b);
@@ -205,6 +222,12 @@ export class ElAutocomplete extends Elementum {
       font-weight: 600;
     }
 
+    .check-icon {
+      font-weight: bold;
+      color: var(--el-color-primary, #2563eb);
+      margin-right: 6px;
+    }
+
     .option-meta {
       font-size: 0.75rem;
       color: var(--el-text-muted, #64748b);
@@ -218,26 +241,41 @@ export class ElAutocomplete extends Elementum {
       color: var(--el-text-muted, #64748b);
       text-align: center;
     }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
   `;
 
   connected() {
     this.required.value = this.hasAttribute('required');
     this.disabled.value = this.hasAttribute('disabled');
-    this.setFormValue(this.value.value);
+    this.multiple.value = this.hasAttribute('multiple');
+
+    this.#syncFormValue();
     this.validate();
 
     // Form value synchronization
     effect(() => {
-      const val = this.value.value;
-      this.setFormValue(val ? String(val) : '');
+      this.#syncFormValue();
       this.validate();
     }, { signal: this.signal });
 
-    // Sync input text with display label
+    // Sync input text with display label in single mode
     effect(() => {
-      const input = this.root?.querySelector?.('.combobox-input');
-      if (input && document.activeElement !== input) {
-        input.value = this.displayLabel.value;
+      if (!this.multiple.value) {
+        const input = this.root?.querySelector?.('.combobox-input');
+        if (input && document.activeElement !== input) {
+          input.value = this.displayLabel.value;
+        }
       }
     }, { signal: this.signal });
 
@@ -259,16 +297,37 @@ export class ElAutocomplete extends Elementum {
       this.validate();
     } else if (name === 'disabled') {
       this.disabled.value = newValue !== null && newValue !== 'false';
-    } else if (name === 'value') {
-      this.setFormValue(newValue);
+    } else if (name === 'multiple') {
+      this.multiple.value = newValue !== null && newValue !== 'false';
+      this.#syncFormValue();
       this.validate();
+    } else if (name === 'value') {
+      this.value.value = newValue;
+      this.#syncFormValue();
+      this.validate();
+    }
+  }
+
+  #syncFormValue() {
+    if (this.multiple.value) {
+      const vals = this.selectedItems.value.map(it => this.getItemValue(it));
+      this.setFormValue(vals.join(','));
+    } else {
+      const val = this.value.value;
+      this.setFormValue(val ? String(val) : '');
     }
   }
 
   validate() {
     const isRequired = Boolean(this.required.value);
-    const hasValue = String(this.value.value || '').trim().length > 0;
     const inputEl = this.root?.querySelector?.('.combobox-input');
+    let hasValue = false;
+
+    if (this.multiple.value) {
+      hasValue = this.selectedItems.value.length > 0;
+    } else {
+      hasValue = String(this.value.value || '').trim().length > 0;
+    }
 
     if (isRequired && !hasValue) {
       this.setValidity(
@@ -304,6 +363,14 @@ export class ElAutocomplete extends Elementum {
     return item.meta || item.email || item.code || item.subtitle || '';
   }
 
+  isItemSelected(item) {
+    const val = this.getItemValue(item);
+    if (this.multiple.value) {
+      return this.selectedItems.value.some(it => this.getItemValue(it) === val);
+    }
+    return this.value.value === val;
+  }
+
   setData(items) {
     this.data.value = Array.isArray(items) ? items : [];
   }
@@ -330,7 +397,6 @@ export class ElAutocomplete extends Elementum {
     const endpoint = this.url.value;
 
     if (endpoint) {
-      // Remote fetch
       this.isLoading.value = true;
       this.isOpen.value = true;
       this.activeIndex.value = -1;
@@ -356,14 +422,11 @@ export class ElAutocomplete extends Elementum {
           const raw = await res.json();
           const items = Array.isArray(raw) ? raw : (raw.results || raw.data || raw.items || []);
 
-          // Apply client-side case-insensitive filter if endpoint returned full array
           const filtered = items.filter(matchesQuery);
-
           this.suggestions.value = filtered.length > 0 ? filtered : items;
           this.isOpen.value = true;
         } catch (err) {
           if (err.name !== 'AbortError') {
-            // Local fallback or filter existing data
             const local = this.data.value.filter(matchesQuery);
             this.suggestions.value = local;
           }
@@ -372,7 +435,6 @@ export class ElAutocomplete extends Elementum {
         }
       }, delay);
     } else {
-      // Local filter
       const local = this.data.value.filter(matchesQuery);
       this.suggestions.value = local;
       this.isOpen.value = true;
@@ -385,24 +447,69 @@ export class ElAutocomplete extends Elementum {
     const label = this.getItemLabel(item);
     const val = this.getItemValue(item);
 
-    this.selectedItem.value = item;
-    this.value.value = val;
-    this.displayLabel.value = label;
+    if (this.multiple.value) {
+      // Toggle or append item in multi-mode
+      const existsIndex = this.selectedItems.value.findIndex(it => this.getItemValue(it) === val);
+      if (existsIndex >= 0) {
+        this.removeItem(existsIndex);
+        return;
+      }
 
-    const input = this.root?.querySelector?.('.combobox-input');
-    if (input) input.value = label;
+      this.selectedItems.value = [...this.selectedItems.value, item];
+      const newVals = this.selectedItems.value.map(it => this.getItemValue(it));
+      this.value.value = newVals;
+      this.displayLabel.value = '';
 
-    this.isOpen.value = false;
-    this.activeIndex.value = -1;
+      const input = this.root?.querySelector?.('.combobox-input');
+      if (input) input.value = '';
+
+      this.announcement.value = `Selected ${label}. Total selected: ${this.selectedItems.value.length}.`;
+      this.suggestions.value = [];
+      this.isOpen.value = false;
+      this.activeIndex.value = -1;
+      this.validate();
+
+      this.emit('select', { item, items: this.selectedItems.value, value: newVals, label });
+      this.emit('change', { value: newVals, items: this.selectedItems.value });
+    } else {
+      // Single selection mode
+      this.selectedItem.value = item;
+      this.value.value = val;
+      this.displayLabel.value = label;
+
+      const input = this.root?.querySelector?.('.combobox-input');
+      if (input) input.value = label;
+
+      this.announcement.value = `Selected ${label}.`;
+      this.isOpen.value = false;
+      this.activeIndex.value = -1;
+      this.validate();
+
+      this.emit('select', { item, value: val, label });
+      this.emit('change', { value: val, label });
+    }
+  }
+
+  removeItem(index) {
+    if (!this.multiple.value) return;
+    const list = [...this.selectedItems.value];
+    if (index < 0 || index >= list.length) return;
+
+    const [removed] = list.splice(index, 1);
+    this.selectedItems.value = list;
+    const newVals = list.map(it => this.getItemValue(it));
+    this.value.value = newVals;
+    this.announcement.value = `Removed ${this.getItemLabel(removed)}. Total selected: ${list.length}.`;
     this.validate();
 
-    this.emit('select', { item, value: val, label });
-    this.emit('change', { value: val, label });
+    this.emit('remove', { item: removed, items: list, value: newVals });
+    this.emit('change', { value: newVals, items: list });
   }
 
   clear() {
     this.selectedItem.value = null;
-    this.value.value = '';
+    this.selectedItems.value = [];
+    this.value.value = this.multiple.value ? [] : '';
     this.displayLabel.value = '';
 
     const input = this.root?.querySelector?.('.combobox-input');
@@ -411,10 +518,11 @@ export class ElAutocomplete extends Elementum {
     this.suggestions.value = [];
     this.isOpen.value = false;
     this.activeIndex.value = -1;
+    this.announcement.value = 'Cleared selection.';
     this.validate();
 
     this.emit('clear');
-    this.emit('change', { value: '', label: '' });
+    this.emit('change', { value: this.multiple.value ? [] : '', items: [] });
   }
 
   open() {
@@ -433,8 +541,7 @@ export class ElAutocomplete extends Elementum {
     const query = e.target.value;
     this.displayLabel.value = query;
 
-    // If text was modified and does not match selectedItem, clear selected value
-    if (this.selectedItem.value && this.getItemLabel(this.selectedItem.value) !== query) {
+    if (!this.multiple.value && this.selectedItem.value && this.getItemLabel(this.selectedItem.value) !== query) {
       this.selectedItem.value = null;
       this.value.value = '';
       this.validate();
@@ -446,8 +553,16 @@ export class ElAutocomplete extends Elementum {
   #onKeyDown = (e) => {
     if (this.disabled.value) return;
     const items = this.suggestions.value;
+    const input = e.target;
 
     switch (e.key) {
+      case 'Backspace':
+        if (this.multiple.value && input.value === '' && this.selectedItems.value.length > 0) {
+          e.preventDefault();
+          this.removeItem(this.selectedItems.value.length - 1);
+        }
+        break;
+
       case 'ArrowDown':
         e.preventDefault();
         if (!this.isOpen.value) {
@@ -518,17 +633,37 @@ export class ElAutocomplete extends Elementum {
           <slot name="prefix"></slot>
         </span>
 
+        ${() => this.multiple.value ? html`
+          <div class="chips-group" part="chips" role="list" aria-label="Selected items">
+            ${() => this.selectedItems.value.map((item, idx) => {
+              const label = this.getItemLabel(item);
+              return html`
+                <el-chip
+                  role="listitem"
+                  size="sm"
+                  variant="primary"
+                  removable
+                  part="chip"
+                  aria-label=${`Selected: ${label}`}
+                  @remove=${() => this.removeItem(idx)}
+                >${label}</el-chip>
+              `;
+            })}
+          </div>
+        ` : null}
+
         <input
           type="text"
           class="combobox-input"
           part="input"
-          placeholder=${this.placeholder}
+          placeholder=${() => (this.multiple.value && this.selectedItems.value.length > 0) ? '' : this.placeholder.value}
           ?disabled=${this.disabled}
-          ?required=${this.required}
+          ?required=${() => (this.multiple.value && this.selectedItems.value.length > 0) ? null : this.required.value}
           role="combobox"
           aria-autocomplete="list"
           aria-expanded=${() => this.isOpen.value ? 'true' : 'false'}
           aria-controls=${listId}
+          aria-haspopup="listbox"
           aria-activedescendant=${() => this.activeIndex.value >= 0 ? `${listId}-opt-${this.activeIndex.value}` : ''}
           @input=${this.#onInput}
           @keydown=${this.#onKeyDown}
@@ -537,18 +672,23 @@ export class ElAutocomplete extends Elementum {
 
         <div class="actions-area" part="actions">
           ${() => this.isLoading.value ? html`<el-spinner size="sm" part="spinner"></el-spinner>` : null}
-          ${() => (this.displayLabel.value && !this.disabled.value) ? html`
+          ${() => ((this.displayLabel.value || this.selectedItems.value.length > 0) && !this.disabled.value) ? html`
             <button
               type="button"
               class="btn-clear"
               part="clear-button"
-              aria-label="Clear input"
+              aria-label="Clear all selections"
               @click=${() => this.clear()}
             >✕</button>
           ` : null}
           <slot name="suffix"></slot>
         </div>
       </div>
+
+      <!-- Accessible Live Region for Screen Readers -->
+      <span class="sr-only" aria-live="polite" part="announcer">
+        ${() => this.announcement.value}
+      </span>
 
       ${() => this.isOpen.value ? html`
         <ul
@@ -568,9 +708,8 @@ export class ElAutocomplete extends Elementum {
             }
             return list.map((item, idx) => {
               const label = this.getItemLabel(item);
-              const val = this.getItemValue(item);
               const meta = this.getItemMeta(item);
-              const isSelected = this.value.value === val;
+              const isSelected = this.isItemSelected(item);
               const isActive = this.activeIndex.value === idx;
 
               return html`
@@ -582,7 +721,10 @@ export class ElAutocomplete extends Elementum {
                   part="option"
                   @click=${() => this.select(item)}
                 >
-                  <span class="option-label">${label}</span>
+                  <span class="option-label">
+                    ${isSelected ? html`<span class="check-icon" aria-hidden="true">✓ </span>` : null}
+                    ${label}
+                  </span>
                   ${meta ? html`<span class="option-meta">${meta}</span>` : null}
                 </li>
               `;

@@ -206,6 +206,21 @@
               </div>
             </div>
 
+            <!-- Layover Hubs (Multiselect with inline chips) -->
+            <div style="margin-bottom: 20px;">
+              <label for="f-stopovers" style="font-weight: 600; font-size: 0.875rem; color: var(--el-text-base, #334155); margin-bottom: 8px; display: block;">
+                Preferred Layover Hubs & Connecting Cities (Multiselect with Chips):
+              </label>
+              <el-autocomplete
+                id="f-stopovers"
+                name="stopovers"
+                multiple
+                placeholder="Add preferred transfer airports (e.g. Singapore, Dubai, London)..."
+              >
+                <span slot="prefix">🔄</span>
+              </el-autocomplete>
+            </div>
+
             <!-- Preferences with el-switch and el-tooltip -->
             <div style="margin-bottom: 24px; padding-top: 8px; border-top: 1px dashed var(--el-surface-border, #e2e8f0);">
               <label style="font-weight: 600; font-size: 0.875rem; color: var(--el-text-base, #334155); margin-bottom: 12px; display: block;">
@@ -392,6 +407,8 @@
 
     const originAc = document.getElementById('f-origin');
     const destAc = document.getElementById('f-dest');
+    const stopoversAc = document.getElementById('f-stopovers');
+
     if (originAc) {
       originAc.setData(airports);
       originAc.displayLabel.value = 'San Francisco (SFO)';
@@ -401,6 +418,9 @@
       destAc.setData(airports);
       destAc.displayLabel.value = 'Tokyo (HND)';
       destAc.value.value = 'Tokyo (HND)';
+    }
+    if (stopoversAc) {
+      stopoversAc.setData(airports);
     }
 
     function getFieldValue(formData, name, id, fallback = '') {
@@ -430,10 +450,12 @@
         return;
       }
 
-      currentBookingData = { origin, destination, date, cabin };
+      const stopovers = stopoversAc?.selectedItems?.value?.map(it => stopoversAc.getItemLabel(it)) || [];
+      currentBookingData = { origin, destination, date, cabin, stopovers };
 
       bookingSummary.innerHTML = `
         <strong>Route:</strong> ${origin} ➔ ${destination}<br/>
+        ${stopovers.length > 0 ? `<strong>Layovers:</strong> ${stopovers.join(', ')}<br/>` : ''}
         <strong>Date:</strong> ${date}<br/>
         <strong>Cabin:</strong> ${String(cabin).toUpperCase()}
       `;

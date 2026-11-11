@@ -319,11 +319,12 @@ export class ElChip extends Elementum {
 
 export class ElAutocomplete extends Elementum {
   name: Signal<string>;
-  value: Signal<string | number>;
+  value: Signal<string | number | any[]>;
   displayLabel: Signal<string>;
   placeholder: Signal<string>;
   disabled: Signal<boolean>;
   required: Signal<boolean>;
+  multiple: Signal<boolean>;
   url: Signal<string>;
   queryParam: Signal<string>;
   debounce: Signal<number>;
@@ -337,9 +338,11 @@ export class ElAutocomplete extends Elementum {
   isLoading: Signal<boolean>;
   activeIndex: Signal<number>;
   selectedItem: Signal<any>;
+  selectedItems: Signal<any[]>;
   setData(items: any[]): void;
   search(query: string): Promise<void>;
   select(item: any): void;
+  removeItem(index: number): void;
   clear(): void;
   open(): void;
   close(): void;

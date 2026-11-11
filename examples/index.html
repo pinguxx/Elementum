@@ -477,6 +477,23 @@
               Selected Airport: <em>None</em>
             </div>
           </div>
+
+          <div>
+            <h4 style="margin: 0 0 8px 0;">Multiselect with Interactive Chips / Pills</h4>
+            <p style="font-size: 0.8125rem; color: var(--el-text-muted, #64748b); margin: 0 0 12px 0;">
+              Combobox with <code>multiple</code> mode: selected items render as inline removable chips with Backspace dismissal.
+            </p>
+            <el-autocomplete
+              id="ac-multiselect-tags"
+              multiple
+              placeholder="Pick skills/tags (e.g. Signals, Web Components, WCAG)..."
+            >
+              <span slot="prefix">🏷️</span>
+            </el-autocomplete>
+            <div id="multiselect-selection" style="margin-top: 10px; font-size: 0.8125rem; color: var(--el-text-muted, #64748b);">
+              Selected Tags: <em>None</em>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -740,6 +757,32 @@
       });
       acAirports.addEventListener('clear', () => {
         if (localSel) localSel.innerHTML = 'Selected Airport: <em>None</em>';
+      });
+    }
+
+    const acMulti = document.getElementById('ac-multiselect-tags');
+    const multiSel = document.getElementById('multiselect-selection');
+    if (acMulti) {
+      acMulti.setData([
+        'Custom Elements', 'Micro-Signals', 'Shadow DOM', 'Figma Tokens',
+        'WCAG 2.2 AA', 'Form-Associated (FACE)', 'Declarative Shadow DOM', 'Zero Build'
+      ]);
+      acMulti.addEventListener('change', (e) => {
+        const count = e.detail.items?.length || 0;
+        if (multiSel) {
+          if (count === 0) {
+            multiSel.innerHTML = 'Selected Tags: <em>None</em>';
+          } else {
+            const names = e.detail.items.map(it => acMulti.getItemLabel(it)).join(', ');
+            multiSel.innerHTML = `Selected Tags (${count}): <strong>${names}</strong>`;
+          }
+        }
+      });
+      acMulti.addEventListener('select', (e) => {
+        toast.info(`Added tag: ${e.detail.label}`);
+      });
+      acMulti.addEventListener('remove', (e) => {
+        toast.warning(`Removed tag: ${acMulti.getItemLabel(e.detail.item)}`);
       });
     }
   </script>

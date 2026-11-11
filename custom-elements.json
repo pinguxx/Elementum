@@ -504,6 +504,7 @@
             { "name": "placeholder", "type": { "text": "string" }, "default": "'Search or type...'" },
             { "name": "disabled", "type": { "text": "boolean" }, "default": "false" },
             { "name": "required", "type": { "text": "boolean" }, "default": "false" },
+            { "name": "multiple", "type": { "text": "boolean" }, "default": "false" },
             { "name": "url", "type": { "text": "string" } },
             { "name": "query-param", "type": { "text": "string" }, "default": "'q'" },
             { "name": "debounce", "type": { "text": "number" }, "default": "250" },
@@ -514,6 +515,7 @@
           ],
           "events": [
             { "name": "select", "description": "Fired when an option is selected: detail: { item, value, label }" },
+            { "name": "remove", "description": "Fired in multi-mode when a chip is removed: detail: { item, items, value }" },
             { "name": "change", "description": "Fired when value changes: detail: { value, label }" },
             { "name": "clear", "description": "Fired when input is cleared" }
           ]
