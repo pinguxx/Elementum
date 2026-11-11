@@ -137,6 +137,12 @@ export class ElInput extends Elementum {
       min-width: 0;
     }
 
+    @media (hover: none) and (pointer: coarse), (max-width: 640px) {
+      input {
+        font-size: 16px !important;
+      }
+    }
+
     input::placeholder {
       color: var(--el-text-muted, #9ca3af);
     }

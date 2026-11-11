@@ -63,6 +63,12 @@ export class ElSelect extends Elementum {
       opacity: 0.6;
     }
 
+    @media (hover: none) and (pointer: coarse), (max-width: 640px) {
+      select {
+        font-size: 16px !important;
+      }
+    }
+
     .arrow {
       position: absolute;
       right: 12px;

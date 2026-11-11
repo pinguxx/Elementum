@@ -92,6 +92,20 @@ export class ElDialog extends Elementum {
       border-bottom-left-radius: var(--el-radius-lg, 16px);
       border-bottom-right-radius: var(--el-radius-lg, 16px);
     }
+
+    @media (max-width: 640px) {
+      dialog {
+        width: calc(100vw - 24px);
+        max-height: calc(100dvh - 32px);
+      }
+
+      .dialog-header,
+      .dialog-body,
+      .dialog-footer {
+        padding-left: var(--el-spacing-md, 16px);
+        padding-right: var(--el-spacing-md, 16px);
+      }
+    }
   `;
 
   #previousActiveElement = null;

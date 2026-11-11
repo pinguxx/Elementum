@@ -48,11 +48,13 @@ export class ElTable extends Elementum {
       display: block;
       width: 100%;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
       font-family: inherit;
     }
 
     table {
       width: 100%;
+      min-width: 480px;
       border-collapse: collapse;
       text-align: left;
       font-size: 0.875rem;

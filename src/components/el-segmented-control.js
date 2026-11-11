@@ -104,6 +104,7 @@ export class ElSegmentedControl extends Elementum {
   static styles = css`
     :host {
       display: inline-flex;
+      max-width: 100%;
       vertical-align: middle;
       box-sizing: border-box;
       user-select: none;
@@ -111,6 +112,9 @@ export class ElSegmentedControl extends Elementum {
 
     .segmented-group {
       display: inline-flex;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
       align-items: center;
       background: var(--el-surface-muted, #f1f5f9);
       border: 1px solid var(--el-surface-border, #e2e8f0);

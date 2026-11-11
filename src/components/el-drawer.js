@@ -212,6 +212,27 @@ export class ElDrawer extends Elementum {
       border-top: 1px solid var(--el-surface-border, #e2e8f0);
       background: var(--el-surface-muted, #f8fafc);
     }
+
+    @media (max-width: 640px) {
+      .placement-left,
+      .placement-right {
+        width: 100vw !important;
+        max-width: 100vw !important;
+      }
+
+      .placement-top,
+      .placement-bottom {
+        max-height: 85dvh;
+        height: auto;
+      }
+
+      .drawer-header,
+      .drawer-body,
+      .drawer-footer {
+        padding-left: var(--el-spacing-md, 16px);
+        padding-right: var(--el-spacing-md, 16px);
+      }
+    }
   `;
 
   render() {

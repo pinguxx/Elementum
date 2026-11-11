@@ -30,6 +30,7 @@ export class ElDropdown extends Elementum {
       left: 0;
       z-index: 1000;
       min-width: 280px;
+      max-width: calc(100vw - 24px);
       background: var(--el-surface-base, #ffffff);
       border: 1px solid var(--el-surface-border, #e5e7eb);
       border-radius: var(--el-radius-md, 8px);
