@@ -295,6 +295,28 @@ export class ElSegmentedControl extends Elementum {
   selectOption(val: string): void;
 }
 
+export class ElPagination extends Elementum {
+  page: Signal<number>;
+  total: Signal<number>;
+  pageSize: Signal<number>;
+  siblingCount: Signal<number>;
+  totalPages: Computed<number>;
+  setPage(p: number): void;
+  next(): void;
+  prev(): void;
+}
+
+export class ElChip extends Elementum {
+  variant: Signal<'primary' | 'success' | 'danger' | 'warning' | 'muted'>;
+  size: Signal<'sm' | 'md'>;
+  removable: Signal<boolean>;
+  selectable: Signal<boolean>;
+  selected: Signal<boolean>;
+  value: Signal<string>;
+  disabled: Signal<boolean>;
+  toggleSelected(): void;
+}
+
 // ==========================================
 // SSR (Declarative Shadow DOM)
 // ==========================================
@@ -336,6 +358,8 @@ declare global {
     'el-avatar-group': ElAvatarGroup;
     'el-drawer': ElDrawer;
     'el-segmented-control': ElSegmentedControl;
+    'el-pagination': ElPagination;
+    'el-chip': ElChip;
   }
 
   namespace JSX {
@@ -363,6 +387,8 @@ declare global {
       'el-avatar-group': any;
       'el-drawer': any;
       'el-segmented-control': any;
+      'el-pagination': any;
+      'el-chip': any;
     }
   }
 }

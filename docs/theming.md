@@ -131,6 +131,8 @@ Because Elementum components use Shadow DOM for encapsulation and performance, s
 | `<el-avatar>` | `part="avatar"`, `part="initials"`, `part="status"` | Avatar container, fallback initials, and status dot |
 | `<el-drawer>` | `part="panel"`, `part="header"`, `part="body"`, `part="footer"` | Slide-over drawer container and sections |
 | `<el-segmented-control>` | `part="group"`, `part="segment"` | Pill switcher container and individual radio buttons |
+| `<el-pagination>` | `part="pagination"`, `part="prev-button"`, `part="next-button"`, `part="page-button"`, `part="active-page"` | Full pagination nav and page buttons |
+| `<el-chip>` | `part="chip"`, `part="remove-button"` | Tag/pill container and remove button |
 
 ---
 

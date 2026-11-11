@@ -239,7 +239,7 @@
   <div class="container">
     <header class="hero-header">
       <div class="badge-bar">
-        <el-badge variant="success" count="20 Web Components"></el-badge>
+        <el-badge variant="success" count="22 Web Components"></el-badge>
         <el-badge variant="default" count="Zero Build / Signals"></el-badge>
         <el-badge variant="default" count="WCAG 2.2 AA"></el-badge>
       </div>
@@ -268,6 +268,8 @@
         <div style="display:flex; align-items:center; gap:8px;">
           <el-segmented-control id="component-picker" value="el-button" size="sm">
             <option value="el-button">Button</option>
+            <option value="el-chip">Chip</option>
+            <option value="el-pagination">Pagination</option>
             <option value="el-progress">Progress</option>
             <option value="el-spinner">Spinner</option>
             <option value="el-avatar">Avatar</option>
@@ -337,7 +339,7 @@
         <span class="showcase-icon">📚</span>
         <h3 class="showcase-title">Showcase Catalog</h3>
         <p class="showcase-desc">
-          Interactive matrix demonstrating all 20 component primitives with reactive signal counters, drawers, and toasts.
+          Interactive matrix demonstrating all 22 component primitives with reactive signal counters, drawers, and toasts.
         </p>
       </a>
 
@@ -386,6 +388,26 @@
         el.addEventListener('click', () => toast.info('Button clicked!'));
         stagePreview.appendChild(el);
         snippet = `<el-button variant="${variant}" size="${size}"${disabled ? ' disabled' : ''}>Interactive Button</el-button>`;
+      } else if (tag === 'el-chip') {
+        const el = document.createElement('el-chip');
+        el.setAttribute('variant', variant === 'ghost' ? 'muted' : variant);
+        el.setAttribute('size', size === 'lg' ? 'md' : size);
+        el.setAttribute('selectable', '');
+        el.setAttribute('removable', '');
+        if (disabled) el.setAttribute('disabled', '');
+        el.textContent = 'Interactive Chip';
+        el.addEventListener('remove', () => toast.info('Chip dismissed!'));
+        stagePreview.appendChild(el);
+        snippet = `<el-chip variant="${el.getAttribute('variant')}" size="${el.getAttribute('size')}" selectable removable${disabled ? ' disabled' : ''}>Interactive Chip</el-chip>`;
+      } else if (tag === 'el-pagination') {
+        const el = document.createElement('el-pagination');
+        el.setAttribute('page', '2');
+        el.setAttribute('total', '50');
+        el.setAttribute('page-size', '10');
+        if (disabled) el.setAttribute('disabled', '');
+        el.addEventListener('pagechange', (e) => toast.info(`Navigated to page ${e.detail.page}`));
+        stagePreview.appendChild(el);
+        snippet = `<el-pagination page="2" total="50" page-size="10"${disabled ? ' disabled' : ''}></el-pagination>`;
       } else if (tag === 'el-progress') {
         const el = document.createElement('el-progress');
         el.setAttribute('value', '65');

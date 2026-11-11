@@ -390,6 +390,46 @@
         <el-button variant="primary" id="btn-close-drawer">Done</el-button>
       </div>
     </el-drawer>
+
+    <!-- SECTION 8: Live Free API Data Loading, Filter Chips & Pagination -->
+    <section>
+      <h2>8. Live Free API Loading, Interactive Filter Chips & Pagination</h2>
+      <p>
+        Fetches live records from a free public API (<code>jsonplaceholder.typicode.com/users</code>) with interactive filter chips, loading spinner, and responsive pagination.
+      </p>
+
+      <div class="card">
+        <!-- Filter Chips Bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="api-filter-chips">
+            <el-chip selectable selected variant="primary" value="all">All Users</el-chip>
+            <el-chip selectable variant="muted" value="biz">.biz Domains</el-chip>
+            <el-chip selectable variant="muted" value="org">.org Domains</el-chip>
+            <el-chip selectable variant="muted" value="tv">.tv Domains</el-chip>
+          </div>
+
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <span id="api-loading-indicator" style="display: none; align-items: center; gap: 6px; font-size: 0.8125rem; color: var(--el-text-muted, #64748b);">
+              <el-spinner size="sm" variant="primary"></el-spinner> Loading...
+            </span>
+            <el-button size="sm" variant="secondary" id="btn-fetch-api">
+              🔄 Fetch Live Data
+            </el-button>
+          </div>
+        </div>
+
+        <!-- Table displaying API data -->
+        <el-table id="api-table"></el-table>
+
+        <!-- Pagination Controls -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; flex-wrap: wrap; gap: 12px;">
+          <span style="font-size: 0.875rem; color: var(--el-text-muted, #64748b);" id="api-page-summary">
+            Showing records 1–4 of 10
+          </span>
+          <el-pagination id="api-pagination" page="1" total="10" page-size="4"></el-pagination>
+        </div>
+      </div>
+    </section>
   </div>
 
   <script type="module">
@@ -501,6 +541,115 @@
     if (!customElements.get('demo-counter')) {
       customElements.define('demo-counter', DemoCounter);
     }
+
+    // 6. Live API Loading, Filter Chips & Pagination
+    const apiTable = document.getElementById('api-table');
+    const apiPagination = document.getElementById('api-pagination');
+    const apiLoading = document.getElementById('api-loading-indicator');
+    const apiSummary = document.getElementById('api-page-summary');
+    const btnFetchApi = document.getElementById('btn-fetch-api');
+    const chipGroup = document.getElementById('api-filter-chips');
+
+    let allUsers = [];
+    let currentFilter = 'all';
+
+    if (apiTable) {
+      apiTable.columns.value = [
+        { key: 'id', label: 'ID', width: '60px' },
+        { key: 'name', label: 'Name', sortable: true },
+        { key: 'email', label: 'Email', sortable: true },
+        { key: 'city', label: 'City' },
+        { key: 'company', label: 'Company' },
+      ];
+    }
+
+    function renderApiPage() {
+      if (!apiTable) return;
+      let filtered = allUsers;
+      if (currentFilter !== 'all') {
+        filtered = allUsers.filter((u) => u.email.toLowerCase().includes(`.${currentFilter}`));
+      }
+
+      const pageSize = 4;
+      const total = filtered.length;
+      apiPagination?.setAttribute('total', String(total));
+      apiPagination?.setAttribute('page-size', String(pageSize));
+
+      const page = Number(apiPagination?.page?.value || 1);
+      const start = (page - 1) * pageSize;
+      const slice = filtered.slice(start, start + pageSize);
+
+      apiTable.data.value = slice;
+
+      if (apiSummary) {
+        if (total === 0) {
+          apiSummary.textContent = 'No records match this filter';
+        } else {
+          const end = Math.min(start + pageSize, total);
+          apiSummary.textContent = `Showing records ${start + 1}–${end} of ${total}`;
+        }
+      }
+    }
+
+    async function fetchUsers() {
+      if (apiLoading) apiLoading.style.display = 'inline-flex';
+      try {
+        const res = await fetch('https://jsonplaceholder.typicode.com/users');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        allUsers = data.map((u) => ({
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          city: u.address?.city || '',
+          company: u.company?.name || '',
+        }));
+        toast.success(`Loaded ${allUsers.length} users from API`);
+      } catch (err) {
+        // Fallback local mock data
+        allUsers = [
+          { id: 1, name: 'Leanne Graham', email: 'Sincere@april.biz', city: 'Gwenborough', company: 'Romaguera-Crona' },
+          { id: 2, name: 'Ervin Howell', email: 'Shanna@melissa.tv', city: 'Wisokyburgh', company: 'Deckow-Crist' },
+          { id: 3, name: 'Clementine Bauch', email: 'Nathan@yesenia.net', city: 'McKenziehaven', company: 'Romaguera-Jacobson' },
+          { id: 4, name: 'Patricia Lebsack', email: 'Julianne.OConner@kory.org', city: 'South Elvis', company: 'Robel-Corkery' },
+          { id: 5, name: 'Chelsey Dietrich', email: 'Lucio_Hettinger@annie.ca', city: 'Roscoeview', company: 'Keebler LLC' },
+          { id: 6, name: 'Mrs. Dennis Schulist', email: 'Karley_Dach@jasper.info', city: 'South Christy', company: 'Considine-Lockman' },
+          { id: 7, name: 'Kurtis Weissnat', email: 'Telly.Hoeger@billy.biz', city: 'Howemouth', company: 'Johns Group' },
+          { id: 8, name: 'Nicholas Runolfsdottir', email: 'Sherwood@rosamond.me', city: 'Aliyaview', company: 'Abernathy Group' },
+          { id: 9, name: 'Glenna Reichert', email: 'Chaim_McDermott@dana.io', city: 'Bartholomebury', company: 'Yost and Sons' },
+          { id: 10, name: 'Clementina DuBuque', email: 'Rey.Padberg@karina.biz', city: 'Lebsackbury', company: 'Hoeger LLC' }
+        ];
+        toast.info('Loaded fallback dataset (offline mode)');
+      } finally {
+        if (apiLoading) apiLoading.style.display = 'none';
+        apiPagination?.setPage?.(1);
+        renderApiPage();
+      }
+    }
+
+    btnFetchApi?.addEventListener('click', fetchUsers);
+    apiPagination?.addEventListener('pagechange', renderApiPage);
+
+    // Filter Chips handling
+    chipGroup?.querySelectorAll('el-chip').forEach((chip) => {
+      chip.addEventListener('change', (e) => {
+        if (e.detail.selected) {
+          chipGroup.querySelectorAll('el-chip').forEach((c) => {
+            if (c !== chip) {
+              c.removeAttribute('selected');
+              c.setAttribute('variant', 'muted');
+            }
+          });
+          chip.setAttribute('variant', 'primary');
+          currentFilter = e.detail.value;
+          apiPagination?.setPage?.(1);
+          renderApiPage();
+        }
+      });
+    });
+
+    // Initial load
+    fetchUsers();
   </script>
 </body>
 </html>

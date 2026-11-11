@@ -85,6 +85,8 @@ Elementum runs directly in any modern browser without Webpack, Vite, or Babel.
 | **Avatar** | `<el-avatar>`, `<el-avatar-group>` | User avatar with image fallback, automatic initials, and status dot. |
 | **Drawer** | `<el-drawer>` | Slide-over drawer overlay (`left`, `right`, `top`, `bottom`) with focus trap. |
 | **Segmented** | `<el-segmented-control>` | Form-associated pill switcher with keyboard arrow navigation. |
+| **Pagination** | `<el-pagination>` | Accessible numeric page navigation with ellipsis windowing and `pagechange` events. |
+| **Chip / Pill** | `<el-chip>` | Interactive tag with `selectable` and `removable` dismiss modes (`role="button"`). |
 
 ---
 
@@ -139,7 +141,9 @@ Elementum/
 │       ├── el-spinner.js    # Animated accessible SVG spinner
 │       ├── el-avatar.js     # User avatar & avatar group with fallback
 │       ├── el-drawer.js     # Accessible slide-over drawer overlay
-│       └── el-segmented-control.js # Form-associated pill switcher
+│       ├── el-segmented-control.js # Form-associated pill switcher
+│       ├── el-pagination.js # Accessible numeric pagination controls
+│       └── el-chip.js       # Interactive filter chips & pills
 ├── tools/
 │   ├── sync-tokens.js       # CLI to compile figma-tokens.json into tokens.css
 │   └── create-component.js  # CLI to scaffold new components (npm run create)

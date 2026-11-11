@@ -278,14 +278,29 @@
         <el-tab label="My Bookings 📋" value="trips">
           <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
             <span style="font-size: 0.9375rem; color: var(--el-text-muted, #64748b);">
-              Sort columns or select bookings to manage:
+              Sort columns, filter with chips, or select bookings to manage:
             </span>
             <div style="display: flex; gap: 8px;">
               <el-button size="sm" variant="secondary" id="btn-cancel-trip">Cancel Selected</el-button>
               <el-button size="sm" variant="primary" id="btn-download-trip">Download Itinerary</el-button>
             </div>
           </div>
+
+          <!-- Interactive Filter Chips -->
+          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 14px; flex-wrap: wrap;">
+            <span style="font-size: 0.8125rem; font-weight: 600; color: var(--el-text-muted, #64748b);">Filter Status:</span>
+            <el-chip id="chip-all" variant="primary" size="sm" selectable selected value="all">All Bookings</el-chip>
+            <el-chip id="chip-confirmed" variant="success" size="sm" selectable value="Confirmed">Confirmed</el-chip>
+            <el-chip id="chip-scheduled" variant="warning" size="sm" selectable value="Scheduled">Scheduled</el-chip>
+          </div>
+
           <el-table id="trips-table" selectable></el-table>
+
+          <!-- Accessible Pagination Controls -->
+          <div style="margin-top: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <span id="trips-page-info" style="font-size: 0.8125rem; color: var(--el-text-muted, #64748b);">Showing page 1</span>
+            <el-pagination id="trips-pagination" page="1" total="5" page-size="2"></el-pagination>
+          </div>
         </el-tab>
       </el-tabs>
     </div>
@@ -392,8 +407,45 @@
       toast.info('Booking cancelled.');
     });
 
-    // Setup Trips Data Table
+    // Setup Trips Data Table & Pagination
     const tripsTable = document.getElementById('trips-table');
+    const tripsPagination = document.getElementById('trips-pagination');
+    const tripsPageInfo = document.getElementById('trips-page-info');
+
+    let allTrips = [
+      { flight: 'SK-204', route: 'SFO ➔ HND', date: '2026-12-18', class: 'Business', price: '$1,850', status: 'Confirmed' },
+      { flight: 'SK-811', route: 'JFK ➔ LHR', date: '2026-11-28', class: 'Economy', price: '$640', status: 'Confirmed' },
+      { flight: 'SK-309', route: 'SEA ➔ CDG', date: '2027-01-15', class: 'Premium', price: '$1,120', status: 'Scheduled' },
+      { flight: 'SK-552', route: 'LAX ➔ SYD', date: '2027-02-04', class: 'Economy', price: '$980', status: 'Confirmed' },
+      { flight: 'SK-117', route: 'ORD ➔ FRA', date: '2027-02-22', class: 'Business', price: '$2,100', status: 'Scheduled' },
+    ];
+    let activeFilter = 'all';
+
+    function getFilteredTrips() {
+      if (activeFilter === 'all') return allTrips;
+      return allTrips.filter(t => t.status === activeFilter);
+    }
+
+    function refreshTripsTable() {
+      if (!tripsTable || !tripsPagination) return;
+      const filtered = getFilteredTrips();
+      tripsPagination.total.value = filtered.length;
+      const pageSize = Number(tripsPagination.pageSize?.value || tripsPagination.getAttribute('page-size') || 2);
+      const currentPage = Number(tripsPagination.page?.value || tripsPagination.getAttribute('page') || 1);
+      const start = (currentPage - 1) * pageSize;
+      const pageSlice = filtered.slice(start, start + pageSize);
+
+      tripsTable.data.value = pageSlice;
+      tripsTable.selected.value = [];
+
+      if (tripsPageInfo) {
+        const total = filtered.length;
+        const from = total === 0 ? 0 : start + 1;
+        const to = Math.min(start + pageSize, total);
+        tripsPageInfo.textContent = `Showing ${from}-${to} of ${total} bookings`;
+      }
+    }
+
     if (tripsTable) {
       tripsTable.columns.value = [
         { key: 'flight', label: 'Flight #', sortable: true, width: '120px' },
@@ -403,12 +455,35 @@
         { key: 'price', label: 'Price', sortable: true, width: '100px' },
         { key: 'status', label: 'Status', width: '110px' }
       ];
-      tripsTable.data.value = [
-        { flight: 'SK-204', route: 'SFO ➔ HND', date: '2026-12-18', class: 'Business', price: '$1,850', status: 'Confirmed' },
-        { flight: 'SK-811', route: 'JFK ➔ LHR', date: '2026-11-28', class: 'Economy', price: '$640', status: 'Confirmed' },
-        { flight: 'SK-309', route: 'SEA ➔ CDG', date: '2027-01-15', class: 'Premium', price: '$1,120', status: 'Scheduled' },
-      ];
+      refreshTripsTable();
     }
+
+    tripsPagination?.addEventListener('pagechange', () => {
+      refreshTripsTable();
+    });
+
+    // Chip Filter Handlers
+    const filterChips = [
+      document.getElementById('chip-all'),
+      document.getElementById('chip-confirmed'),
+      document.getElementById('chip-scheduled')
+    ].filter(Boolean);
+
+    filterChips.forEach(chip => {
+      chip.addEventListener('change', (e) => {
+        if (!e.detail.selected) {
+          // Keep active chip selected if clicked again
+          chip.selected.value = true;
+          return;
+        }
+        filterChips.forEach(c => {
+          if (c !== chip) c.selected.value = false;
+        });
+        activeFilter = chip.getAttribute('value') || 'all';
+        tripsPagination?.setPage(1);
+        refreshTripsTable();
+      });
+    });
 
     document.getElementById('btn-cancel-trip')?.addEventListener('click', () => {
       const selected = tripsTable?.selected?.value || [];
@@ -416,8 +491,20 @@
         toast.warning('Please select at least one booking to cancel.');
         return;
       }
-      tripsTable.data.value = tripsTable.data.value.filter((_, idx) => !selected.includes(idx));
-      tripsTable.selected.value = [];
+      const filtered = getFilteredTrips();
+      const pageSize = Number(tripsPagination.pageSize?.value || 2);
+      const currentPage = Number(tripsPagination.page?.value || 1);
+      const start = (currentPage - 1) * pageSize;
+      const itemsToRemove = new Set(selected.map(idx => filtered[start + idx]).filter(Boolean));
+
+      allTrips = allTrips.filter(item => !itemsToRemove.has(item));
+      const remainingFiltered = getFilteredTrips();
+      const maxPage = Math.max(1, Math.ceil(remainingFiltered.length / pageSize));
+      if (currentPage > maxPage) {
+        tripsPagination.setPage(maxPage);
+      } else {
+        refreshTripsTable();
+      }
       toast.success(`Cancelled ${selected.length} booking(s).`);
     });
 
@@ -440,7 +527,9 @@
           price: '$790',
           status: 'Confirmed'
         };
-        tripsTable.data.value = [newTrip, ...tripsTable.data.value];
+        allTrips = [newTrip, ...allTrips];
+        tripsPagination?.setPage(1);
+        refreshTripsTable();
       }
 
       flightForm.reset();

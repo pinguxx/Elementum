@@ -440,6 +440,53 @@
           ]
         }
       ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-pagination.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElPagination",
+          "tagName": "el-pagination",
+          "description": "Accessible pagination component with dynamic page windowing, ellipsis, and W3C navigation semantics.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "attributes": [
+            { "name": "page", "type": { "text": "number" }, "default": "1" },
+            { "name": "total", "type": { "text": "number" }, "default": "0" },
+            { "name": "page-size", "type": { "text": "number" }, "default": "10" },
+            { "name": "sibling-count", "type": { "text": "number" }, "default": "1" }
+          ],
+          "events": [
+            { "name": "pagechange", "description": "Fired when page changes: detail: { page, pageSize }" }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-chip.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElChip",
+          "tagName": "el-chip",
+          "description": "Interactive pill / tag chip supporting selection, dismiss buttons, and slot icons.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "attributes": [
+            { "name": "variant", "type": { "text": "'primary' | 'success' | 'danger' | 'warning' | 'muted'" }, "default": "'muted'" },
+            { "name": "size", "type": { "text": "'sm' | 'md'" }, "default": "'md'" },
+            { "name": "removable", "type": { "text": "boolean" }, "default": "false" },
+            { "name": "selectable", "type": { "text": "boolean" }, "default": "false" },
+            { "name": "selected", "type": { "text": "boolean" }, "default": "false" },
+            { "name": "value", "type": { "text": "string" } }
+          ],
+          "events": [
+            { "name": "remove", "description": "Fired when remove button is clicked: detail: { value }" },
+            { "name": "change", "description": "Fired when selection toggles: detail: { selected, value }" }
+          ]
+        }
+      ]
     }
   ]
 }
