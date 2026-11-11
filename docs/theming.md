@@ -133,6 +133,7 @@ Because Elementum components use Shadow DOM for encapsulation and performance, s
 | `<el-segmented-control>` | `part="group"`, `part="segment"` | Pill switcher container and individual radio buttons |
 | `<el-pagination>` | `part="pagination"`, `part="prev-button"`, `part="next-button"`, `part="page-button"`, `part="active-page"` | Full pagination nav and page buttons |
 | `<el-chip>` | `part="chip"`, `part="remove-button"` | Tag/pill container and remove button |
+| `<el-autocomplete>` | `part="wrapper"`, `part="input"`, `part="listbox"`, `part="option"`, `part="clear-button"`, `part="spinner"` | Combobox input, floating listbox, options, clear button, and spinner |
 
 ---
 

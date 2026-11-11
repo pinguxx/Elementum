@@ -87,6 +87,7 @@ Elementum runs directly in any modern browser without Webpack, Vite, or Babel.
 | **Segmented** | `<el-segmented-control>` | Form-associated pill switcher with keyboard arrow navigation. |
 | **Pagination** | `<el-pagination>` | Accessible numeric page navigation with ellipsis windowing and `pagechange` events. |
 | **Chip / Pill** | `<el-chip>` | Interactive tag with `selectable` and `removable` dismiss modes (`role="button"`). |
+| **Autocomplete** | `<el-autocomplete>` | Form-associated combobox supporting static arrays and debounced remote URL endpoints with ARIA 1.2. |
 
 ---
 
@@ -143,7 +144,8 @@ Elementum/
 │       ├── el-drawer.js     # Accessible slide-over drawer overlay
 │       ├── el-segmented-control.js # Form-associated pill switcher
 │       ├── el-pagination.js # Accessible numeric pagination controls
-│       └── el-chip.js       # Interactive filter chips & pills
+│       ├── el-chip.js       # Interactive filter chips & pills
+│       └── el-autocomplete.js # Form-associated combobox & remote search
 ├── tools/
 │   ├── sync-tokens.js       # CLI to compile figma-tokens.json into tokens.css
 │   └── create-component.js  # CLI to scaffold new components (npm run create)

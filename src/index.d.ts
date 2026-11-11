@@ -317,6 +317,36 @@ export class ElChip extends Elementum {
   toggleSelected(): void;
 }
 
+export class ElAutocomplete extends Elementum {
+  name: Signal<string>;
+  value: Signal<string | number>;
+  displayLabel: Signal<string>;
+  placeholder: Signal<string>;
+  disabled: Signal<boolean>;
+  required: Signal<boolean>;
+  url: Signal<string>;
+  queryParam: Signal<string>;
+  debounce: Signal<number>;
+  minChars: Signal<number>;
+  labelKey: Signal<string>;
+  valueKey: Signal<string>;
+  size: Signal<'sm' | 'md' | 'lg'>;
+  data: Signal<any[]>;
+  suggestions: Signal<any[]>;
+  isOpen: Signal<boolean>;
+  isLoading: Signal<boolean>;
+  activeIndex: Signal<number>;
+  selectedItem: Signal<any>;
+  setData(items: any[]): void;
+  search(query: string): Promise<void>;
+  select(item: any): void;
+  clear(): void;
+  open(): void;
+  close(): void;
+  checkValidity(): boolean;
+  reportValidity(): boolean;
+}
+
 // ==========================================
 // SSR (Declarative Shadow DOM)
 // ==========================================
@@ -360,6 +390,7 @@ declare global {
     'el-segmented-control': ElSegmentedControl;
     'el-pagination': ElPagination;
     'el-chip': ElChip;
+    'el-autocomplete': ElAutocomplete;
   }
 
   namespace JSX {
@@ -389,6 +420,7 @@ declare global {
       'el-segmented-control': any;
       'el-pagination': any;
       'el-chip': any;
+      'el-autocomplete': any;
     }
   }
 }

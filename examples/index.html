@@ -430,6 +430,56 @@
         </div>
       </div>
     </section>
+
+    <!-- SECTION 9: Remote API & Local Autocomplete (Combobox) -->
+    <section>
+      <h2>9. Remote Free API & Local Autocomplete (Combobox)</h2>
+      <p>
+        The <code>&lt;el-autocomplete&gt;</code> element supports debounced remote endpoint queries (using the free JSONPlaceholder API), instant local array filtering, keyboard navigation, and form association.
+      </p>
+
+      <div class="card">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+          <div>
+            <h4 style="margin: 0 0 8px 0;">Live Remote API Query (JSONPlaceholder)</h4>
+            <p style="font-size: 0.8125rem; color: var(--el-text-muted, #64748b); margin: 0 0 12px 0;">
+              Queries <code>jsonplaceholder.typicode.com/users</code> with 250ms debouncing and active spinner.
+            </p>
+            <el-autocomplete
+              id="ac-remote-users"
+              url="https://jsonplaceholder.typicode.com/users?q={query}"
+              label-key="name"
+              value-key="id"
+              debounce="200"
+              placeholder="Search user name (e.g. Leanne, Ervin, Chelsey)..."
+            >
+              <span slot="prefix">👤</span>
+            </el-autocomplete>
+            <div id="remote-user-selection" style="margin-top: 10px; font-size: 0.8125rem; color: var(--el-text-muted, #64748b);">
+              Selected User: <em>None</em>
+            </div>
+          </div>
+
+          <div>
+            <h4 style="margin: 0 0 8px 0;">Local Dataset Autocomplete with Key Mapping</h4>
+            <p style="font-size: 0.8125rem; color: var(--el-text-muted, #64748b); margin: 0 0 12px 0;">
+              Instant client-side substring matching on name, IATA code, and country.
+            </p>
+            <el-autocomplete
+              id="ac-local-airports"
+              label-key="name"
+              value-key="id"
+              placeholder="Search airport (e.g. SFO, Tokyo, London)..."
+            >
+              <span slot="prefix">✈️</span>
+            </el-autocomplete>
+            <div id="local-airport-selection" style="margin-top: 10px; font-size: 0.8125rem; color: var(--el-text-muted, #64748b);">
+              Selected Airport: <em>None</em>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 
   <script type="module">
@@ -650,6 +700,48 @@
 
     // Initial load
     fetchUsers();
+
+    // 7. Autocomplete Demos setup
+    const acRemote = document.getElementById('ac-remote-users');
+    const remoteSel = document.getElementById('remote-user-selection');
+    acRemote?.addEventListener('select', (e) => {
+      const user = e.detail.item;
+      if (remoteSel) {
+        remoteSel.innerHTML = `Selected User: <strong>${user.name}</strong> (ID: ${user.id}, Email: <code>${user.email}</code>)`;
+      }
+      toast.success(`Selected user: ${user.name}`);
+    });
+    acRemote?.addEventListener('clear', () => {
+      if (remoteSel) remoteSel.innerHTML = 'Selected User: <em>None</em>';
+    });
+
+    const acAirports = document.getElementById('ac-local-airports');
+    const localSel = document.getElementById('local-airport-selection');
+    if (acAirports) {
+      acAirports.setData([
+        { id: 'SFO', name: 'San Francisco International (SFO)', meta: 'USA' },
+        { id: 'HND', name: 'Tokyo Haneda (HND)', meta: 'Japan' },
+        { id: 'JFK', name: 'John F. Kennedy International (JFK)', meta: 'USA' },
+        { id: 'LHR', name: 'London Heathrow (LHR)', meta: 'United Kingdom' },
+        { id: 'CDG', name: 'Paris Charles de Gaulle (CDG)', meta: 'France' },
+        { id: 'SIN', name: 'Singapore Changi (SIN)', meta: 'Singapore' },
+        { id: 'LAX', name: 'Los Angeles International (LAX)', meta: 'USA' },
+        { id: 'SYD', name: 'Sydney Kingsford Smith (SYD)', meta: 'Australia' },
+        { id: 'FRA', name: 'Frankfurt Airport (FRA)', meta: 'Germany' },
+        { id: 'DXB', name: 'Dubai International (DXB)', meta: 'UAE' },
+      ]);
+
+      acAirports.addEventListener('select', (e) => {
+        const item = e.detail.item;
+        if (localSel) {
+          localSel.innerHTML = `Selected Airport: <strong>${item.name}</strong> [Code: <code>${item.id}</code>, Country: ${item.meta}]`;
+        }
+        toast.info(`Selected airport: ${item.id}`);
+      });
+      acAirports.addEventListener('clear', () => {
+        if (localSel) localSel.innerHTML = 'Selected Airport: <em>None</em>';
+      });
+    }
   </script>
 </body>
 </html>

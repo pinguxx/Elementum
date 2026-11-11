@@ -239,7 +239,7 @@
   <div class="container">
     <header class="hero-header">
       <div class="badge-bar">
-        <el-badge variant="success" count="22 Web Components"></el-badge>
+        <el-badge variant="success" count="23 Web Components"></el-badge>
         <el-badge variant="default" count="Zero Build / Signals"></el-badge>
         <el-badge variant="default" count="WCAG 2.2 AA"></el-badge>
       </div>
@@ -268,6 +268,7 @@
         <div style="display:flex; align-items:center; gap:8px;">
           <el-segmented-control id="component-picker" value="el-button" size="sm">
             <option value="el-button">Button</option>
+            <option value="el-autocomplete">Autocomplete</option>
             <option value="el-chip">Chip</option>
             <option value="el-pagination">Pagination</option>
             <option value="el-progress">Progress</option>
@@ -339,7 +340,7 @@
         <span class="showcase-icon">📚</span>
         <h3 class="showcase-title">Showcase Catalog</h3>
         <p class="showcase-desc">
-          Interactive matrix demonstrating all 22 component primitives with reactive signal counters, drawers, and toasts.
+          Interactive matrix demonstrating all 23 component primitives with reactive signal counters, drawers, and toasts.
         </p>
       </a>
 
@@ -388,6 +389,15 @@
         el.addEventListener('click', () => toast.info('Button clicked!'));
         stagePreview.appendChild(el);
         snippet = `<el-button variant="${variant}" size="${size}"${disabled ? ' disabled' : ''}>Interactive Button</el-button>`;
+      } else if (tag === 'el-autocomplete') {
+        const el = document.createElement('el-autocomplete');
+        el.setAttribute('size', size);
+        el.setAttribute('placeholder', 'Search fruits (e.g. Apple, Banana)...');
+        if (disabled) el.setAttribute('disabled', '');
+        el.setData(['Apple', 'Apricot', 'Avocado', 'Banana', 'Blackberry', 'Blueberry', 'Cherry', 'Cranberry']);
+        el.addEventListener('select', (e) => toast.info(`Selected: ${e.detail.label}`));
+        stagePreview.appendChild(el);
+        snippet = `<el-autocomplete size="${size}" placeholder="Search fruits..."${disabled ? ' disabled' : ''}></el-autocomplete>`;
       } else if (tag === 'el-chip') {
         const el = document.createElement('el-chip');
         el.setAttribute('variant', variant === 'ghost' ? 'muted' : variant);

@@ -29,6 +29,7 @@ export { ElDrawer } from './components/el-drawer.js';
 export { ElSegmentedControl } from './components/el-segmented-control.js';
 export { ElPagination } from './components/el-pagination.js';
 export { ElChip } from './components/el-chip.js';
+export { ElAutocomplete } from './components/el-autocomplete.js';
 
 // Server-Side Rendering (Declarative Shadow DOM)
 export { renderTemplateToString, renderComponentToDSD } from './ssr.js';

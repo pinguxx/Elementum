@@ -165,17 +165,29 @@
           <form id="flight-form">
             <div class="form-grid">
               <div class="field">
-                <label for="f-origin">Departure City:</label>
-                <el-input id="f-origin" name="origin" placeholder="e.g. San Francisco (SFO)" value="San Francisco (SFO)">
+                <label for="f-origin">Departure Airport (Autocomplete):</label>
+                <el-autocomplete
+                  id="f-origin"
+                  name="origin"
+                  placeholder="Search departure city or code (e.g. SFO, Tokyo)..."
+                  value="San Francisco (SFO)"
+                  required
+                >
                   <span slot="prefix">🛫</span>
-                </el-input>
+                </el-autocomplete>
               </div>
 
               <div class="field">
-                <label for="f-dest">Destination City:</label>
-                <el-input id="f-dest" name="destination" placeholder="e.g. Tokyo (HND)" value="Tokyo (HND)">
+                <label for="f-dest">Destination Airport (Autocomplete):</label>
+                <el-autocomplete
+                  id="f-dest"
+                  name="destination"
+                  placeholder="Search destination city or code (e.g. HND, London)..."
+                  value="Tokyo (HND)"
+                  required
+                >
                   <span slot="prefix">🛬</span>
-                </el-input>
+                </el-autocomplete>
               </div>
 
               <div class="field">
@@ -364,12 +376,39 @@
 
     let currentBookingData = null;
 
+    // Airport Autocomplete Datasets
+    const airports = [
+      { id: 'SFO', name: 'San Francisco (SFO)', meta: 'United States' },
+      { id: 'HND', name: 'Tokyo Haneda (HND)', meta: 'Japan' },
+      { id: 'JFK', name: 'New York JFK (JFK)', meta: 'United States' },
+      { id: 'LHR', name: 'London Heathrow (LHR)', meta: 'United Kingdom' },
+      { id: 'CDG', name: 'Paris Charles de Gaulle (CDG)', meta: 'France' },
+      { id: 'SIN', name: 'Singapore Changi (SIN)', meta: 'Singapore' },
+      { id: 'LAX', name: 'Los Angeles (LAX)', meta: 'United States' },
+      { id: 'SYD', name: 'Sydney Kingsford Smith (SYD)', meta: 'Australia' },
+      { id: 'FRA', name: 'Frankfurt Airport (FRA)', meta: 'Germany' },
+      { id: 'DXB', name: 'Dubai International (DXB)', meta: 'UAE' },
+    ];
+
+    const originAc = document.getElementById('f-origin');
+    const destAc = document.getElementById('f-dest');
+    if (originAc) {
+      originAc.setData(airports);
+      originAc.displayLabel.value = 'San Francisco (SFO)';
+      originAc.value.value = 'San Francisco (SFO)';
+    }
+    if (destAc) {
+      destAc.setData(airports);
+      destAc.displayLabel.value = 'Tokyo (HND)';
+      destAc.value.value = 'Tokyo (HND)';
+    }
+
     function getFieldValue(formData, name, id, fallback = '') {
       const formVal = formData.get(name);
       if (typeof formVal === 'string' && formVal.trim().length > 0) return formVal.trim();
       const el = document.getElementById(id);
       if (el) {
-        const raw = (el.value && typeof el.value === 'object' && 'value' in el.value) ? el.value.value : el.value;
+        const raw = (el.displayLabel?.value || el.value?.value || el.value);
         if (typeof raw === 'string' && raw.trim().length > 0) return raw.trim();
         if (raw !== undefined && raw !== null && String(raw).trim().length > 0) return String(raw).trim();
       }

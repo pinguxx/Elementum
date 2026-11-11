@@ -487,6 +487,38 @@
           ]
         }
       ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-autocomplete.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElAutocomplete",
+          "tagName": "el-autocomplete",
+          "description": "Form-associated combobox component supporting static data arrays, remote URL queries with debouncing, flexible key mapping, and ARIA 1.2 accessibility.",
+          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "attributes": [
+            { "name": "name", "type": { "text": "string" } },
+            { "name": "value", "type": { "text": "string" } },
+            { "name": "placeholder", "type": { "text": "string" }, "default": "'Search or type...'" },
+            { "name": "disabled", "type": { "text": "boolean" }, "default": "false" },
+            { "name": "required", "type": { "text": "boolean" }, "default": "false" },
+            { "name": "url", "type": { "text": "string" } },
+            { "name": "query-param", "type": { "text": "string" }, "default": "'q'" },
+            { "name": "debounce", "type": { "text": "number" }, "default": "250" },
+            { "name": "min-chars", "type": { "text": "number" }, "default": "1" },
+            { "name": "label-key", "type": { "text": "string" }, "default": "'label'" },
+            { "name": "value-key", "type": { "text": "string" }, "default": "'value'" },
+            { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'" }
+          ],
+          "events": [
+            { "name": "select", "description": "Fired when an option is selected: detail: { item, value, label }" },
+            { "name": "change", "description": "Fired when value changes: detail: { value, label }" },
+            { "name": "clear", "description": "Fired when input is cleared" }
+          ]
+        }
+      ]
     }
   ]
 }
