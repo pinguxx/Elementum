@@ -3,598 +3,869 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Skyline Travel - @wc/elementum Application Showcase</title>
+  <title>Pulse Cloud - @wc/elementum SPA Showcase</title>
   <link rel="stylesheet" href="../src/tokens.css" />
   <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: var(--el-surface-muted, #f8fafc);
-      color: var(--el-text-base, #0f172a);
-      transition: background-color 0.2s ease, color 0.2s ease;
-      min-height: 100vh;
+    *, *::before, *::after {
+      box-sizing: border-box;
     }
 
-    header {
-      background: var(--el-surface-base, #ffffff);
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: var(--el-font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+      padding: 0 0 60px 0;
+      background-color: var(--el-surface-muted, #f8fafc);
+      color: var(--el-text-primary, #0f172a);
+      transition: background-color 0.2s ease, color 0.2s ease;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    /* Main Container */
+    .app-viewport {
+      max-width: 1200px;
+      margin: 28px auto;
+      padding: 0 20px;
+    }
+
+    /* Subpage Header Banner */
+    .subpage-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
       border-bottom: 1px solid var(--el-surface-border, #e2e8f0);
-      padding: 16px 32px;
+    }
+
+    :root[data-theme="dark"] .subpage-banner {
+      border-bottom-color: #334155;
+    }
+
+    .subpage-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin: 0 0 4px 0;
+      letter-spacing: -0.025em;
+    }
+
+    .subpage-desc {
+      font-size: 0.95rem;
+      color: var(--el-text-muted, #64748b);
+      margin: 0;
+    }
+
+    /* KPI Cards Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--el-surface-card, #ffffff);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      border-radius: var(--el-radius-lg, 12px);
+      padding: 20px;
+      box-shadow: var(--el-shadow-subtle, 0 1px 2px rgba(0, 0, 0, 0.05));
+    }
+
+    :root[data-theme="dark"] .kpi-card {
+      background: #111827;
+      border-color: #334155;
+    }
+
+    .kpi-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--el-text-muted, #64748b);
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .kpi-value {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--el-text-primary, #0f172a);
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    :root[data-theme="dark"] .kpi-value {
+      color: #f8fafc;
+    }
+
+    /* Hero Layout for Overview */
+    .hero-container {
+      background: var(--el-surface-card, #ffffff);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      border-radius: var(--el-radius-lg, 16px);
+      padding: 48px 36px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 32px;
+      box-shadow: var(--el-shadow-card, 0 4px 6px -1px rgba(0,0,0,0.05));
+    }
+
+    :root[data-theme="dark"] .hero-container {
+      background: #111827;
+      border-color: #334155;
+    }
+
+    .hero-title {
+      font-size: 2.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 16px 0;
+      line-height: 1.15;
+    }
+
+    .hero-lead {
+      font-size: 1.15rem;
+      color: var(--el-text-muted, #64748b);
+      max-width: 680px;
+      margin: 0 auto 28px auto;
+      line-height: 1.6;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    /* 3-Column Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 36px;
+    }
+
+    /* Dashboard Layout with Sidebar */
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .sidebar-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      height: 38px;
+      padding: 0 12px;
+      border-radius: var(--el-radius-md, 8px);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--el-text-secondary, #475569);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+      white-space: nowrap;
+      text-align: left;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    .sidebar-nav-item:hover {
+      background: var(--el-surface-muted, #f1f5f9);
+      color: var(--el-text-primary, #0f172a);
+    }
+
+    .sidebar-nav-item.active {
+      background: var(--el-surface-muted, #f1f5f9);
+      color: var(--el-color-primary, #2563eb);
+      font-weight: 600;
+    }
+
+    :root[data-theme="dark"] .sidebar-nav-item {
+      color: #94a3b8;
+    }
+
+    :root[data-theme="dark"] .sidebar-nav-item:hover,
+    :root[data-theme="dark"] .sidebar-nav-item.active {
+      background: #1e293b;
+      color: #60a5fa;
+    }
+
+    .sidebar-nav-item .item-icon {
+      flex-shrink: 0;
+      width: 20px;
+      font-size: 1.1rem;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Collapsed Sidebar Clean Layout */
+    el-sidebar[collapsed] {
+      width: 56px !important;
+      min-width: 56px !important;
+      max-width: 56px !important;
+    }
+
+    el-sidebar[collapsed] .collapsible-text {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      width: 0 !important;
+      height: 0 !important;
+      overflow: hidden !important;
+    }
+
+    el-sidebar[collapsed] .sidebar-header-row,
+    el-sidebar[collapsed] el-sidebar-header > div {
+      justify-content: center !important;
+      width: 100% !important;
+      padding: 0 !important;
+    }
+
+    el-sidebar[collapsed] .sidebar-nav-item {
+      width: 38px !important;
+      min-width: 38px !important;
+      max-width: 38px !important;
+      height: 38px !important;
+      padding: 0 !important;
+      margin: 0 auto 6px auto !important;
+      justify-content: center !important;
+      border-radius: var(--el-radius-md, 8px) !important;
+    }
+
+    el-sidebar[collapsed] .sidebar-nav-item:hover {
+      transform: scale(1.08);
+    }
+
+    el-sidebar[collapsed] el-sidebar-content {
+      padding: 8px 0 !important;
+      align-items: center !important;
+      overflow-y: hidden !important;
+    }
+
+    el-sidebar[collapsed] el-sidebar-footer {
+      padding: 10px 0 !important;
+      justify-content: center !important;
+    }
+
+    @media (max-width: 860px) {
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .dash-main {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      min-width: 0;
+    }
+
+    .card-panel {
+      background: var(--el-surface-card, #ffffff);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      border-radius: var(--el-radius-lg, 12px);
+      padding: 24px;
+      box-shadow: var(--el-shadow-subtle, 0 1px 2px rgba(0, 0, 0, 0.05));
+    }
+
+    :root[data-theme="dark"] .card-panel {
+      background: #111827;
+      border-color: #334155;
+    }
+
+    .card-panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 0 0 16px 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    .brand {
+    /* Pricing Section */
+    .pricing-summary-card {
+      margin-top: 28px;
+      padding: 24px;
+      background: var(--el-surface-muted, #f8fafc);
+      border: 2px dashed var(--el-surface-border, #cbd5e1);
+      border-radius: var(--el-radius-lg, 12px);
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--el-text-base, #1e293b);
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
     }
 
-    .brand-icon {
-      font-size: 1.5rem;
+    :root[data-theme="dark"] .pricing-summary-card {
+      background: #1e293b;
+      border-color: #475569;
     }
 
-    main {
-      max-width: 960px;
-      margin: 40px auto;
-      padding: 0 24px;
+    .price-display {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--el-color-primary, #2563eb);
     }
-
-    .hero-card {
-      background: var(--el-surface-base, #ffffff);
-      border: 1px solid var(--el-surface-border, #e2e8f0);
-      border-radius: var(--el-radius-lg, 16px);
-      padding: 32px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    }
-
-    .hero-title {
-      margin-top: 0;
-      font-size: 1.75rem;
-      font-weight: 700;
-    }
-
-    .hero-subtitle {
-      color: var(--el-text-muted, #64748b);
-      margin-top: -8px;
-      margin-bottom: 24px;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-      margin-bottom: 24px;
-    }
-
-    @media (max-width: 640px) {
-      header {
-        padding: 12px 16px;
-      }
-      .brand span {
-        font-size: 1.05rem;
-      }
-      main {
-        margin: 16px auto;
-        padding: 0 12px;
-      }
-      .hero-card {
-        padding: 20px 16px;
-      }
-      .hero-title {
-        font-size: 1.35rem;
-      }
-      .form-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-      }
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .field label {
-      font-weight: 600;
-      font-size: 0.875rem;
-      color: var(--el-text-base, #334155);
-    }
-
-    .actions-bar {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 12px;
-      padding-top: 20px;
-      border-top: 1px solid var(--el-surface-border, #e2e8f0);
-    }
-
-    .summary-box {
-      background: var(--el-surface-muted, #f1f5f9);
-      border-radius: var(--el-radius-md, 8px);
-      padding: 16px;
-      margin-top: 12px;
-      font-size: 0.9375rem;
-      line-height: 1.5;
+    :root[data-theme="dark"] .price-display {
+      color: #60a5fa;
     }
   </style>
-  <script type="module" src="../src/index.js"></script>
 </head>
 <body>
-  <!-- Global Toaster -->
   <el-toaster></el-toaster>
 
-  <!-- Top Navbar -->
-  <header>
-    <div class="brand">
-      <span class="brand-icon">✈️</span>
-      <span>Skyline Travel</span>
-      <el-badge variant="success" count="Elementum v0.1.0"></el-badge>
-    </div>
-    <div style="display: flex; align-items: center; gap: 16px;">
-      <el-avatar name="Sophia Taylor" status="online" size="sm" alt="User Profile"></el-avatar>
-      <el-tooltip content="Toggle Light / Dark mode" placement="bottom">
-        <el-theme-switch></el-theme-switch>
-      </el-tooltip>
-      <el-tooltip content="View Elementum on GitHub" placement="bottom">
-        <el-button variant="ghost" size="sm" id="btn-github">
-          GitHub Repo ↗
-        </el-button>
-      </el-tooltip>
-    </div>
-  </header>
+  <!-- Sticky Application Top Navigation -->
+  <el-navbar sticky brand="⚡ Pulse Cloud" badge="SPA" badge-variant="primary" href="#/overview">
+    <el-route-link to="/overview" exact>Overview</el-route-link>
+    <el-route-link to="/dashboard">Workspace</el-route-link>
+    <el-route-link to="/analytics">Analytics</el-route-link>
+    <el-route-link to="/pricing">Plans &amp; Pricing</el-route-link>
+    <el-route-link to="/settings">Account &amp; API</el-route-link>
+    <a href="../index.html">Docs &amp; Catalog ↗</a>
+    <el-theme-switch slot="actions"></el-theme-switch>
+    <el-avatar slot="actions" name="Alex Rivera" status="online" size="sm"></el-avatar>
+  </el-navbar>
 
-  <!-- Main Booking Application -->
-  <main>
-    <div class="hero-card">
-      <h1 class="hero-title">Book Your Next Journey</h1>
-      <p class="hero-subtitle">
-        Powered completely by @wc/elementum: fine-grained signals, Shadow DOM, and form-associated custom elements.
-      </p>
+  <!-- SPA Router Container -->
+  <main class="app-viewport">
+    <el-router default="/overview">
 
-      <!-- Tabs Component -->
-      <el-tabs value="flights" id="main-tabs">
-        <!-- TAB 1: FLIGHTS -->
-        <el-tab label="Flights ✈️" value="flights">
-          <form id="flight-form">
-            <div class="form-grid">
-              <div class="field">
-                <label for="f-origin">Departure Airport (Autocomplete):</label>
-                <el-autocomplete
-                  id="f-origin"
-                  name="origin"
-                  placeholder="Search departure city or code (e.g. SFO, Tokyo)..."
-                  value="San Francisco (SFO)"
-                  required
-                >
-                  <span slot="prefix">🛫</span>
-                </el-autocomplete>
+      <!-- ========================================================================= -->
+      <!-- ROUTE 1: OVERVIEW / LANDING                                               -->
+      <!-- ========================================================================= -->
+      <el-route path="/overview" exact>
+        <div class="hero-container">
+          <el-border-beam></el-border-beam>
+          <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+            <el-badge variant="default" count="100% Native Web Components"></el-badge>
+            <el-badge variant="success" count="Zero Bundler Lock-in"></el-badge>
+          </div>
+          <h1 class="hero-title">The Next-Generation SaaS Platform<br>Built Purely with Web Components</h1>
+          <p class="hero-lead">
+            Pulse Cloud is a full Single-Page Application running entirely on <strong>@wc/elementum</strong>.
+            Fine-grained signals, zero-dependency W3C custom elements, and Radix-inspired accessible primitives.
+          </p>
+          <div class="hero-actions">
+            <el-button variant="primary" size="lg" onclick="location.hash = '#/dashboard'">
+              Launch Workspace
+            </el-button>
+            <el-button variant="outline" size="lg" onclick="location.hash = '#/pricing'">
+              View Pricing Cards
+            </el-button>
+          </div>
+        </div>
+
+        <el-callout variant="info" style="margin-bottom: 28px;">
+          <span slot="title">Client-Side Declarative Router</span>
+          This entire application operates via &lt;el-router&gt;, &lt;el-route&gt;, and &lt;el-route-link&gt;.
+          Browser back/forward history and instant view transitions occur without page reloads or virtual DOM diffs.
+        </el-callout>
+
+        <div class="features-grid">
+          <el-card>
+            <el-card-header>
+              <el-card-title>⚡ Fine-Grained Signals</el-card-title>
+              <el-card-description>Direct DOM mutations via micro-signals</el-card-description>
+            </el-card-header>
+            <el-card-content>
+              Every reactive property automatically recalculates dependencies in microsecond time, skipping full-tree virtual DOM reconciliation.
+            </el-card-content>
+          </el-card>
+
+          <el-card>
+            <el-card-header>
+              <el-card-title>🎯 Radix-Inspired Ergonomics</el-card-title>
+              <el-card-description>Accessible keyboard & collision detection</el-card-description>
+            </el-card-header>
+            <el-card-content>
+              Features &lt;el-data-list&gt;, &lt;el-radio-card&gt;, &lt;el-callout&gt;, and &lt;el-navigation-menu&gt; with full WCAG 2.2 AA conformance.
+            </el-card-content>
+          </el-card>
+
+          <el-card>
+            <el-card-header>
+              <el-card-title>🎨 12-Step Radix Color Tokens</el-card-title>
+              <el-card-description>1:1 Penpot & Figma synchronization</el-card-description>
+            </el-card-header>
+            <el-card-content>
+              High-contrast lightness steps guaranteed mathematically across dark and light themes, completely eliminating contrast drift.
+            </el-card-content>
+          </el-card>
+        </div>
+      </el-route>
+
+      <!-- ========================================================================= -->
+      <!-- ROUTE 2: DASHBOARD / WORKSPACE                                            -->
+      <!-- ========================================================================= -->
+      <el-route path="/dashboard">
+        <div class="subpage-banner">
+          <div>
+            <h2 class="subpage-title">Workspace Dashboard</h2>
+            <p class="subpage-desc">Real-time infrastructure telemetry, edge functions, and deployment pipelines.</p>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <el-button variant="outline" size="sm" onclick="triggerRefresh()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+              Refresh Feed
+            </el-button>
+            <el-button variant="primary" size="sm" onclick="deployService()">
+              + Deploy Service
+            </el-button>
+          </div>
+        </div>
+
+        <!-- KPI Metrics -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span>Monthly Revenue</span>
+              <el-badge variant="success" count="+14.2%"></el-badge>
+            </div>
+            <div class="kpi-value">
+              $<el-number-flow id="kpi-revenue" value="128450"></el-number-flow>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span>Active Edge Nodes</span>
+              <el-badge variant="default" count="Global"></el-badge>
+            </div>
+            <div class="kpi-value">
+              <el-number-flow id="kpi-nodes" value="48"></el-number-flow>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span>Edge Cache Hit Rate</span>
+              <span>98.4%</span>
+            </div>
+            <div style="margin-top: 12px;">
+              <el-meter value="98" max="100"></el-meter>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span>P99 API Latency</span>
+              <el-badge variant="success" count="Optimal"></el-badge>
+            </div>
+            <div class="kpi-value">
+              18<span style="font-size: 1rem; color: var(--el-text-muted);">ms</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Split Layout -->
+        <div class="dashboard-layout">
+          <!-- Mini Collapsible Sidebar -->
+          <el-sidebar id="app-dash-sidebar" style="height: 480px;">
+            <el-sidebar-header style="padding: 10px 12px;">
+              <div class="sidebar-header-row">
+                <span class="collapsible-text" style="font-weight: 700; font-size: 0.95rem; white-space: nowrap;">Edge Regions</span>
+                <el-sidebar-trigger for="app-dash-sidebar" title="Toggle Sidebar"></el-sidebar-trigger>
               </div>
+            </el-sidebar-header>
+            <el-sidebar-content style="padding: 10px 8px;">
+              <button class="sidebar-nav-item active" title="Global (Anycast)">
+                <span class="item-icon">🌎</span>
+                <span class="collapsible-text">Global (Anycast)</span>
+              </button>
+              <button class="sidebar-nav-item" title="us-east-1 (N. Virginia)">
+                <span class="item-icon">🇺🇸</span>
+                <span class="collapsible-text">us-east-1 (N. Virginia)</span>
+              </button>
+              <button class="sidebar-nav-item" title="us-west-2 (Oregon)">
+                <span class="item-icon">🇺🇸</span>
+                <span class="collapsible-text">us-west-2 (Oregon)</span>
+              </button>
+              <button class="sidebar-nav-item" title="eu-west-1 (Dublin)">
+                <span class="item-icon">🇪🇺</span>
+                <span class="collapsible-text">eu-west-1 (Dublin)</span>
+              </button>
+              <button class="sidebar-nav-item" title="ap-northeast-1 (Tokyo)">
+                <span class="item-icon">🇯🇵</span>
+                <span class="collapsible-text">ap-northeast-1 (Tokyo)</span>
+              </button>
+            </el-sidebar-content>
+            <el-sidebar-footer style="padding: 12px; justify-content: center;">
+              <span style="font-size: 0.85rem;" title="5 / 5 Clusters Healthy">🟢</span>
+              <span class="collapsible-text" style="font-size: 0.75rem; color: var(--el-text-muted); margin-left: 6px; white-space: nowrap;">5 / 5 Clusters Healthy</span>
+            </el-sidebar-footer>
+          </el-sidebar>
 
-              <div class="field">
-                <label for="f-dest">Destination Airport (Autocomplete):</label>
-                <el-autocomplete
-                  id="f-dest"
-                  name="destination"
-                  placeholder="Search destination city or code (e.g. HND, London)..."
-                  value="Tokyo (HND)"
-                  required
-                >
-                  <span slot="prefix">🛬</span>
-                </el-autocomplete>
+          <!-- Main Table and Activity -->
+          <div class="dash-main">
+            <div class="card-panel">
+              <div class="card-panel-title">
+                <span>Active Microservices</span>
+                <el-badge variant="default" count="Production"></el-badge>
               </div>
+              <el-table id="services-table" selectable></el-table>
+            </div>
 
-              <div class="field">
-                <label for="f-date">Departure Date:</label>
-                <el-datepicker id="f-date" name="date" placeholder="Select date..."></el-datepicker>
+            <div class="card-panel">
+              <div class="card-panel-title">
+                <span>Deployment Activity Log</span>
+                <span style="font-size: 0.85rem; color: var(--el-text-muted);">Real-Time Feed</span>
               </div>
+              <el-timeline>
+                <el-timeline-item status="completed" title="Edge Worker v2.4.1 Deployed" date="Just now">
+                  Automatic rollout succeeded across 48 POPs with 0 dropped sockets.
+                </el-timeline-item>
+                <el-timeline-item status="completed" title="PostgreSQL Schema Migration" date="14 mins ago">
+                  Table partitions updated with 0ms downtime lock acquisition.
+                </el-timeline-item>
+                <el-timeline-item status="active" title="Canary Traffic Shift" date="35 mins ago">
+                  Currently routing 15% of European ingress traffic to Dublin cluster.
+                </el-timeline-item>
+              </el-timeline>
+            </div>
+          </div>
+        </div>
+      </el-route>
 
-              <div class="field">
-                <label for="f-class">Cabin Class:</label>
-                <el-select id="f-class" name="cabin" value="economy">
-                  <option value="economy">Economy Class</option>
-                  <option value="premium">Premium Economy</option>
-                  <option value="business">Business Class</option>
-                  <option value="first">First Class</option>
-                </el-select>
+      <!-- ========================================================================= -->
+      <!-- ROUTE 3: ANALYTICS & METRICS                                              -->
+      <!-- ========================================================================= -->
+      <el-route path="/analytics">
+        <div class="subpage-banner">
+          <div>
+            <h2 class="subpage-title">Telemetry & System Metrics</h2>
+            <p class="subpage-desc">High-resolution performance profiles, API throughput, and error rates.</p>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <el-segmented-control id="analytics-timeframe" value="30d">
+              <span value="24h">24h</span>
+              <span value="7d">7d</span>
+              <span value="30d">30d</span>
+              <span value="1y">1y</span>
+            </el-segmented-control>
+            <el-datepicker value="2026-11-15"></el-datepicker>
+          </div>
+        </div>
+
+        <div class="card-panel" style="margin-bottom: 24px;">
+          <div class="card-panel-title" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span>Throughput & Traffic Volume (Req/sec)</span>
+              <el-badge variant="success" count="+28.4% Peak"></el-badge>
+            </div>
+            <div style="display: flex; align-items: center; gap: 14px; font-size: 0.85rem; color: var(--el-text-muted); flex-wrap: wrap;">
+              <span style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--el-color-primary, #2563eb); display: inline-block;"></span>
+                <span>Current: <strong style="color: var(--el-text-primary, #0f172a);">5,450 req/s</strong></span>
+              </span>
+              <span style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
+                <span>Baseline: <strong style="color: var(--el-text-primary, #0f172a);">4,200 req/s</strong></span>
+              </span>
+              <span style="padding: 2px 8px; background: var(--el-surface-muted, #f1f5f9); border-radius: 4px; font-size: 0.75rem;">Avg: 3,410</span>
+              <span style="padding: 2px 8px; background: var(--el-surface-muted, #f1f5f9); border-radius: 4px; font-size: 0.75rem;">P99: 14.2ms</span>
+            </div>
+          </div>
+          <el-chart
+            type="area"
+            curve="smooth"
+            secondary-key="previous"
+            data='[
+              {"label":"00:00","value":1450,"previous":1200},
+              {"label":"02:00","value":1120,"previous":1050},
+              {"label":"04:00","value":890,"previous":950},
+              {"label":"06:00","value":1850,"previous":1400},
+              {"label":"08:00","value":3620,"previous":2900},
+              {"label":"10:00","value":4890,"previous":3800},
+              {"label":"12:00","value":5721,"previous":4450},
+              {"label":"14:00","value":5340,"previous":4600},
+              {"label":"16:00","value":4920,"previous":4300},
+              {"label":"18:00","value":4150,"previous":3700},
+              {"label":"20:00","value":3200,"previous":2800},
+              {"label":"22:00","value":2150,"previous":1950}
+            ]'
+            style="height: 240px; margin-top: 12px;"
+          ></el-chart>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+          <div class="card-panel">
+            <div class="card-panel-title">Compute Cluster CPU Load</div>
+            <div style="margin: 16px 0;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem;">
+                <span>CPU Core Allocation</span>
+                <span style="font-weight: 600;">42%</span>
               </div>
+              <el-progress value="42"></el-progress>
             </div>
-
-            <!-- Layover Hubs (Multiselect with inline chips) -->
-            <div style="margin-bottom: 20px;">
-              <label for="f-stopovers" style="font-weight: 600; font-size: 0.875rem; color: var(--el-text-base, #334155); margin-bottom: 8px; display: block;">
-                Preferred Layover Hubs & Connecting Cities (Multiselect with Chips):
-              </label>
-              <el-autocomplete
-                id="f-stopovers"
-                name="stopovers"
-                multiple
-                placeholder="Add preferred transfer airports (e.g. Singapore, Dubai, London)..."
-              >
-                <span slot="prefix">🔄</span>
-              </el-autocomplete>
-            </div>
-
-            <!-- Preferences with el-switch and el-tooltip -->
-            <div style="margin-bottom: 24px; padding-top: 8px; border-top: 1px dashed var(--el-surface-border, #e2e8f0);">
-              <label style="font-weight: 600; font-size: 0.875rem; color: var(--el-text-base, #334155); margin-bottom: 12px; display: block;">
-                Flight Preferences & Options:
-              </label>
-              <div style="display: flex; gap: 24px; flex-wrap: wrap;">
-                <el-tooltip content="Show only non-stop flights" placement="top">
-                  <el-switch id="f-direct" name="direct">Direct flights only</el-switch>
-                </el-tooltip>
-                <el-tooltip content="100% refund up to 24h before departure" placement="top">
-                  <el-switch id="f-insurance" name="insurance" checked>Travel Protection (+$35)</el-switch>
-                </el-tooltip>
-                <el-tooltip content="Fund certified carbon offset initiatives" placement="top">
-                  <el-switch id="f-carbon" name="carbon">Carbon Neutral (+$12)</el-switch>
-                </el-tooltip>
+            <div style="margin: 16px 0;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem;">
+                <span>RAM Allocation (64 GB)</span>
+                <span style="font-weight: 600;">68%</span>
               </div>
-            </div>
-
-            <div class="actions-bar">
-              <el-button type="reset" variant="secondary">Reset Form</el-button>
-              <el-button type="submit" variant="primary">
-                <span slot="prefix">🔍</span> Search & Review Booking
-              </el-button>
-            </div>
-          </form>
-        </el-tab>
-
-        <!-- TAB 2: HOTELS -->
-        <el-tab label="Hotels 🏨" value="hotels">
-          <div class="form-grid">
-            <div class="field">
-              <label>Destination City:</label>
-              <el-input placeholder="Where are you staying?">
-                <span slot="prefix">📍</span>
-              </el-input>
-            </div>
-
-            <div class="field">
-              <label>Check-in Date:</label>
-              <el-datepicker placeholder="Check-in"></el-datepicker>
-            </div>
-
-            <div class="field">
-              <label>Room Type:</label>
-              <el-select>
-                <option value="single">Standard Single</option>
-                <option value="double">Deluxe Double</option>
-                <option value="suite">Executive Suite</option>
-              </el-select>
-            </div>
-          </div>
-          <div class="actions-bar">
-            <el-button variant="primary" id="btn-hotels">Search Hotels</el-button>
-          </div>
-        </el-tab>
-
-        <!-- TAB 3: CARS -->
-        <el-tab label="Rental Cars 🚗" value="cars">
-          <div class="form-grid">
-            <div class="field">
-              <label>Pick-up Airport:</label>
-              <el-input placeholder="Airport code or city">
-                <span slot="prefix">🚗</span>
-              </el-input>
-            </div>
-
-            <div class="field">
-              <label>Vehicle Class:</label>
-              <el-select>
-                <option value="compact">Compact / Sedan</option>
-                <option value="suv">SUV</option>
-                <option value="luxury">Luxury EV</option>
-              </el-select>
-            </div>
-          </div>
-          <div class="actions-bar">
-            <el-button variant="primary" id="btn-cars">Search Cars</el-button>
-          </div>
-        </el-tab>
-
-        <!-- TAB 4: MY TRIPS -->
-        <el-tab label="My Bookings 📋" value="trips">
-          <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-            <span style="font-size: 0.9375rem; color: var(--el-text-muted, #64748b);">
-              Sort columns, filter with chips, or select bookings to manage:
-            </span>
-            <div style="display: flex; gap: 8px;">
-              <el-button size="sm" variant="secondary" id="btn-cancel-trip">Cancel Selected</el-button>
-              <el-button size="sm" variant="primary" id="btn-download-trip">Download Itinerary</el-button>
+              <el-progress value="68"></el-progress>
             </div>
           </div>
 
-          <!-- Interactive Filter Chips -->
-          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 14px; flex-wrap: wrap;">
-            <span style="font-size: 0.8125rem; font-weight: 600; color: var(--el-text-muted, #64748b);">Filter Status:</span>
-            <el-chip id="chip-all" variant="primary" size="sm" selectable selected value="all">All Bookings</el-chip>
-            <el-chip id="chip-confirmed" variant="success" size="sm" selectable value="Confirmed">Confirmed</el-chip>
-            <el-chip id="chip-scheduled" variant="warning" size="sm" selectable value="Scheduled">Scheduled</el-chip>
+          <div class="card-panel">
+            <div class="card-panel-title">Latency Breakdown (ms)</div>
+            <el-chart
+              type="bar"
+              data='[{"label":"DNS","value":4},{"label":"TCP Handshake","value":9},{"label":"TLS","value":11},{"label":"TTFB","value":18}]'
+              style="height: 180px;"
+            ></el-chart>
+          </div>
+        </div>
+      </el-route>
+
+      <!-- ========================================================================= -->
+      <!-- ROUTE 4: PRICING & SUBSCRIPTIONS                                          -->
+      <!-- ========================================================================= -->
+      <el-route path="/pricing">
+        <div class="subpage-banner">
+          <div>
+            <h2 class="subpage-title">Plans & Infrastructure Capacity</h2>
+            <p class="subpage-desc">Select your workspace tier. Interactive calculation driven by fine-grained micro-signals.</p>
+          </div>
+          <el-segmented-control id="billing-cycle" value="monthly">
+            <span value="monthly">Monthly Billing</span>
+            <span value="annual">Annual Billing (-20%)</span>
+          </el-segmented-control>
+        </div>
+
+        <!-- Radix-inspired Radio Cards Group -->
+        <el-radio-card-group id="plan-selector" name="plan" value="pro" columns="3">
+          <el-radio-card value="starter">
+            <span slot="title">Starter Tier</span>
+            <span slot="description">Perfect for prototypes, side-projects, and solo builders.</span>
+            <div style="margin-top: 14px; font-size: 1.5rem; font-weight: 800;">
+              $0 <span style="font-size: 0.85rem; font-weight: 400; color: var(--el-text-muted);">/ month</span>
+            </div>
+          </el-radio-card>
+
+          <el-radio-card value="pro">
+            <span slot="title">Pro Team ⭐</span>
+            <span slot="description">For production workloads, automated CI/CD, and team collaboration.</span>
+            <div style="margin-top: 14px; font-size: 1.5rem; font-weight: 800; color: var(--el-color-primary, #2563eb);">
+              $<span id="pro-price">29</span> <span style="font-size: 0.85rem; font-weight: 400; color: var(--el-text-muted);">/ month</span>
+            </div>
+          </el-radio-card>
+
+          <el-radio-card value="enterprise">
+            <span slot="title">Enterprise Mesh</span>
+            <span slot="description">Dedicated VPC clusters, 99.99% SLA, and custom audit vaults.</span>
+            <div style="margin-top: 14px; font-size: 1.5rem; font-weight: 800;">
+              $<span id="ent-price">99</span> <span style="font-size: 0.85rem; font-weight: 400; color: var(--el-text-muted);">/ month</span>
+            </div>
+          </el-radio-card>
+        </el-radio-card-group>
+
+        <!-- Optional Add-ons with Checkbox Cards -->
+        <h3 style="margin: 32px 0 16px 0; font-size: 1.15rem; font-weight: 700;">Infrastructure Add-Ons</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+          <el-checkbox-card id="addon-telemetry" value="15">
+            <span slot="title">Live OpenTelemetry Ingestion</span>
+            <span slot="description">Continuous metric streaming to Datadog / Honeycomb (+$15/mo).</span>
+          </el-checkbox-card>
+
+          <el-checkbox-card id="addon-sandbox" value="35">
+            <span slot="title">Dedicated Node Sandbox</span>
+            <span slot="description">Isolated hardware microVM instances per tenant (+$35/mo).</span>
+          </el-checkbox-card>
+        </div>
+
+        <!-- Dynamic Reactive Total Summary -->
+        <div class="pricing-summary-card">
+          <div>
+            <div style="font-size: 0.9rem; color: var(--el-text-muted);">Calculated Monthly Investment</div>
+            <div class="price-display">$<span id="calculated-total">29</span> <span style="font-size: 1rem; color: var(--el-text-muted); font-weight: 400;">/ mo</span></div>
+          </div>
+          <el-button variant="primary" size="lg" onclick="confirmSubscription()">
+            Confirm Workspace Upgrade
+          </el-button>
+        </div>
+      </el-route>
+
+      <!-- ========================================================================= -->
+      <!-- ROUTE 5: SETTINGS & CREDENTIALS                                           -->
+      <!-- ========================================================================= -->
+      <el-route path="/settings">
+        <div class="subpage-banner">
+          <div>
+            <h2 class="subpage-title">Account & API Credentials</h2>
+            <p class="subpage-desc">Inspect security keys, organization endpoints, and configure notification webhooks.</p>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px;">
+          <!-- Radix Data List Card -->
+          <div class="card-panel">
+            <div class="card-panel-title">API Authentication Tokens</div>
+            <el-callout variant="success" size="sm" style="margin-bottom: 16px;">
+              Production keys are encrypted with AES-256 and rotated quarterly.
+            </el-callout>
+
+            <el-data-list orientation="horizontal">
+              <el-data-list-item label="Live Secret Key" value="sk_live_9941a87c12f0e9b2184d" copyable></el-data-list-item>
+              <el-data-list-item label="Public Client Key" value="pk_live_0083cb84a91f" copyable></el-data-list-item>
+              <el-data-list-item label="Webhook Secret" value="whsec_88fa12b9c704e" copyable></el-data-list-item>
+              <el-data-list-item label="Organization ID" value="org_elementum_prod_us"></el-data-list-item>
+              <el-data-list-item label="Primary Region" value="us-central1 (Iowa)"></el-data-list-item>
+            </el-data-list>
           </div>
 
-          <el-table id="trips-table" selectable></el-table>
+          <!-- Profile Form -->
+          <div class="card-panel">
+            <div class="card-panel-title">Notification Preferences</div>
+            <el-form id="settings-form">
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <el-field label="Administrator Email" hint="Security breach alerts will be delivered here">
+                  <el-input type="email" value="security@pulsecloud.internal"></el-input>
+                </el-field>
 
-          <!-- Accessible Pagination Controls -->
-          <div style="margin-top: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-            <span id="trips-page-info" style="font-size: 0.8125rem; color: var(--el-text-muted, #64748b);">Showing page 1</span>
-            <el-pagination id="trips-pagination" page="1" total="5" page-size="2"></el-pagination>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 8px;">
+                  <div>
+                    <div style="font-weight: 600; font-size: 0.9rem;">Automated Zero-Downtime Rollbacks</div>
+                    <div style="font-size: 0.8rem; color: var(--el-text-muted);">Revert immediately if P99 latency exceeds 150ms</div>
+                  </div>
+                  <el-switch checked></el-switch>
+                </div>
+
+                <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 8px;">
+                  <div>
+                    <div style="font-weight: 600; font-size: 0.9rem;">Daily Metrics Digest</div>
+                    <div style="font-size: 0.8rem; color: var(--el-text-muted);">Receive summary Slack webhook every morning at 08:00 UTC</div>
+                  </div>
+                  <el-switch checked></el-switch>
+                </div>
+
+                <div style="margin-top: 12px;">
+                  <el-button variant="primary" onclick="saveSettings()">Save Preferences</el-button>
+                </div>
+              </div>
+            </el-form>
           </div>
-        </el-tab>
-      </el-tabs>
-    </div>
+        </div>
+      </el-route>
 
-    <!-- Frequently Asked Questions with el-accordion -->
-    <div style="margin-top: 32px;">
-      <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 16px;">Travel FAQs & Guidelines</h2>
-      <el-accordion>
-        <el-accordion-item title="Can I cancel or change my flight without penalty?">
-          Bookings with Travel Protection enabled may be cancelled up to 24 hours prior to scheduled departure for a 100% refund. Standard bookings receive future flight credits without change fees.
-        </el-accordion-item>
-        <el-accordion-item title="What are the standard baggage allowances?">
-          Economy passengers are permitted one personal item and one carry-on bag (up to 10kg). Premium Economy and Business Class include two complimentary checked bags up to 23kg each.
-        </el-accordion-item>
-        <el-accordion-item title="How does @wc/elementum power this app?">
-          All UI widgets in this view (tabs, dates, popovers, accordions, switches, and tables) run on native Custom Elements and micro-signals with zero framework build dependencies.
-        </el-accordion-item>
-      </el-accordion>
-    </div>
+    </el-router>
   </main>
 
-  <!-- Confirmation Modal Dialog -->
-  <el-dialog id="confirm-modal" title="Confirm Your Reservation">
-    <div id="modal-content">
-      <div style="margin-bottom: 16px;">
-        <span style="font-size: 0.8125rem; font-weight: 600; color: var(--el-text-muted, #64748b);">Booking Step 2 of 2: Final Confirmation</span>
-        <el-progress value="100" max="100" variant="success" size="sm" style="margin-top: 6px;"></el-progress>
-      </div>
-      <p>Please review your flight booking details before confirming:</p>
-      <div class="summary-box" id="booking-summary">
-        <!-- Injected dynamically -->
-      </div>
-    </div>
-    <div slot="footer">
-      <el-button variant="secondary" id="modal-cancel">Cancel</el-button>
-      <el-button variant="primary" id="modal-confirm">Confirm Booking</el-button>
-    </div>
-  </el-dialog>
-
   <script type="module">
-    import { toast } from '../src/index.js';
+    import { toast, signal, effect, navigate, currentRoute } from '../src/index.js';
 
-    // Hook up external link and mock action buttons
-    document.getElementById('btn-github')?.addEventListener('click', () => {
-      window.open('https://github.com/pinguxx/Elementum', '_blank');
-    });
+    window.navigate = navigate;
+    window.currentRoute = currentRoute;
 
-    document.getElementById('btn-hotels')?.addEventListener('click', () => {
-      toast.info('Hotel search coming soon!');
-    });
-
-    document.getElementById('btn-cars')?.addEventListener('click', () => {
-      toast.info('Rental car search coming soon!');
-    });
-
-    const flightForm = document.getElementById('flight-form');
-    const confirmModal = document.getElementById('confirm-modal');
-    const bookingSummary = document.getElementById('booking-summary');
-    const modalCancel = document.getElementById('modal-cancel');
-    const modalConfirm = document.getElementById('modal-confirm');
-
-    let currentBookingData = null;
-
-    // Airport Autocomplete Datasets
-    const airports = [
-      { id: 'SFO', name: 'San Francisco (SFO)', meta: 'United States' },
-      { id: 'HND', name: 'Tokyo Haneda (HND)', meta: 'Japan' },
-      { id: 'JFK', name: 'New York JFK (JFK)', meta: 'United States' },
-      { id: 'LHR', name: 'London Heathrow (LHR)', meta: 'United Kingdom' },
-      { id: 'CDG', name: 'Paris Charles de Gaulle (CDG)', meta: 'France' },
-      { id: 'SIN', name: 'Singapore Changi (SIN)', meta: 'Singapore' },
-      { id: 'LAX', name: 'Los Angeles (LAX)', meta: 'United States' },
-      { id: 'SYD', name: 'Sydney Kingsford Smith (SYD)', meta: 'Australia' },
-      { id: 'FRA', name: 'Frankfurt Airport (FRA)', meta: 'Germany' },
-      { id: 'DXB', name: 'Dubai International (DXB)', meta: 'UAE' },
-    ];
-
-    const originAc = document.getElementById('f-origin');
-    const destAc = document.getElementById('f-dest');
-    const stopoversAc = document.getElementById('f-stopovers');
-
-    if (originAc) {
-      originAc.setData(airports);
-      originAc.displayLabel.value = 'San Francisco (SFO)';
-      originAc.value.value = 'San Francisco (SFO)';
-    }
-    if (destAc) {
-      destAc.setData(airports);
-      destAc.displayLabel.value = 'Tokyo (HND)';
-      destAc.value.value = 'Tokyo (HND)';
-    }
-    if (stopoversAc) {
-      stopoversAc.setData(airports);
-    }
-
-    function getFieldValue(formData, name, id, fallback = '') {
-      const formVal = formData.get(name);
-      if (typeof formVal === 'string' && formVal.trim().length > 0) return formVal.trim();
-      const el = document.getElementById(id);
-      if (el) {
-        const raw = (el.displayLabel?.value || el.value?.value || el.value);
-        if (typeof raw === 'string' && raw.trim().length > 0) return raw.trim();
-        if (raw !== undefined && raw !== null && String(raw).trim().length > 0) return String(raw).trim();
-      }
-      return fallback;
-    }
-
-    // Native <form> submission capturing Form-Associated Custom Elements!
-    flightForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-
-      const formData = new FormData(flightForm);
-      const origin = getFieldValue(formData, 'origin', 'f-origin', 'San Francisco (SFO)');
-      const destination = getFieldValue(formData, 'destination', 'f-dest', 'Tokyo (HND)');
-      const date = getFieldValue(formData, 'date', 'f-date', '');
-      const cabin = getFieldValue(formData, 'cabin', 'f-class', 'economy');
-
-      if (!date) {
-        toast.error('Please pick a departure date before continuing!');
-        return;
-      }
-
-      const stopovers = stopoversAc?.selectedItems?.value?.map(it => stopoversAc.getItemLabel(it)) || [];
-      currentBookingData = { origin, destination, date, cabin, stopovers };
-
-      bookingSummary.innerHTML = `
-        <strong>Route:</strong> ${origin} ➔ ${destination}<br/>
-        ${stopovers.length > 0 ? `<strong>Layovers:</strong> ${stopovers.join(', ')}<br/>` : ''}
-        <strong>Date:</strong> ${date}<br/>
-        <strong>Cabin:</strong> ${String(cabin).toUpperCase()}
-      `;
-
-      confirmModal.showModal();
-    });
-
-    modalCancel.addEventListener('click', () => {
-      confirmModal.close();
-      toast.info('Booking cancelled.');
-    });
-
-    // Setup Trips Data Table & Pagination
-    const tripsTable = document.getElementById('trips-table');
-    const tripsPagination = document.getElementById('trips-pagination');
-    const tripsPageInfo = document.getElementById('trips-page-info');
-
-    let allTrips = [
-      { flight: 'SK-204', route: 'SFO ➔ HND', date: '2026-12-18', class: 'Business', price: '$1,850', status: 'Confirmed' },
-      { flight: 'SK-811', route: 'JFK ➔ LHR', date: '2026-11-28', class: 'Economy', price: '$640', status: 'Confirmed' },
-      { flight: 'SK-309', route: 'SEA ➔ CDG', date: '2027-01-15', class: 'Premium', price: '$1,120', status: 'Scheduled' },
-      { flight: 'SK-552', route: 'LAX ➔ SYD', date: '2027-02-04', class: 'Economy', price: '$980', status: 'Confirmed' },
-      { flight: 'SK-117', route: 'ORD ➔ FRA', date: '2027-02-22', class: 'Business', price: '$2,100', status: 'Scheduled' },
-    ];
-    let activeFilter = 'all';
-
-    function getFilteredTrips() {
-      if (activeFilter === 'all') return allTrips;
-      return allTrips.filter(t => t.status === activeFilter);
-    }
-
-    function refreshTripsTable() {
-      if (!tripsTable || !tripsPagination) return;
-      const filtered = getFilteredTrips();
-      tripsPagination.total.value = filtered.length;
-      const pageSize = Number(tripsPagination.pageSize?.value || tripsPagination.getAttribute('page-size') || 2);
-      const currentPage = Number(tripsPagination.page?.value || tripsPagination.getAttribute('page') || 1);
-      const start = (currentPage - 1) * pageSize;
-      const pageSlice = filtered.slice(start, start + pageSize);
-
-      tripsTable.data.value = pageSlice;
-      tripsTable.selected.value = [];
-
-      if (tripsPageInfo) {
-        const total = filtered.length;
-        const from = total === 0 ? 0 : start + 1;
-        const to = Math.min(start + pageSize, total);
-        tripsPageInfo.textContent = `Showing ${from}-${to} of ${total} bookings`;
-      }
-    }
-
-    if (tripsTable) {
-      tripsTable.columns.value = [
-        { key: 'flight', label: 'Flight #', sortable: true, width: '120px' },
-        { key: 'route', label: 'Route', sortable: true },
-        { key: 'date', label: 'Date', sortable: true, width: '130px' },
-        { key: 'class', label: 'Class', sortable: true, width: '120px' },
-        { key: 'price', label: 'Price', sortable: true, width: '100px' },
-        { key: 'status', label: 'Status', width: '110px' }
+    // Populate Services Table
+    const table = document.getElementById('services-table');
+    if (table) {
+      table.columns = [
+        { key: 'name', label: 'Service Name', sortable: true },
+        { key: 'version', label: 'Tag' },
+        { key: 'status', label: 'Status' },
+        { key: 'p99', label: 'P99 Latency' }
       ];
-      refreshTripsTable();
+      table.data = [
+        { name: 'auth-gateway-svc', version: 'v3.1.2', status: 'Healthy', p99: '14ms' },
+        { name: 'billing-ledger-api', version: 'v2.8.0', status: 'Healthy', p99: '22ms' },
+        { name: 'edge-telemetry-collector', version: 'v1.14.0', status: 'Healthy', p99: '6ms' },
+        { name: 'user-sessions-cache', version: 'v4.0.1', status: 'Healthy', p99: '3ms' }
+      ];
     }
 
-    tripsPagination?.addEventListener('pagechange', () => {
-      refreshTripsTable();
+    // Interactive Reactive Pricing Calculation with Micro-Signals
+    const planCost = signal(29);
+    const billingCycle = signal('monthly');
+    const addonTelemetry = signal(0);
+    const addonSandbox = signal(0);
+
+    // Watch billing cycle
+    document.getElementById('billing-cycle')?.addEventListener('change', (e) => {
+      billingCycle.value = e.detail.value;
+      const isAnnual = e.detail.value === 'annual';
+      document.getElementById('pro-price').textContent = isAnnual ? '24' : '29';
+      document.getElementById('ent-price').textContent = isAnnual ? '79' : '99';
     });
 
-    // Chip Filter Handlers
-    const filterChips = [
-      document.getElementById('chip-all'),
-      document.getElementById('chip-confirmed'),
-      document.getElementById('chip-scheduled')
-    ].filter(Boolean);
+    // Watch plan card selection
+    document.getElementById('plan-selector')?.addEventListener('change', (e) => {
+      const p = e.detail.value;
+      if (p === 'starter') planCost.value = 0;
+      else if (p === 'pro') planCost.value = billingCycle.value === 'annual' ? 24 : 29;
+      else if (p === 'enterprise') planCost.value = billingCycle.value === 'annual' ? 79 : 99;
+    });
 
-    filterChips.forEach(chip => {
-      chip.addEventListener('change', (e) => {
-        if (!e.detail.selected) {
-          // Keep active chip selected if clicked again
-          chip.selected.value = true;
-          return;
-        }
-        filterChips.forEach(c => {
-          if (c !== chip) c.selected.value = false;
-        });
-        activeFilter = chip.getAttribute('value') || 'all';
-        tripsPagination?.setPage(1);
-        refreshTripsTable();
+    // Watch add-ons
+    document.getElementById('addon-telemetry')?.addEventListener('change', (e) => {
+      addonTelemetry.value = e.detail.checked ? 15 : 0;
+    });
+    document.getElementById('addon-sandbox')?.addEventListener('change', (e) => {
+      addonSandbox.value = e.detail.checked ? 35 : 0;
+    });
+
+    // Auto-update total via effect
+    effect(() => {
+      const total = planCost.value + addonTelemetry.value + addonSandbox.value;
+      const el = document.getElementById('calculated-total');
+      if (el) el.textContent = String(total);
+    });
+
+    window.confirmSubscription = function() {
+      toast.success('Workspace plan updated! New tier active across all edge clusters.');
+    };
+
+    window.saveSettings = function() {
+      toast.success('Notification preferences saved successfully.');
+    };
+
+    window.triggerRefresh = function() {
+      const rev = document.getElementById('kpi-revenue');
+      if (rev) rev.value = String(Math.floor(125000 + Math.random() * 8000));
+      toast.info('Telemetry feed updated.');
+    };
+
+    // Region switcher in dashboard sidebar
+    document.querySelectorAll('.sidebar-nav-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sidebar-nav-item').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const regionName = btn.getAttribute('title') || 'Region';
+        toast.info(`Switched active region to ${regionName}`);
       });
     });
 
-    document.getElementById('btn-cancel-trip')?.addEventListener('click', () => {
-      const selected = tripsTable?.selected?.value || [];
-      if (selected.length === 0) {
-        toast.warning('Please select at least one booking to cancel.');
-        return;
-      }
-      const filtered = getFilteredTrips();
-      const pageSize = Number(tripsPagination.pageSize?.value || 2);
-      const currentPage = Number(tripsPagination.page?.value || 1);
-      const start = (currentPage - 1) * pageSize;
-      const itemsToRemove = new Set(selected.map(idx => filtered[start + idx]).filter(Boolean));
-
-      allTrips = allTrips.filter(item => !itemsToRemove.has(item));
-      const remainingFiltered = getFilteredTrips();
-      const maxPage = Math.max(1, Math.ceil(remainingFiltered.length / pageSize));
-      if (currentPage > maxPage) {
-        tripsPagination.setPage(maxPage);
-      } else {
-        refreshTripsTable();
-      }
-      toast.success(`Cancelled ${selected.length} booking(s).`);
-    });
-
-    document.getElementById('btn-download-trip')?.addEventListener('click', () => {
-      toast.info('Downloading PDF travel itinerary...');
-    });
-
-    modalConfirm.addEventListener('click', () => {
-      confirmModal.close();
-      toast.success(`Success! Flight on ${currentBookingData.date} booked!`);
-
-      // Prepend to reactive data table!
-      if (tripsTable && currentBookingData) {
-        const randomNum = Math.floor(100 + Math.random() * 900);
-        const newTrip = {
-          flight: `SK-${randomNum}`,
-          route: `${currentBookingData.origin.split(' ')[0]} ➔ ${currentBookingData.destination.split(' ')[0]}`,
-          date: currentBookingData.date,
-          class: String(currentBookingData.cabin).toUpperCase(),
-          price: '$790',
-          status: 'Confirmed'
-        };
-        allTrips = [newTrip, ...allTrips];
-        tripsPagination?.setPage(1);
-        refreshTripsTable();
-      }
-
-      flightForm.reset();
-    });
+    window.deployService = function() {
+      toast.info('Starting zero-downtime deployment pipeline...');
+    };
   </script>
 </body>
 </html>

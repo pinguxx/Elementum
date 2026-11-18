@@ -94,6 +94,12 @@ export class ElAvatar extends Elementum {
       font-size: 18px;
     }
 
+    .size-xl {
+      width: 56px;
+      height: 56px;
+      font-size: 20px;
+    }
+
     img {
       width: 100%;
       height: 100%;
@@ -111,7 +117,8 @@ export class ElAvatar extends Elementum {
       border: 2px solid var(--el-surface-card, #ffffff);
     }
 
-    .size-lg .status-dot {
+    .size-lg .status-dot,
+    .size-xl .status-dot {
       width: 12px;
       height: 12px;
     }
@@ -167,6 +174,11 @@ export class ElAvatar extends Elementum {
 }
 
 export class ElAvatarGroup extends Elementum {
+  static observedAttributes = ['max'];
+
+  max = signal(0);
+  overflowCount = signal(0);
+
   static styles = css`
     :host {
       display: inline-flex;
@@ -191,10 +203,64 @@ export class ElAvatarGroup extends Elementum {
     ::slotted(el-avatar:hover) {
       z-index: 10;
     }
+
+    .overflow-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      margin-left: var(--el-avatar-overlap, -10px);
+      border-radius: var(--el-radius-full, 9999px);
+      background: var(--el-surface-muted, #f1f5f9);
+      color: var(--el-text-primary, #0f172a);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      box-shadow: 0 0 0 2px var(--el-surface-card, #ffffff);
+      font-family: var(--el-font-sans, system-ui, sans-serif);
+      font-size: 12px;
+      font-weight: 600;
+      position: relative;
+      z-index: 5;
+    }
   `;
 
+  connected() {
+    this.#syncMax();
+  }
+
+  attributeChanged(name, oldValue, newValue) {
+    if (name === 'max') {
+      this.#syncMax();
+    }
+  }
+
+  #syncMax() {
+    const raw = parseInt(this.getAttribute('max') || '0', 10);
+    const maxVal = Number.isFinite(raw) && raw > 0 ? raw : 0;
+    this.max.value = maxVal;
+
+    const avatars = Array.from(this.querySelectorAll('el-avatar'));
+    if (maxVal > 0 && avatars.length > maxVal) {
+      avatars.forEach((av, idx) => {
+        av.style.display = idx < maxVal ? '' : 'none';
+      });
+      this.overflowCount.value = avatars.length - maxVal;
+    } else {
+      avatars.forEach((av) => {
+        av.style.display = '';
+      });
+      this.overflowCount.value = 0;
+    }
+  }
+
   render() {
-    return html`<slot></slot>`;
+    return html`
+      <slot @slotchange=${() => this.#syncMax()}></slot>
+      ${() =>
+        this.overflowCount.value > 0
+          ? html`<span class="overflow-badge" part="overflow">+${() => this.overflowCount.value}</span>`
+          : null}
+    `;
   }
 }
 

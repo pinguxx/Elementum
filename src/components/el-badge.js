@@ -8,49 +8,119 @@ import { html, css } from '../template.js';
 import { signal } from '../signal.js';
 
 export class ElBadge extends Elementum {
-  static observedAttributes = ['variant', 'count'];
+  static observedAttributes = ['variant', 'count', 'label', 'size'];
 
-  variant = signal('default'); // 'default' | 'success' | 'danger'
+  variant = signal('default'); // 'default' | 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'outline'
   count = signal('');
+  label = signal('');
+  size = signal('md');
+
+  connected() {
+    if (this.hasAttribute('label')) this.label.value = this.getAttribute('label');
+    if (this.hasAttribute('count')) this.count.value = this.getAttribute('count');
+    if (this.hasAttribute('variant')) this.variant.value = this.getAttribute('variant');
+    if (this.hasAttribute('size')) this.size.value = this.getAttribute('size');
+  }
+
+  attributeChanged(name, oldValue, newValue) {
+    if (name === 'label') {
+      this.label.value = newValue || '';
+    } else if (name === 'count') {
+      this.count.value = newValue || '';
+    } else if (name === 'variant') {
+      this.variant.value = newValue || 'default';
+    } else if (name === 'size') {
+      this.size.value = newValue || 'md';
+    } else if (name in this) {
+      this[name].value = newValue;
+    }
+  }
 
   static styles = css`
     :host {
       display: inline-flex;
       align-items: center;
       vertical-align: middle;
+      font-family: var(--el-font-sans, system-ui, sans-serif);
     }
 
     span {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       padding: 2px 8px;
       font-size: 0.75rem;
       font-weight: 600;
       border-radius: var(--el-radius-full, 9999px);
       line-height: 1.2;
+      box-sizing: border-box;
+      transition: all 120ms ease;
     }
 
     :host([variant="default"]) span,
     :host(:not([variant])) span {
-      background: var(--el-surface-muted, #f3f4f6);
-      color: var(--el-text-base, #111827);
+      background: var(--el-surface-muted, #f1f5f9);
+      color: var(--el-text-primary, #0f172a);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+    }
+
+    :host([variant="primary"]) span {
+      background: var(--el-color-primary, #2563eb);
+      color: #ffffff;
+      border: 1px solid transparent;
+    }
+
+    :host([variant="secondary"]) span {
+      background: var(--el-surface-muted, #f1f5f9);
+      color: var(--el-text-muted, #475569);
+      border: 1px solid var(--el-surface-border, #cbd5e1);
     }
 
     :host([variant="success"]) span {
       background: #dcfce7;
       color: var(--el-color-success, #16a34a);
+      border: 1px solid rgba(22, 163, 74, 0.2);
     }
 
     :host([variant="danger"]) span {
       background: #fee2e2;
       color: var(--el-color-danger, #dc2626);
+      border: 1px solid rgba(220, 38, 38, 0.2);
+    }
+
+    :host([variant="warning"]) span {
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid rgba(180, 83, 9, 0.2);
+    }
+
+    :host([variant="info"]) span {
+      background: #e0f2fe;
+      color: #0284c7;
+      border: 1px solid rgba(2, 132, 199, 0.2);
+    }
+
+    :host([variant="outline"]) span {
+      background: transparent;
+      color: var(--el-text-primary, #0f172a);
+      border: 1px solid var(--el-surface-border, #cbd5e1);
+    }
+
+    :host([size="sm"]) span {
+      padding: 1px 6px;
+      font-size: 0.6875rem;
+    }
+
+    :host([size="lg"]) span {
+      padding: 4px 12px;
+      font-size: 0.875rem;
     }
   `;
 
   render() {
     return html`
       <span part="badge">
-        <slot>${() => this.count.value}</slot>
+        <slot>${() => this.label.value || this.count.value || 'Badge'}</slot>
       </span>
     `;
   }

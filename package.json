@@ -25,9 +25,14 @@
   },
   "scripts": {
     "test": "node --test --experimental-test-coverage",
+    "serve": "node tools/serve.js",
+    "serve:proxy": "node tools/serve.js --proxy",
     "mcp": "node mcp/server.js",
     "create": "node tools/create-component.js",
-    "tokens:sync": "node tools/sync-tokens.js"
+    "tokens:sync": "node tools/sync-tokens.js",
+    "penpot:mcp": "node tools/sync-penpot-mcp.js",
+    "penpot:design-app": "node tools/design-ledgerflow-penpot.js",
+    "penpot:generate": "node tools/penpot-to-elementum.js"
   },
   "keywords": [
     "web-components",

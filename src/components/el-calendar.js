@@ -23,11 +23,13 @@ function formatDateString(year, month, day) {
 }
 
 export class ElCalendar extends Elementum {
-  static observedAttributes = ['value'];
+  static observedAttributes = ['value', 'min-year', 'max-year'];
 
   value = signal(''); // 'YYYY-MM-DD'
   viewYear = signal(new Date().getFullYear());
   viewMonth = signal(new Date().getMonth()); // 0 - 11
+  minYear = signal(new Date().getFullYear() - 50);
+  maxYear = signal(new Date().getFullYear() + 20);
 
   monthTitle = computed(() => {
     return `${MONTH_NAMES[this.viewMonth.value]} ${this.viewYear.value}`;
@@ -52,6 +54,50 @@ export class ElCalendar extends Elementum {
       align-items: center;
       justify-content: space-between;
       padding: 0 var(--el-spacing-xs, 4px);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .header-select {
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--el-radius-sm, 4px);
+      color: var(--el-text-base, #111827);
+      font-size: 0.875rem;
+      font-weight: 600;
+      font-family: inherit;
+      padding: 3px 6px;
+      cursor: pointer;
+      outline: none;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+      text-align: center;
+    }
+
+    .header-select:hover {
+      background: var(--el-surface-muted, #f3f4f6);
+      border-color: var(--el-surface-border, #e5e7eb);
+    }
+
+    .header-select:focus-visible {
+      border-color: var(--el-color-primary, #2563eb);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+
+    .header-select option {
+      background: var(--el-surface-base, #ffffff);
+      color: var(--el-text-base, #111827);
+      font-weight: 500;
+    }
+
+    :root[data-theme="dark"] .header-select option {
+      background: #1e293b;
+      color: #f8fafc;
     }
 
     .header-title {
@@ -133,6 +179,14 @@ export class ElCalendar extends Elementum {
 
   connected() {
     // If an initial value was provided, sync the initial view to it
+    if (this.hasAttribute('min-year')) {
+      const parsed = Number(this.getAttribute('min-year'));
+      if (!isNaN(parsed)) this.minYear.value = parsed;
+    }
+    if (this.hasAttribute('max-year')) {
+      const parsed = Number(this.getAttribute('max-year'));
+      if (!isNaN(parsed)) this.maxYear.value = parsed;
+    }
     if (this.value.value) {
       const parts = this.value.value.split('-').map(Number);
       if (parts.length === 3) {
@@ -140,6 +194,57 @@ export class ElCalendar extends Elementum {
         this.viewMonth.value = parts[1] - 1;
       }
     }
+  }
+
+  attributeChanged(name, oldValue, newValue) {
+    if (name === 'value' && newValue) {
+      this.value.value = newValue;
+      const parts = newValue.split('-').map(Number);
+      if (parts.length === 3) {
+        this.viewYear.value = parts[0];
+        this.viewMonth.value = parts[1] - 1;
+      }
+    } else if (name === 'min-year' && newValue) {
+      const parsed = Number(newValue);
+      if (!isNaN(parsed)) this.minYear.value = parsed;
+    } else if (name === 'max-year' && newValue) {
+      const parsed = Number(newValue);
+      if (!isNaN(parsed)) this.maxYear.value = parsed;
+    }
+    return true;
+  }
+
+  setMonth(m) {
+    const month = Number(m);
+    if (!isNaN(month) && month >= 0 && month <= 11) {
+      this.viewMonth.value = month;
+    }
+  }
+
+  setYear(y) {
+    const year = Number(y);
+    if (!isNaN(year)) {
+      this.viewYear.value = year;
+    }
+  }
+
+  #onMonthSelect = (e) => {
+    this.setMonth(e.target.value);
+  };
+
+  #onYearSelect = (e) => {
+    this.setYear(e.target.value);
+  };
+
+  #generateYears() {
+    const currentYear = new Date().getFullYear();
+    const min = Number(this.minYear.value) || (currentYear - 50);
+    const max = Number(this.maxYear.value) || (currentYear + 20);
+    const years = [];
+    for (let y = min; y <= max; y++) {
+      years.push(y);
+    }
+    return years;
   }
 
   prevMonth = () => {
@@ -237,7 +342,42 @@ export class ElCalendar extends Elementum {
       <div class="calendar" part="calendar">
         <div class="header">
           <button type="button" class="nav-btn" @click=${this.prevMonth} aria-label="Previous Month">◀</button>
-          <span class="header-title">${this.monthTitle}</span>
+          <div class="header-controls">
+            <select
+              class="header-select month-select"
+              aria-label="Select month"
+              @change=${this.#onMonthSelect}
+            >
+              ${() =>
+                MONTH_NAMES.map(
+                  (name, idx) => html`
+                    <option
+                      value="${idx}"
+                      ?selected=${() => this.viewMonth.value === idx}
+                    >
+                      ${name}
+                    </option>
+                  `
+                )}
+            </select>
+            <select
+              class="header-select year-select"
+              aria-label="Select year"
+              @change=${this.#onYearSelect}
+            >
+              ${() =>
+                this.#generateYears().map(
+                  (y) => html`
+                    <option
+                      value="${y}"
+                      ?selected=${() => this.viewYear.value === y}
+                    >
+                      ${y}
+                    </option>
+                  `
+                )}
+            </select>
+          </div>
           <button type="button" class="nav-btn" @click=${this.nextMonth} aria-label="Next Month">▶</button>
         </div>
 

@@ -27,9 +27,12 @@ export class ElSpinner extends Elementum {
     :host {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
+      gap: 8px;
       vertical-align: middle;
       box-sizing: border-box;
+      font-family: var(--el-font-sans, system-ui, sans-serif);
+      font-size: 0.875rem;
+      color: var(--el-text-primary, #0f172a);
     }
 
     .spinner {
@@ -70,6 +73,26 @@ export class ElSpinner extends Elementum {
       color: var(--el-color-primary, #2563eb);
     }
 
+    .variant-secondary {
+      color: var(--el-text-secondary, #475569);
+    }
+
+    .variant-success {
+      color: var(--el-color-success, #16a34a);
+    }
+
+    .variant-danger {
+      color: var(--el-color-danger, #dc2626);
+    }
+
+    .variant-warning {
+      color: var(--el-color-warning, #d97706);
+    }
+
+    .variant-info {
+      color: var(--el-color-info, #0284c7);
+    }
+
     .variant-muted {
       color: var(--el-text-muted, #64748b);
     }
@@ -85,6 +108,10 @@ export class ElSpinner extends Elementum {
       to {
         transform: rotate(360deg);
       }
+    }
+
+    .spinner-label {
+      line-height: 1;
     }
 
     .sr-only {
@@ -112,8 +139,11 @@ export class ElSpinner extends Elementum {
           <circle class="circle-bg" cx="12" cy="12" r="10" stroke="currentColor"></circle>
           <path class="circle-arc" d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" stroke-linecap="round"></path>
         </svg>
-        <span class="sr-only">${() => this.label.value}</span>
       </div>
+      ${() =>
+        this.label.value
+          ? html`<span class="spinner-label" part="label"><slot>${() => this.label.value}</slot></span>`
+          : html`<slot></slot>`}
     `;
   }
 }

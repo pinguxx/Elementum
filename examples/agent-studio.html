@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elementum AI Agent Studio</title>
+  <link rel="stylesheet" href="../src/tokens.css" />
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.05) 0%, transparent 60%);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: var(--el-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+      padding: 0 0 40px 0;
+      background-color: var(--el-surface-muted, #f8fafc);
+      background-image: var(--bg-gradient);
+      color: var(--el-text-primary, #0f172a);
+      transition: background-color var(--el-transition-fluid, 280ms cubic-bezier(0.16, 1, 0.3, 1));
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    el-navbar {
+      margin-bottom: 32px;
+    }
+
+    .studio-shell {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      box-sizing: border-box;
+    }
+
+    /* Studio Header */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--el-border-translucent, rgba(15, 23, 42, 0.08));
+    }
+
+    .title-area h1 {
+      margin: 0 0 6px 0;
+      font-size: 1.625rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-craft {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: var(--el-radius-full, 9999px);
+      background: rgba(37, 99, 235, 0.1);
+      color: var(--el-color-primary, #2563eb);
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--el-text-secondary, #64748b);
+      max-width: 680px;
+      line-height: 1.5;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Live Telemetry Bar with NumberFlow */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+    }
+
+    .metric-card {
+      position: relative;
+      background: var(--el-surface-elevated, #ffffff);
+      border: 1px solid var(--el-border-translucent, rgba(15, 23, 42, 0.08));
+      border-radius: var(--el-radius-lg, 12px);
+      padding: 16px 20px;
+      box-shadow: var(--el-shadow-card, 0 1px 3px rgba(0,0,0,0.06), 0 8px 16px -4px rgba(0,0,0,0.04));
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow: hidden;
+    }
+
+    .metric-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--el-text-muted, #64748b);
+    }
+
+    .metric-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--el-text-primary, #0f172a);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric-controls {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    .mini-btn {
+      padding: 2px 8px;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      border: 1px solid var(--el-border-translucent, rgba(15, 23, 42, 0.12));
+      border-radius: var(--el-radius-sm, 4px);
+      background: var(--el-surface-muted, #f8fafc);
+      color: var(--el-text-secondary, #475569);
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+
+    .mini-btn:hover {
+      background: var(--el-color-primary, #2563eb);
+      color: #ffffff;
+      border-color: var(--el-color-primary, #2563eb);
+    }
+
+    /* Agent Generation Canvas */
+    .agent-canvas {
+      position: relative;
+      background: var(--el-surface-elevated, #ffffff);
+      border: 1px solid var(--el-border-translucent, rgba(15, 23, 42, 0.08));
+      border-radius: var(--el-radius-xl, 16px);
+      padding: 24px;
+      box-shadow: var(--el-shadow-card, 0 1px 3px rgba(0,0,0,0.06), 0 8px 16px -4px rgba(0,0,0,0.04));
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .canvas-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .canvas-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .status-pulse {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--el-color-success, #10b981);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+
+    .status-pulse.thinking {
+      background: var(--el-color-primary, #2563eb);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.15); }
+    }
+
+    .quick-prompts {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 0.8125rem;
+    }
+
+    .quick-label {
+      color: var(--el-text-muted, #64748b);
+      font-weight: 500;
+    }
+
+    .prompt-chip {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .response-stream-box {
+      font-size: 0.9375rem;
+      line-height: 1.7;
+      color: var(--el-text-primary, #1e293b);
+      background: var(--el-surface-muted, #f8fafc);
+      border: 1px solid var(--el-border-translucent, rgba(15, 23, 42, 0.06));
+      border-radius: var(--el-radius-lg, 12px);
+      padding: 18px;
+      min-height: 110px;
+    }
+
+    /* Verification Pin Box */
+    .security-card {
+      background: var(--el-surface-elevated, #ffffff);
+      border: 1px solid var(--el-border-translucent, rgba(15, 23, 42, 0.08));
+      border-radius: var(--el-radius-lg, 12px);
+      padding: 20px 24px;
+      box-shadow: var(--el-shadow-subtle, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .security-info h3 {
+      margin: 0 0 4px 0;
+      font-size: 0.9375rem;
+      font-weight: 600;
+    }
+
+    .security-info p {
+      margin: 0;
+      font-size: 0.8125rem;
+      color: var(--el-text-secondary, #64748b);
+    }
+
+    .security-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    kbd {
+      display: inline-block;
+      padding: 2px 6px;
+      font-family: inherit;
+      font-size: 0.75rem;
+      line-height: 1;
+      color: var(--el-text-muted, #64748b);
+      background: var(--el-surface-muted, #f1f5f9);
+      border: 1px solid rgba(15, 23, 42, 0.12);
+      border-radius: 4px;
+    }
+  </style>
+
+  <script type="module">
+    import { toast, createAgUiStore } from '../src/index.js';
+
+    // Interactive Demo Wiring
+    const cmd = document.getElementById('studio-cmd');
+    const cmdTrigger = document.getElementById('cmd-trigger');
+    const promptInput = document.getElementById('studio-prompt');
+    const reasoningCard = document.getElementById('studio-reasoning');
+    const streamingText = document.getElementById('studio-stream');
+    const tokenFlow = document.getElementById('token-flow');
+    const latencyFlow = document.getElementById('latency-flow');
+    const costFlow = document.getElementById('cost-flow');
+    const otpInput = document.getElementById('auth-otp');
+    const statusPulse = document.getElementById('agent-pulse');
+    const statusLabel = document.getElementById('agent-status-label');
+    const studioToolCall = document.getElementById('studio-tool-call');
+    const agUiLogBox = document.getElementById('ag-ui-log-box');
+
+    // Initialize live AG-UI reactive store bound directly to Studio components
+    const agUiStore = createAgUiStore({ metrics: { tokens: 1248 } });
+    agUiStore.bindComponents({
+      promptInput,
+      streamingText,
+      reasoningCard,
+      toolCallCard: studioToolCall,
+      stateBindings: {
+        '/metrics/tokens': [tokenFlow, 'value'],
+      },
+    });
+
+    agUiStore.onEvent((ev) => {
+      if (!agUiLogBox) return;
+      const line = document.createElement('div');
+      line.style.marginTop = '4px';
+      line.style.fontSize = '0.78rem';
+      line.textContent = `[AG-UI] ${ev.type} ${JSON.stringify(ev)}`;
+      agUiLogBox.prepend(line);
+      if (agUiLogBox.children.length > 25) {
+        agUiLogBox.lastElementChild?.remove();
+      }
+    });
+
+    studioToolCall?.addEventListener('approve', (e) => {
+      agUiStore.dispatch({
+        type: 'TOOL_CALL_RESULT',
+        toolCallId: e.detail.callId || studioToolCall.getAttribute('call-id') || 'tc-demo',
+        result: { status: 'deployed', url: 'https://edge-prod.elementum.dev', approvedBy: 'operator' },
+      });
+      toast.success(`Approved ${e.detail.name}! TOOL_CALL_RESULT dispatched.`);
+    });
+
+    studioToolCall?.addEventListener('reject', (e) => {
+      toast.warning(`Rejected execution of ${e.detail.name}`);
+    });
+
+    async function* createSimulatedAgUiStream(withHitl = false) {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      yield { type: 'RUN_STARTED', runId: 'run_' + Date.now().toString(36) };
+      yield { type: 'STEP_STARTED', stepName: 'Analyzing AG-UI State & Capabilities' };
+      await wait(160);
+      yield { type: 'TOOL_CALL_START', toolCallId: 'tc_live_1', toolCallName: withHitl ? 'deploy_edge_worker' : 'audit_wcag_contrast', requiresApproval: withHitl };
+      await wait(140);
+      yield { type: 'TOOL_CALL_ARGS', toolCallId: 'tc_live_1', delta: '{"region": "us-east-1",' };
+      await wait(140);
+      yield { type: 'TOOL_CALL_ARGS', toolCallId: 'tc_live_1', delta: ' "replicas": 3}' };
+      await wait(140);
+      yield { type: 'TOOL_CALL_END', toolCallId: 'tc_live_1' };
+      if (!withHitl) {
+        yield { type: 'TOOL_CALL_RESULT', toolCallId: 'tc_live_1', result: { passed: true, contrastRatio: 9.8 } };
+      }
+      yield { type: 'STEP_FINISHED' };
+      yield { type: 'TEXT_MESSAGE_START', messageId: 'msg_1', role: 'assistant' };
+      for (const chunk of ['Connected via AG-UI event stream. ', 'Applied JSON Patch state delta cleanly ', 'with zero virtual-DOM diffing!']) {
+        yield { type: 'TEXT_MESSAGE_CONTENT', messageId: 'msg_1', delta: chunk };
+        currentTokens += 45;
+        yield { type: 'STATE_DELTA', delta: [{ op: 'replace', path: '/metrics/tokens', value: currentTokens }] };
+        await wait(150);
+      }
+      yield { type: 'TEXT_MESSAGE_END', messageId: 'msg_1' };
+      yield { type: 'RUN_FINISHED' };
+    }
+
+    window.runAgUiStreamDemo = async (withHitl = false) => {
+      await agUiStore.connectSSE(createSimulatedAgUiStream(withHitl));
+      toast.info(withHitl ? 'Awaiting Human-in-the-Loop approval in <el-tool-call>!' : 'AG-UI stream completed.');
+    };
+
+    window.dispatchDemoStateDelta = () => {
+      currentTokens += 120;
+      agUiStore.dispatch({
+        type: 'STATE_DELTA',
+        delta: [{ op: 'replace', path: '/metrics/tokens', value: currentTokens }],
+      });
+      costFlow?.setAttribute('value', (currentTokens * 0.000015).toFixed(4));
+      toast.success(`STATE_DELTA applied (/metrics/tokens -> ${currentTokens})`);
+    };
+
+    cmdTrigger?.addEventListener('click', () => cmd.show());
+
+    cmd?.addEventListener('select', (e) => {
+      const val = e.detail.value;
+      if (val === 'stream-wcag') {
+        runAgentDemo('Audit accessibility for custom modal dialog: check ARIA 1.2 roles, inert background, focus traps, and 24px touch targets.');
+      } else if (val === 'stream-penpot') {
+        runAgentDemo('Extract design tokens from Penpot W3C DTCG JSON file and compile to CSS custom properties with physical easing.');
+      } else if (val === 'reset-tokens') {
+        tokenFlow.setAttribute('value', '0');
+        toast.info('Token counter reset to 0');
+      } else if (val === 'references') {
+        window.location.href = './references.html';
+      } else if (val === 'showcase') {
+        window.location.href = './index.html';
+      } else if (val === 'skyline') {
+        window.location.href = './skyline.html';
+      }
+    });
+
+    let currentTokens = 1248;
+
+    // NumberFlow Playground Buttons
+    window.adjustTokens = (delta) => {
+      currentTokens = Math.max(0, currentTokens + delta);
+      tokenFlow.setAttribute('value', String(currentTokens));
+      costFlow.setAttribute('value', (currentTokens * 0.000015).toFixed(4));
+    };
+
+    window.randomizeLatency = () => {
+      latencyFlow.setAttribute('value', String(Math.floor(120 + Math.random() * 260)));
+    };
+
+    // Quick Prompt Chips
+    window.selectPrompt = (text) => {
+      promptInput.setAttribute('value', text);
+      promptInput.focus();
+      runAgentDemo(text);
+    };
+
+    // Interactive Agent Run
+    promptInput?.addEventListener('submit', (e) => {
+      runAgentDemo(e.detail.value);
+    });
+
+    function runAgentDemo(promptText) {
+      if (!promptText) return;
+
+      statusPulse.classList.add('thinking');
+      statusLabel.textContent = 'Agent is thinking & analyzing...';
+      reasoningCard.setAttribute('thinking', '');
+      reasoningCard.setAttribute('summary', 'Formulating solution & validating tokens...');
+      reasoningCard.setAttribute('open', '');
+      promptInput.setAttribute('loading', '');
+
+      let elapsed = 0;
+      const timer = setInterval(() => {
+        elapsed += 0.3;
+        reasoningCard.setAttribute('duration', `${elapsed.toFixed(1)}s`);
+      }, 300);
+
+      setTimeout(() => {
+        clearInterval(timer);
+        statusPulse.classList.remove('thinking');
+        statusLabel.textContent = 'Active Frontier Agent (Ready)';
+        reasoningCard.removeAttribute('thinking');
+        reasoningCard.setAttribute('summary', 'Reasoning complete — 4 verification checks passed');
+        reasoningCard.setAttribute('duration', '1.2s');
+        promptInput.removeAttribute('loading');
+
+        const responseText = `✓ Verified requirements for: "${promptText}"\n\n• Applied layered ambient elevation (--el-shadow-card) and translucent borders.\n• Attached reactive micro-signals without virtual DOM overhead.\n• Implemented WCAG 2.2 AA compliant focus preservation.`;
+        streamingText.setAttribute('text', responseText);
+        streamingText.start();
+
+        // Mount live generated component in sandbox
+        const sandboxWrap = document.getElementById('sandbox-wrapper');
+        const sandboxCont = document.getElementById('sandbox-container');
+        if (sandboxWrap && sandboxCont) {
+          sandboxWrap.style.display = 'block';
+          const lower = promptText.toLowerCase();
+          if (lower.includes('modal') || lower.includes('dialog')) {
+            sandboxCont.innerHTML = `
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                <el-button variant="primary" onclick="document.getElementById('live-gen-dialog')?.showModal()">Open Generated &lt;el-dialog&gt;</el-button>
+                <el-dialog id="live-gen-dialog" heading="Accessible Dialog (Synthesized)">
+                  <p>Generated by the autonomous agent with full keyboard focus containment and Escape dismissal.</p>
+                </el-dialog>
+              </div>
+            `;
+          } else if (lower.includes('accessibility') || lower.includes('contrast')) {
+            sandboxCont.innerHTML = `
+              <div style="width: 100%;">
+                <el-callout variant="success">
+                  <span slot="title">WCAG 2.2 AA Contrast Audit Passed</span>
+                  All 12 Radix color steps meet 4.5:1 minimum contrast across dark and light canvases.
+                </el-callout>
+              </div>
+            `;
+          } else if (lower.includes('penpot') || lower.includes('token')) {
+            sandboxCont.innerHTML = `
+              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <el-badge variant="default" count="DTCG Token Synced"></el-badge>
+                <el-badge variant="success" count="Light/Dark 12-Step"></el-badge>
+                <div style="width: 24px; height: 24px; border-radius: 4px; background: var(--el-step-9, #2563eb);" title="Primary Step 9"></div>
+                <div style="width: 24px; height: 24px; border-radius: 4px; background: #10b981;" title="Success"></div>
+              </div>
+            `;
+          } else {
+            sandboxCont.innerHTML = `
+              <el-card style="width: 100%;">
+                <el-card-header>
+                  <el-card-title>Synthesized Web Component</el-card-title>
+                  <el-card-description>Constructed dynamically from prompt</el-card-description>
+                </el-card-header>
+                <el-card-content>
+                  <p style="margin: 0;">Mounted in Shadow DOM with active micro-signals: "${promptText}"</p>
+                </el-card-content>
+              </el-card>
+            `;
+          }
+        }
+      }, 1200);
+    }
+
+    // Model Selector Listener
+    document.getElementById('model-selector')?.addEventListener('change', (e) => {
+      const budgetMap = { claude: '8,192 toks', gemini: '32,768 toks', deepseek: '16,384 toks' };
+      const label = document.getElementById('budget-label');
+      if (label) label.textContent = budgetMap[e.detail.value] || '8,192 toks';
+      toast.info(`Switched model to ${e.detail.value.toUpperCase()}`);
+    });
+
+    // MCP Live Simulator
+    window.simulateMcpCall = function(type) {
+      const logBox = document.getElementById('mcp-log-box');
+      if (!logBox) return;
+
+      const time = new Date().toLocaleTimeString();
+      let entry = '';
+      if (type === 'tools/list') {
+        entry = `
+          <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--el-surface-border, #e2e8f0);">
+            <span style="color: #64748b;">[${time}] &lt;- agent: tools/list</span><br>
+            <span style="color: #10b981;">[${time}] -&gt; mcp: 200 OK (64 tool schemas returned: el_button, el_router, el_data_list, el_callout, ...)</span>
+          </div>
+        `;
+      } else {
+        entry = `
+          <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--el-surface-border, #e2e8f0);">
+            <span style="color: #64748b;">[${time}] &lt;- agent: tools/call "mcp__elementum_audit_contrast" {"mode":"wcag_2_2_aa"}</span><br>
+            <span style="color: #2563eb;">[${time}] -&gt; mcp: {"status":"compliant","ratio":8.4,"passed":true}</span>
+          </div>
+        `;
+      }
+      logBox.innerHTML += entry;
+      logBox.scrollTop = logBox.scrollHeight;
+      toast.success('MCP Tool Call trace logged!');
+    };
+
+    streamingText?.addEventListener('stream-tick', () => {
+      currentTokens += 3;
+      tokenFlow.setAttribute('value', String(currentTokens));
+      costFlow.setAttribute('value', (currentTokens * 0.000015).toFixed(4));
+      latencyFlow.setAttribute('value', String(Math.floor(140 + Math.random() * 40)));
+    });
+
+    streamingText?.addEventListener('stream-end', () => {
+      toast.success('Agent generation finished successfully!');
+    });
+
+    // OTP Verification Demo
+    window.pasteDemoPin = (pin) => {
+      otpInput.setAttribute('value', pin);
+      otpInput.value.value = pin;
+      toast.success(`Pasted verification PIN: ${pin}`);
+    };
+
+    otpInput?.addEventListener('complete', (e) => {
+      toast.success(`Verification Successful! Code ${e.detail.value} authenticated.`);
+    });
+  </script>
+</head>
+<body>
+  <el-toaster></el-toaster>
+
+  <!-- Top Sticky Navigation Bar -->
+  <el-navbar sticky brand="⚡ Elementum" badge="AI Studio" badge-variant="success" href="../index.html">
+    <a href="../index.html">Home</a>
+    <a href="../docs.html">Documentation</a>
+    <a href="./index.html">Catalog</a>
+    <a href="./registry.html">UI Registry</a>
+    <a href="./agent-studio.html" active>AI Studio</a>
+    <a href="./app.html">Showcase App</a>
+    <el-theme-switch slot="actions"></el-theme-switch>
+  </el-navbar>
+
+  <div class="studio-shell">
+    <!-- Header -->
+    <header class="header-bar">
+      <div class="title-area">
+        <h1>
+          Elementum AI Studio
+          <span class="badge-craft">Interactive Demo</span>
+        </h1>
+        <p class="subtitle">
+          An interactive laboratory demonstrating how to build modern AI interfaces with rolling counters, collapsible thought disclosures, auto-expanding composers, and command palettes.
+        </p>
+      </div>
+      <div class="header-actions">
+        <el-button variant="primary" size="sm" id="cmd-trigger">
+          Command Menu <kbd>⌘K</kbd>
+        </el-button>
+        <el-button variant="secondary" size="sm" onclick="location.href='./app.html'">
+          Showcase App 🚀
+        </el-button>
+      </div>
+    </header>
+
+    <!-- Metrics Bar with Rolling NumberFlow Odometer -->
+    <section class="metrics-grid">
+      <div class="metric-card">
+        <span class="metric-title">Output Tokens (Odometer)</span>
+        <div class="metric-value">
+          <el-number-flow id="token-flow" value="1248" suffix=" toks"></el-number-flow>
+        </div>
+        <div class="metric-controls">
+          <button type="button" class="mini-btn" onclick="adjustTokens(100)">+100</button>
+          <button type="button" class="mini-btn" onclick="adjustTokens(500)">+500</button>
+          <button type="button" class="mini-btn" onclick="adjustTokens(-250)">-250</button>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <span class="metric-title">Inference Latency</span>
+        <div class="metric-value">
+          <el-number-flow id="latency-flow" value="192" suffix=" ms"></el-number-flow>
+        </div>
+        <div class="metric-controls">
+          <button type="button" class="mini-btn" onclick="randomizeLatency()">Randomize</button>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <span class="metric-title">Estimated Cost</span>
+        <div class="metric-value">
+          <el-number-flow id="cost-flow" value="0.0187" prefix="$"></el-number-flow>
+        </div>
+        <div class="metric-controls">
+          <span style="font-size:0.6875rem; color:var(--el-text-muted);">$0.015 / 1k toks</span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <span class="metric-title">Runtime Dependencies</span>
+        <div class="metric-value">
+          <el-number-flow value="0" suffix=" deps"></el-number-flow>
+        </div>
+        <div class="metric-controls">
+          <span style="font-size:0.6875rem; color:var(--el-color-success);">100% Native Web Standards</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Agent Canvas with Animated Border Beam -->
+    <section class="agent-canvas">
+      <el-border-beam size="85" duration="8" border-width="1.5"></el-border-beam>
+
+      <div class="canvas-header" style="flex-wrap: wrap; gap: 12px;">
+        <div class="canvas-status">
+          <span class="status-pulse" id="agent-pulse"></span>
+          <span id="agent-status-label">Active Frontier Agent (Ready)</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <el-segmented-control id="model-selector" value="claude">
+            <span value="claude">Claude 3.7 (Hybrid)</span>
+            <span value="gemini">Gemini 2.0 Flash</span>
+            <span value="deepseek">DeepSeek R1</span>
+          </el-segmented-control>
+          <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; background: var(--el-surface-muted, #f1f5f9); padding: 4px 10px; border-radius: var(--el-radius-md, 6px); border: 1px solid var(--el-surface-border, #e2e8f0);">
+            <span style="color: var(--el-text-muted);">Thinking Budget:</span>
+            <span id="budget-label" style="font-weight: 700;">8,192 toks</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Interactive Prompt Chips -->
+      <div class="quick-prompts">
+        <span class="quick-label">Try an action:</span>
+        <el-chip class="prompt-chip" variant="default" onclick="selectPrompt('Generate an accessible WCAG 2.2 modal dialog')">✨ Generate Modal</el-chip>
+        <el-chip class="prompt-chip" variant="default" onclick="selectPrompt('Audit accessibility & color contrast for light/dark theme')">🔍 Audit Accessibility</el-chip>
+        <el-chip class="prompt-chip" variant="default" onclick="selectPrompt('Sync design tokens from Penpot W3C DTCG format')">🎨 Sync Penpot Tokens</el-chip>
+      </div>
+
+      <!-- Collapsible Reasoning Card -->
+      <el-reasoning-card
+        id="studio-reasoning"
+        duration="1.8s"
+        summary="Synthesizing Emil Kowalski's micro-interaction principles"
+        open
+      >
+        <p>1. <strong>Identified AI visual markers:</strong> harsh solid borders (#e2e8f0), abrupt count jumps, and stiff popups.</p>
+        <p>2. <strong>Remediation:</strong> replaced with layered ambient elevation shadows, rolling vertical reels, and physical easing curves.</p>
+        <p>3. <strong>Zero-dependency validation:</strong> all components run natively on standard Web Components and micro-signals.</p>
+      </el-reasoning-card>
+
+      <!-- Streaming Text Response -->
+      <div class="response-stream-box">
+        <el-streaming-text
+          id="studio-stream"
+          text="Welcome to the Elementum AI Studio. Notice how numbers roll naturally like a luxury watch odometer instead of jumping abruptly. Translucent alpha borders provide delicate depth without harsh outlines. Type a prompt below or pick one of the quick chips above to see the agent run!"
+          speed="18"
+        ></el-streaming-text>
+      </div>
+
+      <!-- Live Generated Component Sandbox -->
+      <div id="sandbox-wrapper" style="margin-bottom: 20px; display: none;">
+        <div style="font-size: 0.85rem; font-weight: 700; color: var(--el-text-muted); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+          <span>⚡ Live Generated Component Sandbox</span>
+          <el-badge variant="success" count="Mounted in Real-Time"></el-badge>
+        </div>
+        <div id="sandbox-container" style="background: var(--el-surface-base, #ffffff); border: 2px dashed var(--el-surface-border, #cbd5e1); border-radius: var(--el-radius-lg, 12px); padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 90px;">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+
+      <!-- Beautiful UI-Style Auto-Expanding Prompt Composer -->
+      <el-prompt-input
+        id="studio-prompt"
+        placeholder="Ask the agent to construct an accessible component... (Press Enter to send)"
+        max-rows="8"
+      >
+        <div slot="tools">
+          <el-chip variant="default">Deep Research</el-chip>
+          <el-chip variant="default">WCAG 2.2 AA</el-chip>
+          <el-chip variant="default">Penpot DTCG Tokens</el-chip>
+        </div>
+      </el-prompt-input>
+    </section>
+
+    <!-- AG-UI Protocol Event Stream & HITL Tool Call Playground -->
+    <section class="security-card" style="margin-top: 24px;">
+      <div style="width: 100%; display: flex; flex-direction: column; gap: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700;">AG-UI Protocol Live Event Stream &amp; Tool Calls</h3>
+            <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--el-text-muted);">Stream live AG-UI lifecycle events (<code>RUN_*</code>, <code>TOOL_CALL_*</code>, <code>TEXT_MESSAGE_*</code>, <code>STATE_DELTA</code>) directly into Elementum signals.</p>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <el-button variant="primary" size="sm" onclick="runAgUiStreamDemo(false)">Stream AG-UI Run</el-button>
+            <el-button variant="outline" size="sm" onclick="runAgUiStreamDemo(true)">Stream HITL Tool Call</el-button>
+            <el-button variant="secondary" size="sm" onclick="dispatchDemoStateDelta()">Dispatch STATE_DELTA</el-button>
+          </div>
+        </div>
+
+        <el-tool-call
+          id="studio-tool-call"
+          name="deploy_edge_worker"
+          call-id="tc_demo_1"
+          status="awaiting-approval"
+          approval
+          args='{"region":"us-east-1","replicas":3}'
+        ></el-tool-call>
+
+        <div id="ag-ui-log-box" style="background: var(--el-surface-base, #ffffff); border: 1px solid var(--el-surface-border, #e2e8f0); border-radius: var(--el-radius-md, 8px); padding: 12px; font-family: var(--el-font-mono, monospace); font-size: 0.78rem; line-height: 1.45; max-height: 150px; overflow-y: auto;">
+          <div style="color: var(--el-text-muted);">AG-UI event stream ready. Click a stream button above to inspect live dispatched frames.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MCP Tool Calls & Telemetry Section -->
+    <section class="security-card" style="margin-top: 24px;">
+      <div style="width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700;">Model Context Protocol (MCP) Live Tool Traces</h3>
+            <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--el-text-muted);">Inspect autonomous tool invocation payloads between the AI agent and Elementum's MCP Server.</p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <el-button variant="outline" size="sm" onclick="simulateMcpCall('tools/list')">List Tools</el-button>
+            <el-button variant="outline" size="sm" onclick="simulateMcpCall('tools/call')">Audit WCAG</el-button>
+          </div>
+        </div>
+
+        <div id="mcp-log-box" style="background: var(--el-surface-base, #ffffff); border: 1px solid var(--el-surface-border, #e2e8f0); border-radius: var(--el-radius-md, 8px); padding: 14px; font-family: var(--el-font-mono, monospace); font-size: 0.8125rem; line-height: 1.5; max-height: 180px; overflow-y: auto;">
+          <div style="color: var(--el-color-primary, #2563eb); font-weight: 600;">[MCP Handshake] Initialized server "elementum-design-system" (v0.1.0) with 64 registered tool definitions.</div>
+          <div style="color: var(--el-text-muted);">Ready for agent tool_calls. Click "List Tools" or "Audit WCAG" above to trace a live payload.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PIN / Security Box with Segmented OTP Input -->
+    <section class="security-card">
+      <div class="security-info">
+        <h3>Studio API Authorization Code</h3>
+        <p>Enter your 6-digit confirmation key (supports auto-advance and clipboard paste):</p>
+      </div>
+      <div class="security-actions">
+        <el-otp-input id="auth-otp" length="6"></el-otp-input>
+        <el-button variant="secondary" size="sm" onclick="pasteDemoPin('928401')">Paste 928401</el-button>
+        <el-button variant="ghost" size="sm" onclick="document.getElementById('auth-otp').clear()">Clear</el-button>
+      </div>
+    </section>
+
+    <!-- Command Palette Dialog (⌘K) -->
+    <el-command id="studio-cmd" placeholder="Search commands, agents, or settings...">
+      <el-command-group heading="Quick Actions">
+        <el-command-item value="stream-wcag" shortcut="⌘A">Audit Accessibility (WCAG 2.2)</el-command-item>
+        <el-command-item value="stream-penpot" shortcut="⌘P">Sync Penpot Design Tokens</el-command-item>
+        <el-command-item value="reset-tokens" shortcut="⌘R">Reset Token Counter</el-command-item>
+      </el-command-group>
+      <el-command-group heading="Navigation">
+        <el-command-item value="references">Open Reference Gallery Hub</el-command-item>
+        <el-command-item value="showcase">Go to Component Showcase</el-command-item>
+        <el-command-item value="skyline">Open Skyline Dashboard</el-command-item>
+      </el-command-group>
+    </el-command>
+  </div>
+</body>
+</html>

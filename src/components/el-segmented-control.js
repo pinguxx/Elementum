@@ -4,7 +4,7 @@ import { signal } from '../signal.js';
 
 export class ElSegmentedControl extends Elementum {
   static formAssociated = true;
-  static observedAttributes = ['value', 'disabled', 'size', 'name'];
+  static observedAttributes = ['value', 'disabled', 'size', 'name', 'options'];
 
   value = signal('');
   disabled = signal(false);
@@ -42,6 +42,12 @@ export class ElSegmentedControl extends Elementum {
       this.disabled.value = newValue !== null && newValue !== 'false';
     } else if (name === 'size') {
       this.size.value = newValue || 'md';
+    } else if (name === 'options') {
+      this.#scanOptions();
+      if (!this.value.value && this.#options.value[0]) {
+        this.value.value = this.#options.value[0].value;
+        this.setFormValue(this.value.value);
+      }
     }
   }
 
@@ -64,7 +70,40 @@ export class ElSegmentedControl extends Elementum {
         this.value.value = raw[0].value;
         this.setFormValue(raw[0].value);
       }
+      return;
     }
+
+    const optAttr = this.getAttribute('options');
+    if (optAttr) {
+      try {
+        const parsed = JSON.parse(optAttr);
+        if (Array.isArray(parsed)) {
+          this.#options.value = parsed.map((o) =>
+            typeof o === 'string'
+              ? { label: o, value: o, disabled: false }
+              : { label: o.label || o.value, value: o.value || o.label, disabled: !!o.disabled }
+          );
+          if (!this.value.value && this.#options.value[0]) {
+            this.value.value = this.#options.value[0].value;
+            this.setFormValue(this.value.value);
+          }
+          return;
+        }
+      } catch (e) {
+        this.#options.value = optAttr
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean)
+          .map((s) => ({ label: s, value: s, disabled: false }));
+        if (!this.value.value && this.#options.value[0]) {
+          this.value.value = this.#options.value[0].value;
+          this.setFormValue(this.value.value);
+        }
+        return;
+      }
+    }
+
+    this.#options.value = [];
   }
 
   selectOption(val) {

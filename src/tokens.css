@@ -1,6 +1,6 @@
 /**
  * Elementum Design Tokens
- * Auto-generated from tokens/figma-tokens.json
+ * Auto-generated from penpot-tokens.json (Unified Penpot & Figma parser)
  */
 
 :root,
@@ -12,15 +12,36 @@
   --el-color-danger: #dc2626;
   --el-color-success: #16a34a;
 
-  /* Surfaces */
+  /* Surfaces & Elevation */
   --el-surface-base: #ffffff;
+  --el-surface-card: #ffffff;
+  --el-surface-elevated: #ffffff;
   --el-surface-muted: #f3f4f6;
   --el-surface-border: #e5e7eb;
+  --el-border-translucent: rgba(15, 23, 42, 0.08);
+
+  /* Subtle Ambient Shadows (Ban the AI look) */
+  --el-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --el-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 8px 16px -4px rgba(0, 0, 0, 0.04);
+  --el-shadow-popover: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  --el-shadow-glow: 0 0 20px -5px rgba(37, 99, 235, 0.25);
+
+  /* Physical Motion & Natural Easing Curves */
+  --el-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --el-ease-in-fast: cubic-bezier(0.7, 0, 0.84, 0);
+  --el-transition-snappy: 150ms var(--el-ease-in-fast);
+  --el-transition-fluid: 280ms var(--el-ease-out-expo);
 
   /* Typography Colors */
   --el-text-base: #111827;
+  --el-text-primary: #0f172a;
+  --el-text-secondary: #475569;
   --el-text-muted: #6b7280;
   --el-text-inverse: #ffffff;
+
+  /* Font Families */
+  --el-font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --el-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* Spacing */
   --el-spacing-xs: 4px;
@@ -35,6 +56,41 @@
   --el-radius-lg: 16px;
   --el-radius-full: 9999px;
 
+  /* Chart Data Series Tokens */
+  --el-chart-1: #2563eb;
+  --el-chart-2: #10b981;
+  --el-chart-3: #f59e0b;
+  --el-chart-4: #8b5cf6;
+  --el-chart-5: #ec4899;
+
+  /* Typographic Rhythm Tokens */
+  --el-typeset-size: 1rem;
+  --el-typeset-leading: 1.75;
+  --el-typeset-flow: 1.25em;
+  --el-typeset-font-body: var(--el-font-sans);
+
+  /* Radix Colors 12-Step Accessible Scale (Light Theme) */
+  --el-step-1: #fbfcfd;  /* App canvas background */
+  --el-step-2: #f8fafc;  /* Subtle component background */
+  --el-step-3: #f1f5f9;  /* Normal component surface */
+  --el-step-4: #e2e8f0;  /* Hovered component surface */
+  --el-step-5: #cbd5e1;  /* Active/selected surface */
+  --el-step-6: #e2e8f0;  /* Subtle borders / dividers */
+  --el-step-7: #cbd5e1;  /* Interactive borders */
+  --el-step-8: #94a3b8;  /* Focus rings & hover borders */
+  --el-step-9: #2563eb;  /* Solid primary accent */
+  --el-step-10: #1d4ed8; /* Hovered solid primary */
+  --el-step-11: #475569; /* Secondary/muted text */
+  --el-step-12: #0f172a; /* High-contrast primary text */
+  --el-typeset-font-heading: var(--el-font-sans);
+
+  /* Component specific tokens (Light) */
+  --el-tooltip-bg: #0f172a;
+  --el-tooltip-text: #ffffff;
+  --el-tooltip-border: rgba(255, 255, 255, 0.12);
+  --el-skeleton-bg: #e2e8f0;
+  --el-skeleton-shimmer: rgba(255, 255, 255, 0.6);
+
   color-scheme: light;
 }
 
@@ -47,14 +103,52 @@
   --el-color-success: #22c55e;
 
   /* Surfaces (Dark Mode) */
-  --el-surface-base: #0f172a;
+  --el-surface-base: #0b0f19;
+  --el-surface-card: #111827;
+  --el-surface-elevated: #1e293b;
   --el-surface-muted: #1e293b;
   --el-surface-border: #334155;
+  --el-border-translucent: rgba(255, 255, 255, 0.08);
+
+  --el-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --el-shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+  --el-shadow-popover: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  --el-shadow-glow: 0 0 25px -5px rgba(59, 130, 246, 0.35);
 
   /* Typography Colors (Dark Mode) */
-  --el-text-base: #f8fafc;
-  --el-text-muted: #94a3b8;
+  --el-text-base: #f9fafb;
+  --el-text-primary: #f8fafc;
+  --el-text-secondary: #94a3b8;
+  --el-text-muted: #64748b;
   --el-text-inverse: #0f172a;
+
+  /* Chart Colors (Dark Mode) */
+  --el-chart-1: #3b82f6;
+  --el-chart-2: #34d399;
+  --el-chart-3: #fbbf24;
+  --el-chart-4: #a78bfa;
+  --el-chart-5: #f472b6;
+
+  /* Radix Colors 12-Step Accessible Scale (Dark Theme) */
+  --el-step-1: #090d16;  /* App canvas background */
+  --el-step-2: #0f172a;  /* Subtle component background */
+  --el-step-3: #1e293b;  /* Normal component surface */
+  --el-step-4: #334155;  /* Hovered component surface */
+  --el-step-5: #475569;  /* Active/selected surface */
+  --el-step-6: #1e293b;  /* Subtle borders / dividers */
+  --el-step-7: #334155;  /* Interactive borders */
+  --el-step-8: #64748b;  /* Focus rings & hover borders */
+  --el-step-9: #3b82f6;  /* Solid primary accent */
+  --el-step-10: #2563eb; /* Hovered solid primary */
+  --el-step-11: #94a3b8; /* Secondary/muted text */
+  --el-step-12: #f8fafc; /* High-contrast primary text */
+
+  /* Component specific tokens (Dark) */
+  --el-tooltip-bg: #1e293b;
+  --el-tooltip-text: #f8fafc;
+  --el-tooltip-border: #475569;
+  --el-skeleton-bg: #334155;
+  --el-skeleton-shimmer: rgba(255, 255, 255, 0.15);
 
   color-scheme: dark;
 }
@@ -67,14 +161,256 @@
     --el-color-danger: #ef4444;
     --el-color-success: #22c55e;
 
-    --el-surface-base: #0f172a;
+    --el-surface-base: #0b0f19;
+    --el-surface-card: #111827;
+    --el-surface-elevated: #1e293b;
     --el-surface-muted: #1e293b;
     --el-surface-border: #334155;
+    --el-border-translucent: rgba(255, 255, 255, 0.08);
 
-    --el-text-base: #f8fafc;
-    --el-text-muted: #94a3b8;
+    --el-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --el-shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+    --el-shadow-popover: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+    --el-shadow-glow: 0 0 25px -5px rgba(59, 130, 246, 0.35);
+
+    --el-text-base: #f9fafb;
+    --el-text-primary: #f8fafc;
+    --el-text-secondary: #94a3b8;
+    --el-text-muted: #64748b;
     --el-text-inverse: #0f172a;
+
+    --el-chart-1: #3b82f6;
+    --el-chart-2: #34d399;
+    --el-chart-3: #fbbf24;
+    --el-chart-4: #a78bfa;
+    --el-chart-5: #f472b6;
+
+    /* Radix Colors 12-Step Accessible Scale (Dark Theme) */
+    --el-step-1: #090d16;
+    --el-step-2: #0f172a;
+    --el-step-3: #1e293b;
+    --el-step-4: #334155;
+    --el-step-5: #475569;
+    --el-step-6: #1e293b;
+    --el-step-7: #334155;
+    --el-step-8: #64748b;
+    --el-step-9: #3b82f6;
+    --el-step-10: #2563eb;
+    --el-step-11: #94a3b8;
+    --el-step-12: #f8fafc;
+
+    /* Component specific tokens (Dark Media) */
+    --el-tooltip-bg: #1e293b;
+    --el-tooltip-text: #f8fafc;
+    --el-tooltip-border: #475569;
+    --el-skeleton-bg: #334155;
+    --el-skeleton-shimmer: rgba(255, 255, 255, 0.15);
 
     color-scheme: dark;
   }
 }
+
+/* ========================================================
+   Typographic Rhythm Container (.el-typeset)
+   ======================================================== */
+.el-typeset {
+  font-family: var(--el-typeset-font-body, var(--el-font-sans));
+  font-size: var(--el-typeset-size, 1rem);
+  line-height: var(--el-typeset-leading, 1.75);
+  color: var(--el-text-primary, #0f172a);
+}
+
+.el-typeset :is(h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, pre, table) {
+  margin-block: 0;
+}
+
+.el-typeset :is(h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, pre, table) + * {
+  margin-top: var(--el-typeset-flow, 1.25em);
+}
+
+.el-typeset h1 {
+  font-family: var(--el-typeset-font-heading, var(--el-font-sans));
+  font-size: 2.25em;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--el-text-base, #111827);
+}
+
+.el-typeset h2 {
+  font-family: var(--el-typeset-font-heading, var(--el-font-sans));
+  font-size: 1.5em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  color: var(--el-text-base, #111827);
+  border-bottom: 1px solid var(--el-surface-border, #e2e8f0);
+  padding-bottom: 0.3em;
+}
+
+.el-typeset h3 {
+  font-family: var(--el-typeset-font-heading, var(--el-font-sans));
+  font-size: 1.25em;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.4;
+  color: var(--el-text-base, #111827);
+}
+
+.el-typeset p {
+  color: var(--el-text-secondary, #475569);
+}
+
+.el-typeset blockquote {
+  border-left: 3px solid var(--el-color-primary, #2563eb);
+  padding-left: 1em;
+  font-style: italic;
+  color: var(--el-text-muted, #64748b);
+}
+
+.el-typeset ul, .el-typeset ol {
+  padding-left: 1.5em;
+  color: var(--el-text-secondary, #475569);
+}
+
+.el-typeset li + li {
+  margin-top: calc(var(--el-typeset-flow, 1.25em) * 0.35);
+}
+
+.el-typeset code {
+  font-family: var(--el-font-mono);
+  background: var(--el-surface-muted, #f1f5f9);
+  padding: 0.2em 0.4em;
+  border-radius: var(--el-radius-sm, 4px);
+  font-size: 0.875em;
+  color: var(--el-text-primary, #0f172a);
+}
+
+.el-typeset pre {
+  background: var(--el-surface-elevated, #1e293b);
+  color: #f8fafc;
+  padding: 1em 1.25em;
+  border-radius: var(--el-radius-md, 8px);
+  overflow-x: auto;
+  font-family: var(--el-font-mono);
+  font-size: 0.875em;
+  line-height: 1.6;
+}
+
+.el-typeset pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+/* ========================================================
+   FOUC & Layout-Shift Prevention for Custom Elements
+   ======================================================== */
+el-command:not(:defined),
+el-dialog:not(:defined),
+el-drawer:not(:defined),
+el-toaster:not(:defined),
+el-dropdown:not(:defined) {
+  display: none !important;
+}
+
+:not(:defined):is(
+  el-button,
+  el-badge,
+  el-input,
+  el-calendar,
+  el-datepicker,
+  el-tabs,
+  el-tab,
+  el-select,
+  el-switch,
+  el-tooltip,
+  el-accordion,
+  el-accordion-item,
+  el-table,
+  el-progress,
+  el-spinner,
+  el-avatar,
+  el-avatar-group,
+  el-segmented-control,
+  el-pagination,
+  el-chip,
+  el-autocomplete,
+  el-number-flow,
+  el-otp-input,
+  el-prompt-input,
+  el-reasoning-card,
+  el-border-beam,
+  el-streaming-text,
+  el-chart,
+  el-theme-switch
+) {
+  opacity: 0;
+}
+
+:defined {
+  animation: el-defined-in 120ms var(--el-ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+@keyframes el-defined-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ========================================================
+   Sidebar Layout & State Helpers
+   ======================================================== */
+el-sidebar[collapsed] .collapsible-text,
+[collapsed] .collapsible-text {
+  display: none !important;
+}
+
+el-sidebar[collapsed] el-sidebar-header > div,
+el-sidebar[collapsed] el-sidebar-header {
+  justify-content: center !important;
+}
+
+el-sidebar[collapsed] el-sidebar-content el-button,
+el-sidebar[collapsed] el-sidebar-content button {
+  width: 36px !important;
+  min-width: 36px !important;
+  max-width: 36px !important;
+  padding: 6px 0 !important;
+  justify-content: center !important;
+  text-align: center !important;
+  margin: 0 auto !important;
+}
+
+el-sidebar[collapsed] el-sidebar-content div {
+  align-items: center !important;
+}
+
+/* ========================================================
+   High-Contrast Button & Theme Switch Shadow Part Overrides
+   ======================================================== */
+:root[data-theme="dark"] el-button[variant="secondary"]::part(button) {
+  background-color: #1e293b;
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+:root[data-theme="dark"] el-button[variant="secondary"]::part(button):hover {
+  background-color: #334155;
+  color: #f8fafc;
+  border-color: #475569;
+}
+
+:root[data-theme="dark"] el-theme-switch::part(button) {
+  background-color: #1e293b;
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+:root[data-theme="dark"] el-theme-switch::part(button):hover {
+  background-color: #334155;
+  color: #f8fafc;
+  border-color: var(--el-color-primary, #3b82f6);
+}
+
+

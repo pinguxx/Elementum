@@ -3,7 +3,7 @@ import { html, css } from '../template.js';
 import { signal } from '../signal.js';
 
 export class ElChip extends Elementum {
-  static observedAttributes = ['variant', 'size', 'removable', 'selectable', 'selected', 'value', 'disabled'];
+  static observedAttributes = ['variant', 'size', 'removable', 'selectable', 'selected', 'value', 'disabled', 'label', 'auto-remove'];
 
   variant = signal('muted'); // 'primary' | 'success' | 'danger' | 'warning' | 'muted'
   size = signal('md'); // 'sm' | 'md'
@@ -12,6 +12,7 @@ export class ElChip extends Elementum {
   selected = signal(false);
   value = signal('');
   disabled = signal(false);
+  label = signal('');
 
   connected() {
     this.#syncValues();
@@ -36,6 +37,7 @@ export class ElChip extends Elementum {
     this.selected.value = this.hasAttribute('selected');
     this.value.value = this.getAttribute('value') || '';
     this.disabled.value = this.hasAttribute('disabled');
+    this.label.value = this.getAttribute('label') || '';
   }
 
   toggleSelected() {
@@ -53,7 +55,10 @@ export class ElChip extends Elementum {
   #onRemoveClick = (e) => {
     e.stopPropagation();
     if (this.disabled.value) return;
-    this.emit('remove', { value: this.value.value });
+    const ev = this.emit('remove', { value: this.value.value });
+    if (this.hasAttribute('auto-remove') && !ev.defaultPrevented) {
+      this.remove();
+    }
   };
 
   #onClick = () => {
@@ -69,7 +74,10 @@ export class ElChip extends Elementum {
       this.toggleSelected();
     } else if (this.removable.value && (e.key === 'Backspace' || e.key === 'Delete')) {
       e.preventDefault();
-      this.emit('remove', { value: this.value.value });
+      const ev = this.emit('remove', { value: this.value.value });
+      if (this.hasAttribute('auto-remove') && !ev.defaultPrevented) {
+        this.remove();
+      }
     }
   };
 
@@ -107,11 +115,23 @@ export class ElChip extends Elementum {
       font-size: 0.8125rem;
     }
 
+    .size-lg {
+      height: 36px;
+      padding: 0 16px;
+      font-size: 0.9375rem;
+    }
+
     /* Variants */
     .variant-muted {
       background: var(--el-surface-muted, #f1f5f9);
       color: var(--el-text-primary, #1e293b);
       border-color: var(--el-surface-border, #e2e8f0);
+    }
+
+    .variant-secondary {
+      background: var(--el-surface-muted, #f1f5f9);
+      color: var(--el-text-secondary, #475569);
+      border-color: var(--el-surface-border, #cbd5e1);
     }
 
     .variant-primary {
@@ -124,6 +144,12 @@ export class ElChip extends Elementum {
       background: #ecfdf5;
       color: #059669;
       border-color: #a7f3d0;
+    }
+
+    .variant-info {
+      background: #f0f9ff;
+      color: #0284c7;
+      border-color: #bae6fd;
     }
 
     .variant-warning {
@@ -147,6 +173,7 @@ export class ElChip extends Elementum {
       filter: brightness(0.96);
     }
 
+    :host([selected]) .chip,
     .selected {
       background: var(--el-color-primary, #2563eb) !important;
       color: #ffffff !important;
@@ -207,7 +234,7 @@ export class ElChip extends Elementum {
         tabindex=${() => (this.selectable.value && !this.disabled.value ? '0' : null)}
       >
         <slot name="prefix"></slot>
-        <slot></slot>
+        <slot>${() => this.label.value || ''}</slot>
         <slot name="suffix"></slot>
 
         ${() =>

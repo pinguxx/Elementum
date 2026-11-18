@@ -69,8 +69,20 @@ export class ElProgress extends Elementum {
       background: var(--el-color-primary, #2563eb);
     }
 
+    .bar[data-variant='secondary'] {
+      background: var(--el-text-secondary, #475569);
+    }
+
     .bar[data-variant='success'] {
       background: var(--el-color-success, #10b981);
+    }
+
+    .bar[data-variant='warning'] {
+      background: var(--el-color-warning, #f59e0b);
+    }
+
+    .bar[data-variant='info'] {
+      background: var(--el-color-info, #0284c7);
     }
 
     .bar[data-variant='danger'] {

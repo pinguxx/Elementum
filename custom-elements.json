@@ -4,284 +4,6 @@
   "modules": [
     {
       "kind": "javascript-module",
-      "path": "src/components/el-button.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "name": "ElButton",
-          "tagName": "el-button",
-          "description": "Frameworkless, signal-driven button component with 1:1 Figma variant parity.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
-          "attributes": [
-            { "name": "variant", "type": { "text": "'primary' | 'secondary' | 'danger' | 'ghost'" }, "default": "'primary'" },
-            { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'" },
-            { "name": "disabled", "type": { "text": "boolean" }, "default": "false" }
-          ],
-          "slots": [
-            { "name": "", "description": "Primary button label text." },
-            { "name": "prefix", "description": "Icon or element placed before the label." },
-            { "name": "suffix", "description": "Icon or badge placed after the label." }
-          ],
-          "events": [
-            { "name": "click", "description": "Fired when user clicks the button." }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/el-badge.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "name": "ElBadge",
-          "tagName": "el-badge",
-          "description": "Minimal status indicator and notification badge.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
-          "attributes": [
-            { "name": "variant", "type": { "text": "'default' | 'success' | 'danger'" }, "default": "'default'" },
-            { "name": "count", "type": { "text": "string" } }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/el-input.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "name": "ElInput",
-          "tagName": "el-input",
-          "description": "Form-associated text/form input with prefix/suffix slots and design token styling.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
-          "attributes": [
-            { "name": "value", "type": { "text": "string" } },
-            { "name": "placeholder", "type": { "text": "string" } },
-            { "name": "disabled", "type": { "text": "boolean" } },
-            { "name": "readonly", "type": { "text": "boolean" } },
-            { "name": "required", "type": { "text": "boolean" }, "default": "false" },
-            { "name": "pattern", "type": { "text": "string" } },
-            { "name": "minlength", "type": { "text": "number" } },
-            { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'" }
-          ],
-          "events": [
-            { "name": "input", "description": "Fired on character typed." },
-            { "name": "change", "description": "Fired on commit/blur." }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/el-dropdown.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "name": "ElDropdown",
-          "tagName": "el-dropdown",
-          "description": "Accessible overlay container with light-dismiss and trigger slot.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
-          "attributes": [
-            { "name": "open", "type": { "text": "boolean" }, "default": "false" }
-          ],
-          "events": [
-            { "name": "open", "description": "Fired when opened." },
-            { "name": "close", "description": "Fired when closed." }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/el-calendar.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "name": "ElCalendar",
-          "tagName": "el-calendar",
-          "description": "Standalone accessible calendar month-grid component.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
-          "attributes": [
-            { "name": "value", "type": { "text": "string" } }
-          ],
-          "events": [
-            { "name": "select", "description": "Fired when date is selected." }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/el-datepicker.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "name": "ElDatepicker",
-          "tagName": "el-datepicker",
-          "description": "Form-associated composite Datepicker combining dropdown, input, and calendar.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
-          "attributes": [
-            { "name": "value", "type": { "text": "string" } },
-            { "name": "placeholder", "type": { "text": "string" }, "default": "'Select date...'" },
-            { "name": "disabled", "type": { "text": "boolean" }, "default": "false" },
-            { "name": "required", "type": { "text": "boolean" }, "default": "false" }
-          ],
-          "events": [
-            { "name": "change", "description": "Fired when date changes: detail.value" }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/el-dialog.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "name": "ElDialog",
-          "tagName": "el-dialog",
-          "description": "Accessible modal dialog powered by native <dialog> with overscroll containment.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
-          "attributes": [
-            { "name": "open", "type": { "text": "boolean" }, "default": "false" },
-            { "name": "title", "type": { "text": "string" } }
-          ],
-          "slots": [
-            { "name": "header", "description": "Dialog title or header." },
-            { "name": "", "description": "Dialog body content." },
-            { "name": "footer", "description": "Action buttons." }
-          ],
-          "events": [
-            { "name": "open", "description": "Fired when modal opens." },
-            { "name": "close", "description": "Fired when modal closes: detail.returnValue" }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/el-tabs.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "name": "ElTabs",
-          "tagName": "el-tabs",
-          "description": "Accessible tablist and tab panel container with keyboard navigation.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
-          "attributes": [
-            { "name": "value", "type": { "text": "string" }, "description": "Active tab value" }
-          ],
-          "events": [
-            { "name": "tabchange", "description": "Fired on tab change: detail.value" }
-          ]
-        },
-        {
-          "kind": "class",
-          "name": "ElTab",
-          "tagName": "el-tab",
-          "description": "Individual tab panel inside <el-tabs>.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
-          "attributes": [
-            { "name": "label", "type": { "text": "string" } },
-            { "name": "value", "type": { "text": "string" } }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/el-select.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "name": "ElSelect",
-          "tagName": "el-select",
-          "description": "Form-associated custom select dropdown with option list.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
-          "attributes": [
-            { "name": "value", "type": { "text": "string" } },
-            { "name": "placeholder", "type": { "text": "string" } },
-            { "name": "disabled", "type": { "text": "boolean" } },
-            { "name": "required", "type": { "text": "boolean" }, "default": "false" }
-          ],
-          "events": [
-            { "name": "change", "description": "Fired on selection change: detail.value" }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/el-theme-switch.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "name": "ElThemeSwitch",
-          "tagName": "el-theme-switch",
-          "description": "Color theme toggle between Light and Dark mode with localStorage persistence.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
-          "events": [
-            { "name": "themechange", "description": "Fired when theme toggles: detail.theme" }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/el-toast.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "name": "ElToaster",
-          "tagName": "el-toaster",
-          "description": "Viewport overlay container rendering programmatic toast notifications.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/el-switch.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "name": "ElSwitch",
-          "tagName": "el-switch",
-          "description": "Form-associated accessible toggle switch with keyboard support and token styling.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
-          "attributes": [
-            { "name": "checked", "type": { "text": "boolean" }, "default": "false" },
-            { "name": "disabled", "type": { "text": "boolean" }, "default": "false" },
-            { "name": "required", "type": { "text": "boolean" }, "default": "false" },
-            { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'" }
-          ],
-          "events": [
-            { "name": "change", "description": "Fired on toggle: detail: { checked, value }" }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/el-tooltip.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "name": "ElTooltip",
-          "tagName": "el-tooltip",
-          "description": "Accessible lightweight tooltip anchored to wrapped trigger element.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
-          "attributes": [
-            { "name": "content", "type": { "text": "string" } },
-            { "name": "placement", "type": { "text": "'top' | 'bottom' | 'left' | 'right'" }, "default": "'top'" },
-            { "name": "delay", "type": { "text": "number" }, "default": "150" }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/components/el-accordion.js",
       "declarations": [
         {
@@ -289,12 +11,24 @@
           "name": "ElAccordion",
           "tagName": "el-accordion",
           "description": "Accordion container coordinating multiple or single disclosure expansion.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
           "attributes": [
-            { "name": "multiple", "type": { "text": "boolean" }, "default": "false" }
+            {
+              "name": "multiple",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            }
           ],
           "events": [
-            { "name": "change", "description": "Fired when active item changes: detail: { value, open }" }
+            {
+              "name": "change",
+              "description": "Fired when active item changes: detail: { value, open }"
+            }
           ]
         },
         {
@@ -302,188 +36,115 @@
           "name": "ElAccordionItem",
           "tagName": "el-accordion-item",
           "description": "Accessible disclosure item for accordion panel.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
           "attributes": [
-            { "name": "title", "type": { "text": "string" } },
-            { "name": "value", "type": { "text": "string" } },
-            { "name": "open", "type": { "text": "boolean" } }
+            {
+              "name": "title",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "open",
+              "type": {
+                "text": "boolean"
+              }
+            }
           ]
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/el-table.js",
+      "path": "src/components/el-alert-dialog.js",
       "declarations": [
         {
           "kind": "class",
-          "name": "ElTable",
-          "tagName": "el-table",
-          "description": "Fine-grained reactive data table with column sorting and row selection.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "name": "ElAlertDialog",
+          "tagName": "el-alert-dialog",
+          "description": "Modal confirmation dialog for destructive or high-impact actions.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-alert.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElAlert",
+          "tagName": "el-alert",
+          "description": "Inline notification banner with contextual variants, dismissibility and icon slots.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
           "attributes": [
-            { "name": "selectable", "type": { "text": "boolean" }, "default": "false" }
+            {
+              "name": "variant",
+              "type": {
+                "text": "'default' | 'info' | 'success' | 'warning' | 'destructive'"
+              },
+              "default": "'default'"
+            },
+            {
+              "name": "title",
+              "type": {
+                "text": "string"
+              },
+              "default": "''"
+            },
+            {
+              "name": "dismissible",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            }
           ],
           "events": [
-            { "name": "sort", "description": "Fired when sort column changes: detail: { key, direction }" },
-            { "name": "selectionchange", "description": "Fired when row selection changes: detail: { selected }" }
+            {
+              "name": "dismiss",
+              "description": "Emitted when user dismisses the alert."
+            }
           ]
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "src/components/el-progress.js",
+      "path": "src/components/el-aspect-ratio.js",
       "declarations": [
         {
           "kind": "class",
-          "name": "ElProgress",
-          "tagName": "el-progress",
-          "description": "Accessible progress bar with determinate and indeterminate states and WCAG role='progressbar'.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "name": "ElAspectRatio",
+          "tagName": "el-aspect-ratio",
+          "description": "CLS-free container enforcing fixed aspect ratios for responsive media.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
           "attributes": [
-            { "name": "value", "type": { "text": "number" }, "default": "0" },
-            { "name": "max", "type": { "text": "number" }, "default": "100" },
-            { "name": "variant", "type": { "text": "'primary' | 'success' | 'danger'" }, "default": "'primary'" },
-            { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'" },
-            { "name": "indeterminate", "type": { "text": "boolean" }, "default": "false" },
-            { "name": "striped", "type": { "text": "boolean" }, "default": "false" }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/el-spinner.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "name": "ElSpinner",
-          "tagName": "el-spinner",
-          "description": "Smooth SVG loading spinner with accessible status role.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
-          "attributes": [
-            { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'" },
-            { "name": "variant", "type": { "text": "'primary' | 'muted' | 'white'" }, "default": "'primary'" },
-            { "name": "label", "type": { "text": "string" }, "default": "'Loading'" }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/el-avatar.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "name": "ElAvatar",
-          "tagName": "el-avatar",
-          "description": "User avatar with image fallback, automatic initials, and status indicator.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
-          "attributes": [
-            { "name": "src", "type": { "text": "string" } },
-            { "name": "alt", "type": { "text": "string" } },
-            { "name": "name", "type": { "text": "string" } },
-            { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'" },
-            { "name": "shape", "type": { "text": "'circle' | 'square'" }, "default": "'circle'" },
-            { "name": "status", "type": { "text": "'online' | 'offline' | 'busy' | 'away'" } }
-          ]
-        },
-        {
-          "kind": "class",
-          "name": "ElAvatarGroup",
-          "tagName": "el-avatar-group",
-          "description": "Clustered avatar stack with overlapping borders.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/el-drawer.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "name": "ElDrawer",
-          "tagName": "el-drawer",
-          "description": "Accessible slide-over drawer panel with backdrop light-dismiss and keyboard traps.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
-          "attributes": [
-            { "name": "open", "type": { "text": "boolean" }, "default": "false" },
-            { "name": "placement", "type": { "text": "'left' | 'right' | 'top' | 'bottom'" }, "default": "'right'" },
-            { "name": "title", "type": { "text": "string" } }
-          ],
-          "events": [
-            { "name": "open", "description": "Fired when drawer opens." },
-            { "name": "close", "description": "Fired when drawer closes." }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/el-segmented-control.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "name": "ElSegmentedControl",
-          "tagName": "el-segmented-control",
-          "description": "Form-associated pill segment switcher with arrow key navigation and ARIA radiogroup semantics.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
-          "attributes": [
-            { "name": "value", "type": { "text": "string" } },
-            { "name": "disabled", "type": { "text": "boolean" }, "default": "false" },
-            { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'" }
-          ],
-          "events": [
-            { "name": "change", "description": "Fired on segment selection: detail.value" }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/el-pagination.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "name": "ElPagination",
-          "tagName": "el-pagination",
-          "description": "Accessible pagination component with dynamic page windowing, ellipsis, and W3C navigation semantics.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
-          "attributes": [
-            { "name": "page", "type": { "text": "number" }, "default": "1" },
-            { "name": "total", "type": { "text": "number" }, "default": "0" },
-            { "name": "page-size", "type": { "text": "number" }, "default": "10" },
-            { "name": "sibling-count", "type": { "text": "number" }, "default": "1" }
-          ],
-          "events": [
-            { "name": "pagechange", "description": "Fired when page changes: detail: { page, pageSize }" }
-          ]
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/el-chip.js",
-      "declarations": [
-        {
-          "kind": "class",
-          "name": "ElChip",
-          "tagName": "el-chip",
-          "description": "Interactive pill / tag chip supporting selection, dismiss buttons, and slot icons.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
-          "attributes": [
-            { "name": "variant", "type": { "text": "'primary' | 'success' | 'danger' | 'warning' | 'muted'" }, "default": "'muted'" },
-            { "name": "size", "type": { "text": "'sm' | 'md'" }, "default": "'md'" },
-            { "name": "removable", "type": { "text": "boolean" }, "default": "false" },
-            { "name": "selectable", "type": { "text": "boolean" }, "default": "false" },
-            { "name": "selected", "type": { "text": "boolean" }, "default": "false" },
-            { "name": "value", "type": { "text": "string" } }
-          ],
-          "events": [
-            { "name": "remove", "description": "Fired when remove button is clicked: detail: { value }" },
-            { "name": "change", "description": "Fired when selection toggles: detail: { selected, value }" }
+            {
+              "name": "ratio",
+              "type": {
+                "text": "string"
+              },
+              "default": "'16/9'"
+            }
           ]
         }
       ]
@@ -497,27 +158,2585 @@
           "name": "ElAutocomplete",
           "tagName": "el-autocomplete",
           "description": "Form-associated combobox component supporting static data arrays, remote URL queries with debouncing, flexible key mapping, and ARIA 1.2 accessibility.",
-          "superclass": { "name": "Elementum", "module": "src/index.js" },
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
           "attributes": [
-            { "name": "name", "type": { "text": "string" } },
-            { "name": "value", "type": { "text": "string" } },
-            { "name": "placeholder", "type": { "text": "string" }, "default": "'Search or type...'" },
-            { "name": "disabled", "type": { "text": "boolean" }, "default": "false" },
-            { "name": "required", "type": { "text": "boolean" }, "default": "false" },
-            { "name": "multiple", "type": { "text": "boolean" }, "default": "false" },
-            { "name": "url", "type": { "text": "string" } },
-            { "name": "query-param", "type": { "text": "string" }, "default": "'q'" },
-            { "name": "debounce", "type": { "text": "number" }, "default": "250" },
-            { "name": "min-chars", "type": { "text": "number" }, "default": "1" },
-            { "name": "label-key", "type": { "text": "string" }, "default": "'label'" },
-            { "name": "value-key", "type": { "text": "string" }, "default": "'value'" },
-            { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'" }
+            {
+              "name": "name",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Search or type...'"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "required",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "multiple",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "url",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "query-param",
+              "type": {
+                "text": "string"
+              },
+              "default": "'q'"
+            },
+            {
+              "name": "debounce",
+              "type": {
+                "text": "number"
+              },
+              "default": "250"
+            },
+            {
+              "name": "min-chars",
+              "type": {
+                "text": "number"
+              },
+              "default": "1"
+            },
+            {
+              "name": "label-key",
+              "type": {
+                "text": "string"
+              },
+              "default": "'label'"
+            },
+            {
+              "name": "value-key",
+              "type": {
+                "text": "string"
+              },
+              "default": "'value'"
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "'sm' | 'md' | 'lg'"
+              },
+              "default": "'md'"
+            }
           ],
           "events": [
-            { "name": "select", "description": "Fired when an option is selected: detail: { item, value, label }" },
-            { "name": "remove", "description": "Fired in multi-mode when a chip is removed: detail: { item, items, value }" },
-            { "name": "change", "description": "Fired when value changes: detail: { value, label }" },
-            { "name": "clear", "description": "Fired when input is cleared" }
+            {
+              "name": "select",
+              "description": "Fired when an option is selected: detail: { item, value, label }"
+            },
+            {
+              "name": "remove",
+              "description": "Fired in multi-mode when a chip is removed: detail: { item, items, value }"
+            },
+            {
+              "name": "change",
+              "description": "Fired when value changes: detail: { value, label }"
+            },
+            {
+              "name": "clear",
+              "description": "Fired when input is cleared"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-avatar.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElAvatar",
+          "tagName": "el-avatar",
+          "description": "User avatar with image fallback, automatic initials, and status indicator.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "src",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "alt",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "name",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "'sm' | 'md' | 'lg'"
+              },
+              "default": "'md'"
+            },
+            {
+              "name": "shape",
+              "type": {
+                "text": "'circle' | 'square'"
+              },
+              "default": "'circle'"
+            },
+            {
+              "name": "status",
+              "type": {
+                "text": "'online' | 'offline' | 'busy' | 'away'"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "ElAvatarGroup",
+          "tagName": "el-avatar-group",
+          "description": "Clustered avatar stack with overlapping borders.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-badge.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElBadge",
+          "tagName": "el-badge",
+          "description": "Minimal status indicator and notification badge.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "variant",
+              "type": {
+                "text": "'default' | 'success' | 'danger'"
+              },
+              "default": "'default'"
+            },
+            {
+              "name": "count",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-border-beam.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElBorderBeam",
+          "tagName": "el-border-beam",
+          "description": "Luminous animated border ray highlight that circles any container perimeter.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "size",
+              "type": {
+                "text": "number"
+              },
+              "default": "60"
+            },
+            {
+              "name": "duration",
+              "type": {
+                "text": "number"
+              },
+              "default": "8"
+            },
+            {
+              "name": "color-from",
+              "type": {
+                "text": "string"
+              },
+              "default": "'var(--el-color-primary, #2563eb)'"
+            },
+            {
+              "name": "color-to",
+              "type": {
+                "text": "string"
+              },
+              "default": "'var(--el-color-accent, #a855f7)'"
+            },
+            {
+              "name": "border-width",
+              "type": {
+                "text": "number"
+              },
+              "default": "1.5"
+            },
+            {
+              "name": "reverse",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-breadcrumb.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElBreadcrumb",
+          "tagName": "el-breadcrumb",
+          "description": "Semantic navigation trail container with configurable separators.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "separator",
+              "type": {
+                "text": "string"
+              },
+              "default": "'/'"
+            }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "ElBreadcrumbItem",
+          "tagName": "el-breadcrumb-item",
+          "description": "Individual breadcrumb link or terminal item.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "href",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "current",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-button.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElButton",
+          "tagName": "el-button",
+          "description": "Frameworkless, signal-driven button component with 1:1 Figma variant parity.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "variant",
+              "type": {
+                "text": "'primary' | 'secondary' | 'danger' | 'ghost'"
+              },
+              "default": "'primary'"
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "'sm' | 'md' | 'lg'"
+              },
+              "default": "'md'"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            }
+          ],
+          "slots": [
+            {
+              "name": "",
+              "description": "Primary button label text."
+            },
+            {
+              "name": "prefix",
+              "description": "Icon or element placed before the label."
+            },
+            {
+              "name": "suffix",
+              "description": "Icon or badge placed after the label."
+            }
+          ],
+          "events": [
+            {
+              "name": "click",
+              "description": "Fired when user clicks the button."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-calendar.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElCalendar",
+          "tagName": "el-calendar",
+          "description": "Standalone accessible calendar month-grid component.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              }
+            }
+          ],
+          "events": [
+            {
+              "name": "select",
+              "description": "Fired when date is selected."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-card.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElCard",
+          "tagName": "el-card",
+          "description": "Structured card container with header, title, description, content and footer subcomponents.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "hoverable",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "ElCardHeader",
+          "tagName": "el-card-header",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        },
+        {
+          "kind": "class",
+          "name": "ElCardTitle",
+          "tagName": "el-card-title",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        },
+        {
+          "kind": "class",
+          "name": "ElCardDescription",
+          "tagName": "el-card-description",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        },
+        {
+          "kind": "class",
+          "name": "ElCardContent",
+          "tagName": "el-card-content",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        },
+        {
+          "kind": "class",
+          "name": "ElCardFooter",
+          "tagName": "el-card-footer",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-carousel.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElCarousel",
+          "tagName": "el-carousel",
+          "description": "Accessible touch-swipeable and keyboard navigable carousel with autoplay and indicators.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "auto-play",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "interval",
+              "type": {
+                "text": "number"
+              },
+              "default": "4000"
+            },
+            {
+              "name": "loop",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true"
+            }
+          ],
+          "events": [
+            {
+              "name": "slide-change",
+              "description": "Emitted when current slide changes."
+            }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "ElCarouselSlide",
+          "tagName": "el-carousel-slide",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-chart.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElChart",
+          "tagName": "el-chart",
+          "description": "Zero-dependency native SVG chart primitive with area, bar, line modes, reactive tooltips, and token theming.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "type",
+              "type": {
+                "text": "'area' | 'line' | 'bar'"
+              },
+              "default": "'area'"
+            },
+            {
+              "name": "x-key",
+              "type": {
+                "text": "string"
+              },
+              "default": "'label'"
+            },
+            {
+              "name": "y-key",
+              "type": {
+                "text": "string"
+              },
+              "default": "'value'"
+            },
+            {
+              "name": "secondary-key",
+              "type": {
+                "text": "string"
+              },
+              "default": "''"
+            },
+            {
+              "name": "height",
+              "type": {
+                "text": "number"
+              },
+              "default": "200"
+            },
+            {
+              "name": "show-grid",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true"
+            },
+            {
+              "name": "show-dots",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-checkbox.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElCheckbox",
+          "tagName": "el-checkbox",
+          "description": "Form-associated accessible checkbox with indeterminate tri-state support.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-chip.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElChip",
+          "tagName": "el-chip",
+          "description": "Interactive pill / tag chip supporting selection, dismiss buttons, and slot icons.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "variant",
+              "type": {
+                "text": "'primary' | 'success' | 'danger' | 'warning' | 'muted'"
+              },
+              "default": "'muted'"
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "'sm' | 'md'"
+              },
+              "default": "'md'"
+            },
+            {
+              "name": "removable",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "selectable",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "selected",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              }
+            }
+          ],
+          "events": [
+            {
+              "name": "remove",
+              "description": "Fired when remove button is clicked: detail: { value }"
+            },
+            {
+              "name": "change",
+              "description": "Fired when selection toggles: detail: { selected, value }"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-collapsible.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElCollapsible",
+          "tagName": "el-collapsible",
+          "description": "Accessible disclosure panel with smooth animated height expansion.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-command.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElCommand",
+          "tagName": "el-command",
+          "description": "Accessible keyboard-first command menu and search palette (⌘K / cmdk style).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "open",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Type a command or search...'"
+            }
+          ],
+          "events": [
+            {
+              "name": "select",
+              "description": "Fired when an item is selected: detail: { value, item }"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-context-menu.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElContextMenu",
+          "tagName": "el-context-menu",
+          "description": "Floating context menu opening at cursor coordinates on right-click.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-datepicker.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElDatepicker",
+          "tagName": "el-datepicker",
+          "description": "Form-associated composite Datepicker combining dropdown, input, and calendar.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Select date...'"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "required",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            }
+          ],
+          "events": [
+            {
+              "name": "change",
+              "description": "Fired when date changes: detail.value"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-dialog.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElDialog",
+          "tagName": "el-dialog",
+          "description": "Accessible modal dialog powered by native <dialog> with overscroll containment.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "open",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "title",
+              "type": {
+                "text": "string"
+              }
+            }
+          ],
+          "slots": [
+            {
+              "name": "header",
+              "description": "Dialog title or header."
+            },
+            {
+              "name": "",
+              "description": "Dialog body content."
+            },
+            {
+              "name": "footer",
+              "description": "Action buttons."
+            }
+          ],
+          "events": [
+            {
+              "name": "open",
+              "description": "Fired when modal opens."
+            },
+            {
+              "name": "close",
+              "description": "Fired when modal closes: detail.returnValue"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-drawer.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElDrawer",
+          "tagName": "el-drawer",
+          "description": "Accessible slide-over drawer panel with backdrop light-dismiss and keyboard traps.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "open",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "placement",
+              "type": {
+                "text": "'left' | 'right' | 'top' | 'bottom'"
+              },
+              "default": "'right'"
+            },
+            {
+              "name": "title",
+              "type": {
+                "text": "string"
+              }
+            }
+          ],
+          "events": [
+            {
+              "name": "open",
+              "description": "Fired when drawer opens."
+            },
+            {
+              "name": "close",
+              "description": "Fired when drawer closes."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-dropdown.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElDropdown",
+          "tagName": "el-dropdown",
+          "description": "Accessible overlay container with light-dismiss and trigger slot.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "open",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            }
+          ],
+          "events": [
+            {
+              "name": "open",
+              "description": "Fired when opened."
+            },
+            {
+              "name": "close",
+              "description": "Fired when closed."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-dropzone.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElDropzone",
+          "tagName": "el-dropzone",
+          "description": "Drag and drop file upload target with type filtering and size constraint validation.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "accept",
+              "type": {
+                "text": "string"
+              },
+              "default": "''"
+            },
+            {
+              "name": "max-size",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "multiple",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            }
+          ],
+          "events": [
+            {
+              "name": "files-selected",
+              "description": "Emitted when valid files are dropped or selected."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-empty-state.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElEmptyState",
+          "tagName": "el-empty-state",
+          "description": "Zero-data placeholder graphic with title, description, and action CTA slots.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "title",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "description",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-field.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElField",
+          "tagName": "el-field",
+          "description": "Accessible form field wrapper providing label, description, and error messaging.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-form.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElForm",
+          "tagName": "el-form",
+          "description": "Form container orchestrating validation, serialization and data collection across Elementum inputs.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "events": [
+            {
+              "name": "submit",
+              "description": "Emitted on valid form submission."
+            }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "ElFieldset",
+          "tagName": "el-fieldset",
+          "description": "Accessible field grouping container with legend and cascade disable support.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "legend",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-input.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElInput",
+          "tagName": "el-input",
+          "description": "Form-associated text/form input with prefix/suffix slots and design token styling.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "name": "readonly",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "name": "required",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "pattern",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "minlength",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "'sm' | 'md' | 'lg'"
+              },
+              "default": "'md'"
+            }
+          ],
+          "events": [
+            {
+              "name": "input",
+              "description": "Fired on character typed."
+            },
+            {
+              "name": "change",
+              "description": "Fired on commit/blur."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-kbd.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElKbd",
+          "tagName": "el-kbd",
+          "description": "Keycap keyboard shortcut parser and badge renderer.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "keys",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "'sm' | 'md' | 'lg'"
+              },
+              "default": "'md'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-menubar.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElMenubar",
+          "tagName": "el-menubar",
+          "description": "Desktop application menubar with arrow key roving focus and hover switching.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-meter.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElMeter",
+          "tagName": "el-meter",
+          "description": "Scalar gauge primitive for displaying storage, CPU, and threshold metrics.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-number-field.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElNumberField",
+          "tagName": "el-number-field",
+          "description": "Precision numeric stepper with keyboard arrow scrubbing and bounds.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-number-flow.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElNumberFlow",
+          "tagName": "el-number-flow",
+          "description": "Smooth vertical rolling odometer number reel with prefix/suffix support and reduced-motion fallback.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "number | string"
+              },
+              "default": "'0'"
+            },
+            {
+              "name": "prefix",
+              "type": {
+                "text": "string"
+              },
+              "default": "''"
+            },
+            {
+              "name": "suffix",
+              "type": {
+                "text": "string"
+              },
+              "default": "''"
+            },
+            {
+              "name": "duration",
+              "type": {
+                "text": "number"
+              },
+              "default": "400"
+            },
+            {
+              "name": "animated",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-otp-input.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElOtpInput",
+          "tagName": "el-otp-input",
+          "description": "Segmented one-time-password and PIN verification box with auto-advance, backspace retreat, and paste splitting.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "length",
+              "type": {
+                "text": "number"
+              },
+              "default": "6"
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "''"
+            },
+            {
+              "name": "type",
+              "type": {
+                "text": "'text' | 'password'"
+              },
+              "default": "'text'"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "required",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            }
+          ],
+          "events": [
+            {
+              "name": "complete",
+              "description": "Fired when all code slots are filled: detail: { value }"
+            },
+            {
+              "name": "change",
+              "description": "Fired on code change: detail: { value }"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-pagination.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElPagination",
+          "tagName": "el-pagination",
+          "description": "Accessible pagination component with dynamic page windowing, ellipsis, and W3C navigation semantics.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "page",
+              "type": {
+                "text": "number"
+              },
+              "default": "1"
+            },
+            {
+              "name": "total",
+              "type": {
+                "text": "number"
+              },
+              "default": "0"
+            },
+            {
+              "name": "page-size",
+              "type": {
+                "text": "number"
+              },
+              "default": "10"
+            },
+            {
+              "name": "sibling-count",
+              "type": {
+                "text": "number"
+              },
+              "default": "1"
+            }
+          ],
+          "events": [
+            {
+              "name": "pagechange",
+              "description": "Fired when page changes: detail: { page, pageSize }"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-popover.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElPopover",
+          "tagName": "el-popover",
+          "description": "Non-modal floating overlay anchored to a trigger with light-dismiss.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-preview-card.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElPreviewCard",
+          "tagName": "el-preview-card",
+          "description": "Hover card popup showing rich preview content with hover intent delays.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-progress.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElProgress",
+          "tagName": "el-progress",
+          "description": "Accessible progress bar with determinate and indeterminate states and WCAG role='progressbar'.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "number"
+              },
+              "default": "0"
+            },
+            {
+              "name": "max",
+              "type": {
+                "text": "number"
+              },
+              "default": "100"
+            },
+            {
+              "name": "variant",
+              "type": {
+                "text": "'primary' | 'success' | 'danger'"
+              },
+              "default": "'primary'"
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "'sm' | 'md' | 'lg'"
+              },
+              "default": "'md'"
+            },
+            {
+              "name": "indeterminate",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "striped",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-prompt-input.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElPromptInput",
+          "tagName": "el-prompt-input",
+          "description": "Auto-expanding AI prompt composer with action bar slots and Enter-to-submit keyboard shortcuts.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "''"
+            },
+            {
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Type a message or prompt...'"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "loading",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "max-rows",
+              "type": {
+                "text": "number"
+              },
+              "default": "10"
+            },
+            {
+              "name": "min-rows",
+              "type": {
+                "text": "number"
+              },
+              "default": "2"
+            },
+            {
+              "name": "clear-on-submit",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true"
+            }
+          ],
+          "events": [
+            {
+              "name": "submit",
+              "description": "Fired when prompt is submitted via Enter or submit button: detail: { value }"
+            },
+            {
+              "name": "input",
+              "description": "Fired on character input"
+            },
+            {
+              "name": "change",
+              "description": "Fired on commit"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-radio.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElRadio",
+          "tagName": "el-radio",
+          "description": "Accessible radio button primitive working inside ElRadioGroup.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-rating.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElRating",
+          "tagName": "el-rating",
+          "description": "Form-associated star rating component with keyboard arrows and hover preview.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "number"
+              },
+              "default": "0"
+            },
+            {
+              "name": "max",
+              "type": {
+                "text": "number"
+              },
+              "default": "5"
+            },
+            {
+              "name": "readonly",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            }
+          ],
+          "events": [
+            {
+              "name": "change",
+              "description": "Emitted when rating value is confirmed."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-reasoning-card.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElReasoningCard",
+          "tagName": "el-reasoning-card",
+          "description": "Collapsible AI thinking process disclosure with pulsing indicator dot and duration timer badge.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "open",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "thinking",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "duration",
+              "type": {
+                "text": "string"
+              },
+              "default": "''"
+            },
+            {
+              "name": "summary",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Thinking process'"
+            }
+          ],
+          "events": [
+            {
+              "name": "toggle",
+              "description": "Fired when disclosure toggles: detail: { open }"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-resizable.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElResizable",
+          "tagName": "el-resizable",
+          "description": "Split-pane divider handle with pointer dragging and keyboard arrow resize.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "direction",
+              "type": {
+                "text": "'horizontal' | 'vertical'"
+              },
+              "default": "'horizontal'"
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "number"
+              },
+              "default": "50"
+            },
+            {
+              "name": "min",
+              "type": {
+                "text": "number"
+              },
+              "default": "10"
+            },
+            {
+              "name": "max",
+              "type": {
+                "text": "number"
+              },
+              "default": "90"
+            }
+          ],
+          "events": [
+            {
+              "name": "resize",
+              "description": "Emitted during pane resizing with percentage size."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-scroll-area.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElScrollArea",
+          "tagName": "el-scroll-area",
+          "description": "Custom cross-browser scrollbar container avoiding OS layout shifts.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-segmented-control.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElSegmentedControl",
+          "tagName": "el-segmented-control",
+          "description": "Form-associated pill segment switcher with arrow key navigation and ARIA radiogroup semantics.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "'sm' | 'md' | 'lg'"
+              },
+              "default": "'md'"
+            }
+          ],
+          "events": [
+            {
+              "name": "change",
+              "description": "Fired on segment selection: detail.value"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-select.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElSelect",
+          "tagName": "el-select",
+          "description": "Form-associated custom select dropdown with option list.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "name": "required",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            }
+          ],
+          "events": [
+            {
+              "name": "change",
+              "description": "Fired on selection change: detail.value"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-separator.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElSeparator",
+          "tagName": "el-separator",
+          "description": "Visual or semantic horizontal/vertical content divider.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-sidebar.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElSidebar",
+          "tagName": "el-sidebar",
+          "description": "Collapsible application sidebar with off-canvas drawer mode and responsive collapse.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "collapsed",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "collapsible",
+              "type": {
+                "text": "'offcanvas' | 'icon' | 'none'"
+              },
+              "default": "'offcanvas'"
+            },
+            {
+              "name": "side",
+              "type": {
+                "text": "'left' | 'right'"
+              },
+              "default": "'left'"
+            }
+          ],
+          "events": [
+            {
+              "name": "collapse",
+              "description": "Emitted when sidebar collapses."
+            },
+            {
+              "name": "expand",
+              "description": "Emitted when sidebar expands."
+            }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "ElSidebarHeader",
+          "tagName": "el-sidebar-header",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        },
+        {
+          "kind": "class",
+          "name": "ElSidebarContent",
+          "tagName": "el-sidebar-content",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        },
+        {
+          "kind": "class",
+          "name": "ElSidebarFooter",
+          "tagName": "el-sidebar-footer",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        },
+        {
+          "kind": "class",
+          "name": "ElSidebarTrigger",
+          "tagName": "el-sidebar-trigger",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-skeleton.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElSkeleton",
+          "tagName": "el-skeleton",
+          "description": "Shimmer wave/pulse placeholder box preventing layout shifts.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "variant",
+              "type": {
+                "text": "'text' | 'circular' | 'rectangular'"
+              },
+              "default": "'text'"
+            },
+            {
+              "name": "animation",
+              "type": {
+                "text": "'pulse' | 'wave' | 'none'"
+              },
+              "default": "'pulse'"
+            },
+            {
+              "name": "width",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "height",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-slider.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElSlider",
+          "tagName": "el-slider",
+          "description": "Accessible continuous or stepped range slider with keyboard navigation.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-spinner.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElSpinner",
+          "tagName": "el-spinner",
+          "description": "Smooth SVG loading spinner with accessible status role.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "size",
+              "type": {
+                "text": "'sm' | 'md' | 'lg'"
+              },
+              "default": "'md'"
+            },
+            {
+              "name": "variant",
+              "type": {
+                "text": "'primary' | 'muted' | 'white'"
+              },
+              "default": "'primary'"
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Loading'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-streaming-text.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElStreamingText",
+          "tagName": "el-streaming-text",
+          "description": "Simulated token-by-token streaming typewriter text with organic jitter, blinking cursor, and completion events.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "text",
+              "type": {
+                "text": "string"
+              },
+              "default": "''"
+            },
+            {
+              "name": "speed",
+              "type": {
+                "text": "number"
+              },
+              "default": "20"
+            },
+            {
+              "name": "cursor",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true"
+            },
+            {
+              "name": "auto-start",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true"
+            }
+          ],
+          "events": [
+            {
+              "name": "stream-start",
+              "description": "Fired when streaming begins"
+            },
+            {
+              "name": "stream-end",
+              "description": "Fired when streaming completes: detail: { text }"
+            },
+            {
+              "name": "stream-tick",
+              "description": "Fired on each character token: detail: { text }"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-switch.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElSwitch",
+          "tagName": "el-switch",
+          "description": "Form-associated accessible toggle switch with keyboard support and token styling.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "checked",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "required",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "'sm' | 'md' | 'lg'"
+              },
+              "default": "'md'"
+            }
+          ],
+          "events": [
+            {
+              "name": "change",
+              "description": "Fired on toggle: detail: { checked, value }"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-table.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElTable",
+          "tagName": "el-table",
+          "description": "Fine-grained reactive data table with column sorting and row selection.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "selectable",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            }
+          ],
+          "events": [
+            {
+              "name": "sort",
+              "description": "Fired when sort column changes: detail: { key, direction }"
+            },
+            {
+              "name": "selectionchange",
+              "description": "Fired when row selection changes: detail: { selected }"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-tabs.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElTabs",
+          "tagName": "el-tabs",
+          "description": "Accessible tablist and tab panel container with keyboard navigation.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "description": "Active tab value"
+            }
+          ],
+          "events": [
+            {
+              "name": "tabchange",
+              "description": "Fired on tab change: detail.value"
+            }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "ElTab",
+          "tagName": "el-tab",
+          "description": "Individual tab panel inside <el-tabs>.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-textarea.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElTextarea",
+          "tagName": "el-textarea",
+          "description": "Form-associated auto-resizing multi-line text input with character counting.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "''"
+            },
+            {
+              "name": "rows",
+              "type": {
+                "text": "number"
+              },
+              "default": "3"
+            },
+            {
+              "name": "auto-resize",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "required",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "maxlength",
+              "type": {
+                "text": "number"
+              }
+            }
+          ],
+          "events": [
+            {
+              "name": "input",
+              "description": "Emitted on character input."
+            },
+            {
+              "name": "change",
+              "description": "Emitted on commit."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-theme-switch.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElThemeSwitch",
+          "tagName": "el-theme-switch",
+          "description": "Color theme toggle between Light and Dark mode with localStorage persistence.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "events": [
+            {
+              "name": "themechange",
+              "description": "Fired when theme toggles: detail.theme"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-timeline.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElTimeline",
+          "tagName": "el-timeline",
+          "description": "Activity progression trail container.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "orientation",
+              "type": {
+                "text": "'vertical' | 'horizontal'"
+              },
+              "default": "'vertical'"
+            }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "ElTimelineItem",
+          "tagName": "el-timeline-item",
+          "description": "Individual chronological milestone node with status badges.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "status",
+              "type": {
+                "text": "'default' | 'active' | 'success' | 'warning' | 'destructive'"
+              },
+              "default": "'default'"
+            },
+            {
+              "name": "date",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-toast.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElToaster",
+          "tagName": "el-toaster",
+          "description": "Viewport overlay container rendering programmatic toast notifications.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-toast.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElToast",
+          "tagName": "el-toast",
+          "description": "Individual notification toast item managed by ToastManager.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-toggle.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElToggle",
+          "tagName": "el-toggle",
+          "description": "Two-state toggle button with pressed state and group support.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-toolbar.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElToolbar",
+          "tagName": "el-toolbar",
+          "description": "Accessible action bar container with roving tabindex keyboard navigation.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-tooltip.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElTooltip",
+          "tagName": "el-tooltip",
+          "description": "Accessible lightweight tooltip anchored to wrapped trigger element.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "content",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "placement",
+              "type": {
+                "text": "'top' | 'bottom' | 'left' | 'right'"
+              },
+              "default": "'top'"
+            },
+            {
+              "name": "delay",
+              "type": {
+                "text": "number"
+              },
+              "default": "150"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-tree-view.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElTreeView",
+          "tagName": "el-tree-view",
+          "description": "Hierarchical tree list container with keyboard navigation.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        },
+        {
+          "kind": "class",
+          "name": "ElTreeItem",
+          "tagName": "el-tree-item",
+          "description": "Expandable/collapsible tree node.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "expanded",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "selected",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            }
+          ],
+          "events": [
+            {
+              "name": "expand",
+              "description": "Emitted when branch expands."
+            },
+            {
+              "name": "collapse",
+              "description": "Emitted when branch collapses."
+            },
+            {
+              "name": "select",
+              "description": "Emitted when item is selected."
+            }
           ]
         }
       ]

@@ -31,15 +31,21 @@ export class ElTooltip extends Elementum {
       font-size: 0.8125rem;
       line-height: 1.25;
       font-weight: 500;
-      color: #ffffff;
-      background: var(--el-text-base, #1f2937);
-      border-radius: var(--el-radius-sm, 4px);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15);
+      color: var(--el-tooltip-text, #ffffff) !important;
+      background: var(--el-tooltip-bg, #0f172a) !important;
+      border: 1px solid var(--el-tooltip-border, rgba(255, 255, 255, 0.15));
+      border-radius: var(--el-radius-sm, 6px);
+      box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.4);
       white-space: nowrap;
       pointer-events: none;
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+    }
+
+    .tooltip-bubble ::slotted(*),
+    .tooltip-bubble slot {
+      color: var(--el-tooltip-text, #ffffff) !important;
     }
 
     .tooltip-bubble.visible {
@@ -86,6 +92,8 @@ export class ElTooltip extends Elementum {
   `;
 
   connected() {
+    this.setAttribute('data-state', this.visible.value ? 'open' : 'closed');
+    this.setAttribute('data-side', this.placement.value);
     this.addEventListener('mouseenter', this.#onEnter);
     this.addEventListener('mouseleave', this.#onLeave);
     this.addEventListener('focusin', this.#onEnter);
@@ -97,18 +105,22 @@ export class ElTooltip extends Elementum {
     if (this.disabled.value) return;
     clearTimeout(this.#timeoutId);
     const delayMs = Number(this.delay.value) || 0;
-    if (delayMs > 0) {
-      this.#timeoutId = setTimeout(() => {
-        this.visible.value = true;
-      }, delayMs);
-    } else {
+    const doShow = () => {
       this.visible.value = true;
+      this.setAttribute('data-state', 'open');
+      this.setAttribute('data-side', this.placement.value);
+    };
+    if (delayMs > 0) {
+      this.#timeoutId = setTimeout(doShow, delayMs);
+    } else {
+      doShow();
     }
   }
 
   hide() {
     clearTimeout(this.#timeoutId);
     this.visible.value = false;
+    this.setAttribute('data-state', 'closed');
   }
 
   #onEnter = () => {

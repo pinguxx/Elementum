@@ -3,788 +3,2878 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>@wc/elementum Component Showcase</title>
+  <title>Elementum Component Catalog & Options Explorer</title>
   <link rel="stylesheet" href="../src/tokens.css" />
+  <script type="module" src="../src/index.js"></script>
   <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      margin: 0;
-      padding: 40px 20px;
-      background-color: var(--el-surface-muted, #f8fafc);
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      background-color: var(--el-surface-base, #ffffff);
       color: var(--el-text-base, #0f172a);
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--el-surface-base, #ffffff);
+      color: var(--el-text-base, #0f172a);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
       transition: background-color 0.2s ease, color 0.2s ease;
     }
 
-    .container {
-      max-width: 960px;
-      margin: 0 auto;
-      background: var(--el-surface-base, #ffffff);
-      padding: 40px;
-      border-radius: var(--el-radius-lg, 16px);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-      border: 1px solid var(--el-surface-border, #e2e8f0);
-    }
-
-    @media (max-width: 640px) {
-      body {
-        padding: 16px 8px;
-      }
-      .container {
-        padding: 20px 16px;
-      }
-      h1 {
-        font-size: 1.4rem;
-      }
-      .card {
-        padding: 16px;
-      }
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .header-bar {
-      display: flex;
-      justify-content: space-between;
+    /* Responsive Top Navbar Mobile Sidebar Trigger */
+    .mobile-sidebar-toggle {
+      display: inline-flex;
       align-items: center;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    h1 {
-      margin: 0;
-      color: var(--el-text-base, #1e293b);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 1.75rem;
-    }
-
-    section {
-      margin: 36px 0;
-      padding-top: 28px;
-      border-top: 1px solid var(--el-surface-border, #e2e8f0);
-    }
-
-    section h2 {
-      margin-top: 0;
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--el-text-base, #1e293b);
-    }
-
-    section p {
-      color: var(--el-text-muted, #64748b);
-      font-size: 0.9375rem;
-      margin-bottom: 20px;
-      line-height: 1.5;
-    }
-
-    .row {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .card {
+      gap: 6px;
+      padding: 6px 10px;
+      font-size: 0.8125rem;
+      font-weight: 600;
       background: var(--el-surface-muted, #f1f5f9);
-      border-radius: var(--el-radius-md, 8px);
-      padding: 24px;
-      margin-top: 16px;
+      border: 1px solid var(--el-surface-border, #cbd5e1);
+      border-radius: 6px;
+      color: var(--el-text-primary, #0f172a);
+      cursor: pointer;
+      user-select: none;
+      flex-shrink: 0;
     }
 
-    .form-grid {
+    @media (max-width: 420px) {
+      .mobile-sidebar-toggle {
+        padding: 5px 8px;
+        font-size: 0.75rem;
+        gap: 4px;
+      }
+    }
+
+    :root[data-theme="dark"] .mobile-sidebar-toggle {
+      background: #1e293b;
+      border-color: #334155;
+      color: #f8fafc;
+    }
+
+    @media (min-width: 1025px) {
+      .mobile-sidebar-toggle {
+        display: none !important;
+      }
+    }
+
+    /* Layout Shell */
+    .catalog-layout {
+      display: flex;
+      flex: 1;
+      width: 100%;
+      max-width: 1600px;
+      margin: 0 auto;
+      box-sizing: border-box;
+      min-width: 0;
+    }
+
+    /* Left Sidebar Navigation */
+    .catalog-sidebar {
+      width: 290px;
+      min-width: 290px;
+      max-width: 290px;
+      border-right: 1px solid var(--el-surface-border, #e2e8f0);
+      height: calc(100vh - 56px);
+      position: sticky;
+      top: 56px;
+      overflow-y: auto;
+      padding: 16px 12px 32px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: var(--el-surface-card, #ffffff);
+      box-sizing: border-box;
+      z-index: 50;
+    }
+
+    :root[data-theme="dark"] .catalog-sidebar {
+      border-right-color: #1e293b;
+      background: var(--el-surface-elevated, #0f172a);
+    }
+
+    .sidebar-mobile-header {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--el-surface-border, #e2e8f0);
+    }
+
+    :root[data-theme="dark"] .sidebar-mobile-header {
+      border-bottom-color: #1e293b;
+    }
+
+    .sidebar-close-btn {
+      background: transparent;
+      border: 1px solid var(--el-surface-border, #cbd5e1);
+      border-radius: 6px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      color: var(--el-text-primary, #0f172a);
+    }
+
+    :root[data-theme="dark"] .sidebar-close-btn {
+      border-color: #334155;
+      color: #f8fafc;
+    }
+
+    .sidebar-backdrop {
+      display: none;
+    }
+
+    @media (max-width: 1024px) {
+      .catalog-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 300px;
+        max-width: 86vw;
+        height: 100vh;
+        z-index: 1000;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        transform: translateX(-105%);
+        transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+      }
+      .catalog-sidebar.mobile-open {
+        transform: translateX(0);
+      }
+      .sidebar-mobile-header {
+        display: flex;
+      }
+      .sidebar-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 999;
+        display: none;
+      }
+      .sidebar-backdrop.active {
+        display: block;
+      }
+    }
+
+    .search-box {
+      position: sticky;
+      top: 0;
+      background: var(--el-surface-card, #ffffff);
+      padding-bottom: 8px;
+      z-index: 10;
+    }
+
+    :root[data-theme="dark"] .search-box {
+      background: var(--el-surface-elevated, #0f172a);
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 38px;
+      padding: 0 34px 0 34px;
+      background: var(--el-surface-muted, #f1f5f9);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      color: var(--el-text-primary, #0f172a);
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    :root[data-theme="dark"] .search-input {
+      background: #1e293b;
+      border-color: #334155;
+      color: #f8fafc;
+    }
+
+    .search-input:focus {
+      border-color: var(--el-color-primary, #2563eb);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    }
+
+    .search-icon-left {
+      position: absolute;
+      left: 10px;
+      font-size: 14px;
+      color: var(--el-text-muted, #94a3b8);
+      pointer-events: none;
+    }
+
+    .search-shortcut {
+      position: absolute;
+      right: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--el-surface-card, #ffffff);
+      border: 1px solid var(--el-surface-border, #cbd5e1);
+      border-radius: 4px;
+      padding: 2px 6px;
+      color: var(--el-text-muted, #64748b);
+      pointer-events: none;
+    }
+
+    :root[data-theme="dark"] .search-shortcut {
+      background: #0f172a;
+      border-color: #475569;
+    }
+
+    /* Nav Category Sections */
+    .nav-category {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--el-text-muted, #64748b);
+      border-radius: 6px;
+      user-select: none;
+    }
+
+    .nav-item-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 12px;
+      border-radius: 7px;
+      color: var(--el-text-secondary, #475569);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: background-color 0.12s ease, color 0.12s ease;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+
+    :root[data-theme="dark"] .nav-item-btn {
+      color: #94a3b8;
+    }
+
+    .nav-item-btn:hover {
+      background: var(--el-surface-muted, #f1f5f9);
+      color: var(--el-text-primary, #0f172a);
+    }
+
+    :root[data-theme="dark"] .nav-item-btn:hover {
+      background: #1e293b;
+      color: #f8fafc;
+    }
+
+    .nav-item-btn.active {
+      background: rgba(37, 99, 235, 0.08);
+      color: var(--el-color-primary, #2563eb);
+      font-weight: 600;
+    }
+
+    :root[data-theme="dark"] .nav-item-btn.active {
+      background: rgba(37, 99, 235, 0.2);
+      color: #60a5fa;
+    }
+
+    .tag-count {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: var(--el-surface-muted, #e2e8f0);
+      color: var(--el-text-muted, #64748b);
+    }
+
+    :root[data-theme="dark"] .tag-count {
+      background: #334155;
+      color: #94a3b8;
+    }
+
+    /* Main Component Detail Content */
+    .catalog-main {
+      flex: 1;
+      min-width: 0;
+      width: 100%;
+      max-width: 100%;
+      padding: 20px 14px 60px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      box-sizing: border-box;
+      overflow-x: hidden;
+    }
+
+    @media (min-width: 1025px) {
+      .catalog-main {
+        padding: 32px 48px 80px 48px;
+        gap: 36px;
+      }
+    }
+
+    /* Component Header */
+    .component-header {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border-bottom: 1px solid var(--el-surface-border, #e2e8f0);
+      padding-bottom: 20px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    :root[data-theme="dark"] .component-header {
+      border-bottom-color: #1e293b;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8125rem;
+      color: var(--el-text-muted, #64748b);
+      flex-wrap: wrap;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .component-title {
+      font-size: clamp(1.4rem, 5vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 0;
+      color: var(--el-text-primary, #0f172a);
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+
+    :root[data-theme="dark"] .component-title {
+      color: #f8fafc;
+    }
+
+    .tag-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: var(--el-surface-muted, #f1f5f9);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      border-radius: 999px;
+      font-family: monospace;
+      font-size: 0.875rem;
+      color: var(--el-color-primary, #2563eb);
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.15s ease;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    :root[data-theme="dark"] .tag-badge-pill {
+      background: #1e293b;
+      border-color: #334155;
+      color: #60a5fa;
+    }
+
+    .tag-badge-pill:hover {
+      background: var(--el-surface-border, #e2e8f0);
+    }
+
+    .component-desc {
+      font-size: 1rem;
+      line-height: 1.5;
+      color: var(--el-text-secondary, #475569);
+      margin: 0;
+      max-width: 820px;
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+
+    :root[data-theme="dark"] .component-desc {
+      color: #94a3b8;
+    }
+
+    .badge-strip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    /* Live Interactive Canvas */
+    .preview-card {
+      background: var(--el-surface-card, #ffffff);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      border-radius: 14px;
+      overflow: visible;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    :root[data-theme="dark"] .preview-card {
+      background: var(--el-surface-elevated, #111827);
+      border-color: #1e293b;
+    }
+
+    .preview-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--el-surface-muted, #f8fafc);
+      border-bottom: 1px solid var(--el-surface-border, #e2e8f0);
+      border-radius: 14px 14px 0 0;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      flex-wrap: wrap;
+      gap: 8px;
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    :root[data-theme="dark"] .preview-toolbar {
+      background: #0b0f19;
+      border-bottom-color: #1e293b;
+    }
+
+    .canvas-stage {
+      padding: 40px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 240px;
+      position: relative;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow: visible;
+    }
+
+    /* Isolate preview canvas theme independently of page data-theme */
+    .canvas-stage:not(.dark-canvas) {
+      --el-color-primary: #2563eb;
+      --el-color-primary-hover: #1d4ed8;
+      --el-color-secondary: #4b5563;
+      --el-color-danger: #dc2626;
+      --el-color-success: #16a34a;
+      --el-surface-base: #ffffff;
+      --el-surface-card: #ffffff;
+      --el-surface-elevated: #ffffff;
+      --el-surface-muted: #f3f4f6;
+      --el-surface-border: #e5e7eb;
+      --el-border-translucent: rgba(15, 23, 42, 0.08);
+      --el-text-base: #111827;
+      --el-text-primary: #0f172a;
+      --el-text-secondary: #475569;
+      --el-text-muted: #6b7280;
+      --el-text-inverse: #ffffff;
+      --el-step-1: #fbfcfd;
+      --el-step-2: #f8fafc;
+      --el-step-3: #f1f5f9;
+      --el-step-4: #e2e8f0;
+      --el-step-5: #cbd5e1;
+      --el-step-6: #e2e8f0;
+      --el-step-7: #cbd5e1;
+      --el-step-8: #94a3b8;
+      --el-step-9: #2563eb;
+      --el-step-10: #1d4ed8;
+      --el-step-11: #475569;
+      --el-step-12: #0f172a;
+      --el-tooltip-bg: #0f172a;
+      --el-tooltip-text: #ffffff;
+      --el-tooltip-border: rgba(255, 255, 255, 0.12);
+      --el-skeleton-bg: #e2e8f0;
+      background: #ffffff;
+      color: #0f172a;
+      color-scheme: light;
+    }
+
+    .canvas-stage.dark-canvas {
+      --el-color-primary: #3b82f6;
+      --el-color-primary-hover: #60a5fa;
+      --el-color-secondary: #9ca3af;
+      --el-color-danger: #ef4444;
+      --el-color-success: #22c55e;
+      --el-surface-base: #0b0f19;
+      --el-surface-card: #111827;
+      --el-surface-elevated: #1e293b;
+      --el-surface-muted: #1e293b;
+      --el-surface-border: #334155;
+      --el-border-translucent: rgba(255, 255, 255, 0.08);
+      --el-text-base: #f9fafb;
+      --el-text-primary: #f8fafc;
+      --el-text-secondary: #94a3b8;
+      --el-text-muted: #64748b;
+      --el-text-inverse: #0f172a;
+      --el-step-1: #090d16;
+      --el-step-2: #0f172a;
+      --el-step-3: #1e293b;
+      --el-step-4: #334155;
+      --el-step-5: #475569;
+      --el-step-6: #1e293b;
+      --el-step-7: #334155;
+      --el-step-8: #64748b;
+      --el-step-9: #3b82f6;
+      --el-step-10: #2563eb;
+      --el-step-11: #94a3b8;
+      --el-step-12: #f8fafc;
+      --el-tooltip-bg: #1e293b;
+      --el-tooltip-text: #f8fafc;
+      --el-tooltip-border: #475569;
+      --el-skeleton-bg: #334155;
+      background: #090d16 !important;
+      color: #f8fafc;
+      color-scheme: dark;
+    }
+
+    .canvas-stage.checkered-canvas {
+      background-image: radial-gradient(var(--el-surface-border, #cbd5e1) 1px, transparent 1px);
+      background-size: 16px 16px;
+    }
+
+    /* High-contrast hover & base states for secondary/canvas toggle buttons across themes */
+    :root[data-theme="dark"] el-button[variant="secondary"]::part(button),
+    .canvas-stage.dark-canvas el-button[variant="secondary"]::part(button) {
+      background-color: #1e293b;
+      color: #f8fafc;
+      border-color: #334155;
+    }
+    :root[data-theme="dark"] el-button[variant="secondary"]::part(button):hover,
+    .canvas-stage.dark-canvas el-button[variant="secondary"]::part(button):hover {
+      background-color: #334155;
+      color: #f8fafc;
+      border-color: #475569;
+    }
+    :root[data-theme="dark"] .preview-card .canvas-stage:not(.dark-canvas) el-button[variant="secondary"]::part(button),
+    .canvas-stage:not(.dark-canvas) el-button[variant="secondary"]::part(button) {
+      background-color: #f3f4f6;
+      color: #0f172a;
+      border-color: #e5e7eb;
+    }
+    :root[data-theme="dark"] .preview-card .canvas-stage:not(.dark-canvas) el-button[variant="secondary"]::part(button):hover,
+    .canvas-stage:not(.dark-canvas) el-button[variant="secondary"]::part(button):hover {
+      background-color: #e2e8f0;
+      color: #0f172a;
+      border-color: #cbd5e1;
+    }
+
+    /* Property Knobs Form */
+    .knobs-container {
+      padding: 16px 14px;
+      border-top: 1px solid var(--el-surface-border, #e2e8f0);
+      background: var(--el-surface-card, #ffffff);
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: 1fr;
+      gap: 14px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    @media (min-width: 600px) {
+      .knobs-container {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+        padding: 20px 24px;
+      }
+    }
+
+    :root[data-theme="dark"] .knobs-container {
+      border-top-color: #1e293b;
+      background: #111827;
+    }
+
+    .knob-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .knob-field-wide {
+      grid-column: 1 / -1;
+    }
+
+    .knob-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--el-text-muted, #64748b);
+      user-select: none;
+    }
+
+    .knob-input, .knob-select {
+      width: 100%;
+      box-sizing: border-box;
+      height: 38px;
+      padding: 0 12px;
+      border-radius: 8px;
+      border: 1px solid var(--el-surface-border, #cbd5e1);
+      background: var(--el-surface-base, #ffffff);
+      color: var(--el-text-primary, #0f172a);
+      font-size: 0.875rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .knob-select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+      cursor: pointer;
+    }
+
+    :root[data-theme="dark"] .knob-input, :root[data-theme="dark"] .knob-select {
+      background-color: #1e293b;
+      border-color: #334155;
+      color: #f8fafc;
+    }
+
+    :root[data-theme="dark"] .knob-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    }
+
+    .knob-input:focus, .knob-select:focus {
+      border-color: var(--el-color-primary, #2563eb);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    }
+
+    /* Generated Code Snippet */
+    .code-container {
+      position: relative;
+      background: #090d16;
+      border-top: 1px solid #1e293b;
+      padding: 16px 20px;
+    }
+
+    .code-block {
+      margin: 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.875rem;
+      color: #e2e8f0;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.1);
+      color: #f8fafc;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Options / API Reference Section */
+    .api-section {
+      display: flex;
+      flex-direction: column;
       gap: 20px;
     }
 
-    .form-group {
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0;
+      color: var(--el-text-primary, #0f172a);
+    }
+
+    :root[data-theme="dark"] .section-title {
+      color: #f8fafc;
+    }
+
+    .api-table-wrapper {
+      background: var(--el-surface-card, #ffffff);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      border-radius: 12px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    :root[data-theme="dark"] .api-table-wrapper {
+      background: var(--el-surface-elevated, #111827);
+      border-color: #1e293b;
+    }
+
+    .api-table {
+      width: 100%;
+      min-width: 480px;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.875rem;
+    }
+
+    .api-table th {
+      background: var(--el-surface-muted, #f8fafc);
+      padding: 12px 16px;
+      font-weight: 600;
+      color: var(--el-text-secondary, #475569);
+      border-bottom: 1px solid var(--el-surface-border, #e2e8f0);
+    }
+
+    :root[data-theme="dark"] .api-table th {
+      background: #0b0f19;
+      color: #94a3b8;
+      border-bottom-color: #1e293b;
+    }
+
+    .api-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--el-surface-border, #f1f5f9);
+      color: var(--el-text-secondary, #334155);
+      vertical-align: top;
+    }
+
+    :root[data-theme="dark"] .api-table td {
+      border-bottom-color: #1e293b;
+      color: #cbd5e1;
+    }
+
+    .api-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .mono-pill {
+      display: inline-block;
+      font-family: monospace;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      padding: 2px 6px;
+      background: rgba(37, 99, 235, 0.08);
+      color: var(--el-color-primary, #2563eb);
+      border-radius: 4px;
+    }
+
+    :root[data-theme="dark"] .mono-pill {
+      background: rgba(37, 99, 235, 0.2);
+      color: #60a5fa;
+    }
+
+    .type-pill {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #c026d3;
+    }
+
+    :root[data-theme="dark"] .type-pill {
+      color: #e879f9;
+    }
+
+    /* Live Event Console */
+    .event-console {
+      background: #090d16;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-family: monospace;
+      font-size: 0.8125rem;
+      max-height: 180px;
+      overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
-    label {
+    .event-log-item {
+      display: flex;
+      gap: 12px;
+      color: #38bdf8;
+    }
+
+    .event-timestamp {
+      color: #64748b;
+    }
+
+    /* Examples & Variations Grid */
+    .variations-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    @media (min-width: 768px) {
+      .variations-grid {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 20px;
+      }
+    }
+
+    .variation-card {
+      background: var(--el-surface-card, #ffffff);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    :root[data-theme="dark"] .variation-card {
+      background: var(--el-surface-elevated, #111827);
+      border-color: #1e293b;
+    }
+
+    .variation-header {
+      padding: 12px 16px;
+      background: var(--el-surface-muted, #f8fafc);
+      border-bottom: 1px solid var(--el-surface-border, #e2e8f0);
+      font-size: 0.875rem;
       font-weight: 600;
-      font-size: 0.875rem;
-      color: var(--el-text-base, #334155);
     }
 
-    .result-pill {
-      display: inline-block;
-      margin-top: 12px;
-      padding: 6px 12px;
-      background: var(--el-surface-border, #e2e8f0);
-      border-radius: 6px;
+    :root[data-theme="dark"] .variation-header {
+      background: #0b0f19;
+      border-bottom-color: #1e293b;
+    }
+
+    .variation-preview {
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      min-height: 120px;
+    }
+
+    .variation-code {
+      background: #090d16;
+      padding: 12px 16px;
+      margin: 0;
       font-family: monospace;
-      font-size: 0.875rem;
+      font-size: 0.8125rem;
+      color: #cbd5e1;
+      border-top: 1px solid #1e293b;
+      white-space: pre-wrap;
     }
   </style>
-  <script type="module" src="../src/index.js"></script>
 </head>
 <body>
-  <!-- Global Toaster Component -->
+  <!-- Global Toaster for Notification Actions -->
   <el-toaster></el-toaster>
 
-  <div class="container">
-    <div class="header-bar">
-      <div>
-        <h1>
-          @wc/elementum
-          <el-badge variant="success" count="All 15 Elements"></el-badge>
-        </h1>
-        <p style="margin: 6px 0 0 0; color: var(--el-text-muted, #64748b);">
-          Fine-grained reactive Web Component catalog powered by micro-signals and Shadow DOM.
-        </p>
+  <!-- Top Sticky Navigation Bar -->
+  <el-navbar sticky brand="⚡ Elementum" badge="Catalog" badge-variant="primary" href="../index.html">
+    <button slot="start" class="mobile-sidebar-toggle" id="btn-mobile-sidebar-toggle" aria-label="Toggle Components Menu">
+      <span>☰</span>
+      <span class="mobile-btn-text">Components</span>
+    </button>
+    <a href="../index.html">Home</a>
+    <a href="./index.html" active>Components</a>
+    <a href="./registry.html">Registry</a>
+    <a href="./agent-studio.html">AI Studio</a>
+    <a href="./app.html">App</a>
+    <el-theme-switch slot="actions" size="sm"></el-theme-switch>
+  </el-navbar>
+
+  <!-- Mobile Sidebar Backdrop -->
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <!-- Main Dual-Pane Catalog Layout -->
+  <div class="catalog-layout">
+    <!-- Left Navigation Sidebar -->
+    <aside class="catalog-sidebar" id="catalog-sidebar">
+      <div class="sidebar-mobile-header">
+        <span style="font-weight:700; font-size:0.95rem;">Components Catalog (84)</span>
+        <button class="sidebar-close-btn" id="btn-sidebar-close" aria-label="Close Sidebar">✕</button>
       </div>
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <el-theme-switch></el-theme-switch>
-        <el-button variant="secondary" size="sm" onclick="location.href='./app.html'">
-          View Travel App ✈️
-        </el-button>
-      </div>
-    </div>
-
-    <!-- 1. BUTTONS & BADGES -->
-    <section>
-      <h2>1. Buttons & Badges (Figma Parity)</h2>
-      <p>Interactive buttons with 1:1 Figma variants, sizes, and slot projection.</p>
-      <div class="row">
-        <el-button variant="primary">Primary Action</el-button>
-        <el-button variant="secondary">Secondary Action</el-button>
-        <el-button variant="danger">Delete Item</el-button>
-        <el-button variant="ghost">Ghost Button</el-button>
-        <el-button variant="primary" disabled>Disabled State</el-button>
-      </div>
-
-      <div class="row" style="margin-top: 16px;">
-        <el-button size="sm">Small</el-button>
-        <el-button size="md">
-          <span slot="prefix">⚡</span>
-          Medium with Prefix
-        </el-button>
-        <el-button size="lg" variant="secondary">
-          Large with Badge
-          <el-badge slot="suffix" variant="success" count="Pro"></el-badge>
-        </el-button>
-        <el-badge variant="default" count="Default"></el-badge>
-        <el-badge variant="danger" count="High Priority"></el-badge>
-      </div>
-    </section>
-
-    <!-- 2. FORM CONTROLS -->
-    <section>
-      <h2>2. Form Controls (&lt;el-input&gt;, &lt;el-select&gt;, &lt;el-switch&gt;, &lt;el-datepicker&gt;)</h2>
-      <p>Form-Associated Custom Elements (FACE) with native submission and reset support.</p>
-      <div class="card">
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="demo-input">Text Input with Prefix:</label>
-            <el-input id="demo-input" placeholder="Enter keywords...">
-              <span slot="prefix">🔍</span>
-            </el-input>
-          </div>
-
-          <div class="form-group">
-            <label for="demo-select">Select Dropdown:</label>
-            <el-select id="demo-select" value="dev">
-              <option value="design">Product Design</option>
-              <option value="dev">Software Engineering</option>
-              <option value="ops">DevOps & Cloud</option>
-            </el-select>
-          </div>
-
-          <div class="form-group">
-            <label for="demo-dp">Composite Datepicker:</label>
-            <el-datepicker id="demo-dp" placeholder="Choose a date"></el-datepicker>
-          </div>
-
-          <div class="form-group">
-            <label>Toggle Switches (&lt;el-switch&gt;):</label>
-            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 4px;">
-              <el-switch size="sm">Small Switch</el-switch>
-              <el-switch size="md" checked>Medium Switch (Checked)</el-switch>
-              <el-switch size="lg">Large Switch</el-switch>
-            </div>
-          </div>
-        </div>
-        <div class="result-pill" id="form-output">Date Selected: (none)</div>
-      </div>
-    </section>
-
-    <!-- 3. FLOATING POPOVERS & TOOLTIPS -->
-    <section>
-      <h2>3. Popovers & Tooltips (&lt;el-tooltip&gt;, &lt;el-dropdown&gt;, &lt;el-dialog&gt;, &lt;el-toaster&gt;)</h2>
-      <p>Accessible floating bubbles, anchor tooltips, dialogs, and notifications.</p>
-
-      <div class="row">
-        <!-- Tooltip Placements -->
-        <el-tooltip content="Tooltip anchored on Top" placement="top">
-          <el-button variant="secondary">Hover Top</el-button>
-        </el-tooltip>
-
-        <el-tooltip content="Tooltip anchored on Bottom" placement="bottom">
-          <el-button variant="secondary">Hover Bottom</el-button>
-        </el-tooltip>
-
-        <el-tooltip content="Tooltip on Left" placement="left">
-          <el-button variant="secondary">Hover Left</el-button>
-        </el-tooltip>
-
-        <el-tooltip content="Tooltip on Right" placement="right">
-          <el-button variant="secondary">Hover Right</el-button>
-        </el-tooltip>
-
-        <!-- Dropdown Popover -->
-        <el-dropdown>
-          <el-button slot="trigger" variant="primary">
-            Actions Menu ▾
-          </el-button>
-          <div style="display: flex; flex-direction: column; gap: 4px; min-width: 160px;">
-            <el-button variant="ghost" size="sm" style="width: 100%; text-align: left;" id="btn-toast-info">Trigger Info Toast</el-button>
-            <el-button variant="ghost" size="sm" style="width: 100%; text-align: left;" id="btn-toast-success">Trigger Success Toast</el-button>
-            <hr style="border: none; border-top: 1px solid var(--el-surface-border, #e5e7eb); margin: 4px 0;" />
-            <el-button variant="danger" size="sm" style="width: 100%; text-align: left;" id="btn-toast-error">Trigger Error Toast</el-button>
-          </div>
-        </el-dropdown>
-
-        <!-- Modal Dialog Trigger -->
-        <el-button variant="secondary" id="btn-open-modal">
-          Open Native &lt;el-dialog&gt;
-        </el-button>
-      </div>
-
-      <!-- Sample Modal Dialog -->
-      <el-dialog id="demo-modal" title="Native Dialog Modal">
-        <p>This modal wraps the native browser <code>&lt;dialog&gt;</code> element with backdrop blur and overscroll containment.</p>
-        <p>Press <kbd>Escape</kbd> or click the button below to close.</p>
-        <div slot="footer">
-          <el-button variant="primary" id="btn-close-modal">Got it!</el-button>
-        </div>
-      </el-dialog>
-    </section>
-
-    <!-- 4. NAVIGATION & DISCLOSURES -->
-    <section>
-      <h2>4. Navigation & Disclosures (&lt;el-tabs&gt;, &lt;el-accordion&gt;)</h2>
-      <p>W3C accessible tabs and disclosure accordions supporting single or multi-expand.</p>
-
-      <el-tabs value="features">
-        <el-tab label="Overview" value="overview">
-          <div class="card" style="margin-top: 0;">
-            <p style="margin: 0;">Elementum eliminates framework runtime overhead while providing a complete Figma-aligned design system.</p>
-          </div>
-        </el-tab>
-        <el-tab label="Accordion & FAQs" value="features">
-          <div class="card" style="margin-top: 0;">
-            <el-accordion multiple>
-              <el-accordion-item title="What makes Elementum different from React or Vue?" open>
-                Elementum relies on browser-native Custom Elements and fine-grained micro-signals (~80 lines). Updates mutate only the exact bound text or attribute nodes without Virtual DOM diffing.
-              </el-accordion-item>
-              <el-accordion-item title="Does it work with standard HTML <form> elements?">
-                Yes! Form controls implement Form-Associated Custom Elements (<code>static formAssociated = true</code>) to submit, reset, and validate natively with <code>FormData</code>.
-              </el-accordion-item>
-              <el-accordion-item title="Can I use it with Figma Tokens?">
-                Yes, <code>tokens/figma-tokens.json</code> compiles automatically into <code>src/tokens.css</code> with full light and dark mode rules.
-              </el-accordion-item>
-            </el-accordion>
-          </div>
-        </el-tab>
-      </el-tabs>
-    </section>
-
-    <!-- 5. REACTIVE DATA TABLE -->
-    <section>
-      <h2>5. Fine-Grained Reactive Data Table (&lt;el-table&gt;)</h2>
-      <p>Data grid with reactive column sorting and multi-row selection.</p>
-      <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <span style="font-size: 0.875rem; color: var(--el-text-muted, #64748b);" id="table-selection-status">
-            0 rows selected
-          </span>
-          <el-button size="sm" variant="secondary" id="btn-add-row">
-            ➕ Add Row
-          </el-button>
-        </div>
-        <el-table id="demo-table" selectable></el-table>
-      </div>
-    </section>
-
-    <!-- 6. LIVE MICRO-SIGNALS -->
-    <section>
-      <h2>6. Micro-Signals Reactive Counter (Live Component)</h2>
-      <p>
-        Clicking the button mutates <strong>only the signal-bound text node</strong>.
-        The host component never re-renders, preserving full DOM focus.
-      </p>
-      <div class="card">
-        <demo-counter></demo-counter>
-      </div>
-    </section>
-
-    <!-- SECTION 7: New Primitives -->
-    <section>
-      <h2>7. Progress, Spinners, Avatars, Drawers & Segmented Controls</h2>
-      <p>
-        Full WCAG 2.2 compliant visual primitives designed with tokens and smooth animations.
-      </p>
-
-      <div class="card">
-        <div style="display:flex; flex-direction:column; gap:24px;">
-          <div>
-            <h4 style="margin:0 0 12px 0;">Progress Bars & Spinners</h4>
-            <div style="display:flex; flex-direction:column; gap:12px; max-width:480px; margin-bottom:16px;">
-              <el-progress value="45" max="100" variant="primary"></el-progress>
-              <el-progress value="80" max="100" variant="success" striped></el-progress>
-              <el-progress indeterminate variant="danger"></el-progress>
-            </div>
-            <div class="row">
-              <el-spinner size="sm" variant="primary"></el-spinner>
-              <el-spinner size="md" variant="primary"></el-spinner>
-              <el-spinner size="lg" variant="primary"></el-spinner>
-            </div>
-          </div>
-
-          <div>
-            <h4 style="margin:0 0 12px 0;">Avatars & Avatar Group</h4>
-            <div class="row">
-              <el-avatar name="Grace Hopper" size="sm" status="online"></el-avatar>
-              <el-avatar name="Alan Turing" size="md" status="away"></el-avatar>
-              <el-avatar name="Ada Lovelace" size="lg" status="busy"></el-avatar>
-              <el-avatar name="Claude Shannon" size="md" shape="square"></el-avatar>
-
-              <el-avatar-group style="margin-left:24px;">
-                <el-avatar name="Alice Miller"></el-avatar>
-                <el-avatar name="Bob Vance"></el-avatar>
-                <el-avatar name="Charlie Day"></el-avatar>
-              </el-avatar-group>
-            </div>
-          </div>
-
-          <div>
-            <h4 style="margin:0 0 12px 0;">Segmented Controls & Drawer</h4>
-            <div class="row">
-              <el-segmented-control id="demo-seg" value="analytics">
-                <option value="overview">Overview</option>
-                <option value="analytics">Analytics</option>
-                <option value="reports">Reports</option>
-              </el-segmented-control>
-
-              <el-button variant="secondary" id="btn-open-drawer">
-                Open Side Drawer 📑
-              </el-button>
-            </div>
-          </div>
+      <div class="search-box">
+        <div class="search-input-wrapper">
+          <span class="search-icon-left">🔍</span>
+          <input
+            type="text"
+            id="component-search-input"
+            class="search-input"
+            placeholder="Search 84 components..."
+            autocomplete="off"
+          />
+          <span class="search-shortcut">/</span>
         </div>
       </div>
-    </section>
 
-    <!-- Side Drawer Component -->
-    <el-drawer id="demo-drawer" title="Project Details" placement="right">
-      <p>This is an accessible slide-over drawer panel supporting keyboard navigation, backdrop dismissal, and focus restoration.</p>
-      <el-progress value="68" variant="primary" style="margin-top:16px;"></el-progress>
-      <div slot="footer">
-        <el-button variant="primary" id="btn-close-drawer">Done</el-button>
+      <div id="sidebar-categories" class="nav-categories-stack">
+        <!-- Dynamically rendered category sections -->
       </div>
-    </el-drawer>
+    </aside>
 
-    <!-- SECTION 8: Live Free API Data Loading, Filter Chips & Pagination -->
-    <section>
-      <h2>8. Live Free API Loading, Interactive Filter Chips & Pagination</h2>
-      <p>
-        Fetches live records from a free public API (<code>jsonplaceholder.typicode.com/users</code>) with interactive filter chips, loading spinner, and responsive pagination.
-      </p>
-
-      <div class="card">
-        <!-- Filter Chips Bar -->
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
-          <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="api-filter-chips">
-            <el-chip selectable selected variant="primary" value="all">All Users</el-chip>
-            <el-chip selectable variant="muted" value="biz">.biz Domains</el-chip>
-            <el-chip selectable variant="muted" value="org">.org Domains</el-chip>
-            <el-chip selectable variant="muted" value="tv">.tv Domains</el-chip>
-          </div>
-
-          <div style="display: flex; gap: 8px; align-items: center;">
-            <span id="api-loading-indicator" style="display: none; align-items: center; gap: 6px; font-size: 0.8125rem; color: var(--el-text-muted, #64748b);">
-              <el-spinner size="sm" variant="primary"></el-spinner> Loading...
-            </span>
-            <el-button size="sm" variant="secondary" id="btn-fetch-api">
-              🔄 Fetch Live Data
-            </el-button>
-          </div>
-        </div>
-
-        <!-- Table displaying API data -->
-        <el-table id="api-table"></el-table>
-
-        <!-- Pagination Controls -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; flex-wrap: wrap; gap: 12px;">
-          <span style="font-size: 0.875rem; color: var(--el-text-muted, #64748b);" id="api-page-summary">
-            Showing records 1–4 of 10
-          </span>
-          <el-pagination id="api-pagination" page="1" total="10" page-size="4"></el-pagination>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 9: Remote API & Local Autocomplete (Combobox) -->
-    <section>
-      <h2>9. Remote Free API & Local Autocomplete (Combobox)</h2>
-      <p>
-        The <code>&lt;el-autocomplete&gt;</code> element supports debounced remote endpoint queries (using the free JSONPlaceholder API), instant local array filtering, keyboard navigation, and form association.
-      </p>
-
-      <div class="card">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
-          <div>
-            <h4 style="margin: 0 0 8px 0;">Live Remote API Query (JSONPlaceholder)</h4>
-            <p style="font-size: 0.8125rem; color: var(--el-text-muted, #64748b); margin: 0 0 12px 0;">
-              Queries <code>jsonplaceholder.typicode.com/users</code> with 250ms debouncing and active spinner.
-            </p>
-            <el-autocomplete
-              id="ac-remote-users"
-              url="https://jsonplaceholder.typicode.com/users?q={query}"
-              label-key="name"
-              value-key="id"
-              debounce="200"
-              placeholder="Search user name (e.g. Leanne, Ervin, Chelsey)..."
-            >
-              <span slot="prefix">👤</span>
-            </el-autocomplete>
-            <div id="remote-user-selection" style="margin-top: 10px; font-size: 0.8125rem; color: var(--el-text-muted, #64748b);">
-              Selected User: <em>None</em>
-            </div>
-          </div>
-
-          <div>
-            <h4 style="margin: 0 0 8px 0;">Local Dataset Autocomplete with Key Mapping</h4>
-            <p style="font-size: 0.8125rem; color: var(--el-text-muted, #64748b); margin: 0 0 12px 0;">
-              Instant client-side substring matching on name, IATA code, and country.
-            </p>
-            <el-autocomplete
-              id="ac-local-airports"
-              label-key="name"
-              value-key="id"
-              placeholder="Search airport (e.g. SFO, Tokyo, London)..."
-            >
-              <span slot="prefix">✈️</span>
-            </el-autocomplete>
-            <div id="local-airport-selection" style="margin-top: 10px; font-size: 0.8125rem; color: var(--el-text-muted, #64748b);">
-              Selected Airport: <em>None</em>
-            </div>
-          </div>
-
-          <div>
-            <h4 style="margin: 0 0 8px 0;">Multiselect with Interactive Chips / Pills</h4>
-            <p style="font-size: 0.8125rem; color: var(--el-text-muted, #64748b); margin: 0 0 12px 0;">
-              Combobox with <code>multiple</code> mode: selected items render as inline removable chips with Backspace dismissal.
-            </p>
-            <el-autocomplete
-              id="ac-multiselect-tags"
-              multiple
-              placeholder="Pick skills/tags (e.g. Signals, Web Components, WCAG)..."
-            >
-              <span slot="prefix">🏷️</span>
-            </el-autocomplete>
-            <div id="multiselect-selection" style="margin-top: 10px; font-size: 0.8125rem; color: var(--el-text-muted, #64748b);">
-              Selected Tags: <em>None</em>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <!-- Main Component Detail Area -->
+    <main class="catalog-main" id="catalog-main-content">
+      <!-- Dynamically rendered component detail page -->
+    </main>
   </div>
 
   <script type="module">
-    import { Elementum, html, css, signal, computed, toast } from '../src/index.js';
+    import { categories, components } from './catalog-data.js';
 
-    // 1. Datepicker listener
-    const dp = document.getElementById('demo-dp');
-    const formOutput = document.getElementById('form-output');
-    dp?.addEventListener('change', (e) => {
-      formOutput.textContent = `Date Selected: ${e.detail.value || '(none)'}`;
-    });
+    let currentTag = 'el-button';
+    let currentProps = {};
+    let isDarkCanvas = false;
 
-    // 2. Toaster triggers
-    document.getElementById('btn-toast-info')?.addEventListener('click', () => {
-      toast.info('Here is an informative notification.');
-    });
-    document.getElementById('btn-toast-success')?.addEventListener('click', () => {
-      toast.success('Record saved successfully!');
-    });
-    document.getElementById('btn-toast-error')?.addEventListener('click', () => {
-      toast.error('Failed to complete action.');
-    });
+    const searchInput = document.getElementById('component-search-input');
+    const sidebarContainer = document.getElementById('sidebar-categories');
+    const mainContent = document.getElementById('catalog-main-content');
 
-    // 3. Modal controls
-    const modal = document.getElementById('demo-modal');
-    document.getElementById('btn-open-modal')?.addEventListener('click', () => {
-      modal?.showModal();
-    });
-    document.getElementById('btn-close-modal')?.addEventListener('click', () => {
-      modal?.close();
-    });
-
-    const drawer = document.getElementById('demo-drawer');
-    document.getElementById('btn-open-drawer')?.addEventListener('click', () => {
-      drawer?.show();
-    });
-    document.getElementById('btn-close-drawer')?.addEventListener('click', () => {
-      drawer?.close();
-    });
-
-    // 4. Data Table setup
-    const table = document.getElementById('demo-table');
-    const selectionStatus = document.getElementById('table-selection-status');
-    if (table) {
-      table.columns.value = [
-        { key: 'name', label: 'Framework / Library', sortable: true },
-        { key: 'size', label: 'Bundle Size', sortable: true, width: '130px' },
-        { key: 'reactivity', label: 'Reactivity Model', sortable: true, width: '180px' },
-        { key: 'standards', label: 'W3C Native', sortable: true, width: '120px' },
-      ];
-      table.data.value = [
-        { name: 'Elementum', size: '~3.2 kB', reactivity: 'Micro-Signals', standards: 'Yes (FACE)' },
-        { name: 'React 19', size: '~45 kB', reactivity: 'Virtual DOM', standards: 'Synthetic' },
-        { name: 'Vue 3', size: '~33 kB', reactivity: 'Proxy Signals', standards: 'Wrapper' },
-        { name: 'Svelte 5', size: '~12 kB', reactivity: 'Runes / Compiler', standards: 'Wrapper' },
-      ];
-
-      table.addEventListener('selectionchange', (e) => {
-        const count = e.detail.selected.length;
-        selectionStatus.textContent = `${count} row(s) selected`;
-      });
+    // 1. Initial Hash Route Handling (#el-slider, #el-drawer, etc.)
+    function syncFromHash() {
+      const hash = window.location.hash.replace(/^#/, '').trim();
+      if (hash && components[hash]) {
+        currentTag = hash;
+        return true;
+      }
+      return false;
     }
-
-    document.getElementById('btn-add-row')?.addEventListener('click', () => {
-      if (table) {
-        const id = table.data.value.length + 1;
-        table.data.value = [
-          ...table.data.value,
-          { name: `Custom System ${id}`, size: `~${id * 2} kB`, reactivity: 'Fine-Grained', standards: 'Yes' }
-        ];
-        toast.info(`Added row: Custom System ${id}`);
+    syncFromHash();
+    window.addEventListener('hashchange', () => {
+      const hash = window.location.hash.replace(/^#/, '').trim();
+      if (hash && components[hash] && hash !== currentTag) {
+        currentTag = hash;
+        document.body.style.overflow = '';
+        document.body.style.transform = '';
+        renderSidebar();
+        renderComponentDetail(currentTag);
       }
     });
 
-    // 5. Live Counter custom element
-    class DemoCounter extends Elementum {
-      count = signal(0);
-      isHigh = computed(() => this.count.value >= 5);
+    // Mobile Sidebar Drawer Helpers
+    function closeMobileSidebar() {
+      document.getElementById('catalog-sidebar')?.classList.remove('mobile-open');
+      document.getElementById('sidebar-backdrop')?.classList.remove('active');
+    }
 
-      inc = () => this.count.value++;
-      reset = () => (this.count.value = 0);
+    function openMobileSidebar() {
+      document.getElementById('catalog-sidebar')?.classList.add('mobile-open');
+      document.getElementById('sidebar-backdrop')?.classList.add('active');
+    }
 
-      static styles = css`
-        :host { display: block; font-family: inherit; }
-        .stats { margin-bottom: 12px; font-weight: 500; font-size: 1rem; }
-        .highlight { color: #dc2626; font-weight: bold; }
+    document.getElementById('btn-mobile-sidebar-toggle')?.addEventListener('click', openMobileSidebar);
+    document.getElementById('btn-sidebar-close')?.addEventListener('click', closeMobileSidebar);
+    document.getElementById('sidebar-backdrop')?.addEventListener('click', closeMobileSidebar);
+
+    // 2. Render Left Sidebar with Categories
+    function renderSidebar(filterQuery = '') {
+      sidebarContainer.innerHTML = '';
+      const query = filterQuery.toLowerCase().trim();
+
+      categories.forEach(cat => {
+        const matchingTags = Object.keys(components).filter(tag => {
+          const comp = components[tag];
+          if (comp.category !== cat.id) return false;
+          if (!query) return true;
+          return tag.toLowerCase().includes(query) || comp.name.toLowerCase().includes(query);
+        });
+
+        if (matchingTags.length === 0) return;
+
+        const catSection = document.createElement('div');
+        catSection.className = 'nav-category';
+
+        const header = document.createElement('div');
+        header.className = 'category-header';
+        header.innerHTML = `<span>${cat.icon} ${cat.title}</span><span class="tag-count">${matchingTags.length}</span>`;
+        catSection.appendChild(header);
+
+        matchingTags.forEach(tag => {
+          const comp = components[tag];
+          const btn = document.createElement('button');
+          btn.className = `nav-item-btn ${tag === currentTag ? 'active' : ''}`;
+          btn.innerHTML = `<span>&lt;${tag}&gt;</span>`;
+          btn.onclick = () => {
+            window.location.hash = tag;
+            closeMobileSidebar();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          };
+          catSection.appendChild(btn);
+        });
+
+        sidebarContainer.appendChild(catSection);
+      });
+    }
+
+    // 3. Search Filter Handling
+    searchInput.addEventListener('input', (e) => {
+      renderSidebar(e.target.value);
+    });
+
+    // Global keyboard shortcut '/' to focus search
+    window.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement !== searchInput) {
+        e.preventDefault();
+        searchInput.focus();
+        searchInput.select();
+      }
+    });
+
+    // 4. Render Component Detail View
+    function renderComponentDetail(tag) {
+      const comp = components[tag];
+      if (!comp) return;
+
+      // Initialize currentProps with defaults
+      currentProps = {};
+      (comp.props || []).forEach(p => {
+        currentProps[p.name] = p.default;
+      });
+
+      // Find category title
+      const catObj = categories.find(c => c.id === comp.category) || { title: 'Component', icon: '⚡' };
+
+      mainContent.innerHTML = `
+        <div class="component-header">
+          <el-breadcrumb style="margin-bottom: 12px;">
+            <el-breadcrumb-item href="#el-button">Components</el-breadcrumb-item>
+            <el-breadcrumb-item href="#${tag}">${catObj.title}</el-breadcrumb-item>
+            <el-breadcrumb-item current>&lt;${tag}&gt;</el-breadcrumb-item>
+          </el-breadcrumb>
+
+          <div class="title-row">
+            <h1 class="component-title">&lt;${tag}&gt;</h1>
+            <div class="tag-badge-pill" id="copy-tag-pill" title="Click to copy custom element tag">
+              <span>&lt;${tag}&gt;&lt;/${tag}&gt;</span>
+              <span>📋</span>
+            </div>
+          </div>
+
+          <p class="component-desc">${comp.description}</p>
+
+          <div class="badge-strip">
+            <el-badge variant="outline" count="Zero Runtime Deps"></el-badge>
+            <el-badge variant="outline" count="Signal Driven"></el-badge>
+            <el-badge variant="outline" count="Shadow DOM v1"></el-badge>
+            ${comp.formAssociated ? '<el-badge variant="success" count="Form Associated"></el-badge>' : ''}
+          </div>
+        </div>
+
+        <!-- 1. Live Interactive Preview Canvas -->
+        <div class="preview-card">
+          <div class="preview-toolbar">
+            <span>⚡ Interactive Preview Canvas</span>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <el-button size="sm" variant="secondary" id="btn-toggle-canvas-theme">${isDarkCanvas ? 'Light Canvas ☀️' : 'Dark Canvas 🌙'}</el-button>
+              <el-button size="sm" variant="secondary" id="btn-reset-knobs">Reset Props ↺</el-button>
+            </div>
+          </div>
+
+          <div class="canvas-stage${isDarkCanvas ? ' dark-canvas' : ''}" id="live-stage">
+            <!-- Rendered Live Element -->
+          </div>
+
+          <!-- Interactive Property Knobs -->
+          <div class="knobs-container" id="knobs-form">
+            <!-- Rendered Knobs -->
+          </div>
+
+          <!-- Live Generated Markup Snippet -->
+          <div class="code-container">
+            <button class="copy-btn" id="btn-copy-code">Copy HTML 📋</button>
+            <pre class="code-block" id="generated-code-box"></pre>
+          </div>
+        </div>
+
+        <!-- 2. Comprehensive Options & API Reference Table -->
+        <div class="api-section">
+          <h2 class="section-title">All Options & API Reference</h2>
+          
+          <div class="api-table-wrapper">
+            <table class="api-table">
+              <thead>
+                <tr>
+                  <th style="width: 22%;">Attribute / Prop</th>
+                  <th style="width: 20%;">Type</th>
+                  <th style="width: 15%;">Default</th>
+                  <th style="width: 43%;">Description</th>
+                </tr>
+              </thead>
+              <tbody id="api-props-tbody">
+                <!-- Rendered API rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 3. Dispatched Events & Real-time Event Monitor -->
+        <div class="api-section">
+          <h2 class="section-title">Dispatched Custom Events</h2>
+          
+          <div class="api-table-wrapper">
+            <table class="api-table">
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Event Name</th>
+                  <th style="width: 75%;">Description & Detail Schema</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${(comp.events && comp.events.length > 0)
+                  ? comp.events.map(ev => `
+                    <tr>
+                      <td><span class="mono-pill">${ev.name}</span></td>
+                      <td>${ev.description || 'Emitted upon user interaction.'}</td>
+                    </tr>
+                  `).join('')
+                  : '<tr><td colspan="2" style="color:var(--el-text-muted);">Standard HTML DOM events (click, focus, blur).</td></tr>'
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <h3 style="font-size:1rem; margin:12px 0 6px 0; color:var(--el-text-muted);">Live Event Stream:</h3>
+          <div class="event-console" id="live-event-console">
+            <div class="event-log-item"><span class="event-timestamp">[00:00:00]</span><span>Listening for &lt;${tag}&gt; events...</span></div>
+          </div>
+        </div>
+
+        <!-- 4. Slots & Extensibility -->
+        <div class="api-section">
+          <h2 class="section-title">Slots</h2>
+          
+          <div class="api-table-wrapper">
+            <table class="api-table">
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Slot Name</th>
+                  <th style="width: 75%;">Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${(comp.slots && comp.slots.length > 0)
+                  ? comp.slots.map(sl => `
+                    <tr>
+                      <td><span class="mono-pill">${sl.name}</span></td>
+                      <td>${sl.description}</td>
+                    </tr>
+                  `).join('')
+                  : '<tr><td colspan="2" style="color:var(--el-text-muted);">Default single slot content.</td></tr>'
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 5. Code Examples & Variations -->
+        <div class="api-section">
+          <h2 class="section-title">Examples & Common Patterns</h2>
+          <div class="variations-grid">
+            ${(comp.examples || []).map(ex => `
+              <div class="variation-card">
+                <div class="variation-header">${ex.title}</div>
+                <div class="variation-preview">${ex.code}</div>
+                <pre class="variation-code">${escapeHtml(ex.code)}</pre>
+              </div>
+            `).join('')}
+          </div>
+        </div>
       `;
 
-      render() {
-        return html`
-          <div class="stats">
-            Current Count: <strong>${this.count}</strong>
-            <span class=${() => (this.isHigh.value ? 'highlight' : '')}>
-              ${() => (this.isHigh.value ? ' (High Activity Triggered!)' : '')}
-            </span>
-          </div>
-          <div style="display: flex; gap: 8px;">
-            <el-button variant="primary" @click=${this.inc}>
-              <span slot="prefix">➕</span> Increment Count
-            </el-button>
-            <el-button variant="secondary" @click=${this.reset}>
-              Reset
-            </el-button>
-          </div>
-        `;
-      }
+      // Setup tag copy pill
+      document.getElementById('copy-tag-pill')?.addEventListener('click', () => {
+        navigator.clipboard.writeText(`<${tag}></${tag}>`);
+        toast.success(`Copied <${tag}> tag to clipboard!`);
+      });
+
+      // Canvas theme toggle
+      const stage = document.getElementById('live-stage');
+      const canvasToggleBtn = document.getElementById('btn-toggle-canvas-theme');
+      canvasToggleBtn?.addEventListener('click', () => {
+        isDarkCanvas = stage.classList.toggle('dark-canvas');
+        canvasToggleBtn.textContent = isDarkCanvas ? 'Light Canvas ☀️' : 'Dark Canvas 🌙';
+      });
+
+      // Reset Knobs
+      document.getElementById('btn-reset-knobs')?.addEventListener('click', () => {
+        (comp.props || []).forEach(p => {
+          currentProps[p.name] = p.default;
+        });
+        renderKnobs(comp);
+        updateLivePreview(comp);
+      });
+
+      // Render Knobs & Tables
+      renderKnobs(comp);
+      renderApiTable(comp);
+      updateLivePreview(comp);
     }
 
-    if (!customElements.get('demo-counter')) {
-      customElements.define('demo-counter', DemoCounter);
-    }
+    // 5. Render Knobs Form Controls
+    function renderKnobs(comp) {
+      const container = document.getElementById('knobs-form');
+      if (!container) return;
+      container.innerHTML = '';
 
-    // 6. Live API Loading, Filter Chips & Pagination
-    const apiTable = document.getElementById('api-table');
-    const apiPagination = document.getElementById('api-pagination');
-    const apiLoading = document.getElementById('api-loading-indicator');
-    const apiSummary = document.getElementById('api-page-summary');
-    const btnFetchApi = document.getElementById('btn-fetch-api');
-    const chipGroup = document.getElementById('api-filter-chips');
+      (comp.props || []).forEach(prop => {
+        const field = document.createElement('div');
+        const isWide = prop.type === 'text' || ['label', 'title', 'message', 'content'].includes(prop.name);
+        field.className = `knob-field ${isWide ? 'knob-field-wide' : ''}`;
 
-    let allUsers = [];
-    let currentFilter = 'all';
+        const label = document.createElement('label');
+        label.className = 'knob-label';
+        label.textContent = prop.name;
+        field.appendChild(label);
 
-    if (apiTable) {
-      apiTable.columns.value = [
-        { key: 'id', label: 'ID', width: '60px' },
-        { key: 'name', label: 'Name', sortable: true },
-        { key: 'email', label: 'Email', sortable: true },
-        { key: 'city', label: 'City' },
-        { key: 'company', label: 'Company' },
-      ];
-    }
-
-    function renderApiPage() {
-      if (!apiTable) return;
-      let filtered = allUsers;
-      if (currentFilter !== 'all') {
-        filtered = allUsers.filter((u) => u.email.toLowerCase().includes(`.${currentFilter}`));
-      }
-
-      const pageSize = 4;
-      const total = filtered.length;
-      apiPagination?.setAttribute('total', String(total));
-      apiPagination?.setAttribute('page-size', String(pageSize));
-
-      const page = Number(apiPagination?.page?.value || 1);
-      const start = (page - 1) * pageSize;
-      const slice = filtered.slice(start, start + pageSize);
-
-      apiTable.data.value = slice;
-
-      if (apiSummary) {
-        if (total === 0) {
-          apiSummary.textContent = 'No records match this filter';
+        if (prop.type === 'select' && prop.options) {
+          const select = document.createElement('select');
+          select.className = 'knob-select';
+          prop.options.forEach(opt => {
+            const optEl = document.createElement('option');
+            optEl.value = opt;
+            optEl.textContent = opt;
+            if (opt === currentProps[prop.name]) optEl.selected = true;
+            select.appendChild(optEl);
+          });
+          select.setAttribute('data-prop', prop.name);
+          select.onchange = (e) => {
+            currentProps[prop.name] = e.target.value;
+            updateLivePreview(comp);
+          };
+          field.appendChild(select);
+        } else if (prop.type === 'boolean') {
+          const sw = document.createElement('el-switch');
+          sw.setAttribute('data-prop', prop.name);
+          if (currentProps[prop.name]) sw.setAttribute('checked', '');
+          sw.textContent = currentProps[prop.name] ? 'true' : 'false';
+          sw.onchange = (e) => {
+            const val = Boolean(e.detail?.checked ?? e.target.checked);
+            currentProps[prop.name] = val;
+            sw.textContent = val ? 'true' : 'false';
+            updateLivePreview(comp);
+          };
+          field.appendChild(sw);
+        } else if (prop.type === 'number') {
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.className = 'knob-input';
+          input.setAttribute('data-prop', prop.name);
+          input.value = currentProps[prop.name] ?? 0;
+          input.oninput = (e) => {
+            currentProps[prop.name] = Number(e.target.value);
+            updateLivePreview(comp);
+          };
+          field.appendChild(input);
         } else {
-          const end = Math.min(start + pageSize, total);
-          apiSummary.textContent = `Showing records ${start + 1}–${end} of ${total}`;
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.className = 'knob-input';
+          input.setAttribute('data-prop', prop.name);
+          input.value = currentProps[prop.name] ?? '';
+          input.oninput = (e) => {
+            currentProps[prop.name] = e.target.value;
+            updateLivePreview(comp);
+          };
+          field.appendChild(input);
+        }
+
+        container.appendChild(field);
+      });
+    }
+
+    // 6. Render API Props Table
+    function renderApiTable(comp) {
+      const tbody = document.getElementById('api-props-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (!comp.props || comp.props.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="color:var(--el-text-muted);">No customizable attributes.</td></tr>';
+        return;
+      }
+
+      comp.props.forEach(prop => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span class="mono-pill">${prop.name}</span></td>
+          <td><span class="type-pill">${prop.type === 'select' ? (prop.options || []).join(' | ') : prop.type}</span></td>
+          <td><span style="font-family:monospace; color:var(--el-text-muted);">${prop.default !== '' ? prop.default : '—'}</span></td>
+          <td>${prop.description}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // 7. Build Rich Component Markup with Slotted Content & Attributes
+    function buildComponentMarkup(comp, props) {
+      const p = { ...props };
+      const tag = comp.tag;
+
+      // 1. el-button: slotted label text
+      if (tag === 'el-button') {
+        const attrs = [];
+        if (p.variant) attrs.push(`variant="${p.variant}"`);
+        if (p.size) attrs.push(`size="${p.size}"`);
+        if (p.disabled) attrs.push('disabled');
+        if (p.type && p.type !== 'button') attrs.push(`type="${p.type}"`);
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        const label = p.label !== undefined && p.label !== '' ? p.label : 'Interactive Button';
+        return `<el-button${attrStr}>${escapeHtml(label)}</el-button>`;
+      }
+
+      // 2. el-toggle: slotted label text & pressed state
+      if (tag === 'el-toggle') {
+        const attrs = [];
+        if (p.pressed) attrs.push('pressed');
+        if (p.disabled) attrs.push('disabled');
+        if (p.size) attrs.push(`size="${p.size}"`);
+        if (p.variant) attrs.push(`variant="${p.variant}"`);
+        if (p.value) attrs.push(`value="${escapeHtml(p.value)}"`);
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        const label = p.label !== undefined && p.label !== '' ? p.label : 'Toggle Option';
+        return `<el-toggle${attrStr}>${escapeHtml(label)}</el-toggle>`;
+      }
+
+      // 3. el-switch: slotted label & checked state
+      if (tag === 'el-switch') {
+        const attrs = [];
+        if (p.checked) attrs.push('checked');
+        if (p.disabled) attrs.push('disabled');
+        if (p.size) attrs.push(`size="${p.size}"`);
+        if (p.name) attrs.push(`name="${escapeHtml(p.name)}"`);
+        if (p.value) attrs.push(`value="${escapeHtml(p.value)}"`);
+        if (p.required) attrs.push('required');
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        const label = p.label !== undefined && p.label !== '' ? p.label : 'Notification Alerts';
+        return `<el-switch${attrStr}>${escapeHtml(label)}</el-switch>`;
+      }
+
+      // 3b. el-checkbox: tri-state checkbox with label and indeterminate states
+      if (tag === 'el-checkbox') {
+        const attrs = [];
+        if (p.checked) attrs.push('checked');
+        if (p.indeterminate) attrs.push('indeterminate');
+        if (p.disabled) attrs.push('disabled');
+        if (p.required) attrs.push('required');
+        if (p.name) attrs.push(`name="${escapeHtml(p.name)}"`);
+        if (p.value && p.value !== 'on') attrs.push(`value="${escapeHtml(p.value)}"`);
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        const label = p.label !== undefined && p.label !== '' ? p.label : 'Remember this preference';
+        return `<el-checkbox${attrStr}>${escapeHtml(label)}</el-checkbox>`;
+      }
+
+      // 4. el-alert: title attribute, label attribute, slotted message text
+      if (tag === 'el-alert') {
+        const attrs = [];
+        if (p.variant) attrs.push(`variant="${p.variant}"`);
+        if (p.title) attrs.push(`title="${escapeHtml(p.title)}"`);
+        if (p.label) attrs.push(`label="${escapeHtml(p.label)}"`);
+        if (p.dismissible) attrs.push('dismissible');
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        const msg = p.label ? p.label : (p.message || 'Here is an important update on system status.');
+        return `<el-alert${attrStr}>${escapeHtml(msg)}</el-alert>`;
+      }
+
+      // 5. el-chip: variant, interactive flags, slotted label
+      if (tag === 'el-chip') {
+        const attrs = [];
+        if (p.variant) attrs.push(`variant="${p.variant}"`);
+        if (p.size) attrs.push(`size="${p.size}"`);
+        if (p.selectable) attrs.push('selectable');
+        if (p.selected) attrs.push('selected');
+        if (p.value) attrs.push(`value="${escapeHtml(p.value)}"`);
+        if (p.removable) attrs.push('removable');
+        if (p['auto-remove']) attrs.push('auto-remove');
+        if (p.disabled) attrs.push('disabled');
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        const label = p.label !== undefined && p.label !== '' ? p.label : 'Interactive Chip';
+        return `<el-chip${attrStr}>${escapeHtml(label)}</el-chip>`;
+      }
+
+      // 6. el-badge: variant, size, count, slotted text
+      if (tag === 'el-badge') {
+        const attrs = [];
+        if (p.variant) attrs.push(`variant="${p.variant}"`);
+        if (p.size) attrs.push(`size="${p.size}"`);
+        if (p.count !== undefined && p.count !== '') attrs.push(`count="${escapeHtml(p.count)}"`);
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        const label = p.label !== undefined && p.label !== '' ? p.label : (p.count ? '' : 'Active');
+        return `<el-badge${attrStr}>${escapeHtml(label)}</el-badge>`;
+      }
+
+      // 7. el-drawer: trigger button + drawer bottom sheet
+      if (tag === 'el-drawer') {
+        const placement = p.placement || 'bottom';
+        const snap = p['snap-points'] || p.snapPoints || '0.45, 0.8';
+        const title = p.heading || p.title || 'Vaul-Inspired Mobile Sheet';
+        const openAttr = p.open ? ' open' : '';
+        const handleAttr = p.handle !== false ? ' handle' : ' handle="false"';
+        const scaleAttr = p['scale-background'] !== false ? ' scale-background' : '';
+        return `<div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+  <el-button variant="primary" onclick="document.getElementById('demo-drawer-inst').show()">Open Drawer (${placement})</el-button>
+  <el-drawer id="demo-drawer-inst" placement="${placement}"${scaleAttr} snap-points="${snap}"${handleAttr} title="${escapeHtml(title)}"${openAttr}>
+    <div style="max-width: 480px; margin: 0 auto; text-align: left;">
+      <p style="margin: 0; color: var(--el-text-muted); font-size: 0.95rem; line-height: 1.5;">
+        Features fluid drag-to-dismiss gestures, rubberband resistance, multi-stop snap points, and escape key support.
+      </p>
+    </div>
+    <div slot="footer" style="display: flex; gap: 8px;">
+      <el-button variant="secondary" onclick="document.getElementById('demo-drawer-inst').close()">Cancel</el-button>
+      <el-button variant="primary" onclick="document.getElementById('demo-drawer-inst').close()">Confirm & Close</el-button>
+    </div>
+  </el-drawer>
+</div>`;
+      }
+
+      // 8. el-dialog
+      if (tag === 'el-dialog') {
+        const title = p.heading || p.title || 'Confirm Action';
+        const message = p.message || p.content || 'Are you sure you want to proceed?';
+        const openAttr = p.open ? ' open' : '';
+        const headingAttr = p.heading ? ` heading="${escapeHtml(p.heading)}"` : '';
+        return `<div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+  <el-button variant="primary" onclick="document.getElementById('demo-dialog-inst').showModal()">Open Dialog (${escapeHtml(title)})</el-button>
+  <el-dialog id="demo-dialog-inst" title="${escapeHtml(title)}"${headingAttr}${openAttr}>
+    <p style="margin: 0; color: var(--el-text-muted); line-height: 1.5;">${escapeHtml(message)}</p>
+    <div slot="footer" style="display: flex; justify-content: flex-end; gap: 8px;">
+      <el-button variant="secondary" onclick="document.getElementById('demo-dialog-inst').close()">Cancel</el-button>
+      <el-button variant="primary" onclick="document.getElementById('demo-dialog-inst').close()">Confirm</el-button>
+    </div>
+  </el-dialog>
+</div>`;
+      }
+
+      // 8b. el-alert-dialog
+      if (tag === 'el-alert-dialog') {
+        const title = p.title || 'Delete Database Cluster?';
+        const openAttr = p.open ? ' open' : '';
+        return `<div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+  <el-alert-dialog id="demo-alert-dialog-inst" title="${escapeHtml(title)}"${openAttr}>
+    <el-button slot="trigger" variant="danger">Delete Production Database</el-button>
+    <p style="margin: 0 0 16px 0; color: var(--el-text-muted); line-height: 1.5;">
+      This action cannot be undone. This will permanently delete the selected database shards and destroy all active replications.
+    </p>
+    <div style="display: flex; justify-content: flex-end; gap: 8px;">
+      <el-button variant="secondary" onclick="document.getElementById('demo-alert-dialog-inst').close()">Cancel</el-button>
+      <el-button variant="danger" onclick="document.getElementById('demo-alert-dialog-inst').close()">Yes, Delete</el-button>
+    </div>
+  </el-alert-dialog>
+</div>`;
+      }
+
+      // 9. el-toast
+      if (tag === 'el-toast') {
+        const msg = p.message || 'Operation executed successfully.';
+        const type = p.type || 'success';
+        const dur = p.duration || 4000;
+        const btnVariant = type === 'error' ? 'danger' : type === 'warning' ? 'secondary' : 'primary';
+        return `<div style="display:flex; flex-direction:column; gap:14px; align-items:flex-start;">
+  <el-button variant="${btnVariant}" onclick="toast.${type}('${escapeHtml(msg)}', { duration: ${dur} })">
+    Trigger ${type.toUpperCase()} Toast
+  </el-button>
+  <div style="font-size: 0.85rem; color: var(--el-text-muted); background: var(--el-surface-muted); padding: 8px 12px; border-radius: 6px;">
+    Type: <strong>${type}</strong> | Duration: <strong>${dur}ms</strong> | Message: "<em>${escapeHtml(msg)}</em>"
+  </div>
+</div>`;
+      }
+
+      // 10. el-card
+      if (tag === 'el-card') {
+        const title = p.title !== undefined && p.title !== '' ? p.title : 'Server Instance';
+        const content = p.content || p.label || '99.99% uptime observed across 4 active availability zones with automated failover.';
+        const borderedAttr = p.bordered === false ? ' bordered="false"' : ' bordered';
+        const glassAttr = p.glass ? ' glass' : '';
+        const hoverAttr = p.hoverable ? ' hoverable' : '';
+        const bgWrap = p.glass
+          ? 'padding: 20px; border-radius: 14px; background: linear-gradient(135deg, rgba(37,99,235,0.18), rgba(168,85,247,0.18)); max-width: 420px; width: 100%;'
+          : 'max-width: 400px; width: 100%;';
+        return `<div style="${bgWrap}">
+  <el-card title="${escapeHtml(title)}"${borderedAttr}${glassAttr}${hoverAttr}>
+    <p style="margin:0; color:var(--el-text-muted); font-size:0.925rem; line-height:1.5;">${escapeHtml(content)}</p>
+  </el-card>
+</div>`;
+      }
+
+      // 11. el-tooltip
+      if (tag === 'el-tooltip') {
+        const content = p.content || 'Keyboard shortcut: Cmd+Shift+P';
+        const placement = p.placement ? ` placement="${p.placement}"` : '';
+        const delay = p.delay !== undefined ? ` delay="${p.delay}"` : '';
+        const dis = p.disabled ? ' disabled' : '';
+        return `<el-tooltip content="${escapeHtml(content)}"${placement}${delay}${dis}>
+  <el-button variant="secondary">Hover or Focus Me</el-button>
+</el-tooltip>`;
+      }
+
+      // 12. el-popover
+      if (tag === 'el-popover') {
+        const placement = p.placement || 'bottom';
+        const openAttr = p.open ? ' open' : '';
+        const offsetVal = p.offset !== undefined && p.offset !== '' ? p.offset : 8;
+        const arrowAttr = p.arrow ? ' arrow' : '';
+        return `<div style="padding: 48px 0;">
+  <el-popover placement="${placement}" offset="${offsetVal}"${openAttr}${arrowAttr}>
+    <el-button slot="trigger" variant="secondary">Open Popover ▾</el-button>
+    <div slot="content" style="padding: 4px; max-width: 220px;">
+      <h4 style="margin:0 0 6px 0; font-size:0.925rem; font-weight:600;">Popover Surface</h4>
+      <p style="margin:0; font-size:0.825rem; color:var(--el-text-muted);">Anchored at <strong>${placement}</strong> with <strong>${offsetVal}px</strong> offset.</p>
+    </div>
+  </el-popover>
+</div>`;
+      }
+
+      // 13. el-tabs & el-tab
+      if (tag === 'el-tabs') {
+        const val = p.value || 'overview';
+        return `<el-tabs value="${escapeHtml(val)}" style="max-width: 460px; width: 100%;">
+  <el-tab value="overview" label="Overview">
+    <div style="padding: 14px; background: var(--el-surface-muted); border-radius: 8px; font-size: 0.875rem;">
+      <strong>Overview Panel:</strong> 18 active edge nodes running across 4 regions.
+    </div>
+  </el-tab>
+  <el-tab value="metrics" label="Metrics">
+    <div style="padding: 14px; background: var(--el-surface-muted); border-radius: 8px; font-size: 0.875rem;">
+      <strong>Metrics Panel:</strong> p99 latency at 14ms with 99.99% uptime SLA.
+    </div>
+  </el-tab>
+  <el-tab value="settings" label="Settings">
+    <div style="padding: 14px; background: var(--el-surface-muted); border-radius: 8px; font-size: 0.875rem;">
+      <strong>Settings Panel:</strong> Auto-scaling and zero-downtime deploys enabled.
+    </div>
+  </el-tab>
+</el-tabs>`;
+      }
+      if (tag === 'el-tab') {
+        const val = p.value || p.name || 'tab1';
+        const label = p.label || p.name || 'Custom Tab';
+        const dis = p.disabled ? ' disabled' : '';
+        return `<el-tabs value="${escapeHtml(val)}" style="max-width: 460px; width: 100%;">
+  <el-tab value="${escapeHtml(val)}" name="${escapeHtml(p.name || val)}" label="${escapeHtml(label)}"${dis}>
+    <div style="padding: 14px; background: var(--el-surface-muted); border-radius: 8px; font-size: 0.875rem;">
+      Active Tab Content for <strong>${escapeHtml(label)}</strong> (value: <code>${escapeHtml(val)}</code>)
+    </div>
+  </el-tab>
+  <el-tab value="metrics" label="Metrics">
+    <div style="padding: 14px; background: var(--el-surface-muted); border-radius: 8px; font-size: 0.875rem;">
+      Secondary Metrics Tab Panel
+    </div>
+  </el-tab>
+</el-tabs>`;
+      }
+
+      // 14. el-accordion & el-accordion-item
+      if (tag === 'el-accordion') {
+        const mult = p.multiple ? ' multiple' : '';
+        return `<el-accordion${mult} style="max-width: 440px; width: 100%;">
+  <el-accordion-item title="What is Elementum?" open value="intro">
+    <p style="margin:0; color:var(--el-text-muted); line-height:1.5;">A zero-dependency, signal-reactive Web Component design system.</p>
+  </el-accordion-item>
+  <el-accordion-item title="How does styling work?" value="styling">
+    <p style="margin:0; color:var(--el-text-muted); line-height:1.5;">Constructable stylesheets and CSS custom properties matching design tokens.</p>
+  </el-accordion-item>
+</el-accordion>`;
+      }
+      if (tag === 'el-accordion-item') {
+        const title = p.title || 'Accordion Section';
+        const open = p.open ? ' open' : '';
+        const dis = p.disabled ? ' disabled' : '';
+        const val = p.value ? ` value="${escapeHtml(p.value)}"` : '';
+        return `<el-accordion style="max-width: 440px; width: 100%;">
+  <el-accordion-item title="${escapeHtml(title)}"${open}${dis}${val}>
+    <p style="margin:0; color:var(--el-text-muted); line-height:1.5;">Expandable section content reacting smoothly to state changes.</p>
+  </el-accordion-item>
+  <el-accordion-item title="Second Topic">
+    <p style="margin:0; color:var(--el-text-muted); line-height:1.5;">Additional disclosure content.</p>
+  </el-accordion-item>
+</el-accordion>`;
+      }
+
+      // 15. el-chart
+      if (tag === 'el-chart') {
+        const type = p.type || 'line';
+        const curve = p.curve || 'smooth';
+        const showGrid = p['show-grid'] === false ? ' show-grid="false"' : ' show-grid';
+        const showDots = p['show-dots'] === false ? ' show-dots="false"' : ' show-dots';
+        const height = p.height || 220;
+        const chartData = p.data ? (typeof p.data === 'string' ? p.data : JSON.stringify(p.data)) : JSON.stringify([
+          { label: '00:00', value: 1200, secondary: 550 },
+          { label: '04:00', value: 950, secondary: 420 },
+          { label: '08:00', value: 3400, secondary: 1800 },
+          { label: '12:00', value: 5200, secondary: 2600 },
+          { label: '16:00', value: 4800, secondary: 2100 },
+          { label: '20:00', value: 2900, secondary: 1300 }
+        ]);
+        return `<div style="width: 100%; max-width: 640px;">
+  <el-chart type="${type}" curve="${curve}" height="${height}"${showGrid}${showDots} data='${chartData}'></el-chart>
+</div>`;
+      }
+
+      // 16. el-streaming-text
+      if (tag === 'el-streaming-text') {
+        const text = p.text || 'Elementum generates zero runtime dependencies with full signals reactivity.';
+        const speed = p.speed || '25';
+        const cursor = p.cursor ? ` cursor="${escapeHtml(p.cursor)}"` : '';
+        const auto = p['auto-start'] === false ? ' auto-start="false"' : ' auto-start';
+        return `<el-streaming-text text="${escapeHtml(text)}" speed="${speed}"${cursor}${auto}></el-streaming-text>`;
+      }
+
+      // 17. el-prompt-input
+      if (tag === 'el-prompt-input') {
+        const attrs = [];
+        if (p.placeholder) attrs.push(`placeholder="${escapeHtml(p.placeholder)}"`);
+        if (p.value) attrs.push(`value="${escapeHtml(p.value)}"`);
+        if (p.disabled) attrs.push('disabled');
+        if (p.loading) attrs.push('loading');
+        if (p['max-rows']) attrs.push(`max-rows="${p['max-rows']}"`);
+        if (p['min-rows']) attrs.push(`min-rows="${p['min-rows']}"`);
+        if (p['clear-on-submit']) attrs.push('clear-on-submit');
+        if (p.autofocus) attrs.push('autofocus');
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        return `<div style="max-width: 520px; width: 100%;"><el-prompt-input${attrStr}></el-prompt-input></div>`;
+      }
+
+      // 18. el-reasoning-card
+      if (tag === 'el-reasoning-card') {
+        const summary = p.summary || 'Chain of Thought';
+        const duration = p.duration || '1.2s';
+        const open = p.open ? ' open' : '';
+        const thinking = p.thinking ? ' thinking' : '';
+        return `<div style="max-width: 480px; width: 100%;">
+  <el-reasoning-card summary="${escapeHtml(summary)}" duration="${escapeHtml(String(duration))}"${thinking}${open}>
+    <p style="margin:0; color:var(--el-text-muted); font-size:0.875rem;">Step 1: Ingested telemetry signals.<br>Step 2: Optimized route weights.<br>Step 3: Dispatched latency report.</p>
+  </el-reasoning-card>
+</div>`;
+      }
+
+      // 19. el-kbd
+      if (tag === 'el-kbd') {
+        return `<el-kbd keys="${escapeHtml(p.keys || 'Cmd+K')}" size="${p.size || 'md'}"></el-kbd>`;
+      }
+
+      // 20. el-table
+      if (tag === 'el-table') {
+        const selectable = p.selectable ? ' selectable' : '';
+        const hover = p.hover ? ' hover' : '';
+        const striped = p.striped ? ' striped' : '';
+        const tableData = p.data ? (typeof p.data === 'string' ? p.data : JSON.stringify(p.data)) : JSON.stringify([
+          { region: 'us-east-1', status: 'Active', latency: '24ms', throughput: '14.2k req/s' },
+          { region: 'eu-west-1', status: 'Active', latency: '18ms', throughput: '11.8k req/s' },
+          { region: 'ap-northeast-1', status: 'Active', latency: '32ms', throughput: '8.4k req/s' },
+          { region: 'sa-east-1', status: 'Standby', latency: '110ms', throughput: '1.2k req/s' }
+        ]);
+        const columns = p.columns ? (typeof p.columns === 'string' ? p.columns : JSON.stringify(p.columns)) : JSON.stringify([
+          { key: 'region', label: 'Region', sortable: true },
+          { key: 'status', label: 'Cluster Status', sortable: true },
+          { key: 'latency', label: 'Latency (p99)', sortable: true },
+          { key: 'throughput', label: 'Throughput', sortable: true }
+        ]);
+        return `<div style="width: 100%; overflow-x: auto;">
+  <el-table${selectable}${hover}${striped} data='${tableData}' columns='${columns}'></el-table>
+</div>`;
+      }
+
+      // 21. el-select: form select with populated option elements
+      if (tag === 'el-select') {
+        const attrs = [];
+        const currentVal = p.value !== undefined && p.value !== '' ? String(p.value) : 'us-east';
+        attrs.push(`value="${escapeHtml(currentVal)}"`);
+        if (p.placeholder) attrs.push(`placeholder="${escapeHtml(String(p.placeholder))}"`);
+        if (p.name) attrs.push(`name="${escapeHtml(p.name)}"`);
+        if (p.disabled) attrs.push('disabled');
+        if (p.required) attrs.push('required');
+        if (p.options) attrs.push(`options="${escapeHtml(typeof p.options === 'string' ? p.options : JSON.stringify(p.options))}"`);
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        const standardOptions = [
+          { val: 'us-east', label: 'US East (N. Virginia)' },
+          { val: 'us-west', label: 'US West (Oregon)' },
+          { val: 'eu-west', label: 'EU West (Ireland)' },
+          { val: 'ap-northeast', label: 'Asia Pacific (Tokyo)' }
+        ];
+        let optionsHtml = standardOptions.map(o => `    <option value="${o.val}">${o.label}</option>`).join('\n');
+        if (!standardOptions.some(o => o.val === currentVal)) {
+          optionsHtml += `\n    <option value="${escapeHtml(currentVal)}">${escapeHtml(currentVal)}</option>`;
+        }
+        return `<div style="max-width: 380px; width: 100%;">
+  <el-select${attrStr}>
+${optionsHtml}
+  </el-select>
+</div>`;
+      }
+
+      // 22. el-segmented-control: horizontal segment selector
+      if (tag === 'el-segmented-control') {
+        const attrs = [];
+        const currentVal = p.value !== undefined && p.value !== '' ? String(p.value) : 'analytics';
+        attrs.push(`value="${escapeHtml(currentVal)}"`);
+        if (p.size) attrs.push(`size="${p.size}"`);
+        if (p.name) attrs.push(`name="${escapeHtml(p.name)}"`);
+        if (p.disabled) attrs.push('disabled');
+        if (p.options) attrs.push(`options="${escapeHtml(typeof p.options === 'string' ? p.options : JSON.stringify(p.options))}"`);
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        const defaultOptions = ['analytics', 'reports', 'monitoring', 'settings'];
+        let optionsHtml = defaultOptions.map(opt => `  <option value="${opt}">${opt.charAt(0).toUpperCase() + opt.slice(1)}</option>`).join('\n');
+        if (!defaultOptions.includes(currentVal)) {
+          optionsHtml += `\n  <option value="${escapeHtml(currentVal)}">${escapeHtml(currentVal)}</option>`;
+        }
+        return `<el-segmented-control${attrStr}>
+${optionsHtml}
+</el-segmented-control>`;
+      }
+
+      // 23. el-autocomplete: combobox with sample data
+      if (tag === 'el-autocomplete') {
+        const attrs = [];
+        if (p.value) attrs.push(`value="${escapeHtml(String(p.value))}"`);
+        if (p.placeholder) attrs.push(`placeholder="${escapeHtml(String(p.placeholder))}"`);
+        if (p.size) attrs.push(`size="${p.size}"`);
+        if (p.name) attrs.push(`name="${escapeHtml(p.name)}"`);
+        if (p.url) attrs.push(`url="${escapeHtml(String(p.url))}"`);
+        if (p['query-param']) attrs.push(`query-param="${escapeHtml(String(p['query-param']))}"`);
+        if (p['label-key']) attrs.push(`label-key="${escapeHtml(String(p['label-key']))}"`);
+        if (p['value-key']) attrs.push(`value-key="${escapeHtml(String(p['value-key']))}"`);
+        if (p['min-chars'] !== undefined) attrs.push(`min-chars="${p['min-chars']}"`);
+        if (p.debounce !== undefined) attrs.push(`debounce="${p.debounce}"`);
+        if (p.disabled) attrs.push('disabled');
+        if (p.required) attrs.push('required');
+        if (p.multiple) attrs.push('multiple');
+        const optionsData = p.options || p.data || [{"label":"TypeScript","value":"ts"},{"label":"JavaScript","value":"js"},{"label":"Python","value":"py"},{"label":"Rust","value":"rs"},{"label":"Go","value":"go"}];
+        const optStr = typeof optionsData === 'string' ? optionsData : JSON.stringify(optionsData);
+        attrs.push(`options='${escapeHtml(optStr)}'`);
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        return `<div style="max-width: 380px; width: 100%;">
+  <el-autocomplete${attrStr}></el-autocomplete>
+</div>`;
+      }
+
+      // 24a. el-radio
+      if (tag === 'el-radio') {
+        const attrs = [];
+        const val = p.value || 'starter';
+        attrs.push(`value="${escapeHtml(val)}"`);
+        if (p.checked) attrs.push('checked');
+        if (p.disabled) attrs.push('disabled');
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        const label = p.label !== undefined && p.label !== '' ? p.label : 'Standard License ($49)';
+        return `<el-radio${attrStr}>${escapeHtml(label)}</el-radio>`;
+      }
+
+      // 24b. el-radio-group
+      if (tag === 'el-radio-group') {
+        const attrs = [];
+        const val = p.value || 'pro';
+        const name = p.name !== undefined && p.name !== '' ? p.name : 'pricing_plan';
+        attrs.push(`value="${escapeHtml(val)}"`);
+        attrs.push(`name="${escapeHtml(name)}"`);
+        if (p.orientation && p.orientation !== 'vertical') attrs.push(`orientation="${p.orientation}"`);
+        if (p.disabled) attrs.push('disabled');
+        if (p.required) attrs.push('required');
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        return `<div style="display: flex; flex-direction: column; gap: 8px;">
+  <span style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--el-text-muted);">Form Name: ${escapeHtml(name)}</span>
+  <el-radio-group${attrStr}>
+    <el-radio value="starter" name="${escapeHtml(name)}">Starter Plan ($9/mo)</el-radio>
+    <el-radio value="pro" name="${escapeHtml(name)}">Pro Plan ($29/mo)</el-radio>
+    <el-radio value="enterprise" name="${escapeHtml(name)}">Enterprise Tier ($99/mo)</el-radio>
+  </el-radio-group>
+</div>`;
+      }
+
+      // 24c. el-radio-card
+      if (tag === 'el-radio-card') {
+        const attrs = [];
+        attrs.push(`value="${escapeHtml(p.value || 'compute')}"`);
+        if (p.checked) attrs.push('checked');
+        if (p.disabled) attrs.push('disabled');
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        return `<div style="max-width: 360px; width: 100%;">
+  <el-radio-card${attrStr}>
+    <div style="font-weight: 600;">Compute Optimized</div>
+    <div style="font-size: 0.825rem; color: var(--el-text-muted); margin-top: 4px;">8 vCPU, 32GB RAM, 10Gbps Network</div>
+  </el-radio-card>
+</div>`;
+      }
+
+      // 24d. el-radio-card-group
+      if (tag === 'el-radio-card-group') {
+        const cols = p.columns || 2;
+        const val = p.value || 'standard';
+        const name = p.name !== undefined && p.name !== '' ? p.name : 'server_tier';
+        return `<div style="max-width: 580px; width: 100%; display: flex; flex-direction: column; gap: 8px;">
+  <span style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--el-text-muted);">Form Name: ${escapeHtml(name)}</span>
+  <el-radio-card-group value="${escapeHtml(val)}" name="${escapeHtml(name)}" columns="${cols}">
+    <el-radio-card value="basic" name="${escapeHtml(name)}">
+      <div style="font-weight: 600;">Starter Plan</div>
+      <div style="font-size: 0.85rem; color: var(--el-text-muted); margin-top: 4px;">$9 / month per user</div>
+    </el-radio-card>
+    <el-radio-card value="standard" name="${escapeHtml(name)}">
+      <div style="font-weight: 600;">Pro Team</div>
+      <div style="font-size: 0.85rem; color: var(--el-text-muted); margin-top: 4px;">$29 / month per user</div>
+    </el-radio-card>
+  </el-radio-card-group>
+</div>`;
+      }
+
+      // 24e. el-fieldset
+      if (tag === 'el-fieldset') {
+        const legend = p.legend || 'Security & Access Control';
+        const disabled = p.disabled ? ' disabled' : '';
+        return `<div style="max-width: 440px; width: 100%;">
+  <el-fieldset legend="${escapeHtml(legend)}"${disabled}>
+    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
+      <el-field label="Master API Key">
+        <el-input value="ak_live_839210492" type="password"${disabled}></el-input>
+      </el-field>
+      <el-checkbox label="Enforce Hardware FIDO2 2FA" checked${disabled}></el-checkbox>
+      <el-checkbox label="Require VPN for admin actions"${disabled}></el-checkbox>
+    </div>
+  </el-fieldset>
+</div>`;
+      }
+
+      // 24f. el-form
+      if (tag === 'el-form') {
+        const novalidate = p.novalidate ? ' novalidate' : '';
+        return `<div style="max-width: 440px; width: 100%;">
+  <el-form${novalidate}>
+    <el-fieldset legend="User Profile">
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
+        <el-field label="Display Name" required>
+          <el-input placeholder="e.g. Alex Morgan" value="Alex Morgan" required></el-input>
+        </el-field>
+        <el-field label="Email Address" required>
+          <el-input type="email" placeholder="alex@company.com" value="alex@company.com" required></el-input>
+        </el-field>
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px;">
+          <el-button type="reset" variant="secondary">Reset</el-button>
+          <el-button type="submit" variant="primary">Save Changes</el-button>
+        </div>
+      </div>
+    </el-fieldset>
+  </el-form>
+</div>`;
+      }
+
+      // 25. el-breadcrumb / el-breadcrumb-item
+      if (tag === 'el-breadcrumb') {
+        const sep = p.separator || '/';
+        const href = p.href || '#forms';
+        const isCurr = p.current !== false && p.current !== 'false';
+        const currAttr = isCurr ? ' current' : '';
+        return `<div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-start;">
+  <el-breadcrumb separator="${escapeHtml(sep)}">
+    <el-breadcrumb-item href="#home">Home</el-breadcrumb-item>
+    <el-breadcrumb-item href="#components">Components</el-breadcrumb-item>
+    <el-breadcrumb-item href="${escapeHtml(href)}">Forms (${escapeHtml(href)})</el-breadcrumb-item>
+    <el-breadcrumb-item href="${escapeHtml(href)}"${currAttr}>Select Dropdown</el-breadcrumb-item>
+  </el-breadcrumb>
+  <span style="font-size: 0.75rem; color: var(--el-text-muted);">Separator: <code>${escapeHtml(sep)}</code> | Link href: <code>${escapeHtml(href)}</code> | Terminal current: <code>${isCurr}</code></span>
+</div>`;
+      }
+      if (tag === 'el-breadcrumb-item') {
+        const hrefVal = p.href || '#dashboard';
+        const curr = p.current ? ' current' : '';
+        const sep = p.separator || '/';
+        const label = p.label || 'Dashboard';
+        return `<div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-start;">
+  <el-breadcrumb separator="${escapeHtml(sep)}">
+    <el-breadcrumb-item data-preview-target href="${escapeHtml(hrefVal)}" separator="${escapeHtml(sep)}"${curr}>${escapeHtml(label)}</el-breadcrumb-item>
+    <el-breadcrumb-item href="#details">Details</el-breadcrumb-item>
+  </el-breadcrumb>
+  <span style="font-size: 0.75rem; color: var(--el-text-muted);">Target href: <code>${escapeHtml(hrefVal)}</code> | Current Page: <code>${Boolean(p.current)}</code> | Separator: <code>${escapeHtml(sep)}</code></span>
+</div>`;
+      }
+
+      // 26. el-tree-view
+      if (tag === 'el-tree-view') {
+        const mw = p['max-width'] || p.style || '320px';
+        const mwStyle = mw.includes('max-width') ? mw : `max-width: ${mw}; width: 100%;`;
+        return `<el-tree-view max-width="${escapeHtml(mw)}" style="${mwStyle}">
+  <el-tree-item label="src" expanded>
+    <el-tree-item label="components" expanded>
+      <el-tree-item label="el-button.js" selected></el-tree-item>
+      <el-tree-item label="el-select.js"></el-tree-item>
+      <el-tree-item label="el-drawer.js"></el-tree-item>
+    </el-tree-item>
+    <el-tree-item label="tokens.js"></el-tree-item>
+  </el-tree-item>
+  <el-tree-item label="package.json"></el-tree-item>
+</el-tree-view>`;
+      }
+
+      // 26b. el-tree-item
+      if (tag === 'el-tree-item') {
+        const label = p.label !== undefined && p.label !== '' ? p.label : 'components';
+        const exp = p.expanded ? ' expanded' : '';
+        const sel = p.selected ? ' selected' : '';
+        const dis = p.disabled ? ' disabled' : '';
+        return `<el-tree-view style="max-width: 320px; width: 100%;">
+  <el-tree-item label="${escapeHtml(label)}"${exp}${sel}${dis}>
+    <el-tree-item label="el-button.js"></el-tree-item>
+    <el-tree-item label="el-input.js"></el-tree-item>
+  </el-tree-item>
+  <el-tree-item label="package.json"></el-tree-item>
+</el-tree-view>`;
+      }
+
+      // 27. el-dropdown
+      if (tag === 'el-dropdown') {
+        const openAttr = p.open ? ' open' : '';
+        return `<div style="padding: 12px 0 110px 0;">
+  <el-dropdown id="demo-dropdown"${openAttr}>
+    <el-button slot="trigger" variant="secondary">Actions Menu ▾</el-button>
+    <div slot="menu" style="padding: 4px; display: flex; flex-direction: column; gap: 2px; min-width: 160px;">
+      <button onclick="document.getElementById('demo-dropdown').close(); toast('Selected: Edit Item')" style="padding: 8px 12px; text-align: left; background: none; border: none; font-size: 0.875rem; border-radius: 6px; cursor: pointer; color: var(--el-text-base);">✏️ Edit Item</button>
+      <button onclick="document.getElementById('demo-dropdown').close(); toast('Selected: Duplicate')" style="padding: 8px 12px; text-align: left; background: none; border: none; font-size: 0.875rem; border-radius: 6px; cursor: pointer; color: var(--el-text-base);">📋 Duplicate</button>
+      <button onclick="document.getElementById('demo-dropdown').close(); toast.error('Selected: Delete')" style="padding: 8px 12px; text-align: left; background: none; border: none; font-size: 0.875rem; border-radius: 6px; cursor: pointer; color: var(--el-color-danger, #ef4444);">🗑️ Delete</button>
+    </div>
+  </el-dropdown>
+</div>`;
+      }
+
+      // 28. el-timeline & el-timeline-item
+      if (tag === 'el-timeline') {
+        const orient = p.orientation === 'horizontal' ? ' orientation="horizontal"' : '';
+        const rev = p.reverse ? ' reverse' : '';
+        const style = p.orientation === 'horizontal' ? 'max-width: 620px; width: 100%;' : 'max-width: 380px; width: 100%;';
+        return `<el-timeline${orient}${rev} style="${style}">
+  <el-timeline-item status="completed" title="Order Placed" date="10:32 AM">Payment verified via Stripe.</el-timeline-item>
+  <el-timeline-item status="completed" title="Built & Packaged" date="11:15 AM">Assets compiled into production build.</el-timeline-item>
+  <el-timeline-item status="active" title="Deploying to Edge" date="11:42 AM">Syncing regional points of presence.</el-timeline-item>
+  <el-timeline-item status="pending" title="Live Traffic" date="Pending">Awaiting health check confirmation.</el-timeline-item>
+</el-timeline>`;
+      }
+      if (tag === 'el-timeline-item') {
+        const status = p.status || 'active';
+        const title = p.title || 'Deployment Stage';
+        const date = p.date || '10:45 AM';
+        const desc = p.label || 'Synchronizing edge workers across clusters.';
+        return `<el-timeline style="max-width: 380px; width: 100%;">
+  <el-timeline-item status="${status}" title="${escapeHtml(title)}" date="${escapeHtml(date)}" label="${escapeHtml(desc)}">
+    ${escapeHtml(desc)}
+  </el-timeline-item>
+  <el-timeline-item status="pending" title="Next Milestone" date="Pending">
+    Awaiting confirmation and verification checks.
+  </el-timeline-item>
+</el-timeline>`;
+      }
+
+      // 29. el-field
+      if (tag === 'el-field') {
+        const attrs = [];
+        if (p.label) attrs.push(`label="${escapeHtml(p.label)}"`);
+        if (p.description) attrs.push(`description="${escapeHtml(p.description)}"`);
+        if (p.error) attrs.push(`error="${escapeHtml(p.error)}"`);
+        if (p.required) attrs.push('required');
+        if (p.disabled) attrs.push('disabled');
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        return `<div style="max-width: 380px; width: 100%;">
+  <el-field${attrStr}>
+    <el-input placeholder="Enter text..." ${p.disabled ? 'disabled' : ''}></el-input>
+  </el-field>
+</div>`;
+      }
+
+      // 30. el-meter
+      if (tag === 'el-meter') {
+        const val = p.value ?? 72;
+        const min = p.min ?? 0;
+        const max = p.max ?? 100;
+        const low = p.low ?? 33;
+        const high = p.high ?? 66;
+        const optimum = p.optimum ?? 80;
+        const size = p.size || 'md';
+        return `<div style="max-width: 380px; width: 100%;">
+  <el-meter value="${val}" min="${min}" max="${max}" low="${low}" high="${high}" optimum="${optimum}" size="${size}"></el-meter>
+</div>`;
+      }
+
+      // 31. el-progress
+      if (tag === 'el-progress') {
+        const striped = p.striped ? ' striped' : '';
+        const indet = p.indeterminate ? ' indeterminate' : '';
+        const variant = p.variant ? ` variant="${p.variant}"` : '';
+        return `<div style="max-width: 380px; width: 100%;">
+  <el-progress value="${p.value ?? 68}" max="${p.max ?? 100}" size="${p.size || 'md'}"${variant}${striped}${indet}></el-progress>
+</div>`;
+      }
+
+      // 32. el-slider
+      if (tag === 'el-slider') {
+        const orient = p.orientation === 'vertical' ? ' orientation="vertical"' : '';
+        const nameAttr = p.name ? ` name="${escapeHtml(p.name)}"` : '';
+        const style = p.orientation === 'vertical' ? 'height: 180px; display: inline-flex; align-items: center; justify-content: center;' : 'max-width: 380px; width: 100%;';
+        return `<div style="${style}">
+  <el-slider value="${p.value ?? 50}" min="${p.min ?? 0}" max="${p.max ?? 100}" step="${p.step ?? 1}"${orient}${nameAttr} ${p.disabled ? 'disabled' : ''}></el-slider>
+</div>`;
+      }
+
+      // 33. el-rating
+      if (tag === 'el-rating') {
+        const nameAttr = p.name ? ` name="${escapeHtml(p.name)}"` : '';
+        return `<el-rating value="${p.value ?? 4}" max="${p.max ?? 5}"${nameAttr} ${p.readonly ? 'readonly' : ''} ${p.disabled ? 'disabled' : ''}></el-rating>`;
+      }
+
+      // 34. el-callout
+      if (tag === 'el-callout') {
+        return `<el-callout variant="${p.variant || 'info'}" size="${p.size || 'md'}">
+  <strong>System Notice:</strong> Infrastructure scaling completed successfully.
+</el-callout>`;
+      }
+
+      // 35. el-data-list
+      if (tag === 'el-data-list') {
+        const orient = p.orientation || 'horizontal';
+        const size = p.size || 'md';
+        return `<el-data-list orientation="${orient}" size="${size}" style="max-width: 440px; width: 100%;">
+  <el-data-list-item label="Cluster ID" value="cls-99482" copyable></el-data-list-item>
+  <el-data-list-item label="Primary Region" value="us-east-1"></el-data-list-item>
+  <el-data-list-item label="SLA Uptime" value="99.99%"></el-data-list-item>
+</el-data-list>`;
+      }
+      if (tag === 'el-data-list-item') {
+        const label = p.label !== undefined && p.label !== '' ? p.label : 'API Gateway';
+        const value = p.value !== undefined && p.value !== '' ? p.value : 'https://api.elementum.dev/v1';
+        const copyable = p.copyable ? ' copyable' : '';
+        return `<el-data-list style="max-width: 440px; width: 100%;">
+  <el-data-list-item label="${escapeHtml(label)}" value="${escapeHtml(value)}"${copyable}></el-data-list-item>
+  <el-data-list-item label="Environment" value="Production"></el-data-list-item>
+</el-data-list>`;
+      }
+
+      // 36. el-separator
+      if (tag === 'el-separator') {
+        const dec = p.decorative ? ' decorative' : '';
+        const orient = p.orientation || 'horizontal';
+        return `<div style="width: 100%; max-width: 380px;">
+  <p style="margin: 0 0 8px 0; color: var(--el-text-muted);">Top Content Block</p>
+  <el-separator orientation="${orient}"${dec}></el-separator>
+  <p style="margin: 8px 0 0 0; color: var(--el-text-muted);">Bottom Content Block</p>
+</div>`;
+      }
+
+      // 37. el-collapsible
+      if (tag === 'el-collapsible') {
+        return `<el-collapsible ${p.open ? 'open' : ''} ${p.disabled ? 'disabled' : ''}>
+  <el-button slot="trigger" variant="secondary">Toggle Metadata Panel ▾</el-button>
+  <div style="padding: 12px; background: var(--el-surface-muted); border-radius: 6px; margin-top: 8px; font-family: monospace; font-size: 0.85rem;">
+    {"status": 200, "region": "us-east-1", "activeNodes": 14}
+  </div>
+</el-collapsible>`;
+      }
+
+      // 38. el-theme-switch
+      if (tag === 'el-theme-switch') {
+        return `<el-theme-switch theme="${p.theme || 'system'}"></el-theme-switch>`;
+      }
+
+      // 39. el-textarea
+      if (tag === 'el-textarea') {
+        const val = p.value ? ` value="${escapeHtml(p.value)}"` : '';
+        const name = p.name ? ` name="${escapeHtml(p.name)}"` : '';
+        const maxlen = p.maxlength ? ` maxlength="${p.maxlength}"` : '';
+        return `<div style="max-width: 420px; width: 100%;">
+  <el-textarea placeholder="${escapeHtml(p.placeholder || 'Enter notes...')}" rows="${p.rows || 4}" ${p['auto-resize'] ? 'auto-resize' : ''} ${p.disabled ? 'disabled' : ''} ${p.required ? 'required' : ''}${val}${name}${maxlen}></el-textarea>
+</div>`;
+      }
+
+      // 40. el-input
+      if (tag === 'el-input') {
+        const attrs = [];
+        if (p.type) attrs.push(`type="${p.type}"`);
+        if (p.placeholder) attrs.push(`placeholder="${escapeHtml(String(p.placeholder))}"`);
+        if (p.value) attrs.push(`value="${escapeHtml(String(p.value))}"`);
+        if (p.size) attrs.push(`size="${p.size}"`);
+        if (p.disabled) attrs.push('disabled');
+        if (p.readonly) attrs.push('readonly');
+        if (p.required) attrs.push('required');
+        if (p.clearable) attrs.push('clearable');
+        if (p.pattern) attrs.push(`pattern="${escapeHtml(p.pattern)}"`);
+        if (p.minlength) attrs.push(`minlength="${p.minlength}"`);
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        return `<div style="max-width: 360px; width: 100%;">
+  <el-input${attrStr}></el-input>
+</div>`;
+      }
+
+      // 41. el-number-field
+      if (tag === 'el-number-field') {
+        const attrs = [];
+        if (p.value !== undefined) attrs.push(`value="${p.value}"`);
+        if (p.min !== undefined) attrs.push(`min="${p.min}"`);
+        if (p.max !== undefined) attrs.push(`max="${p.max}"`);
+        if (p.step !== undefined) attrs.push(`step="${p.step}"`);
+        if (p.precision !== undefined) attrs.push(`precision="${p.precision}"`);
+        if (p.prefix) attrs.push(`prefix="${escapeHtml(p.prefix)}"`);
+        if (p.suffix) attrs.push(`suffix="${escapeHtml(p.suffix)}"`);
+        if (p.name) attrs.push(`name="${escapeHtml(p.name)}"`);
+        if (p.scrub) attrs.push('scrub');
+        if (p.readonly) attrs.push('readonly');
+        if (p.required) attrs.push('required');
+        if (p.disabled) attrs.push('disabled');
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        return `<div style="max-width: 260px; width: 100%;">
+  <el-number-field${attrStr}></el-number-field>
+</div>`;
+      }
+
+      // 42. el-otp-input
+      if (tag === 'el-otp-input') {
+        const len = p.length || 6;
+        const disabled = p.disabled ? ' disabled' : '';
+        const required = p.required ? ' required' : '';
+        const type = p.type ? ` type="${p.type}"` : '';
+        const name = p.name ? ` name="${escapeHtml(p.name)}"` : '';
+        const val = p.value ? ` value="${escapeHtml(p.value)}"` : '';
+        return `<el-otp-input length="${len}"${type}${name}${val}${disabled}${required}></el-otp-input>`;
+      }
+
+      // 43. el-avatar & el-avatar-group
+      if (tag === 'el-avatar') {
+        const attrs = [];
+        if (p.src) attrs.push(`src="${escapeHtml(p.src)}"`);
+        if (p.name) attrs.push(`name="${escapeHtml(p.name)}"`);
+        if (p.size) attrs.push(`size="${p.size}"`);
+        if (p.status) attrs.push(`status="${p.status}"`);
+        if (p.alt) attrs.push(`alt="${escapeHtml(p.alt)}"`);
+        if (p.shape) attrs.push(`shape="${p.shape}"`);
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        return `<el-avatar${attrStr}></el-avatar>`;
+      }
+      if (tag === 'el-avatar-group') {
+        return `<el-avatar-group max="${p.max || 3}">
+  <el-avatar name="Sarah Chen"></el-avatar>
+  <el-avatar name="Marcus Vance"></el-avatar>
+  <el-avatar name="Elena Rostova"></el-avatar>
+  <el-avatar name="Kenji Sato"></el-avatar>
+</el-avatar-group>`;
+      }
+
+      // 44. el-toggle-group
+      if (tag === 'el-toggle-group') {
+        const type = p.type || 'single';
+        const val = p.value ? ` value="${escapeHtml(p.value)}"` : '';
+        const dis = p.disabled ? ' disabled' : '';
+        return `<el-toggle-group type="${type}"${val}${dis}>
+  <el-toggle value="bold"><b>B</b></el-toggle>
+  <el-toggle value="italic"><i>I</i></el-toggle>
+  <el-toggle value="underline"><u>U</u></el-toggle>
+</el-toggle-group>`;
+      }
+
+      // 45. el-empty-state
+      if (tag === 'el-empty-state') {
+        const icon = p.icon ? ` icon="${escapeHtml(p.icon)}"` : '';
+        return `<div style="max-width: 400px; width: 100%;">
+  <el-empty-state${icon} title="${escapeHtml(p.title || 'No Repositories Found')}" description="${escapeHtml(p.description || 'You have not connected any organizations yet.')}">
+    <el-button variant="primary" size="sm">Connect GitHub</el-button>
+  </el-empty-state>
+</div>`;
+      }
+
+      // 46. el-dropzone
+      if (tag === 'el-dropzone') {
+        const accept = p.accept ? ` accept="${escapeHtml(p.accept)}"` : '';
+        const maxFiles = p['max-files'] ? ` max-files="${p['max-files']}"` : '';
+        const maxSize = p['max-size'] ? ` max-size="${p['max-size']}"` : '';
+        const dis = p.disabled ? ' disabled' : '';
+        const mult = p.multiple ? ' multiple' : '';
+        return `<div style="max-width: 440px; width: 100%;">
+  <el-dropzone${accept}${maxFiles}${maxSize}${dis}${mult}>
+    <div style="padding: 24px 16px; text-align: center;">
+      <div style="font-size: 2rem; margin-bottom: 8px;">📁</div>
+      <div style="font-weight: 600; font-size: 0.95rem;">Drag & drop bundle here</div>
+      <div style="font-size: 0.8rem; color: var(--el-text-muted); margin-top: 4px;">Supports ZIP or TAR up to 10MB</div>
+    </div>
+  </el-dropzone>
+</div>`;
+      }
+
+      // 47. el-datepicker & el-calendar
+      if (tag === 'el-datepicker') {
+        const val = p.value || '2026-11-15';
+        const placeholder = p.placeholder ? ` placeholder="${escapeHtml(p.placeholder)}"` : '';
+        const dis = p.disabled ? ' disabled' : '';
+        const req = p.required ? ' required' : '';
+        return `<div style="max-width: 280px; width: 100%;">
+  <el-datepicker value="${escapeHtml(val)}"${placeholder}${dis}${req}></el-datepicker>
+</div>`;
+      }
+      if (tag === 'el-calendar') {
+        const val = p.value || '2026-11-15';
+        const minYear = p['min-year'] ? ` min-year="${p['min-year']}"` : '';
+        const maxYear = p['max-year'] ? ` max-year="${p['max-year']}"` : '';
+        return `<div style="max-width: 320px; width: 100%;">
+  <el-calendar value="${escapeHtml(val)}"${minYear}${maxYear}></el-calendar>
+</div>`;
+      }
+
+      // 48. el-pagination
+      if (tag === 'el-pagination') {
+        const page = p.page || 1;
+        const total = p.total || 10;
+        const sib = p['sibling-count'] ? ` sibling-count="${p['sibling-count']}"` : '';
+        const pageSize = p['page-size'] ? ` page-size="${p['page-size']}"` : '';
+        return `<el-pagination page="${page}" total="${total}"${sib}${pageSize}></el-pagination>`;
+      }
+
+      // 50. el-card compound items
+      if (tag === 'el-card-header' || tag === 'el-card-title' || tag === 'el-card-description' || tag === 'el-card-content' || tag === 'el-card-footer') {
+        return `<el-card style="max-width: 380px; width: 100%;">
+  <el-card-header>
+    <el-card-title>Deployment Metrics</el-card-title>
+    <el-card-description>Real-time cluster telemetry</el-card-description>
+  </el-card-header>
+  <el-card-content>
+    <p style="margin: 0; font-size: 0.875rem;">18 pods active across us-east-1 and eu-west-1 with zero downtime.</p>
+  </el-card-content>
+  <el-card-footer style="display: flex; justify-content: flex-end; gap: 8px;">
+    <el-button size="sm" variant="secondary">View Logs</el-button>
+  </el-card-footer>
+</el-card>`;
+      }
+
+      // 51. el-sidebar compound items
+      if (tag === 'el-sidebar' || tag === 'el-sidebar-header' || tag === 'el-sidebar-content' || tag === 'el-sidebar-footer') {
+        const col = p.collapsed ? ' collapsed' : '';
+        const variantAttr = p.variant && p.variant !== 'default' ? ` variant="${escapeHtml(p.variant)}"` : '';
+        return `<div style="display: flex; width: 100%; max-width: 520px; height: 240px; border: 1px solid var(--el-surface-border); border-radius: 12px; overflow: hidden; background: var(--el-surface-base);">
+  <el-sidebar id="demo-sidebar"${col}${variantAttr} style="border: none; border-right: 1px solid var(--el-surface-border); border-radius: 0;">
+    <el-sidebar-header${col}>
+      <span class="collapsible-text" style="font-weight: 700; font-size: 0.95rem; white-space: nowrap;">⚡ Elementum</span>
+      <el-sidebar-trigger for="demo-sidebar" title="Toggle Sidebar"></el-sidebar-trigger>
+    </el-sidebar-header>
+    <el-sidebar-content${col}>
+      <a href="#dash" onclick="event.preventDefault(); toast('Opened Dashboard')" style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; text-decoration: none; color: inherit; background: var(--el-surface-muted); font-size: 0.875rem;">
+        <span>📊</span><span class="collapsible-text">Dashboard</span>
+      </a>
+      <a href="#nodes" onclick="event.preventDefault(); toast('Opened Cluster Nodes')" style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; text-decoration: none; color: inherit; font-size: 0.875rem;">
+        <span>🖥️</span><span class="collapsible-text">Cluster Nodes</span>
+      </a>
+      <a href="#logs" onclick="event.preventDefault(); toast('Opened Audit Logs')" style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; text-decoration: none; color: inherit; font-size: 0.875rem;">
+        <span>📋</span><span class="collapsible-text">Audit Logs</span>
+      </a>
+    </el-sidebar-content>
+    <el-sidebar-footer${col} style="font-size: 0.75rem; color: var(--el-text-muted); gap: 8px;">
+      <span>🟢</span><span class="collapsible-text">prod-us-east</span>
+    </el-sidebar-footer>
+  </el-sidebar>
+  <div style="flex: 1; padding: 20px; display: flex; flex-direction: column; justify-content: center; gap: 8px; background: var(--el-surface-muted);">
+    <div style="font-weight: 700; font-size: 0.95rem;">Workspace Shell</div>
+    <p style="margin: 0; font-size: 0.825rem; color: var(--el-text-muted); line-height: 1.5;">Click the sidebar header toggle icon or flip the <code>collapsed</code> switch below to minimize into a 56px icon rail.</p>
+  </div>
+</div>`;
+      }
+
+      // 52. el-command compound items
+      if (tag === 'el-command-item') {
+        const val = p.value || 'deploy-prod';
+        const shortcut = p.shortcut !== undefined && p.shortcut !== '' ? p.shortcut : '⌘D';
+        const dis = p.disabled ? ' disabled' : '';
+        return `<div style="max-width: 420px; width: 100%; border: 1px solid var(--el-surface-border); border-radius: 10px; padding: 8px; background: var(--el-surface-card);">
+  <el-command-item value="${escapeHtml(val)}" shortcut="${escapeHtml(shortcut)}"${dis} onclick="if(!this.hasAttribute('disabled')) toast('Selected command: ${escapeHtml(val)}')">
+    🚀 Deploy Service (${escapeHtml(val)})
+  </el-command-item>
+</div>`;
+      }
+      if (tag === 'el-command-group') {
+        const heading = p.heading || 'Quick Actions';
+        return `<div style="max-width: 420px; width: 100%; border: 1px solid var(--el-surface-border); border-radius: 10px; padding: 8px; background: var(--el-surface-card);">
+  <el-command-group heading="${escapeHtml(heading)}">
+    <el-command-item value="deploy" shortcut="⌘D">🚀 Deploy Service</el-command-item>
+    <el-command-item value="scale" shortcut="⌘S">📈 Scale Workers</el-command-item>
+  </el-command-group>
+</div>`;
+      }
+      if (tag.startsWith('el-command')) {
+        const placeholder = p.placeholder || 'Type a command or search...';
+        const dis = p.disabled ? ' disabled' : '';
+        const openAttr = p.open ? ' open' : '';
+        const inlineAttr = p.inline !== false && !p.open ? ' inline' : '';
+        const shortcutAttr = p.shortcut ? ` shortcut="${escapeHtml(p.shortcut)}"` : ' shortcut="⌘D"';
+        const itemVal = p.value || 'deploy';
+        return `<div style="max-width: 480px; width: 100%; display: flex; flex-direction: column; gap: 12px; align-items: center;">
+  <el-button size="sm" variant="secondary" onclick="const c = document.getElementById('demo-cmd-inst'); c.removeAttribute('inline'); c.show();">🔍 Open Modal Command Palette (⌘K)</el-button>
+  <el-command id="demo-cmd-inst" placeholder="${escapeHtml(placeholder)}"${inlineAttr}${openAttr}${dis}>
+    <el-command-group heading="Quick Actions">
+      <el-command-item value="${escapeHtml(itemVal)}"${shortcutAttr}${dis}>🚀 Deploy Service (${escapeHtml(itemVal)})</el-command-item>
+      <el-command-item value="rollback" shortcut="⌘R">⏪ Rollback Release</el-command-item>
+      <el-command-item value="scale" shortcut="⌘S">📈 Scale Worker Replicas</el-command-item>
+    </el-command-group>
+  </el-command>
+</div>`;
+      }
+
+      // 53. el-navigation-menu compound items
+      if (tag === 'el-navigation-menu' || tag === 'el-navigation-menu-item' || tag === 'el-navigation-menu-trigger' || tag === 'el-navigation-menu-content') {
+        const orient = p.orientation || 'horizontal';
+        return `<div style="padding: 12px 0 110px 0;">
+  <el-navigation-menu orientation="${orient}">
+    <el-navigation-menu-item>
+      <el-navigation-menu-trigger>Platform</el-navigation-menu-trigger>
+      <el-navigation-menu-content style="display: flex; flex-direction: column; gap: 6px; min-width: 240px;">
+        <a href="#edge" onclick="event.preventDefault(); toast('Selected: Serverless Functions')" style="display: block; padding: 8px 10px; border-radius: 6px; text-decoration: none; color: inherit; background: var(--el-surface-muted);">
+          <div style="font-weight: 600; font-size: 0.875rem;">⚡ Serverless Functions</div>
+          <div style="font-size: 0.775rem; color: var(--el-text-muted);">Zero-cold-start edge workers</div>
+        </a>
+        <a href="#mesh" onclick="event.preventDefault(); toast('Selected: Global State Mesh')" style="display: block; padding: 8px 10px; border-radius: 6px; text-decoration: none; color: inherit;">
+          <div style="font-weight: 600; font-size: 0.875rem;">🌐 Global State Mesh</div>
+          <div style="font-size: 0.775rem; color: var(--el-text-muted);">Multi-region replicated KV</div>
+        </a>
+      </el-navigation-menu-content>
+    </el-navigation-menu-item>
+    <el-navigation-menu-item>
+      <a href="#pricing" onclick="event.preventDefault(); toast('Selected: Pricing')" style="display: inline-block; padding: 8px 12px; text-decoration: none; color: inherit; font-weight: 500; font-size: 0.875rem;">Pricing</a>
+    </el-navigation-menu-item>
+    <el-navigation-menu-item>
+      <a href="#docs" onclick="event.preventDefault(); toast('Selected: Documentation')" style="display: inline-block; padding: 8px 12px; text-decoration: none; color: inherit; font-weight: 500; font-size: 0.875rem;">Documentation</a>
+    </el-navigation-menu-item>
+  </el-navigation-menu>
+</div>`;
+      }
+
+      // 54. el-spinner & el-skeleton
+      if (tag === 'el-spinner') {
+        const size = p.size || 'md';
+        const variant = p.variant ? ` variant="${p.variant}"` : '';
+        const label = p.label !== undefined && p.label !== '' ? ` label="${escapeHtml(p.label)}"` : '';
+        return `<el-spinner size="${size}"${variant}${label}></el-spinner>`;
+      }
+      if (tag === 'el-skeleton') {
+        const variant = p.variant || 'text';
+        const width = p.width || (variant === 'circular' ? '48px' : '100%');
+        const height = p.height || (variant === 'circular' ? '48px' : variant === 'rectangular' ? '120px' : '20px');
+        const anim = p.animation || 'wave';
+        return `<div style="max-width: 380px; width: 100%; display: flex; align-items: center; justify-content: center; min-height: 140px; padding: 12px; border: 1px dashed var(--el-surface-border); border-radius: 8px;">
+  <el-skeleton variant="${variant}" width="${width}" height="${height}" animation="${anim}"></el-skeleton>
+</div>`;
+      }
+
+      // 54b. el-aspect-ratio
+      if (tag === 'el-aspect-ratio') {
+        const ratio = p.ratio || '16/9';
+        return `<div style="max-width: 360px; width: 100%;">
+  <el-aspect-ratio ratio="${escapeHtml(ratio)}">
+    <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #2563eb, #6366f1); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+      Ratio: ${escapeHtml(ratio)}
+    </div>
+  </el-aspect-ratio>
+</div>`;
+      }
+
+      // 54c. el-border-beam
+      if (tag === 'el-border-beam') {
+        const size = p.size || 200;
+        const dur = p.duration || 12;
+        const cfrom = p['color-from'] || '#ffaa40';
+        const cto = p['color-to'] || '#9c40ff';
+        const bw = p['border-width'] || 2;
+        const rev = p.reverse ? ' reverse' : '';
+        return `<div style="position: relative; width: 280px; height: 160px; border-radius: 12px; background: var(--el-surface-card); border: 1px solid var(--el-surface-border); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+  <span style="font-weight: 600;">Border Beam Card</span>
+  <el-border-beam size="${size}" duration="${dur}" color-from="${cfrom}" color-to="${cto}" border-width="${bw}"${rev}></el-border-beam>
+</div>`;
+      }
+
+      // 54d. el-context-menu
+      if (tag === 'el-context-menu') {
+        const dis = p.disabled ? ' disabled' : '';
+        return `<el-context-menu${dis}>
+  <div slot="trigger" style="padding: 32px 48px; border: 2px dashed var(--el-surface-border); border-radius: 8px; text-align: center; cursor: context-menu;">
+    Right-click anywhere here for Context Menu
+  </div>
+  <div slot="menu" style="padding: 6px; display: flex; flex-direction: column; gap: 4px; min-width: 160px;">
+    <button style="padding: 8px 12px; text-align: left; background: none; border: none; font-size: 0.875rem; border-radius: 4px; cursor: pointer; color: var(--el-text-base);">Inspect</button>
+    <button style="padding: 8px 12px; text-align: left; background: none; border: none; font-size: 0.875rem; border-radius: 4px; cursor: pointer; color: var(--el-text-base);">Copy Link</button>
+  </div>
+</el-context-menu>`;
+      }
+
+      // 54e. el-preview-card
+      if (tag === 'el-preview-card') {
+        const placement = p.placement || 'bottom';
+        const delay = p.delay !== undefined ? ` delay="${p.delay}"` : '';
+        const openDelay = p['open-delay'] !== undefined && p['open-delay'] !== '' ? ` open-delay="${p['open-delay']}"` : '';
+        const closeDelay = p['close-delay'] !== undefined && p['close-delay'] !== '' ? ` close-delay="${p['close-delay']}"` : '';
+        const openAttr = p.open ? ' open' : '';
+        return `<div style="padding: 56px 0;">
+  <el-preview-card placement="${placement}"${delay}${openDelay}${closeDelay}${openAttr}>
+    <span slot="trigger" style="text-decoration: underline; cursor: pointer; color: var(--el-color-primary); font-weight: 600;">@antigravity</span>
+    <div slot="preview" style="width: 240px;">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span style="font-size: 1.25rem;">⚡</span>
+        <div style="font-weight: 700; font-size: 0.925rem;">Antigravity Agent</div>
+      </div>
+      <div style="font-size: 0.8rem; color: var(--el-text-muted); line-height: 1.4;">Autonomous high-speed agentic software engineer (${placement} placement).</div>
+    </div>
+  </el-preview-card>
+</div>`;
+      }
+
+      // 54f. el-toaster
+      if (tag === 'el-toaster') {
+        const pos = p.position || 'bottom-right';
+        const expandAttr = p.expand ? ' expand' : '';
+        return `<div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
+  <el-toaster position="${pos}"${expandAttr}></el-toaster>
+  <el-button variant="primary" onclick="toast('Notification at ${pos}')">Dispatch Test Toast</el-button>
+  <span style="font-size: 0.8rem; color: var(--el-text-muted);">Configured position: ${pos}${p.expand ? ' (expanded)' : ''}</span>
+</div>`;
+      }
+
+      // 54g. el-toolbar
+      if (tag === 'el-toolbar') {
+        const orient = p.orientation || 'horizontal';
+        const dis = p.disabled ? ' disabled' : '';
+        return `<el-toolbar orientation="${orient}"${dis} style="border: 1px solid var(--el-surface-border); border-radius: 6px; padding: 6px;">
+  <el-button size="sm" variant="secondary">Cut</el-button>
+  <el-button size="sm" variant="secondary">Copy</el-button>
+  <el-button size="sm" variant="secondary">Paste</el-button>
+</el-toolbar>`;
+      }
+
+      // 55. el-checkbox-card
+      if (tag === 'el-checkbox-card') {
+        const checked = p.checked ? ' checked' : '';
+        const disabled = p.disabled ? ' disabled' : '';
+        const val = p.value || 'ssl';
+        return `<div style="max-width: 360px; width: 100%;">
+  <el-checkbox-card value="${escapeHtml(val)}"${checked}${disabled}>
+    <div style="font-weight: 600;">Managed SSL Certificate</div>
+    <div style="font-size: 0.825rem; color: var(--el-text-muted); margin-top: 4px;">Automatic renewal with zero downtime</div>
+  </el-checkbox-card>
+</div>`;
+      }
+
+      // 56. el-visually-hidden
+      if (tag === 'el-visually-hidden') {
+        return `<div style="padding: 12px; border: 1px dashed var(--el-surface-border); border-radius: 6px; font-size: 0.875rem;">
+  <span>Visible Icon: ⚙️</span>
+  <el-visually-hidden>Settings and Configuration</el-visually-hidden>
+  <span style="color: var(--el-text-muted); margin-left: 8px;">(Screen reader text is active but visually hidden)</span>
+</div>`;
+      }
+
+      // 57. el-carousel & el-carousel-slide
+      if (tag === 'el-carousel' || tag === 'el-carousel-slide') {
+        const interval = p.interval ? ` interval="${p.interval}"` : '';
+        const autoPlayAttr = (p['auto-play'] || p.autoplay) ? ' auto-play' : '';
+        const loopAttr = p.loop === false ? ' loop="false"' : ' loop';
+        return `<div style="max-width: 440px; width: 100%;">
+  <el-carousel${autoPlayAttr}${loopAttr}${interval}>
+    <el-carousel-slide>
+      <div style="height: 180px; background: linear-gradient(135deg, #2563eb, #3b82f6); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">Slide 1</div>
+    </el-carousel-slide>
+    <el-carousel-slide>
+      <div style="height: 180px; background: linear-gradient(135deg, #059669, #10b981); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">Slide 2</div>
+    </el-carousel-slide>
+  </el-carousel>
+</div>`;
+      }
+
+      // 58. el-resizable & sub-elements
+      if (tag === 'el-resizable-panel') {
+        const def = p['default-size'] ? ` default-size="${p['default-size']}"` : '';
+        const min = p['min-size'] ? ` min-size="${p['min-size']}"` : '';
+        const max = p['max-size'] ? ` max-size="${p['max-size']}"` : '';
+        return `<div style="max-width: 480px; width: 100%; height: 160px; border: 1px solid var(--el-surface-border); border-radius: 8px; display: flex; overflow: hidden;">
+  <el-resizable-panel${def}${min}${max} style="flex: 1; padding: 12px; background: var(--el-surface-muted);">Panel Left</el-resizable-panel>
+  <el-resizable-handle style="width: 4px; background: var(--el-surface-border); cursor: col-resize;"></el-resizable-handle>
+  <el-resizable-panel style="flex: 1; padding: 12px;">Panel Right</el-resizable-panel>
+</div>`;
+      }
+      if (tag === 'el-resizable-handle') {
+        const dis = p.disabled ? ' disabled' : '';
+        return `<div style="max-width: 480px; width: 100%; height: 160px; border: 1px solid var(--el-surface-border); border-radius: 8px; display: flex; overflow: hidden;">
+  <el-resizable-panel style="flex: 1; padding: 12px; background: var(--el-surface-muted);">Panel A</el-resizable-panel>
+  <el-resizable-handle${dis} style="width: 6px; background: var(--el-color-primary); cursor: col-resize;"></el-resizable-handle>
+  <el-resizable-panel style="flex: 1; padding: 12px;">Panel B</el-resizable-panel>
+</div>`;
+      }
+      if (tag.startsWith('el-resizable')) {
+        const dir = p.direction ? ` direction="${p.direction}"` : '';
+        const dis = p.disabled ? ' disabled' : '';
+        return `<div style="max-width: 480px; width: 100%; height: 160px; border: 1px solid var(--el-surface-border); border-radius: 8px; display: flex; overflow: hidden;">
+  <el-resizable${dir}${dis} style="width: 100%; height: 100%; display: flex;">
+    <el-resizable-panel style="flex: 1; padding: 12px; background: var(--el-surface-muted);">Panel A</el-resizable-panel>
+    <el-resizable-handle style="width: 4px; background: var(--el-surface-border); cursor: col-resize;"></el-resizable-handle>
+    <el-resizable-panel style="flex: 1; padding: 12px;">Panel B</el-resizable-panel>
+  </el-resizable>
+</div>`;
+      }
+
+      // 59. el-scroll-area
+      if (tag === 'el-scroll-area') {
+        const type = p.type ? ` type="${p.type}"` : '';
+        const heightVal = p.height || '140px';
+        const maxH = p['max-height'] || '200px';
+        const maxW = p['max-width'] || '380px';
+        const heightAttr = ` height="${escapeHtml(String(heightVal))}"`;
+        const maxHAttr = ` max-height="${escapeHtml(String(maxH))}"`;
+        const maxWAttr = ` max-width="${escapeHtml(String(maxW))}"`;
+        return `<el-scroll-area${type}${heightAttr}${maxHAttr}${maxWAttr} style="max-width: ${escapeHtml(String(maxW))}; width: 100%; height: ${escapeHtml(String(heightVal))}; max-height: ${escapeHtml(String(maxH))}; border: 1px solid var(--el-surface-border); border-radius: 8px; padding: 12px;">
+  <p style="margin: 0 0 12px 0;">Reactive custom scroll area with smooth native kinetic deceleration.</p>
+  <p style="margin: 0 0 12px 0;">Signals control thumb visibility and cross-browser styling.</p>
+  <p style="margin: 0 0 12px 0;">Works seamlessly on mobile touch and desktop precision tracks.</p>
+</el-scroll-area>`;
+      }
+
+      // 60. el-menubar
+      if (tag === 'el-menubar') {
+        const dis = p.disabled ? ' disabled' : '';
+        return `<el-menubar${dis} style="border: 1px solid var(--el-surface-border); border-radius: 6px; padding: 4px 8px;">
+  <span style="font-weight: 600; padding: 4px 8px;">File</span>
+  <span style="font-weight: 600; padding: 4px 8px;">Edit</span>
+  <span style="font-weight: 600; padding: 4px 8px;">View</span>
+  <span style="font-weight: 600; padding: 4px 8px;">Help</span>
+</el-menubar>`;
+      }
+
+      // 61. el-number-flow
+      if (tag === 'el-number-flow') {
+        const val = p.value !== undefined && p.value !== '' ? p.value : '48290';
+        const prefix = p.prefix !== undefined ? p.prefix : '$';
+        const suffix = p.suffix || '';
+        const duration = p.duration !== undefined ? p.duration : 400;
+        const animated = p.animated === false ? ' animated="false"' : '';
+        return `<div style="display: flex; align-items: center; justify-content: center; padding: 24px 0; font-size: 2.75rem; font-weight: 700; color: var(--el-text-primary, #0f172a);">
+  <el-number-flow value="${escapeHtml(String(val))}" prefix="${escapeHtml(prefix)}" suffix="${escapeHtml(suffix)}" duration="${duration}"${animated}></el-number-flow>
+</div>`;
+      }
+
+      // 62. el-inset
+      if (tag === 'el-inset') {
+        const side = p.side || 'all';
+        const clip = p.clip ? ' clip' : '';
+        return `<div style="max-width: 380px; width: 100%; border: 1px solid var(--el-surface-border); border-radius: 8px; overflow: hidden; background: var(--el-surface-card);">
+  <el-inset side="${side}"${clip} style="background: var(--el-surface-muted); padding: 20px; text-align: center; font-weight: 600;">
+    Inset Section (${side})
+  </el-inset>
+  <div style="padding: 16px; font-size: 0.875rem; color: var(--el-text-muted);">Card body content beneath inset boundary.</div>
+</div>`;
+      }
+
+      // 63. el-route-link & el-router & el-route
+      if (tag === 'el-route-link') {
+        const to = p.to || '/analytics';
+        const exact = p.exact ? ' exact' : '';
+        return `<div style="max-width: 460px; width: 100%; border: 1px solid var(--el-surface-border); border-radius: 10px; padding: 16px; background: var(--el-surface-card); display: flex; flex-direction: column; gap: 14px;">
+  <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+    <el-route-link data-preview-target to="${escapeHtml(to)}"${exact} style="padding: 6px 14px; background: var(--el-color-primary); color: white; border-radius: 6px; font-weight: 600; font-size: 0.85rem;">Navigate to ${escapeHtml(to)}</el-route-link>
+    <el-route-link to="/home" exact style="padding: 6px 14px; border: 1px solid var(--el-surface-border); border-radius: 6px; font-weight: 600; font-size: 0.85rem;">Home (/home)</el-route-link>
+  </div>
+  <el-router default="/home" style="padding: 12px; background: var(--el-surface-muted); border-radius: 8px; font-size: 0.875rem;">
+    <el-route path="/home" exact>🏠 <strong>Home Route Active:</strong> Click the button above to navigate to <code>${escapeHtml(to)}</code>.</el-route>
+    <el-route path="${escapeHtml(to)}">🚀 <strong>Route Matched:</strong> Currently viewing <code>${escapeHtml(to)}</code>.</el-route>
+  </el-router>
+</div>`;
+      }
+      if (tag === 'el-route') {
+        const routePath = p.path || '/home';
+        const normPath = routePath.startsWith('/') ? routePath : '/' + routePath;
+        const exactAttr = p.exact ? ' exact' : '';
+        return `<div style="max-width: 480px; width: 100%; border: 1px solid var(--el-surface-border); border-radius: 10px; padding: 16px; background: var(--el-surface-card); display: flex; flex-direction: column; gap: 12px;">
+  <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--el-surface-border); padding-bottom: 10px;">
+    <span style="font-weight: 700; font-size: 0.9rem;">Matched Route: <code>${escapeHtml(normPath)}</code>${p.exact ? ' (exact)' : ''}</span>
+    <div style="display: flex; gap: 8px;">
+      <el-route-link to="${escapeHtml(normPath)}" style="padding: 4px 10px; border-radius: 6px; background: var(--el-surface-muted); font-size: 0.8rem; font-weight: 600;">${escapeHtml(normPath)}</el-route-link>
+      <el-route-link to="/settings" style="padding: 4px 10px; border-radius: 6px; background: var(--el-surface-muted); font-size: 0.8rem; font-weight: 600;">/settings</el-route-link>
+    </div>
+  </div>
+  <el-router default="${escapeHtml(normPath)}">
+    <el-route data-preview-target path="${escapeHtml(normPath)}"${exactAttr}>
+      <div style="padding: 14px; background: var(--el-surface-muted); border-radius: 8px; font-size: 0.875rem;">
+        🚀 <strong>Active Route (${escapeHtml(normPath)}):</strong> Matched route content block.
+      </div>
+    </el-route>
+    <el-route path="/settings">
+      <div style="padding: 14px; background: var(--el-surface-muted); border-radius: 8px; font-size: 0.875rem;">
+        ⚙️ <strong>Settings View (/settings):</strong> Workspace configuration and access control.
+      </div>
+    </el-route>
+  </el-router>
+</div>`;
+      }
+      if (tag === 'el-router') {
+        const defRoute = p.default || '/home';
+        const normDef = defRoute.startsWith('/') ? defRoute : '/' + defRoute;
+        return `<div style="max-width: 480px; width: 100%; border: 1px solid var(--el-surface-border); border-radius: 10px; padding: 16px; background: var(--el-surface-card); display: flex; flex-direction: column; gap: 12px;">
+  <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--el-surface-border); padding-bottom: 10px;">
+    <span style="font-weight: 700; font-size: 0.9rem;">SPA Router Outlet</span>
+    <div style="display: flex; gap: 8px;">
+      <el-route-link to="/home" style="padding: 4px 10px; border-radius: 6px; background: var(--el-surface-muted); font-size: 0.8rem; font-weight: 600;">/home</el-route-link>
+      <el-route-link to="/analytics" style="padding: 4px 10px; border-radius: 6px; background: var(--el-surface-muted); font-size: 0.8rem; font-weight: 600;">/analytics</el-route-link>
+      <el-route-link to="/settings" style="padding: 4px 10px; border-radius: 6px; background: var(--el-surface-muted); font-size: 0.8rem; font-weight: 600;">/settings</el-route-link>
+    </div>
+  </div>
+  <el-router default="${escapeHtml(normDef)}">
+    <el-route path="/home">
+      <div style="padding: 14px; background: var(--el-surface-muted); border-radius: 8px; font-size: 0.875rem;">
+        🏠 <strong>Home View (/home):</strong> Cluster overview and live status summary.
+      </div>
+    </el-route>
+    <el-route path="/analytics">
+      <div style="padding: 14px; background: var(--el-surface-muted); border-radius: 8px; font-size: 0.875rem;">
+        📊 <strong>Analytics View (/analytics):</strong> Real-time request telemetry and throughput metrics.
+      </div>
+    </el-route>
+    <el-route path="/settings">
+      <div style="padding: 14px; background: var(--el-surface-muted); border-radius: 8px; font-size: 0.875rem;">
+        ⚙️ <strong>Settings View (/settings):</strong> Workspace configuration and access control.
+      </div>
+    </el-route>
+    ${!['/home', '/analytics', '/settings'].includes(normDef) ? `<el-route path="${escapeHtml(normDef)}"><div style="padding: 14px; background: var(--el-surface-muted); border-radius: 8px; font-size: 0.875rem;">✨ <strong>Custom Route (${escapeHtml(normDef)}):</strong> Matched custom route path.</div></el-route>` : ''}
+  </el-router>
+</div>`;
+      }
+
+      // 64. el-sidebar-trigger
+      if (tag === 'el-sidebar-trigger') {
+        return `<div style="display: flex; width: 100%; max-width: 500px; height: 220px; border: 1px solid var(--el-surface-border); border-radius: 12px; overflow: hidden; background: var(--el-surface-base);">
+  <el-sidebar id="trigger-demo-sidebar" style="border: none; border-right: 1px solid var(--el-surface-border); border-radius: 0;">
+    <el-sidebar-header>
+      <span class="collapsible-text" style="font-weight: 700; font-size: 0.9rem;">⚡ Console</span>
+      <el-sidebar-trigger for="trigger-demo-sidebar"></el-sidebar-trigger>
+    </el-sidebar-header>
+    <el-sidebar-content>
+      <a href="#dash" onclick="event.preventDefault()" style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; text-decoration: none; color: inherit; background: var(--el-surface-muted); font-size: 0.85rem;">
+        <span>📊</span><span class="collapsible-text">Overview</span>
+      </a>
+      <a href="#logs" onclick="event.preventDefault()" style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; text-decoration: none; color: inherit; font-size: 0.85rem;">
+        <span>📋</span><span class="collapsible-text">Logs</span>
+      </a>
+    </el-sidebar-content>
+  </el-sidebar>
+  <div style="flex: 1; padding: 20px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 10px;">
+    <el-sidebar-trigger for="trigger-demo-sidebar">
+      <span style="padding: 2px 8px; font-size: 0.85rem; font-weight: 600;">☰ Toggle Sidebar</span>
+    </el-sidebar-trigger>
+    <span style="font-size: 0.8rem; color: var(--el-text-muted);">Click either trigger button to collapse or expand the connected sidebar.</span>
+  </div>
+</div>`;
+      }
+
+      // 65. el-navbar
+      if (tag === 'el-navbar') {
+        const attrs = [];
+        if (p.brand !== undefined && p.brand !== '') attrs.push(`brand="${escapeHtml(String(p.brand))}"`);
+        if (p.href !== undefined && p.href !== '') attrs.push(`href="${escapeHtml(String(p.href))}"`);
+        if (p.badge !== undefined && p.badge !== '') attrs.push(`badge="${escapeHtml(String(p.badge))}"`);
+        if (p['badge-variant']) attrs.push(`badge-variant="${escapeHtml(String(p['badge-variant']))}"`);
+        if (p.sticky) attrs.push('sticky');
+        if (p.open) attrs.push('open');
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        return `<div style="width: 100%; border: 1px solid var(--el-surface-border); border-radius: 10px; overflow: visible; min-height: 170px; background: var(--el-surface-muted);">
+  <el-navbar data-preview-target${attrStr}>
+    <a href="#home" active onclick="event.preventDefault()">Home</a>
+    <a href="#components" onclick="event.preventDefault()">Components</a>
+    <a href="#docs" onclick="event.preventDefault()">Docs</a>
+    <el-theme-switch slot="actions" size="sm"></el-theme-switch>
+  </el-navbar>
+  <div style="padding: 18px 20px; font-size: 0.85rem; color: var(--el-text-muted);">
+    Page content below responsive navigation bar. Resize viewport or toggle <code>open</code> to inspect mobile menu drawer.
+  </div>
+</div>`;
+      }
+
+      // 66. el-code-block
+      if (tag === 'el-code-block') {
+        const attrs = [];
+        if (p.code !== undefined && p.code !== '') attrs.push(`code="${escapeHtml(String(p.code))}"`);
+        if (p.language) attrs.push(`language="${escapeHtml(String(p.language))}"`);
+        if (p.copyable) attrs.push('copyable');
+        if (p.compact) attrs.push('compact');
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        return `<div style="width: 100%; max-width: 560px;">
+  <el-code-block data-preview-target${attrStr}></el-code-block>
+</div>`;
+      }
+
+      // 67. el-tool-call
+      if (tag === 'el-tool-call') {
+        const attrs = [];
+        if (p.name !== undefined && p.name !== '') attrs.push(`name="${escapeHtml(String(p.name))}"`);
+        if (p['call-id'] !== undefined && p['call-id'] !== '') attrs.push(`call-id="${escapeHtml(String(p['call-id']))}"`);
+        if (p.status) attrs.push(`status="${escapeHtml(String(p.status))}"`);
+        if (p.args !== undefined && p.args !== '') attrs.push(`args="${escapeHtml(String(p.args))}"`);
+        if (p.result !== undefined && p.result !== '') attrs.push(`result="${escapeHtml(String(p.result))}"`);
+        if (p.approval) attrs.push('approval');
+        if (p.open === false) attrs.push('open="false"');
+        else if (p.open) attrs.push('open');
+        const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+        return `<div style="width: 100%; max-width: 560px;">
+  <el-tool-call data-preview-target${attrStr}></el-tool-call>
+</div>`;
+      }
+
+      // Standard Fallback: separate slot keys (label, text, content, message) from tag attributes
+      const slotKeys = ['label', 'text', 'content', 'message', 'children'];
+      let innerSlot = '';
+      const attrPairs = [];
+
+      for (const [k, v] of Object.entries(p)) {
+        if (v === '' || v === false || v === undefined || v === null) continue;
+        if (slotKeys.includes(k.toLowerCase())) {
+          innerSlot = String(v);
+        } else if (v === true) {
+          attrPairs.push(k);
+        } else {
+          attrPairs.push(`${k}="${escapeHtml(String(v))}"`);
         }
       }
-    }
 
-    async function fetchUsers() {
-      if (apiLoading) apiLoading.style.display = 'inline-flex';
-      try {
-        const res = await fetch('https://jsonplaceholder.typicode.com/users');
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        allUsers = data.map((u) => ({
-          id: u.id,
-          name: u.name,
-          email: u.email,
-          city: u.address?.city || '',
-          company: u.company?.name || '',
-        }));
-        toast.success(`Loaded ${allUsers.length} users from API`);
-      } catch (err) {
-        // Fallback local mock data
-        allUsers = [
-          { id: 1, name: 'Leanne Graham', email: 'Sincere@april.biz', city: 'Gwenborough', company: 'Romaguera-Crona' },
-          { id: 2, name: 'Ervin Howell', email: 'Shanna@melissa.tv', city: 'Wisokyburgh', company: 'Deckow-Crist' },
-          { id: 3, name: 'Clementine Bauch', email: 'Nathan@yesenia.net', city: 'McKenziehaven', company: 'Romaguera-Jacobson' },
-          { id: 4, name: 'Patricia Lebsack', email: 'Julianne.OConner@kory.org', city: 'South Elvis', company: 'Robel-Corkery' },
-          { id: 5, name: 'Chelsey Dietrich', email: 'Lucio_Hettinger@annie.ca', city: 'Roscoeview', company: 'Keebler LLC' },
-          { id: 6, name: 'Mrs. Dennis Schulist', email: 'Karley_Dach@jasper.info', city: 'South Christy', company: 'Considine-Lockman' },
-          { id: 7, name: 'Kurtis Weissnat', email: 'Telly.Hoeger@billy.biz', city: 'Howemouth', company: 'Johns Group' },
-          { id: 8, name: 'Nicholas Runolfsdottir', email: 'Sherwood@rosamond.me', city: 'Aliyaview', company: 'Abernathy Group' },
-          { id: 9, name: 'Glenna Reichert', email: 'Chaim_McDermott@dana.io', city: 'Bartholomebury', company: 'Yost and Sons' },
-          { id: 10, name: 'Clementina DuBuque', email: 'Rey.Padberg@karina.biz', city: 'Lebsackbury', company: 'Hoeger LLC' }
-        ];
-        toast.info('Loaded fallback dataset (offline mode)');
-      } finally {
-        if (apiLoading) apiLoading.style.display = 'none';
-        apiPagination?.setPage?.(1);
-        renderApiPage();
+      if (!innerSlot && comp.slots && comp.slots.some(s => s.name === 'default')) {
+        innerSlot = comp.name || '';
       }
+
+      const attrStr = attrPairs.length ? ' ' + attrPairs.join(' ') : '';
+      if (attrPairs.length > 0 || innerSlot) {
+        return innerSlot ? `<${tag}${attrStr}>${escapeHtml(innerSlot)}</${tag}>` : `<${tag}${attrStr}></${tag}>`;
+      }
+
+      // Enhanced Generic Fallback: if no props were modified, use example code if available
+      if (comp.examples && comp.examples[0] && comp.examples[0].code) {
+        return comp.examples[0].code;
+      }
+
+      return `<${tag}></${tag}>`;
     }
 
-    btnFetchApi?.addEventListener('click', fetchUsers);
-    apiPagination?.addEventListener('pagechange', renderApiPage);
+    const DEFAULT_TRUE_BOOL_ATTRS = new Set(['loop', 'handle', 'bordered', 'auto-start', 'animated', 'show-grid', 'show-dots']);
+    const JSON_DATA_ATTRS = new Set(['data', 'columns', 'options']);
 
-    // Filter Chips handling
-    chipGroup?.querySelectorAll('el-chip').forEach((chip) => {
-      chip.addEventListener('change', (e) => {
-        if (e.detail.selected) {
-          chipGroup.querySelectorAll('el-chip').forEach((c) => {
-            if (c !== chip) {
-              c.removeAttribute('selected');
-              c.setAttribute('variant', 'muted');
+    function syncDeclaredPropsToStage(stage, comp, props) {
+      const targetEl = stage.querySelector('[data-preview-target]') || stage.querySelector(comp.tag);
+      if (!targetEl) return targetEl;
+
+      const ctor = customElements.get(comp.tag);
+      const observed = new Set(ctor?.observedAttributes || []);
+      for (const prop of (comp.props || [])) {
+        if (!observed.has(prop.name)) continue;
+        const val = props[prop.name];
+        if (prop.type === 'boolean') {
+          if (val) {
+            if (!targetEl.hasAttribute(prop.name) || targetEl.getAttribute(prop.name) === 'false') {
+              targetEl.setAttribute(prop.name, '');
+            }
+          } else if (DEFAULT_TRUE_BOOL_ATTRS.has(prop.name)) {
+            targetEl.setAttribute(prop.name, 'false');
+          } else {
+            targetEl.removeAttribute(prop.name);
+          }
+        } else if (val !== undefined && val !== null && val !== '') {
+          const strVal = String(val);
+          if (!JSON_DATA_ATTRS.has(prop.name) && targetEl.getAttribute(prop.name) !== strVal) {
+            targetEl.setAttribute(prop.name, strVal);
+          }
+        } else if (!JSON_DATA_ATTRS.has(prop.name) && targetEl.hasAttribute(prop.name)) {
+          targetEl.removeAttribute(prop.name);
+        }
+      }
+      return targetEl;
+    }
+
+    // 8. Update Live Rendered Preview & Code Snippet
+    function updateLivePreview(comp) {
+      const stage = document.getElementById('live-stage');
+      const codeBox = document.getElementById('generated-code-box');
+      if (!stage || !codeBox) return;
+
+      const markup = buildComponentMarkup(comp, currentProps);
+      stage.innerHTML = markup;
+      const syncedTarget = syncDeclaredPropsToStage(stage, comp, currentProps);
+      const cleanMarkup = markup.replace(/\s+data-preview-target\b/g, '');
+      codeBox.textContent = cleanMarkup;
+
+      // Attach event listeners to live element for event console
+      const liveEl = syncedTarget || stage.querySelector(comp.tag) || stage.firstElementChild;
+      const consoleBox = document.getElementById('live-event-console');
+      if (liveEl && consoleBox) {
+        const eventsToWatch = ['click', 'change', 'input', 'open', 'close', 'dismiss', 'select', 'toggle', 'remove', 'copy', 'approve', 'reject'];
+        eventsToWatch.forEach(evName => {
+          liveEl.addEventListener(evName, (e) => {
+            const time = new Date().toTimeString().split(' ')[0];
+            const detailStr = e.detail ? JSON.stringify(e.detail) : '—';
+            const logItem = document.createElement('div');
+            logItem.className = 'event-log-item';
+            logItem.innerHTML = `<span class="event-timestamp">[${time}]</span><strong>${evName}</strong>: <span>${escapeHtml(detailStr)}</span>`;
+            consoleBox.prepend(logItem);
+
+            if (evName === 'remove') {
+              setTimeout(() => {
+                if (!stage.querySelector(comp.tag)) {
+                  stage.innerHTML = '<div style="color: var(--el-text-muted); font-size: 0.875rem; font-style: italic; padding: 12px; border: 1px dashed var(--el-surface-border); border-radius: 6px;">Chip dismissed. Toggle Removable or click Reset Props to restore.</div>';
+                }
+              }, 50);
+            }
+
+            // Sync state when component value changes from interaction
+            if (evName === 'change' && e.detail?.value !== undefined && currentProps.value !== undefined) {
+              currentProps.value = e.detail.value;
+              const knobVal = document.querySelector('[data-prop="value"]');
+              if (knobVal) knobVal.value = e.detail.value;
+              codeBox.textContent = buildComponentMarkup(comp, currentProps).replace(/\s+data-preview-target\b/g, '');
             }
           });
-          chip.setAttribute('variant', 'primary');
-          currentFilter = e.detail.value;
-          apiPagination?.setPage?.(1);
-          renderApiPage();
-        }
-      });
-    });
-
-    // Initial load
-    fetchUsers();
-
-    // 7. Autocomplete Demos setup
-    const acRemote = document.getElementById('ac-remote-users');
-    const remoteSel = document.getElementById('remote-user-selection');
-    acRemote?.addEventListener('select', (e) => {
-      const user = e.detail.item;
-      if (remoteSel) {
-        remoteSel.innerHTML = `Selected User: <strong>${user.name}</strong> (ID: ${user.id}, Email: <code>${user.email}</code>)`;
+        });
       }
-      toast.success(`Selected user: ${user.name}`);
-    });
-    acRemote?.addEventListener('clear', () => {
-      if (remoteSel) remoteSel.innerHTML = 'Selected User: <em>None</em>';
-    });
 
-    const acAirports = document.getElementById('ac-local-airports');
-    const localSel = document.getElementById('local-airport-selection');
-    if (acAirports) {
-      acAirports.setData([
-        { id: 'SFO', name: 'San Francisco International (SFO)', meta: 'USA' },
-        { id: 'HND', name: 'Tokyo Haneda (HND)', meta: 'Japan' },
-        { id: 'JFK', name: 'John F. Kennedy International (JFK)', meta: 'USA' },
-        { id: 'LHR', name: 'London Heathrow (LHR)', meta: 'United Kingdom' },
-        { id: 'CDG', name: 'Paris Charles de Gaulle (CDG)', meta: 'France' },
-        { id: 'SIN', name: 'Singapore Changi (SIN)', meta: 'Singapore' },
-        { id: 'LAX', name: 'Los Angeles International (LAX)', meta: 'USA' },
-        { id: 'SYD', name: 'Sydney Kingsford Smith (SYD)', meta: 'Australia' },
-        { id: 'FRA', name: 'Frankfurt Airport (FRA)', meta: 'Germany' },
-        { id: 'DXB', name: 'Dubai International (DXB)', meta: 'UAE' },
-      ]);
-
-      acAirports.addEventListener('select', (e) => {
-        const item = e.detail.item;
-        if (localSel) {
-          localSel.innerHTML = `Selected Airport: <strong>${item.name}</strong> [Code: <code>${item.id}</code>, Country: ${item.meta}]`;
-        }
-        toast.info(`Selected airport: ${item.id}`);
-      });
-      acAirports.addEventListener('clear', () => {
-        if (localSel) localSel.innerHTML = 'Selected Airport: <em>None</em>';
-      });
+      // Hook up copy code button
+      document.getElementById('btn-copy-code').onclick = () => {
+        navigator.clipboard.writeText(cleanMarkup);
+        toast.success('Markup copied to clipboard!');
+      };
     }
 
-    const acMulti = document.getElementById('ac-multiselect-tags');
-    const multiSel = document.getElementById('multiselect-selection');
-    if (acMulti) {
-      acMulti.setData([
-        'Custom Elements', 'Micro-Signals', 'Shadow DOM', 'Figma Tokens',
-        'WCAG 2.2 AA', 'Form-Associated (FACE)', 'Declarative Shadow DOM', 'Zero Build'
-      ]);
-      acMulti.addEventListener('change', (e) => {
-        const count = e.detail.items?.length || 0;
-        if (multiSel) {
-          if (count === 0) {
-            multiSel.innerHTML = 'Selected Tags: <em>None</em>';
-          } else {
-            const names = e.detail.items.map(it => acMulti.getItemLabel(it)).join(', ');
-            multiSel.innerHTML = `Selected Tags (${count}): <strong>${names}</strong>`;
-          }
-        }
-      });
-      acMulti.addEventListener('select', (e) => {
-        toast.info(`Added tag: ${e.detail.label}`);
-      });
-      acMulti.addEventListener('remove', (e) => {
-        toast.warning(`Removed tag: ${acMulti.getItemLabel(e.detail.item)}`);
-      });
-    }
+    // Initial render
+    renderSidebar();
+    renderComponentDetail(currentTag);
   </script>
 </body>
 </html>

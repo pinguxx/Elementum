@@ -35,6 +35,12 @@ export class Signal {
     return this._value;
   }
 
+  subscribe(callback) {
+    return effect(() => {
+      callback(this.value);
+    });
+  }
+
   valueOf() {
     return this.value;
   }

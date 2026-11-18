@@ -14,5 +14,6 @@ globalThis.MutationObserver = window.MutationObserver;
 globalThis.CustomEvent = window.CustomEvent;
 globalThis.Event = window.Event;
 globalThis.MouseEvent = window.MouseEvent;
+globalThis.PointerEvent = window.PointerEvent || window.MouseEvent;
 globalThis.KeyboardEvent = window.KeyboardEvent;
 globalThis.localStorage = window.localStorage;

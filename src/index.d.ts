@@ -350,6 +350,395 @@ export class ElAutocomplete extends Elementum {
   reportValidity(): boolean;
 }
 
+export class ElNumberFlow extends Elementum {
+  value: Signal<number | string>;
+  format: Signal<string>;
+  prefix: Signal<string>;
+  suffix: Signal<string>;
+  animated: Signal<boolean>;
+}
+
+export class ElOtpInput extends Elementum {
+  length: Signal<number>;
+  value: Signal<string>;
+  type: Signal<'text' | 'password'>;
+  disabled: Signal<boolean>;
+  required: Signal<boolean>;
+  autofocus: Signal<boolean>;
+  focus(): void;
+  blur(): void;
+  clear(): void;
+}
+
+export class ElCommand extends Elementum {
+  open: Signal<boolean>;
+  query: Signal<string>;
+  placeholder: Signal<string>;
+  shortcut: Signal<string>;
+  toggle(): void;
+  show(): void;
+  close(): void;
+}
+
+export class ElCommandGroup extends Elementum {
+  heading: Signal<string>;
+}
+
+export class ElCommandItem extends Elementum {
+  value: Signal<string>;
+  shortcut: Signal<string>;
+  disabled: Signal<boolean>;
+  active: Signal<boolean>;
+}
+
+export class ElPromptInput extends Elementum {
+  value: Signal<string>;
+  placeholder: Signal<string>;
+  disabled: Signal<boolean>;
+  loading: Signal<boolean>;
+  maxRows: Signal<number>;
+  minRows: Signal<number>;
+  clearOnSubmit: Signal<boolean>;
+  submit(): void;
+  focus(): void;
+  blur(): void;
+}
+
+export class ElReasoningCard extends Elementum {
+  open: Signal<boolean>;
+  thinking: Signal<boolean>;
+  duration: Signal<string>;
+  summary: Signal<string>;
+  toggle(): void;
+}
+
+export class ElBorderBeam extends Elementum {
+  size: Signal<number>;
+  duration: Signal<number>;
+  colorFrom: Signal<string>;
+  colorTo: Signal<string>;
+  borderWidth: Signal<number>;
+  reverse: Signal<boolean>;
+}
+
+export class ElStreamingText extends Elementum {
+  text: Signal<string>;
+  displayedText: Signal<string>;
+  speed: Signal<number>;
+  showCursor: Signal<boolean>;
+  isStreaming: Signal<boolean>;
+  isComplete: Signal<boolean>;
+  start(): void;
+  pause(): void;
+  resume(): void;
+  finish(): void;
+}
+
+export class ElChart extends Elementum {
+  type: Signal<'area' | 'line' | 'bar'>;
+  xKey: Signal<string>;
+  yKey: Signal<string>;
+  secondaryKey: Signal<string>;
+  height: Signal<number>;
+  showGrid: Signal<boolean>;
+  showDots: Signal<boolean>;
+  data: Record<string, any>[];
+}
+
+export class ElField extends Elementum {
+  label: Signal<string>;
+  description: Signal<string>;
+  error: Signal<string>;
+  required: Signal<boolean>;
+  disabled: Signal<boolean>;
+  invalid: Signal<boolean>;
+}
+
+export class ElNumberField extends Elementum {
+  value: Signal<number>;
+  min: Signal<number>;
+  max: Signal<number>;
+  step: Signal<number>;
+  precision: Signal<number>;
+  scrub: Signal<boolean>;
+  disabled: Signal<boolean>;
+  required: Signal<boolean>;
+  stepUp(multiplier?: number): void;
+  stepDown(multiplier?: number): void;
+  checkValidity(): boolean;
+  reportValidity(): boolean;
+}
+
+export class ElSlider extends Elementum {
+  value: Signal<number>;
+  min: Signal<number>;
+  max: Signal<number>;
+  step: Signal<number>;
+  orientation: Signal<'horizontal' | 'vertical'>;
+  disabled: Signal<boolean>;
+}
+
+export class ElPopover extends Elementum {
+  isOpen: Signal<boolean>;
+  placement: Signal<string>;
+  offset: Signal<number>;
+  hasArrow: Signal<boolean>;
+  open(): void;
+  close(): void;
+  toggle(): void;
+}
+
+export class ElCollapsible extends Elementum {
+  isOpen: Signal<boolean>;
+  disabled: Signal<boolean>;
+  open(): void;
+  close(): void;
+  toggle(): void;
+}
+
+export class ElScrollArea extends Elementum {
+  type: Signal<'auto' | 'always' | 'hover'>;
+  maxHeight: Signal<string>;
+  maxWidth: Signal<string>;
+}
+
+export class ElToggle extends Elementum {
+  isPressed: Signal<boolean>;
+  disabled: Signal<boolean>;
+  value: Signal<string>;
+  size: Signal<string>;
+  toggle(): void;
+}
+
+export class ElToggleGroup extends Elementum {
+  type: Signal<'single' | 'multiple'>;
+  value: Signal<string>;
+  disabled: Signal<boolean>;
+}
+
+export class ElCheckbox extends Elementum {
+  checked: Signal<boolean>;
+  indeterminate: Signal<boolean>;
+  disabled: Signal<boolean>;
+  required: Signal<boolean>;
+  value: Signal<string>;
+  toggle(): void;
+}
+
+export class ElRadio extends Elementum {
+  value: Signal<string>;
+  disabled: Signal<boolean>;
+  checked: Signal<boolean>;
+  select(): void;
+}
+
+export class ElRadioGroup extends Elementum {
+  value: Signal<string>;
+  disabled: Signal<boolean>;
+  required: Signal<boolean>;
+  orientation: Signal<string>;
+  selectValue(val: string): void;
+}
+
+export class ElPreviewCard extends Elementum {
+  isOpen: Signal<boolean>;
+  openDelay: Signal<number>;
+  closeDelay: Signal<number>;
+  placement: Signal<string>;
+  open(): void;
+  close(): void;
+}
+
+export class ElAlertDialog extends Elementum {
+  isOpen: Signal<boolean>;
+  heading: Signal<string>;
+  open(): void;
+  close(): void;
+  showModal(): void;
+}
+
+export class ElSeparator extends Elementum {
+  orientation: Signal<'horizontal' | 'vertical'>;
+  decorative: Signal<boolean>;
+}
+
+export class ElMeter extends Elementum {
+  value: Signal<number>;
+  min: Signal<number>;
+  max: Signal<number>;
+  low: Signal<number | null>;
+  high: Signal<number | null>;
+  optimum: Signal<number | null>;
+  size: Signal<'sm' | 'md' | 'lg'>;
+}
+
+export class ElToolbar extends Elementum {
+  orientation: Signal<'horizontal' | 'vertical'>;
+  disabled: Signal<boolean>;
+}
+
+export class ElContextMenu extends Elementum {
+  isOpen: Signal<boolean>;
+  disabled: Signal<boolean>;
+  open(x?: number, y?: number): void;
+  close(): void;
+  toggle(x?: number, y?: number): void;
+}
+
+export class ElMenubar extends Elementum {
+  activeMenu: Signal<HTMLElement | null>;
+  disabled: Signal<boolean>;
+  openMenu(item: HTMLElement): void;
+  closeMenu(): void;
+}
+
+export class ElSkeleton extends Elementum {
+  variant: Signal<'text' | 'circular' | 'rectangular'>;
+  animation: Signal<'pulse' | 'wave' | 'none'>;
+  width: Signal<string>;
+  height: Signal<string>;
+}
+
+export class ElBreadcrumb extends Elementum {
+  separator: Signal<string>;
+}
+
+export class ElBreadcrumbItem extends Elementum {
+  href: Signal<string | null>;
+  current: Signal<boolean>;
+}
+
+export class ElKbd extends Elementum {
+  keys: Signal<string[]>;
+  size: Signal<'sm' | 'md' | 'lg'>;
+}
+
+export class ElAlert extends Elementum {
+  variant: Signal<'default' | 'info' | 'success' | 'warning' | 'destructive'>;
+  alertTitle: Signal<string>;
+  dismissible: Signal<boolean>;
+  isDismissed: Signal<boolean>;
+  dismiss(): void;
+}
+
+export class ElCard extends Elementum {
+  hoverable: Signal<boolean>;
+}
+
+export class ElCardHeader extends Elementum {}
+export class ElCardTitle extends Elementum {}
+export class ElCardDescription extends Elementum {}
+export class ElCardContent extends Elementum {}
+export class ElCardFooter extends Elementum {}
+
+export class ElAspectRatio extends Elementum {
+  ratio: Signal<string>;
+}
+
+export class ElTextarea extends Elementum {
+  value: Signal<string>;
+  placeholder: Signal<string>;
+  rows: Signal<number>;
+  autoResize: Signal<boolean>;
+  disabled: Signal<boolean>;
+  required: Signal<boolean>;
+  maxlength: Signal<number | null>;
+  focus(): void;
+  blur(): void;
+}
+
+export class ElResizable extends Elementum {
+  direction: Signal<'horizontal' | 'vertical'>;
+  size: Signal<number>;
+  min: Signal<number>;
+  max: Signal<number>;
+  disabled: Signal<boolean>;
+  setSize(val: number): void;
+}
+
+export class ElCarousel extends Elementum {
+  currentIndex: Signal<number>;
+  totalSlides: Signal<number>;
+  loop: Signal<boolean>;
+  autoPlay: Signal<boolean>;
+  interval: Signal<number>;
+  next(): void;
+  prev(): void;
+  goTo(index: number): void;
+}
+
+export class ElCarouselSlide extends Elementum {}
+
+export class ElTimeline extends Elementum {
+  orientation: Signal<'vertical' | 'horizontal'>;
+}
+
+export class ElTimelineItem extends Elementum {
+  status: Signal<'default' | 'active' | 'success' | 'warning' | 'destructive'>;
+  date: Signal<string>;
+}
+
+export class ElTreeView extends Elementum {}
+
+export class ElTreeItem extends Elementum {
+  label: Signal<string>;
+  expanded: Signal<boolean>;
+  selected: Signal<boolean>;
+  disabled: Signal<boolean>;
+  hasChildren: Signal<boolean>;
+  toggle(e?: Event): void;
+  select(): void;
+}
+
+export class ElEmptyState extends Elementum {
+  emptyTitle: Signal<string>;
+  description: Signal<string>;
+}
+
+export class ElRating extends Elementum {
+  value: Signal<number>;
+  max: Signal<number>;
+  readonly: Signal<boolean>;
+  disabled: Signal<boolean>;
+  hoverValue: Signal<number>;
+  setValue(val: number): void;
+}
+
+export class ElDropzone extends Elementum {
+  accept: Signal<string>;
+  maxSize: Signal<number | null>;
+  multiple: Signal<boolean>;
+  disabled: Signal<boolean>;
+  isDragOver: Signal<boolean>;
+  selectedFiles: Signal<File[]>;
+  openFileDialog(): void;
+}
+
+export class ElSidebar extends Elementum {
+  collapsed: Signal<boolean>;
+  collapsible: Signal<'offcanvas' | 'icon' | 'none'>;
+  side: Signal<'left' | 'right'>;
+  toggle(): void;
+  collapse(): void;
+  expand(): void;
+}
+
+export class ElSidebarHeader extends Elementum {}
+export class ElSidebarContent extends Elementum {}
+export class ElSidebarFooter extends Elementum {}
+export class ElSidebarTrigger extends Elementum {}
+
+export class ElForm extends Elementum {
+  validate(): boolean;
+  getData(): Record<string, any>;
+  reset(): void;
+}
+
+export class ElFieldset extends Elementum {
+  legend: Signal<string>;
+  disabled: Signal<boolean>;
+}
+
 // ==========================================
 // SSR (Declarative Shadow DOM)
 // ==========================================
@@ -394,6 +783,64 @@ declare global {
     'el-pagination': ElPagination;
     'el-chip': ElChip;
     'el-autocomplete': ElAutocomplete;
+    'el-number-flow': ElNumberFlow;
+    'el-otp-input': ElOtpInput;
+    'el-command': ElCommand;
+    'el-command-group': ElCommandGroup;
+    'el-command-item': ElCommandItem;
+    'el-prompt-input': ElPromptInput;
+    'el-reasoning-card': ElReasoningCard;
+    'el-border-beam': ElBorderBeam;
+    'el-streaming-text': ElStreamingText;
+    'el-chart': ElChart;
+    'el-field': ElField;
+    'el-number-field': ElNumberField;
+    'el-slider': ElSlider;
+    'el-popover': ElPopover;
+    'el-collapsible': ElCollapsible;
+    'el-scroll-area': ElScrollArea;
+    'el-toggle': ElToggle;
+    'el-toggle-group': ElToggleGroup;
+    'el-checkbox': ElCheckbox;
+    'el-radio': ElRadio;
+    'el-radio-group': ElRadioGroup;
+    'el-preview-card': ElPreviewCard;
+    'el-alert-dialog': ElAlertDialog;
+    'el-separator': ElSeparator;
+    'el-meter': ElMeter;
+    'el-toolbar': ElToolbar;
+    'el-context-menu': ElContextMenu;
+    'el-menubar': ElMenubar;
+    'el-skeleton': ElSkeleton;
+    'el-breadcrumb': ElBreadcrumb;
+    'el-breadcrumb-item': ElBreadcrumbItem;
+    'el-kbd': ElKbd;
+    'el-alert': ElAlert;
+    'el-card': ElCard;
+    'el-card-header': ElCardHeader;
+    'el-card-title': ElCardTitle;
+    'el-card-description': ElCardDescription;
+    'el-card-content': ElCardContent;
+    'el-card-footer': ElCardFooter;
+    'el-aspect-ratio': ElAspectRatio;
+    'el-textarea': ElTextarea;
+    'el-resizable': ElResizable;
+    'el-carousel': ElCarousel;
+    'el-carousel-slide': ElCarouselSlide;
+    'el-timeline': ElTimeline;
+    'el-timeline-item': ElTimelineItem;
+    'el-tree-view': ElTreeView;
+    'el-tree-item': ElTreeItem;
+    'el-empty-state': ElEmptyState;
+    'el-rating': ElRating;
+    'el-dropzone': ElDropzone;
+    'el-sidebar': ElSidebar;
+    'el-sidebar-header': ElSidebarHeader;
+    'el-sidebar-content': ElSidebarContent;
+    'el-sidebar-footer': ElSidebarFooter;
+    'el-sidebar-trigger': ElSidebarTrigger;
+    'el-form': ElForm;
+    'el-fieldset': ElFieldset;
   }
 
   namespace JSX {
@@ -424,6 +871,65 @@ declare global {
       'el-pagination': any;
       'el-chip': any;
       'el-autocomplete': any;
+      'el-number-flow': any;
+      'el-otp-input': any;
+      'el-command': any;
+      'el-command-group': any;
+      'el-command-item': any;
+      'el-prompt-input': any;
+      'el-reasoning-card': any;
+      'el-border-beam': any;
+      'el-streaming-text': any;
+      'el-chart': any;
+      'el-field': any;
+      'el-number-field': any;
+      'el-slider': any;
+      'el-popover': any;
+      'el-collapsible': any;
+      'el-scroll-area': any;
+      'el-toggle': any;
+      'el-toggle-group': any;
+      'el-checkbox': any;
+      'el-radio': any;
+      'el-radio-group': any;
+      'el-preview-card': any;
+      'el-alert-dialog': any;
+      'el-separator': any;
+      'el-meter': any;
+      'el-toolbar': any;
+      'el-context-menu': any;
+      'el-menubar': any;
+      'el-skeleton': any;
+      'el-breadcrumb': any;
+      'el-breadcrumb-item': any;
+      'el-kbd': any;
+      'el-alert': any;
+      'el-card': any;
+      'el-card-header': any;
+      'el-card-title': any;
+      'el-card-description': any;
+      'el-card-content': any;
+      'el-card-footer': any;
+      'el-aspect-ratio': any;
+      'el-textarea': any;
+      'el-resizable': any;
+      'el-carousel': any;
+      'el-carousel-slide': any;
+      'el-timeline': any;
+      'el-timeline-item': any;
+      'el-tree-view': any;
+      'el-tree-item': any;
+      'el-empty-state': any;
+      'el-rating': any;
+      'el-dropzone': any;
+      'el-sidebar': any;
+      'el-sidebar-header': any;
+      'el-sidebar-content': any;
+      'el-sidebar-footer': any;
+      'el-sidebar-trigger': any;
+      'el-form': any;
+      'el-fieldset': any;
+    }
     }
   }
 }

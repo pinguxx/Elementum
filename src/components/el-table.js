@@ -8,17 +8,96 @@ import { html, css } from '../template.js';
 import { signal, computed } from '../signal.js';
 
 export class ElTable extends Elementum {
-  static observedAttributes = ['selectable'];
+  static observedAttributes = ['selectable', 'data', 'columns', 'hover', 'striped'];
 
-  data = signal([]); // Array of objects
-  columns = signal([]); // Array of { key, label, sortable, width }
   selectable = signal(false);
+  hover = signal(false);
+  striped = signal(false);
   selected = signal([]); // Array of selected row indices/keys
   sortKey = signal('');
   sortDirection = signal(''); // 'asc' | 'desc' | ''
 
+  #dataSignal = signal([]);
+  #columnsSignal = signal([]);
+
+  constructor() {
+    super();
+    Object.defineProperty(this, 'data', {
+      get: () => this.#dataSignal,
+      set: (val) => {
+        this.#applyData(val);
+      },
+      configurable: true
+    });
+
+    Object.defineProperty(this, 'columns', {
+      get: () => this.#columnsSignal,
+      set: (val) => {
+        this.#applyColumns(val);
+      },
+      configurable: true
+    });
+  }
+
+  get tableData() {
+    return this.#dataSignal.value;
+  }
+
+  set tableData(val) {
+    this.#applyData(val);
+  }
+
+  get tableColumns() {
+    return this.#columnsSignal.value;
+  }
+
+  set tableColumns(val) {
+    this.#applyColumns(val);
+  }
+
+  #applyData(val) {
+    let list = [];
+    if (Array.isArray(val)) {
+      list = val;
+    } else if (typeof val === 'string') {
+      try {
+        list = JSON.parse(val);
+      } catch {
+        list = [];
+      }
+    }
+    this.#dataSignal.value = list;
+
+    // Auto-infer columns if not already defined
+    if ((!this.#columnsSignal.value || this.#columnsSignal.value.length === 0) && list.length > 0) {
+      const first = list[0];
+      if (first && typeof first === 'object') {
+        this.#columnsSignal.value = Object.keys(first).map((key) => ({
+          key,
+          label: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' '),
+          sortable: true
+        }));
+      }
+    }
+  }
+
+  #applyColumns(val) {
+    let cols = [];
+    if (Array.isArray(val)) {
+      cols = val;
+    } else if (typeof val === 'string') {
+      try {
+        cols = JSON.parse(val);
+      } catch {
+        cols = [];
+      }
+    }
+    this.#columnsSignal.value = cols;
+  }
+
   sortedData = computed(() => {
-    const list = [...this.data.value];
+    const raw = this.#dataSignal.value;
+    const list = Array.isArray(raw) ? [...raw] : [];
     const key = this.sortKey.value;
     const dir = this.sortDirection.value;
 
@@ -96,8 +175,17 @@ export class ElTable extends Elementum {
       transition: background-color 0.1s ease;
     }
 
-    tr:hover td {
-      background: rgba(37, 99, 235, 0.04);
+    :host([striped]) tbody tr:nth-child(even) td {
+      background: var(--el-surface-muted, #f8fafc);
+    }
+
+    :host([hover]) tbody tr:hover td {
+      background: rgba(37, 99, 235, 0.08);
+      cursor: pointer;
+    }
+
+    :host([hover][striped]) tbody tr:nth-child(even):hover td {
+      background: rgba(37, 99, 235, 0.12);
     }
 
     tr.selected td {
@@ -121,11 +209,56 @@ export class ElTable extends Elementum {
 
   connected() {
     this.selectable.value = this.hasAttribute('selectable');
+    this.hover.value = this.hasAttribute('hover');
+    this.striped.value = this.hasAttribute('striped');
+    if (this.hasAttribute('columns')) {
+      this.#applyColumns(this.getAttribute('columns'));
+    }
+    if (this.hasAttribute('data')) {
+      this.#applyData(this.getAttribute('data'));
+    } else if (this.#dataSignal.value.length === 0) {
+      const slottedTable = this.querySelector('table');
+      if (slottedTable) {
+        const headers = Array.from(slottedTable.querySelectorAll('thead th, tr:first-child th')).map((th, i) => {
+          const text = th.textContent.trim();
+          return {
+            key: th.getAttribute('data-key') || text.toLowerCase().replace(/[^a-z0-9_]/g, '_') || `col_${i}`,
+            label: text || `Column ${i + 1}`,
+            sortable: true
+          };
+        });
+        const rows = Array.from(slottedTable.querySelectorAll('tbody tr')).map(tr => {
+          const cells = Array.from(tr.querySelectorAll('td'));
+          const rowObj = {};
+          cells.forEach((td, i) => {
+            const key = headers[i]?.key || `col_${i}`;
+            rowObj[key] = td.textContent.trim();
+          });
+          return rowObj;
+        });
+        if (headers.length > 0) this.#columnsSignal.value = headers;
+        if (rows.length > 0) this.#dataSignal.value = rows;
+        slottedTable.style.display = 'none';
+      }
+    }
   }
 
   attributeChanged(name, oldValue, newValue) {
     if (name === 'selectable') {
       this.selectable.value = newValue !== null && newValue !== 'false';
+      return true;
+    } else if (name === 'hover') {
+      this.hover.value = newValue !== null && newValue !== 'false';
+      return true;
+    } else if (name === 'striped') {
+      this.striped.value = newValue !== null && newValue !== 'false';
+      return true;
+    } else if (name === 'data') {
+      this.#applyData(newValue);
+      return true;
+    } else if (name === 'columns') {
+      this.#applyColumns(newValue);
+      return true;
     }
   }
 
@@ -193,8 +326,9 @@ export class ElTable extends Elementum {
                     </th>
                   `
                 : ''}
-            ${() =>
-              this.columns.value.map(
+            ${() => {
+              const cols = Array.isArray(this.columns.value) ? this.columns.value : [];
+              return cols.map(
                 (col) => html`
                   <th
                     class=${col.sortable ? 'sortable' : ''}
@@ -220,12 +354,15 @@ export class ElTable extends Elementum {
                         : ''}
                   </th>
                 `
-              )}
+              );
+            }}
           </tr>
         </thead>
         <tbody>
-          ${() =>
-            this.sortedData.value.map(
+          ${() => {
+            const rows = Array.isArray(this.sortedData.value) ? this.sortedData.value : [];
+            const cols = Array.isArray(this.columns.value) ? this.columns.value : [];
+            return rows.map(
               (row, idx) => html`
                 <tr class=${() => (this.isRowSelected(idx) ? 'selected' : '')}>
                   ${() =>
@@ -241,12 +378,13 @@ export class ElTable extends Elementum {
                         `
                       : ''}
                   ${() =>
-                    this.columns.value.map(
+                    cols.map(
                       (col) => html`<td>${row[col.key] ?? ''}</td>`
                     )}
                 </tr>
               `
-            )}
+            );
+          }}
         </tbody>
       </table>
     `;

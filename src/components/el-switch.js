@@ -9,7 +9,7 @@ import { signal } from '../signal.js';
 
 export class ElSwitch extends Elementum {
   static formAssociated = true;
-  static observedAttributes = ['checked', 'disabled', 'name', 'value', 'size', 'required'];
+  static observedAttributes = ['checked', 'disabled', 'name', 'value', 'size', 'required', 'label'];
 
   checked = signal(false);
   disabled = signal(false);
@@ -17,6 +17,7 @@ export class ElSwitch extends Elementum {
   name = signal('');
   value = signal('on');
   size = signal('md'); // 'sm' | 'md' | 'lg'
+  label = signal('');
 
   static styles = css`
     :host {
@@ -115,6 +116,7 @@ export class ElSwitch extends Elementum {
     this.checked.value = this.hasAttribute('checked');
     this.disabled.value = this.hasAttribute('disabled');
     this.required.value = this.hasAttribute('required');
+    if (this.hasAttribute('label')) this.label.value = this.getAttribute('label');
     this.#syncForm();
     this.validate();
 
@@ -147,6 +149,8 @@ export class ElSwitch extends Elementum {
       } else {
         this.setAttribute('tabindex', '0');
       }
+    } else if (name === 'label') {
+      this.label.value = newValue || '';
     }
   }
 
@@ -206,7 +210,7 @@ export class ElSwitch extends Elementum {
         <div class="thumb" part="thumb"></div>
       </div>
       <span class="label" part="label">
-        <slot></slot>
+        <slot>${() => this.label.value || ''}</slot>
       </span>
     `;
   }

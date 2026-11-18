@@ -9,18 +9,24 @@ import { signal } from '../signal.js';
 
 export class ElButton extends Elementum {
   static formAssociated = true;
-  static observedAttributes = ['variant', 'size', 'disabled', 'type'];
+  static observedAttributes = ['variant', 'size', 'disabled', 'type', 'label'];
 
   // Figma Variant mappings as reactive signals
   variant = signal('primary'); // 'primary' | 'secondary' | 'danger' | 'ghost'
   size = signal('md');         // 'sm' | 'md' | 'lg'
   disabled = signal(false);
   type = signal('button');     // 'button' | 'submit' | 'reset'
+  label = signal('');
 
   static styles = css`
     :host {
       display: inline-block;
       vertical-align: middle;
+    }
+
+    :host([disabled]),
+    :host([aria-disabled="true"]) {
+      cursor: not-allowed;
     }
 
     button {
@@ -34,7 +40,7 @@ export class ElButton extends Elementum {
       border-radius: var(--el-radius-md, 8px);
       cursor: pointer;
       user-select: none;
-      transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+      transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease, transform 0.1s ease;
       outline: none;
     }
 
@@ -42,9 +48,29 @@ export class ElButton extends Elementum {
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4);
     }
 
-    button[disabled] {
-      opacity: 0.5;
-      cursor: not-allowed;
+    button:not([disabled]):active {
+      transform: translateY(1px);
+    }
+
+    /* Disabled State - distinct, washed-out, and accessible */
+    button[disabled],
+    button:disabled,
+    :host([disabled]) button,
+    :host([aria-disabled="true"]) button {
+      opacity: 0.45;
+      cursor: not-allowed !important;
+      pointer-events: none !important;
+      box-shadow: none !important;
+      transform: none !important;
+      filter: grayscale(0.2);
+    }
+
+    :root[data-theme="dark"] button[disabled],
+    :root[data-theme="dark"] button:disabled,
+    :root[data-theme="dark"] :host([disabled]) button,
+    :root[data-theme="dark"] :host([aria-disabled="true"]) button {
+      opacity: 0.38;
+      filter: grayscale(0.3);
     }
 
     /* Size Variants */
@@ -68,26 +94,40 @@ export class ElButton extends Elementum {
     :host([variant="primary"]) button,
     :host(:not([variant])) button {
       background-color: var(--el-color-primary, #2563eb);
-      color: var(--el-text-inverse, #ffffff);
+      color: #ffffff;
     }
-    :host([variant="primary"]) button:not([disabled]):hover {
+    :host([variant="primary"]:not([disabled])) button:not([disabled]):hover,
+    :host(:not([variant]):not([disabled])) button:not([disabled]):hover {
       background-color: var(--el-color-primary-hover, #1d4ed8);
     }
 
     :host([variant="secondary"]) button {
       background-color: var(--el-surface-muted, #f3f4f6);
-      color: var(--el-text-base, #111827);
+      color: var(--el-text-primary, #0f172a);
       border-color: var(--el-surface-border, #e5e7eb);
     }
-    :host([variant="secondary"]) button:not([disabled]):hover {
-      background-color: #e5e7eb;
+    :host([variant="secondary"]:not([disabled])) button:not([disabled]):hover {
+      background-color: var(--el-step-4, var(--el-surface-border, #e2e8f0));
+      color: var(--el-text-primary, #0f172a);
+      border-color: var(--el-step-7, var(--el-surface-border, #cbd5e1));
+    }
+
+    :host([variant="outline"]) button {
+      background-color: transparent;
+      color: var(--el-text-primary, #0f172a);
+      border-color: var(--el-surface-border, #cbd5e1);
+    }
+    :host([variant="outline"]:not([disabled])) button:not([disabled]):hover {
+      background-color: var(--el-step-4, var(--el-surface-border, #e2e8f0));
+      color: var(--el-text-primary, #0f172a);
+      border-color: var(--el-step-7, var(--el-surface-border, #94a3b8));
     }
 
     :host([variant="danger"]) button {
       background-color: var(--el-color-danger, #dc2626);
-      color: var(--el-text-inverse, #ffffff);
+      color: #ffffff;
     }
-    :host([variant="danger"]) button:not([disabled]):hover {
+    :host([variant="danger"]:not([disabled])) button:not([disabled]):hover {
       background-color: #b91c1c;
     }
 
@@ -95,16 +135,46 @@ export class ElButton extends Elementum {
       background-color: transparent;
       color: var(--el-color-primary, #2563eb);
     }
-    :host([variant="ghost"]) button:not([disabled]):hover {
-      background-color: var(--el-surface-muted, #f3f4f6);
+    :host([variant="ghost"]:not([disabled])) button:not([disabled]):hover {
+      background-color: var(--el-step-3, var(--el-surface-muted, #f1f5f9));
+      color: var(--el-color-primary-hover, #1d4ed8);
     }
   `;
+
+  connected() {
+    if (this.hasAttribute('disabled')) {
+      this.disabled.value = this.getAttribute('disabled') !== 'false';
+    }
+    if (this.disabled.value) {
+      this.setAttribute('aria-disabled', 'true');
+    }
+    if (this.hasAttribute('label')) {
+      this.label.value = this.getAttribute('label') || '';
+    }
+  }
+
+  attributeChanged(name, oldValue, newValue) {
+    if (name === 'disabled') {
+      const isDisabled = newValue !== null && newValue !== 'false';
+      this.disabled.value = isDisabled;
+      if (isDisabled) {
+        this.setAttribute('aria-disabled', 'true');
+      } else {
+        this.removeAttribute('aria-disabled');
+      }
+      return;
+    }
+    if (name in this) {
+      this[name].value = newValue !== null ? newValue : '';
+    }
+  }
 
   render() {
     return html`
       <button
         part="button"
         ?disabled=${() => Boolean(this.disabled.value)}
+        aria-disabled=${() => Boolean(this.disabled.value) ? 'true' : 'false'}
         @click=${(e) => {
           if (this.disabled.value) {
             e.preventDefault();
@@ -127,7 +197,7 @@ export class ElButton extends Elementum {
         }}
       >
         <slot name="prefix"></slot>
-        <slot></slot>
+        <slot>${() => this.label.value || ''}</slot>
         <slot name="suffix"></slot>
       </button>
     `;

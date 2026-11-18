@@ -3,10 +3,32 @@
  * Ultra-lightweight custom element with shadow root, signal lifecycle, and styles adoption.
  */
 
-import { render, CSSResult } from './template.js';
-import { isSignal } from './signal.js';
+import { render, CSSResult, html, css } from './template.js';
+import { signal, isSignal, effect } from './signal.js';
+
+export { html, css };
 
 const BaseElement = typeof HTMLElement !== 'undefined' ? HTMLElement : class {};
+
+function toCamelCase(attr) {
+  return attr.replace(/-([a-z])/g, (_, ch) => ch.toUpperCase());
+}
+
+function toKebabCase(prop) {
+  return prop.replace(/[A-Z]/g, (ch) => `-${ch.toLowerCase()}`);
+}
+
+function hasCustomSubclassAccessor(instance, prop) {
+  let proto = Object.getPrototypeOf(instance);
+  while (proto && proto !== Elementum.prototype && proto !== BaseElement.prototype && proto !== Object.prototype) {
+    const desc = Object.getOwnPropertyDescriptor(proto, prop);
+    if (desc && (typeof desc.get === 'function' || typeof desc.set === 'function')) {
+      return true;
+    }
+    proto = Object.getPrototypeOf(proto);
+  }
+  return false;
+}
 
 export class Elementum extends BaseElement {
   /**
@@ -26,6 +48,12 @@ export class Elementum extends BaseElement {
 
   #abortController = null;
   #mounted = false;
+  #syncingAttr = false;
+  #upgradedProps = new Set();
+  #reflectedSignals = new Set();
+  #boolAttrs = new Set();
+  #syntheticProps = new Set();
+  #signalEntries = [];
   internals = null;
   #validity = {
     valid: true,
@@ -47,6 +75,7 @@ export class Elementum extends BaseElement {
     if (this.constructor.formAssociated && typeof this.attachInternals === 'function') {
       this.internals = this.attachInternals();
     }
+    queueMicrotask(() => this.#setupReactiveProperties());
   }
 
   setFormValue(value) {
@@ -103,7 +132,11 @@ export class Elementum extends BaseElement {
     this.#validationMessage = message || '';
 
     if (this.internals && typeof this.internals.setValidity === 'function') {
-      this.internals.setValidity(flags, message, anchor);
+      if (anchor && typeof HTMLElement !== 'undefined' && anchor instanceof HTMLElement) {
+        this.internals.setValidity(flags, message, anchor);
+      } else {
+        this.internals.setValidity(flags, message);
+      }
     }
   }
 
@@ -129,6 +162,200 @@ export class Elementum extends BaseElement {
 
   get signal() {
     return this.#abortController?.signal;
+  }
+
+  #reflectToAttribute(attrName, val, initialBoolDefault = false) {
+    if (this.#syncingAttr || !attrName) return;
+    if (typeof val === 'object' && val !== null) return;
+    if (this.constructor.formAssociated && (attrName === 'value' || attrName === 'checked')) return;
+
+    if (typeof val === 'boolean' || initialBoolDefault) {
+      const boolVal = typeof val === 'boolean' ? val : (val === 'false' ? false : Boolean(val));
+      if (boolVal) {
+        if (!this.hasAttribute(attrName) || this.getAttribute(attrName) === 'false') {
+          this.setAttribute(attrName, '');
+        }
+      } else if (this.hasAttribute(attrName)) {
+        this.removeAttribute(attrName);
+      }
+      return;
+    }
+
+    if (val === null || val === undefined) {
+      if (this.hasAttribute(attrName)) {
+        this.removeAttribute(attrName);
+      }
+      return;
+    }
+
+    const strVal = String(val);
+    if (this.getAttribute(attrName) !== strVal) {
+      this.setAttribute(attrName, strVal);
+    }
+  }
+
+  #getMappedAttrValue(attr) {
+    if (!this.hasAttribute(attr)) {
+      return this.#boolAttrs.has(attr) ? false : null;
+    }
+    const val = this.getAttribute(attr);
+    if (this.#boolAttrs.has(attr)) {
+      return val !== 'false';
+    }
+    return val;
+  }
+
+  #syncAttributeToProperty(attr, rawVal) {
+    const camel = toCamelCase(attr);
+    const propKey = (camel !== attr && camel in this) ? camel : attr;
+    if (!(propKey in this)) return;
+    if (typeof this[propKey] === 'function' || this.#syntheticProps.has(propKey)) return;
+
+    const current = this[propKey];
+    const isBool = this.#boolAttrs.has(attr) ||
+      (isSignal(current) ? typeof current.peek() === 'boolean' : typeof current === 'boolean');
+    const mappedVal = isBool ? (rawVal !== null && rawVal !== 'false') : rawVal;
+
+    if (isSignal(current)) {
+      current.value = mappedVal;
+    } else {
+      this[propKey] = mappedVal;
+    }
+  }
+
+  #defineSignalProperty(propKey, attrName, sig, isBool, initialVal) {
+    if (isBool && attrName) {
+      this.#boolAttrs.add(attrName);
+    }
+
+    this.#upgradedProps.add(propKey);
+    if (attrName) {
+      this.#signalEntries.push({ attrName, sig, isBool, initialVal });
+    }
+
+    Object.defineProperty(this, propKey, {
+      configurable: true,
+      enumerable: true,
+      get: () => sig,
+      set: (val) => {
+        if (isSignal(val)) return;
+        sig.value = val;
+        if (attrName) {
+          this.#reflectToAttribute(attrName, val, isBool);
+        }
+      },
+    });
+  }
+
+  #setupReactiveProperties() {
+    const observed = this.constructor.observedAttributes;
+    const observedSet = Array.isArray(observed) ? new Set(observed) : null;
+
+    // 1. Upgrade own Signal properties into two-way reactive accessors
+    for (const propKey of Object.keys(this)) {
+      if (propKey.startsWith('_') || this.#upgradedProps.has(propKey)) continue;
+      if (hasCustomSubclassAccessor(this, propKey)) continue;
+
+      const desc = Object.getOwnPropertyDescriptor(this, propKey);
+      if (!desc || !desc.configurable || !('value' in desc) || !isSignal(desc.value)) {
+        continue;
+      }
+
+      const sig = desc.value;
+      const initialVal = sig.peek();
+      const isBool = typeof initialVal === 'boolean';
+      const kebab = toKebabCase(propKey);
+      const attrName = observedSet
+        ? (observedSet.has(propKey) ? propKey : (observedSet.has(kebab) ? kebab : null))
+        : null;
+
+      this.#defineSignalProperty(propKey, attrName, sig, isBool, initialVal);
+    }
+
+    // 2. Ensure remaining observedAttributes have reactive property accessors
+    if (!observedSet) return;
+    for (const attr of observedSet) {
+      const camel = toCamelCase(attr);
+      const propKey = (attr in this && !(camel in this)) ? attr : camel;
+
+      if (this.#upgradedProps.has(propKey) || this.#upgradedProps.has(attr)) continue;
+      if (hasCustomSubclassAccessor(this, propKey) || (propKey !== attr && hasCustomSubclassAccessor(this, attr))) {
+        continue;
+      }
+
+      const ownDesc = Object.getOwnPropertyDescriptor(this, propKey);
+      if (!ownDesc && propKey in BaseElement.prototype) {
+        continue;
+      }
+
+      if (ownDesc && !ownDesc.configurable) continue;
+      if (ownDesc && !('value' in ownDesc)) continue;
+
+      if (typeof this[propKey] === 'function') {
+        const origMethod = this[propKey];
+        this.#upgradedProps.add(propKey);
+        this.#boolAttrs.add(attr);
+        Object.defineProperty(this, propKey, {
+          configurable: true,
+          enumerable: true,
+          get: () => origMethod,
+          set: (val) => {
+            const boolVal = typeof val === 'boolean' ? val : (val === 'false' ? false : Boolean(val));
+            this.#reflectToAttribute(attr, boolVal, true);
+          },
+        });
+        continue;
+      }
+
+      // Reconstruct Signal when a pre-mount synchronous assignment overwrote a field before microtask setup
+      const hasInitialOwnValue = Boolean(ownDesc && 'value' in ownDesc);
+      if (hasInitialOwnValue) {
+        const initialVal = ownDesc.value;
+        const sig = signal(initialVal);
+        const isBool = typeof initialVal === 'boolean';
+        this.#defineSignalProperty(propKey, attr, sig, isBool, initialVal);
+        if (initialVal !== undefined && !this.hasAttribute(attr)) {
+          this.#reflectToAttribute(attr, initialVal, isBool);
+        }
+        continue;
+      }
+
+      this.#upgradedProps.add(propKey);
+      this.#syntheticProps.add(propKey);
+
+      Object.defineProperty(this, propKey, {
+        configurable: true,
+        enumerable: true,
+        get: () => this.#getMappedAttrValue(attr),
+        set: (val) => {
+          if (typeof val === 'boolean') {
+            this.#boolAttrs.add(attr);
+          }
+          this.#reflectToAttribute(attr, val, this.#boolAttrs.has(attr));
+        },
+      });
+    }
+  }
+
+  #setupAttributeReflection() {
+    if (!this.#abortController) return;
+    for (const { attrName, sig, isBool, initialVal } of this.#signalEntries) {
+      if (!attrName || this.#reflectedSignals.has(sig)) continue;
+      this.#reflectedSignals.add(sig);
+
+      let initialized = false;
+      effect(() => {
+        const val = sig.value;
+        if (!initialized) {
+          initialized = true;
+          if (val !== initialVal && !this.hasAttribute(attrName)) {
+            this.#reflectToAttribute(attrName, val, isBool);
+          }
+          return;
+        }
+        this.#reflectToAttribute(attrName, val, isBool);
+      }, { signal: this.#abortController.signal });
+    }
   }
 
   connectedCallback() {
@@ -172,20 +399,21 @@ export class Elementum extends BaseElement {
       this.root = this;
     }
 
-    // 3. Sync initial HTML attributes into signals or properties
+    // 3. Ensure reactive properties are initialized before syncing attributes or rendering
+    this.#setupReactiveProperties();
+
+    // Sync initial HTML attributes into signals or properties
     const observed = this.constructor.observedAttributes;
     if (Array.isArray(observed)) {
-      for (const attr of observed) {
-        if (this.hasAttribute(attr)) {
-          const val = this.getAttribute(attr);
-          if (attr in this) {
-            if (isSignal(this[attr])) {
-              this[attr].value = val;
-            } else {
-              this[attr] = val;
-            }
+      this.#syncingAttr = true;
+      try {
+        for (const attr of observed) {
+          if (this.hasAttribute(attr)) {
+            this.#syncAttributeToProperty(attr, this.getAttribute(attr));
           }
         }
+      } finally {
+        this.#syncingAttr = false;
       }
     }
 
@@ -193,6 +421,9 @@ export class Elementum extends BaseElement {
     if (typeof this.connected === 'function') {
       this.connected();
     }
+
+    // Reflect signal updates back to host HTML attributes while connected
+    this.#setupAttributeReflection();
 
     // 5. Initial Render
     if (typeof this.render === 'function') {
@@ -213,6 +444,7 @@ export class Elementum extends BaseElement {
     if (this.#abortController) {
       this.#abortController.abort();
     }
+    this.#reflectedSignals.clear();
     this.#mounted = false;
 
     if (typeof this.disconnected === 'function') {
@@ -223,17 +455,17 @@ export class Elementum extends BaseElement {
   attributeChangedCallback(name, oldValue, newValue) {
     if (oldValue === newValue) return;
 
-    // Sync attribute changes directly into matching signals or properties
-    if (name in this) {
-      if (isSignal(this[name])) {
-        this[name].value = newValue;
-      } else {
-        this[name] = newValue;
+    this.#syncingAttr = true;
+    try {
+      if (typeof this.attributeChanged === 'function') {
+        this.attributeChanged(name, oldValue, newValue);
+        return;
       }
-    }
 
-    if (typeof this.attributeChanged === 'function') {
-      this.attributeChanged(name, oldValue, newValue);
+      // Sync attribute changes directly into matching signals or properties
+      this.#syncAttributeToProperty(name, newValue);
+    } finally {
+      this.#syncingAttr = false;
     }
   }
 

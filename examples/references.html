@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elementum Reference Gallery — Banning the AI Look</title>
+  <link rel="stylesheet" href="../src/tokens.css" />
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.05) 0%, transparent 65%);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: var(--el-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+      padding: 0 0 60px 0;
+      background-color: var(--el-surface-muted, #f8fafc);
+      background-image: var(--bg-gradient);
+      color: var(--el-text-primary, #0f172a);
+      transition: background-color var(--el-transition-fluid, 280ms cubic-bezier(0.16, 1, 0.3, 1));
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    el-navbar {
+      margin-bottom: 32px;
+    }
+
+    .gallery-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      box-sizing: border-box;
+    }
+
+    /* Header Bar */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--el-border-translucent, rgba(15, 23, 42, 0.08));
+    }
+
+    .title-area h1 {
+      margin: 0 0 6px 0;
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-ref {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: var(--el-radius-full, 9999px);
+      background: rgba(37, 99, 235, 0.1);
+      color: var(--el-color-primary, #2563eb);
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: 0.9375rem;
+      color: var(--el-text-secondary, #64748b);
+      max-width: 720px;
+      line-height: 1.5;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Reference Cards & Grids */
+    .reference-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .section-header h2 {
+      margin: 0 0 4px 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--el-text-primary, #0f172a);
+    }
+
+    .section-header p {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--el-text-secondary, #64748b);
+    }
+
+    .source-tag {
+      font-size: 0.75rem;
+      font-family: var(--el-font-mono, monospace);
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--el-surface-muted, #f8fafc);
+      border: 1px solid var(--el-border-translucent, rgba(15, 23, 42, 0.1));
+      color: var(--el-text-secondary, #475569);
+    }
+
+    .pattern-card {
+      position: relative;
+      background: var(--el-surface-card, #ffffff);
+      border: 1px solid var(--el-border-translucent, rgba(15, 23, 42, 0.08));
+      border-radius: var(--el-radius-xl, 16px);
+      box-shadow: var(--el-shadow-card, 0 1px 3px rgba(0,0,0,0.06), 0 8px 16px -4px rgba(0,0,0,0.04));
+      padding: 28px;
+      overflow: hidden;
+    }
+
+    :root[data-theme="dark"] .pattern-card {
+      background: #111827 !important;
+      border-color: #334155;
+    }
+
+    /* Pattern B: SaaS Pricing */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 20px;
+    }
+
+    .pricing-card {
+      position: relative;
+      background: var(--el-surface-elevated, #ffffff);
+      border: 1px solid var(--el-border-translucent, rgba(15, 23, 42, 0.08));
+      border-radius: var(--el-radius-lg, 14px);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: var(--el-shadow-subtle, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+    }
+
+    :root[data-theme="dark"] .pricing-card {
+      background: #1e293b !important;
+      border-color: #334155;
+    }
+
+    .pricing-card.featured {
+      border-color: rgba(37, 99, 235, 0.4);
+      box-shadow: 0 0 25px -5px rgba(37, 99, 235, 0.15), var(--el-shadow-card);
+    }
+
+    :root[data-theme="dark"] .pricing-card.featured {
+      background: #1e293b !important;
+      border-color: #3b82f6;
+    }
+
+    .pricing-header h3 {
+      margin: 0 0 6px 0;
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--el-text-primary, #0f172a);
+    }
+
+    .pricing-header p {
+      margin: 0;
+      font-size: 0.8125rem;
+      color: var(--el-text-secondary, #64748b);
+    }
+
+    .price-value {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--el-text-primary, #0f172a);
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .price-period {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--el-text-secondary, #64748b);
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 0.875rem;
+      color: var(--el-text-secondary, #475569);
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .check-icon {
+      color: var(--el-color-success, #10b981);
+      font-weight: 700;
+    }
+
+    /* Pattern D: Auth Card */
+    .auth-box {
+      max-width: 440px;
+      margin: 0 auto;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 32px 28px;
+    }
+
+    .auth-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--el-radius-full, 9999px);
+      background: rgba(37, 99, 235, 0.1);
+      color: var(--el-color-primary, #2563eb);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin: 0 auto;
+    }
+
+    kbd {
+      display: inline-block;
+      padding: 2px 6px;
+      font-family: inherit;
+      font-size: 0.75rem;
+      line-height: 1;
+      color: var(--el-text-muted, #64748b);
+      background: var(--el-surface-muted, #f1f5f9);
+      border: 1px solid rgba(15, 23, 42, 0.12);
+      border-radius: 4px;
+    }
+  </style>
+
+  <script type="module">
+    import { toast } from '../src/index.js';
+
+    // Pricing Odometer Switcher (NumberFlow)
+    const billingSwitch = document.getElementById('billing-cycle');
+    const proPrice = document.getElementById('pro-price');
+    const teamPrice = document.getElementById('team-price');
+    const paidPeriodLabels = document.querySelectorAll('.pricing-card.featured .price-period, .pricing-card:last-child .price-period');
+
+    billingSwitch?.addEventListener('change', (e) => {
+      const selected = e.detail?.value ?? (typeof e.target.value === 'object' ? e.target.value.value : e.target.value);
+      const isAnnual = selected === 'annual';
+      if (isAnnual) {
+        proPrice.setAttribute('value', '19');
+        teamPrice.setAttribute('value', '49');
+        paidPeriodLabels.forEach(p => p.textContent = '/mo (billed annually)');
+      } else {
+        proPrice.setAttribute('value', '24');
+        teamPrice.setAttribute('value', '59');
+        paidPeriodLabels.forEach(p => p.textContent = '/mo (billed monthly)');
+      }
+    });
+
+    // Command Palette Trigger & Action Dispatcher
+    const cmdTrigger = document.getElementById('open-cmdk-btn');
+    const cmdPalette = document.getElementById('cmdk-modal');
+    cmdTrigger?.addEventListener('click', () => cmdPalette.show());
+
+    cmdPalette?.addEventListener('select', (e) => {
+      const val = e.detail.value;
+      if (val === 'sync-penpot') {
+        toast.success('Synced 18 design tokens from tokens/penpot-tokens.json');
+      } else if (val === 'toggle-theme') {
+        const current = document.documentElement.getAttribute('data-theme') || 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('el-theme', next);
+        toast.info(`Switched to ${next} theme`);
+      } else if (val === 'open-studio') {
+        window.location.href = './agent-studio.html';
+      } else if (val === 'penpot-guide') {
+        window.location.href = '../docs/penpot-workflow.md';
+      } else if (val === 'agent-guide') {
+        window.location.href = '../docs/agent-craft-guide.md';
+      } else if (val === 'wcag') {
+        toast.success('WCAG 2.2 AA verified: 4.5:1 contrast, 24px targets, active-descendant combobox.');
+      }
+    });
+
+    // OTP Auth Feedback
+    const otpAuth = document.getElementById('reference-otp');
+    otpAuth?.addEventListener('complete', (e) => {
+      toast.success(`Code ${e.detail.value} verified against active session!`);
+    });
+  </script>
+</head>
+<body>
+  <el-toaster></el-toaster>
+
+  <!-- Top Sticky Navigation Bar -->
+  <el-navbar sticky brand="⚡ Elementum" badge="References" badge-variant="success" href="../index.html">
+    <a href="../index.html">Home</a>
+    <a href="../docs.html">Documentation</a>
+    <a href="./index.html">Catalog</a>
+    <a href="./registry.html">UI Registry</a>
+    <a href="./agent-studio.html">AI Studio</a>
+    <a href="./app.html">Showcase App</a>
+    <el-theme-switch slot="actions"></el-theme-switch>
+  </el-navbar>
+
+  <div class="gallery-container">
+    <div style="background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.2); border-radius: var(--el-radius-lg, 12px); padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+      <div>
+        <strong style="color: var(--el-color-primary, #2563eb);">Looking for real-world application architecture?</strong>
+        <p style="margin: 4px 0 0 0; font-size: 0.9rem; color: var(--el-text-muted);">Explore the live, production-grade Single-Page Application (SPA) built 100% with Elementum Web Components & micro-signals.</p>
+      </div>
+      <a href="./app.html" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--el-color-primary, #2563eb); color: #ffffff; text-decoration: none; border-radius: var(--el-radius-md, 8px); font-weight: 600; font-size: 0.875rem;">
+        Open Showcase App ↗
+      </a>
+    </div>
+    <!-- Top Header -->
+    <header class="header-bar">
+      <div class="title-area">
+        <h1>
+          Elementum Reference Hub
+          <span class="badge-ref">Design Patterns</span>
+        </h1>
+        <p class="subtitle">
+          Real-world, high-craft interface patterns reconstructed from curated design galleries (Beautiful UI, 21st.dev, Magic UI, cmdk, NumberFlow).
+        </p>
+      </div>
+      <div class="header-actions">
+        <el-button variant="secondary" size="sm" onclick="location.href='./agent-studio.html'">
+          AI Studio 🤖
+        </el-button>
+        <el-button variant="secondary" size="sm" onclick="location.href='./index.html'">
+          Component Catalog 🧩
+        </el-button>
+      </div>
+    </header>
+
+    <!-- Reference Pattern 1: SaaS Pricing with Odometer Reels & Border Beam -->
+    <section class="reference-section">
+      <div class="section-header">
+        <div>
+          <h2>1. SaaS Pricing with Fluid Odometer Reels</h2>
+          <p>Banishes abrupt pricing jumps when switching billing cycles using &lt;el-number-flow&gt; and luminous border beams.</p>
+        </div>
+        <span class="source-tag">Reference: 21st.dev + NumberFlow</span>
+      </div>
+
+      <div class="pattern-card">
+        <div style="display: flex; justify-content: center; margin-bottom: 8px;">
+          <el-segmented-control id="billing-cycle" value="monthly">
+            <option value="monthly">Monthly Billing</option>
+            <option value="annual">Annual (Save 20%)</option>
+          </el-segmented-control>
+        </div>
+
+        <div class="pricing-grid">
+          <!-- Starter Plan -->
+          <div class="pricing-card">
+            <div class="pricing-header">
+              <h3>Starter</h3>
+              <p>For independent developers and small prototypes.</p>
+            </div>
+            <div class="price-value">
+              <el-number-flow value="0" prefix="$"></el-number-flow>
+              <span class="price-period">/mo</span>
+            </div>
+            <ul class="feature-list">
+              <li class="feature-item"><span class="check-icon">✓</span> 3 Public Workspaces</li>
+              <li class="feature-item"><span class="check-icon">✓</span> Zero Runtime Dependencies</li>
+              <li class="feature-item"><span class="check-icon">✓</span> Standard Micro-Signals</li>
+            </ul>
+            <el-button variant="secondary" style="margin-top: auto;">Get Started</el-button>
+          </div>
+
+          <!-- Pro Plan (Featured with Border Beam) -->
+          <div class="pricing-card featured">
+            <el-border-beam size="90" duration="7" color-from="#2563eb" color-to="#a855f7"></el-border-beam>
+            <div class="pricing-header">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3>Pro Engineering</h3>
+                <el-chip variant="primary">Popular</el-chip>
+              </div>
+              <p>For production web apps demanding high craft.</p>
+            </div>
+            <div class="price-value">
+              <el-number-flow id="pro-price" value="24" prefix="$"></el-number-flow>
+              <span class="price-period">/mo (billed monthly)</span>
+            </div>
+            <ul class="feature-list">
+              <li class="feature-item"><span class="check-icon">✓</span> Unlimited Production Apps</li>
+              <li class="feature-item"><span class="check-icon">✓</span> Penpot DTCG Token Sync</li>
+              <li class="feature-item"><span class="check-icon">✓</span> WCAG 2.2 AA Auditing</li>
+              <li class="feature-item"><span class="check-icon">✓</span> AI MCP Server Tooling</li>
+            </ul>
+            <el-button variant="primary" style="margin-top: auto;">Upgrade to Pro</el-button>
+          </div>
+
+          <!-- Enterprise Plan -->
+          <div class="pricing-card">
+            <div class="pricing-header">
+              <h3>Team Studio</h3>
+              <p>For cross-functional product & engineering teams.</p>
+            </div>
+            <div class="price-value">
+              <el-number-flow id="team-price" value="59" prefix="$"></el-number-flow>
+              <span class="price-period">/mo (billed monthly)</span>
+            </div>
+            <ul class="feature-list">
+              <li class="feature-item"><span class="check-icon">✓</span> SSO & Team RBAC</li>
+              <li class="feature-item"><span class="check-icon">✓</span> Custom Design Token Exports</li>
+              <li class="feature-item"><span class="check-icon">✓</span> Dedicated Design Engineering</li>
+            </ul>
+            <el-button variant="secondary" style="margin-top: auto;">Contact Sales</el-button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reference Pattern 2: Linear-Style Spotlight Command Menu -->
+    <section class="reference-section">
+      <div class="section-header">
+        <div>
+          <h2>2. Linear-Style Command Menu (<kbd>⌘K</kbd>)</h2>
+          <p>Instant keyboard-first traversal with group headers, shortcut badges, and fuzzy filtering.</p>
+        </div>
+        <span class="source-tag">Reference: cmdk (Paco Coursey)</span>
+      </div>
+
+      <div class="pattern-card" style="text-align: center; padding: 36px 20px;">
+        <p style="margin: 0 0 16px 0; color: var(--el-text-secondary, #64748b);">
+          Press <kbd>⌘K</kbd> / <kbd>Ctrl+K</kbd> anywhere or click the trigger below to launch:
+        </p>
+        <el-button variant="primary" id="open-cmdk-btn">
+          Open Command Palette (⌘K)
+        </el-button>
+
+        <el-command id="cmdk-modal" placeholder="Search commands, docs, or settings...">
+          <el-command-group heading="Recent Actions">
+            <el-command-item value="sync-penpot" shortcut="⌘P">Sync Penpot Design Tokens</el-command-item>
+            <el-command-item value="toggle-theme" shortcut="⌘T">Toggle Theme</el-command-item>
+            <el-command-item value="open-studio" shortcut="⌘S">Open AI Agent Studio</el-command-item>
+          </el-command-group>
+          <el-command-group heading="Design Engineering Docs">
+            <el-command-item value="penpot-guide">Penpot DTCG Workflow</el-command-item>
+            <el-command-item value="agent-guide">Anti-AI Slop Guidelines</el-command-item>
+            <el-command-item value="wcag">WCAG 2.2 AA Compliance</el-command-item>
+          </el-command-group>
+        </el-command>
+      </div>
+    </section>
+
+    <!-- Reference Pattern 3: Minimalist Frictionless PIN / OTP Authentication -->
+    <section class="reference-section">
+      <div class="section-header">
+        <div>
+          <h2>3. Segmented PIN & OTP Verification</h2>
+          <p>Replaces clunky form inputs with a single form-associated segmented code box supporting auto-advance & paste.</p>
+        </div>
+        <span class="source-tag">Reference: input-otp (Emil Kowalski)</span>
+      </div>
+
+      <div class="pattern-card">
+        <div class="auth-box">
+          <div class="auth-icon">🔐</div>
+          <div>
+            <h3 style="margin: 0 0 6px 0; font-size: 1.25rem;">Two-Step Verification</h3>
+            <p style="margin: 0; color: var(--el-text-secondary, #64748b); font-size: 0.875rem;">
+              We sent a 6-digit confirmation code to your device. Try pasting <code>482910</code>:
+            </p>
+          </div>
+
+          <el-otp-input id="reference-otp" length="6"></el-otp-input>
+
+          <div style="display: flex; justify-content: center; gap: 8px;">
+            <el-button variant="primary" style="width: 100%;">Verify & Sign In</el-button>
+          </div>
+          <p style="margin: 0; font-size: 0.8125rem; color: var(--el-text-secondary, #94a3b8);">
+            Didn't receive a code? <a href="#" style="color: var(--el-color-primary, #2563eb); text-decoration: none;">Resend in 45s</a>
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

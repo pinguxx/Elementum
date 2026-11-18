@@ -9,7 +9,7 @@ import { signal } from '../signal.js';
 
 export class ElSelect extends Elementum {
   static formAssociated = true;
-  static observedAttributes = ['value', 'placeholder', 'disabled', 'name', 'required'];
+  static observedAttributes = ['value', 'placeholder', 'disabled', 'name', 'required', 'options'];
 
   value = signal('');
   placeholder = signal('');
@@ -113,6 +113,13 @@ export class ElSelect extends Elementum {
     } else if (name === 'required') {
       this.required.value = newValue !== null && newValue !== 'false';
       this.validate();
+    } else if (name === 'options') {
+      this.#scanOptions();
+      if (!this.value.value && !this.hasAttribute('placeholder') && this.options.value.length > 0) {
+        this.value.value = this.options.value[0].value;
+        this.setFormValue(this.value.value);
+      }
+      this.validate();
     }
   }
 
@@ -136,7 +143,27 @@ export class ElSelect extends Elementum {
       label: opt.textContent.trim(),
       value: opt.value || opt.textContent.trim(),
     }));
-    this.options.value = rawOptions;
+
+    if (rawOptions.length > 0) {
+      this.options.value = rawOptions;
+      return;
+    }
+
+    const optAttr = this.getAttribute('options');
+    if (optAttr) {
+      try {
+        const parsed = JSON.parse(optAttr);
+        if (Array.isArray(parsed)) {
+          this.options.value = parsed.map(o => typeof o === 'string' ? { label: o, value: o } : { label: o.label || o.value, value: o.value || o.label });
+          return;
+        }
+      } catch (e) {
+        this.options.value = optAttr.split(',').map(s => s.trim()).filter(Boolean).map(s => ({ label: s, value: s }));
+        return;
+      }
+    }
+
+    this.options.value = [];
   }
 
   #onChange = (e) => {

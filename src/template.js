@@ -35,22 +35,28 @@ export function css(strings, ...values) {
 // Marker token for template part tracking
 const MARKER = '<!--elementum-part-->';
 const ATTR_PREFIX = 'data-el-part-';
+const SVG_TAG_REGEX = /^\s*(?:<!--[\s\S]*?-->\s*)*<(?:path|line|circle|rect|g|defs|text|polygon|polyline|clipPath|linearGradient|radialGradient|mask|pattern|stop|tspan|use|symbol)\b/i;
 
 export class TemplateResult {
-  constructor(strings, values) {
+  constructor(strings, values, isSvg = false) {
     this.strings = strings;
     this.values = values;
+    this.isSvg = isSvg;
   }
 }
 
 export function html(strings, ...values) {
-  return new TemplateResult(strings, values);
+  return new TemplateResult(strings, values, false);
+}
+
+export function svg(strings, ...values) {
+  return new TemplateResult(strings, values, true);
 }
 
 // Template element cache by template string array reference
 const templateCache = new WeakMap();
 
-function getCachedTemplate(strings) {
+function getCachedTemplate(strings, isSvg = false) {
   let cached = templateCache.get(strings);
   if (cached) return cached;
 
@@ -84,6 +90,9 @@ function getCachedTemplate(strings) {
         if (rawName.startsWith('@')) {
           type = 'event';
           name = rawName.slice(1);
+        } else if (rawName.startsWith('on') && rawName.length > 2 && /^[a-zA-Z]+$/.test(rawName.slice(2))) {
+          type = 'event';
+          name = rawName.slice(2).toLowerCase();
         } else if (rawName.startsWith('.')) {
           type = 'prop';
           name = rawName.slice(1);
@@ -115,8 +124,20 @@ function getCachedTemplate(strings) {
   }
   htmlString += lastStr;
 
+  const isSvgTemplate = Boolean(isSvg) || SVG_TAG_REGEX.test(htmlString);
   const tpl = document.createElement('template');
-  tpl.innerHTML = htmlString;
+  if (isSvgTemplate && !htmlString.trim().toLowerCase().startsWith('<svg')) {
+    tpl.innerHTML = `<svg>${htmlString}</svg>`;
+    const svgEl = tpl.content.firstChild;
+    const frag = document.createDocumentFragment();
+    while (svgEl && svgEl.firstChild) {
+      frag.appendChild(svgEl.firstChild);
+    }
+    tpl.content.textContent = '';
+    tpl.content.appendChild(frag);
+  } else {
+    tpl.innerHTML = htmlString;
+  }
 
   cached = { template: tpl, partMeta };
   templateCache.set(strings, cached);
@@ -202,7 +223,7 @@ export function render(result, container, abortSignal) {
     return;
   }
 
-  const { template, partMeta } = getCachedTemplate(result.strings);
+  const { template, partMeta } = getCachedTemplate(result.strings, result.isSvg);
   const fragment = template.content.cloneNode(true);
   const values = result.values;
 

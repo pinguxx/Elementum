@@ -150,5 +150,30 @@ test('<el-table> renders reactive data, handles sorting and row selection', () =
   table.toggleSelectAll();
   assert.equal(table.selected.value.length, 0);
 
+  // Auto-inferred columns from data attribute
+  const autoTable = document.createElement('el-table');
+  autoTable.setAttribute('data', JSON.stringify([
+    { service: 'Gateway', status: 'Active' },
+    { service: 'Worker', status: 'Idle' }
+  ]));
+  document.body.appendChild(autoTable);
+  assert.equal(autoTable.data.value.length, 2);
+  assert.equal(autoTable.columns.value.length, 2);
+  assert.equal(autoTable.columns.value[0].key, 'service');
+  assert.equal(autoTable.columns.value[0].label, 'Service');
+  assert.equal(autoTable.tableData.length, 2);
+  assert.equal(autoTable.tableColumns.length, 2);
+
+  // Property setters
+  autoTable.tableData = [{ id: 1, name: 'Item' }];
+  assert.equal(autoTable.tableData.length, 1);
+  autoTable.tableColumns = [{ key: 'id', label: 'ID' }];
+  assert.equal(autoTable.tableColumns.length, 1);
+
+  // Attribute changes
+  autoTable.setAttribute('columns', JSON.stringify([{ key: 'name', label: 'Item Name' }]));
+  assert.equal(autoTable.columns.value[0].label, 'Item Name');
+
+  document.body.removeChild(autoTable);
   document.body.removeChild(table);
 });

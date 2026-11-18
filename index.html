@@ -3,78 +3,140 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>@wc/elementum - Micro-Signal Web Components & Design System</title>
+  <title>@wc/elementum - Signal-Driven Web Components & Design System</title>
   <link rel="stylesheet" href="./src/tokens.css" />
+  <script type="module" src="./src/index.js"></script>
   <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
     :root {
       --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
 
-    body {
-      font-family: var(--font-stack);
+    html, body {
       margin: 0;
       padding: 0;
-      background: var(--el-surface-muted, #f8fafc);
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: var(--font-stack);
+      background: var(--el-surface-base, #ffffff);
       color: var(--el-text-primary, #0f172a);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 40px 20px;
       box-sizing: border-box;
       transition: background 0.2s ease, color 0.2s ease;
     }
 
+    /* Container */
     .container {
       width: 100%;
-      max-width: 1040px;
+      max-width: 1140px;
       margin: 0 auto;
+      padding: 0 24px;
+      box-sizing: border-box;
     }
 
-    .hero-header {
+    /* Hero Section */
+    .hero {
       text-align: center;
-      margin-bottom: 40px;
+      padding: 64px 0 48px 0;
     }
 
     .badge-bar {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     h1 {
-      font-size: 2.75rem;
+      font-size: 3.25rem;
       margin: 0 0 16px 0;
       font-weight: 800;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.035em;
+      line-height: 1.15;
       color: var(--el-text-primary, #0f172a);
     }
 
+    @media (max-width: 768px) {
+      h1 { font-size: 2.25rem; }
+    }
+
     .subtitle {
-      font-size: 1.125rem;
+      font-size: 1.2rem;
       color: var(--el-text-muted, #64748b);
-      max-width: 680px;
-      margin: 0 auto 24px auto;
+      max-width: 760px;
+      margin: 0 auto 32px auto;
       line-height: 1.6;
     }
 
-    .nav-actions {
+    .hero-actions {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
+      gap: 16px;
       flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    /* Pillars Grid */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin: 48px 0;
+    }
+
+    .pillar-icon {
+      font-size: 1.75rem;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .pillar-desc {
+      font-size: 0.875rem;
+      color: var(--el-text-muted, #64748b);
+      margin: 0;
+      line-height: 1.5;
     }
 
     /* Playground Box */
+    .playground-section {
+      margin: 48px 0;
+    }
+
+    .section-heading {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .section-heading h2 {
+      font-size: 1.85rem;
+      font-weight: 800;
+      margin: 0 0 8px 0;
+      letter-spacing: -0.02em;
+    }
+
+    .section-heading p {
+      color: var(--el-text-muted, #64748b);
+      margin: 0;
+    }
+
     .playground-card {
       background: var(--el-surface-card, #ffffff);
       border: 1px solid var(--el-surface-border, #e2e8f0);
       border-radius: var(--el-radius-lg, 16px);
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
       overflow: hidden;
-      margin-bottom: 48px;
     }
 
     .playground-header {
@@ -103,25 +165,7 @@
     }
 
     @media (max-width: 768px) {
-      .playground-grid {
-        grid-template-columns: 1fr;
-      }
-      .controls-panel {
-        border-right: none;
-        border-bottom: 1px solid var(--el-surface-border, #e2e8f0);
-        padding: 16px;
-      }
-      .stage-preview {
-        padding: 24px 16px;
-      }
-      .stage-code-bar {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-      }
-      h1 {
-        font-size: 2rem;
-      }
+      .playground-grid { grid-template-columns: 1fr; }
     }
 
     .controls-panel {
@@ -162,6 +206,31 @@
       background: var(--el-surface-card, #ffffff);
     }
 
+    :root[data-theme="dark"] el-button[variant="secondary"]::part(button),
+    .stage-preview.dark-canvas el-button[variant="secondary"]::part(button) {
+      background-color: #1e293b;
+      color: #f8fafc;
+      border-color: #334155;
+    }
+    :root[data-theme="dark"] el-button[variant="secondary"]::part(button):hover,
+    .stage-preview.dark-canvas el-button[variant="secondary"]::part(button):hover {
+      background-color: #334155;
+      color: #f8fafc;
+      border-color: #475569;
+    }
+    :root[data-theme="dark"] .stage-preview:not(.dark-canvas) el-button[variant="secondary"]::part(button),
+    .stage-preview:not(.dark-canvas) el-button[variant="secondary"]::part(button) {
+      background-color: #f3f4f6;
+      color: #0f172a;
+      border-color: #e5e7eb;
+    }
+    :root[data-theme="dark"] .stage-preview:not(.dark-canvas) el-button[variant="secondary"]::part(button):hover,
+    .stage-preview:not(.dark-canvas) el-button[variant="secondary"]::part(button):hover {
+      background-color: #e2e8f0;
+      color: #0f172a;
+      border-color: #cbd5e1;
+    }
+
     .stage-code-bar {
       border-top: 1px solid var(--el-surface-border, #e2e8f0);
       background: #0f172a;
@@ -181,18 +250,18 @@
       color: #93c5fd;
     }
 
-    /* Navigation Showcase Cards */
-    .showcase-grid {
+    /* Documentation Hub Grid */
+    .docs-hub-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-      margin-bottom: 48px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin: 48px 0;
     }
 
-    .showcase-card {
+    .doc-hub-card {
       background: var(--el-surface-card, #ffffff);
       border: 1px solid var(--el-surface-border, #e2e8f0);
-      border-radius: var(--el-radius-md, 8px);
+      border-radius: var(--el-radius-md, 12px);
       padding: 24px;
       text-decoration: none;
       color: inherit;
@@ -202,159 +271,282 @@
       transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
-    .showcase-card:hover {
+    .doc-hub-card:hover {
       transform: translateY(-2px);
       border-color: var(--el-color-primary, #2563eb);
-      box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.12);
+      box-shadow: 0 10px 25px -4px rgba(37, 99, 235, 0.12);
     }
 
-    .showcase-icon {
-      font-size: 2rem;
-    }
-
-    .showcase-title {
+    .doc-hub-card .badge-tag {
+      font-size: 11px;
       font-weight: 700;
-      font-size: 1.125rem;
-      margin: 0;
+      text-transform: uppercase;
+      color: var(--el-color-primary, #2563eb);
+      letter-spacing: 0.05em;
     }
 
-    .showcase-desc {
-      font-size: 0.875rem;
-      color: var(--el-text-muted, #64748b);
-      line-height: 1.5;
+    .doc-hub-card h3 {
+      font-size: 1.25rem;
       margin: 0;
+      font-weight: 700;
+    }
+
+    .doc-hub-card p {
+      font-size: 0.9rem;
+      color: var(--el-text-muted, #64748b);
+      margin: 0;
+      line-height: 1.5;
     }
 
     footer {
       text-align: center;
-      padding: 24px 0;
+      padding: 48px 0 32px 0;
       color: var(--el-text-muted, #64748b);
       font-size: 0.875rem;
       border-top: 1px solid var(--el-surface-border, #e2e8f0);
+      margin-top: 64px;
+    }
+
+    footer a {
+      color: inherit;
+      text-decoration: none;
+      margin: 0 8px;
+    }
+
+    footer a:hover {
+      color: var(--el-color-primary, #2563eb);
     }
   </style>
-  <script type="module" src="./src/index.js"></script>
 </head>
 <body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <el-navbar sticky brand="⚡ Elementum" badge="v0.1.0" badge-variant="success" href="./index.html">
+    <a href="./docs.html">Documentation</a>
+    <a href="./examples/index.html">Catalog</a>
+    <a href="./examples/registry.html">UI Registry</a>
+    <a href="./examples/agent-studio.html">AI Studio</a>
+    <a href="./examples/app.html">Showcase App</a>
+    <el-theme-switch slot="actions"></el-theme-switch>
+  </el-navbar>
+
   <div class="container">
-    <header class="hero-header">
+    <!-- Hero Section -->
+    <header class="hero">
       <div class="badge-bar">
-        <el-badge variant="success" count="23 Web Components"></el-badge>
-        <el-badge variant="default" count="Zero Build / Signals"></el-badge>
-        <el-badge variant="default" count="WCAG 2.2 AA"></el-badge>
+        <el-badge variant="success" count="84 Web Components"></el-badge>
+        <el-badge variant="default" count="0 Runtime Deps"></el-badge>
+        <el-badge variant="default" count="W3C DTCG Tokens"></el-badge>
+        <el-badge variant="default" count="DSD SSR Ready"></el-badge>
+        <el-badge variant="default" count="MCP + AG-UI Native"></el-badge>
       </div>
-      <h1>Elementum Design System</h1>
+
+      <h1>Pure Native Web Components<br>for Engineers & Autonomous Agents</h1>
       <p class="subtitle">
-        Ultra-lightweight, signal-driven Web Components with 1:1 Figma tokens, Declarative Shadow DOM (SSR), and built-in AI MCP tooling.
+        Ultra-lightweight, signal-driven UI primitives with zero build locks, Declarative Shadow DOM SSR, bidirectional Penpot & Figma token sync, and built-in MCP tooling for zero-hallucination agent generation.
       </p>
 
-      <div class="nav-actions">
-        <el-button variant="primary" onclick="window.location.href='./examples/app.html'">
-          Open Demo App 🚀
+      <div class="hero-actions">
+        <el-button variant="primary" onclick="window.location.href='./examples/index.html'">
+          Explore 84 Components 🚀
         </el-button>
-        <el-button variant="secondary" onclick="window.location.href='./examples/index.html'">
-          Component Catalog 🧩
+        <el-button variant="secondary" onclick="window.location.href='./docs.html'">
+          Read Documentation 📖
         </el-button>
-        <el-theme-switch></el-theme-switch>
+        <el-button variant="secondary" onclick="window.location.href='./examples/registry.html'">
+          Theme Registry & Blocks 🎨
+        </el-button>
       </div>
+
+      <el-code-block id="hero-install-code" copyable compact code="npm install @wc/elementum" style="margin: 0 auto;"></el-code-block>
     </header>
 
+    <!-- The 4 Core Architectural Pillars -->
+    <section class="pillars-grid">
+      <el-card hoverable>
+        <el-card-header>
+          <span class="pillar-icon">⚡</span>
+          <el-card-title>Micro-Signals Reactivity</el-card-title>
+        </el-card-header>
+        <el-card-content>
+          <p class="pillar-desc">Direct DOM text-node and attribute mutations via a ~2KB standard signal engine without virtual DOM diffing, memoization traps, or rerender cascades.</p>
+        </el-card-content>
+      </el-card>
+
+      <el-card hoverable>
+        <el-card-header>
+          <span class="pillar-icon">🎨</span>
+          <el-card-title>1:1 Penpot & Figma Sync</el-card-title>
+        </el-card-header>
+        <el-card-content>
+          <p class="pillar-desc">Bidirectional sync with free open-source Penpot (W3C DTCG) and Figma variables with automatic dark-mode token generation and zero layout shifts.</p>
+        </el-card-content>
+      </el-card>
+
+      <el-card hoverable>
+        <el-card-header>
+          <span class="pillar-icon">🛡️</span>
+          <el-card-title>Zero Runtime Dependencies</el-card-title>
+        </el-card-header>
+        <el-card-content>
+          <p class="pillar-desc">Pure native Web Components (Custom Elements, Shadow DOM, ElementInternals FACE). Works natively in React, Vue, Svelte, Angular, Solid, or vanilla HTML.</p>
+        </el-card-content>
+      </el-card>
+
+      <el-card hoverable>
+        <el-card-header>
+          <span class="pillar-icon">🤖</span>
+          <el-card-title>AI Agent & MCP Native</el-card-title>
+        </el-card-header>
+        <el-card-content>
+          <p class="pillar-desc">Built-in Model Context Protocol (MCP) server lets Antigravity, Claude Code, and Cursor inspect schemas and tokens directly, eliminating hallucinated UI.</p>
+        </el-card-content>
+      </el-card>
+    </section>
+
     <!-- Interactive Component Playground -->
-    <div class="playground-card">
-      <div class="playground-header">
-        <div class="playground-title">
-          <span>⚡ Live Component Playground</span>
-        </div>
-        <div style="display:flex; align-items:center; gap:8px;">
-          <el-segmented-control id="component-picker" value="el-button" size="sm">
-            <option value="el-button">Button</option>
-            <option value="el-autocomplete">Autocomplete</option>
-            <option value="el-chip">Chip</option>
-            <option value="el-pagination">Pagination</option>
-            <option value="el-progress">Progress</option>
-            <option value="el-spinner">Spinner</option>
-            <option value="el-avatar">Avatar</option>
-            <option value="el-segmented-control">Segmented</option>
-            <option value="el-switch">Switch</option>
-            <option value="el-badge">Badge</option>
-          </el-segmented-control>
-        </div>
+    <section class="playground-section">
+      <div class="section-heading">
+        <h2>Live Interactive Playground</h2>
+        <p>Inspect, test, and copy reactive component primitives directly in the browser.</p>
       </div>
 
-      <div class="playground-grid">
-        <!-- Controls Sidebar -->
-        <div class="controls-panel">
-          <div class="control-group">
-            <label class="control-label">Variant</label>
-            <el-select id="prop-variant" value="primary">
-              <option value="primary">Primary</option>
-              <option value="secondary">Secondary</option>
-              <option value="danger">Danger</option>
-              <option value="success">Success</option>
-              <option value="ghost">Ghost</option>
-            </el-select>
+      <div class="playground-card">
+        <div class="playground-header">
+          <div class="playground-title">
+            <span>⚡ Component Sandbox</span>
           </div>
-
-          <div class="control-group">
-            <label class="control-label">Size</label>
-            <el-select id="prop-size" value="md">
-              <option value="sm">Small (sm)</option>
-              <option value="md">Medium (md)</option>
-              <option value="lg">Large (lg)</option>
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <el-select id="component-picker" value="el-button" size="sm" style="min-width: 200px;">
+              <option value="el-button">Button</option>
+              <option value="el-drawer">Drawer (Vaul Bottom Sheet)</option>
+              <option value="el-slider">Slider</option>
+              <option value="el-input">Input</option>
+              <option value="el-switch">Switch</option>
+              <option value="el-alert">Alert</option>
+              <option value="el-prompt-input">Prompt Input</option>
+              <option value="el-streaming-text">Streaming Text</option>
+              <option value="el-toast">Toast / Notification</option>
+              <option value="el-segmented-control">Segmented Control</option>
+              <option value="el-badge">Badge</option>
+              <option value="el-progress">Progress</option>
+              <option value="el-meter">Meter</option>
+              <option value="el-avatar">Avatar</option>
+              <option value="el-chip">Chip</option>
+              <option value="el-autocomplete">Autocomplete</option>
+              <option value="el-pagination">Pagination</option>
+              <option value="el-spinner">Spinner</option>
             </el-select>
-          </div>
-
-          <div class="control-group" id="group-disabled">
-            <label class="control-label">State</label>
-            <el-switch id="prop-disabled">Disabled</el-switch>
+            <el-button size="sm" variant="secondary" id="btn-toggle-sandbox-theme">Dark Canvas 🌙</el-button>
           </div>
         </div>
 
-        <!-- Stage & Live Preview -->
-        <div class="stage-panel">
-          <div class="stage-preview" id="stage-preview">
-            <!-- Dynamic element injected here -->
+        <div class="playground-grid">
+          <!-- Controls Sidebar -->
+          <div class="controls-panel">
+            <div class="control-group">
+              <label class="control-label">Variant</label>
+              <el-select id="prop-variant" value="primary">
+                <option value="primary">Primary</option>
+                <option value="secondary">Secondary</option>
+                <option value="danger">Danger</option>
+                <option value="success">Success</option>
+                <option value="warning">Warning</option>
+                <option value="ghost">Ghost</option>
+              </el-select>
+            </div>
+
+            <div class="control-group">
+              <label class="control-label">Size</label>
+              <el-select id="prop-size" value="md">
+                <option value="sm">Small (sm)</option>
+                <option value="md">Medium (md)</option>
+                <option value="lg">Large (lg)</option>
+              </el-select>
+            </div>
+
+            <div class="control-group" id="group-disabled">
+              <label class="control-label">State</label>
+              <el-switch id="prop-disabled">Disabled</el-switch>
+            </div>
           </div>
 
-          <div class="stage-code-bar">
-            <code class="stage-code-text" id="stage-code"></code>
-            <el-button variant="secondary" size="sm" id="btn-copy">
-              Copy Snippet
-            </el-button>
+          <!-- Stage & Live Preview -->
+          <div class="stage-panel">
+            <div class="stage-preview" id="stage-preview">
+              <!-- Dynamic element injected here -->
+            </div>
+
+            <div class="stage-code-bar">
+              <code class="stage-code-text" id="stage-code"></code>
+              <el-button variant="secondary" size="sm" id="btn-copy">
+                Copy Snippet
+              </el-button>
+            </div>
+
+            <!-- Live Event Monitor Bar -->
+            <div id="sandbox-event-bar" style="background:#090d16; border-top:1px solid #1e293b; padding:8px 20px; font-family:var(--el-font-mono, monospace); font-size:12px; color:#38bdf8; display:flex; gap:12px; align-items:center;">
+              <span style="color:#64748b;">Event Monitor:</span>
+              <span id="sandbox-event-text">Ready. Interact with the component above to stream events.</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Features & Docs Grid -->
-    <div class="showcase-grid">
-      <a href="./examples/app.html" class="showcase-card">
-        <span class="showcase-icon">✈️</span>
-        <h3 class="showcase-title">Skyline Booking App</h3>
-        <p class="showcase-desc">
-          Full responsive dashboard with forms, datepickers, accordions, dynamic tabs, modal dialogs, and interactive data tables.
-        </p>
-      </a>
+    <!-- Structured Documentation & User Guide Hub -->
+    <section>
+      <div class="section-heading">
+        <h2>Structured Documentation Hubs</h2>
+        <p>Step-by-step guides for users, designers, developers, and AI agents.</p>
+      </div>
 
-      <a href="./examples/index.html" class="showcase-card">
-        <span class="showcase-icon">📚</span>
-        <h3 class="showcase-title">Showcase Catalog</h3>
-        <p class="showcase-desc">
-          Interactive matrix demonstrating all 23 component primitives with reactive signal counters, drawers, and toasts.
-        </p>
-      </a>
+      <div class="docs-hub-grid">
+        <a href="./docs.html#user-guide" class="doc-hub-card">
+          <span class="badge-tag">End Users & Designers</span>
+          <h3>📖 User Guide</h3>
+          <p>Quickstart tutorials, CSS custom property theming, dark mode derivation, and WCAG 2.2 accessibility standards.</p>
+        </a>
 
-      <a href="https://github.com/pinguxx/Elementum" class="showcase-card" target="_blank">
-        <span class="showcase-icon">🤖</span>
-        <h3 class="showcase-title">AI MCP Server & Guide</h3>
-        <p class="showcase-desc">
-          Query components and tokens over stdio MCP (`mcp/server.js`) and review canonical agent rules in `AGENT_GUIDE.md`.
-        </p>
-      </a>
-    </div>
+        <a href="./docs.html#developer-architecture" class="doc-hub-card">
+          <span class="badge-tag">Core Engineers</span>
+          <h3>⚙️ Developer Architecture</h3>
+          <p>Micro-signals kernel, Custom Element lifecycle, Declarative Shadow DOM (DSD) SSR, and Form-Associated Custom Elements.</p>
+        </a>
 
+        <a href="./docs.html#mcp-server" class="doc-hub-card">
+          <span class="badge-tag">AI Tooling</span>
+          <h3>🤖 MCP Server Setup</h3>
+          <p>How to configure Google Antigravity, Claude Code, Cursor, and Gemini CLI to query live element schemas via Model Context Protocol.</p>
+        </a>
+
+        <a href="./docs.html#design-tokens" class="doc-hub-card">
+          <span class="badge-tag">Design Systems</span>
+          <h3>🎨 Figma & Penpot Workflow</h3>
+          <p>1:1 W3C DTCG token sync, automated dark mode generation, ambient shadows, and zero design-to-code drift.</p>
+        </a>
+
+        <a href="./docs.html#contributing" class="doc-hub-card">
+          <span class="badge-tag">Open Source</span>
+          <h3>🤝 How to Contribute</h3>
+          <p>Component scaffolding CLI, running unit tests, zero runtime dependency policy, and our strict ≥ 95% line coverage bar.</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- Footer -->
     <footer>
-      <p>Elementum — Ultra-lightweight Web Component Design System &copy; 2026. Released under the MIT License.</p>
+      <p>
+        <strong>Elementum</strong> — Ultra-lightweight Web Component Design System &copy; 2026. Released under the MIT License.
+      </p>
+      <p style="margin-top: 8px;">
+        <a href="./docs.html">Documentation</a> &bull;
+        <a href="./examples/index.html">Component Catalog</a> &bull;
+        <a href="./examples/registry.html">UI Registry</a> &bull;
+        <a href="./examples/agent-studio.html">AI Studio</a> &bull;
+        <a href="./examples/app.html">Travel App</a> &bull;
+        <a href="https://github.com/pinguxx/Elementum" target="_blank">GitHub</a>
+      </p>
     </footer>
   </div>
 
@@ -371,6 +563,22 @@
     const stageCode = document.getElementById('stage-code');
     const btnCopy = document.getElementById('btn-copy');
 
+    const eventText = document.getElementById('sandbox-event-text');
+    const btnCanvasTheme = document.getElementById('btn-toggle-sandbox-theme');
+
+    btnCanvasTheme?.addEventListener('click', () => {
+      stagePreview.classList.toggle('dark-canvas');
+      const isDark = stagePreview.classList.contains('dark-canvas');
+      stagePreview.style.background = isDark ? '#090d16' : '';
+      btnCanvasTheme.textContent = isDark ? 'Light Canvas ☀️' : 'Dark Canvas 🌙';
+    });
+
+    function logEvent(name, detail) {
+      if (!eventText) return;
+      const detailStr = detail ? JSON.stringify(detail) : 'fired';
+      eventText.textContent = `[${new Date().toTimeString().split(' ')[0]}] ${name}: ${detailStr}`;
+    }
+
     function updatePlayground() {
       const tag = picker.value.value || 'el-button';
       const variant = propVariant.value.value || 'primary';
@@ -386,16 +594,122 @@
         el.setAttribute('size', size);
         if (disabled) el.setAttribute('disabled', '');
         el.textContent = 'Interactive Button';
-        el.addEventListener('click', () => toast.info('Button clicked!'));
+        el.addEventListener('click', (e) => {
+          logEvent('click', { variant, size });
+          toast.info('Button clicked!');
+        });
         stagePreview.appendChild(el);
         snippet = `<el-button variant="${variant}" size="${size}"${disabled ? ' disabled' : ''}>Interactive Button</el-button>`;
+      } else if (tag === 'el-drawer') {
+        const trigger = document.createElement('el-button');
+        trigger.setAttribute('variant', variant === 'danger' ? 'danger' : 'primary');
+        trigger.setAttribute('size', size);
+        trigger.textContent = 'Open Vaul Bottom Sheet 📱';
+
+        const drawer = document.createElement('el-drawer');
+        drawer.setAttribute('placement', 'bottom');
+        drawer.setAttribute('scale-background', '');
+        drawer.setAttribute('snap-points', '0.4, 0.75, 1');
+        drawer.setAttribute('handle', 'true');
+        drawer.setAttribute('title', 'Vaul-Style Sheet');
+        drawer.innerHTML = `
+          <p style="margin:0 0 16px 0; color:var(--el-text-secondary);">Interactive iOS-style bottom sheet with multi-stop snap points (40%, 75%, 100%) and rubber-band physics.</p>
+          <el-slider value="50"></el-slider>
+          <div slot="footer">
+            <el-button variant="secondary" id="btn-close-sandbox-drawer">Close</el-button>
+          </div>
+        `;
+        trigger.onclick = () => drawer.show();
+        drawer.addEventListener('open', () => logEvent('open', { placement: 'bottom' }));
+        drawer.addEventListener('close', () => logEvent('close', null));
+
+        stagePreview.appendChild(trigger);
+        stagePreview.appendChild(drawer);
+        drawer.querySelector('#btn-close-sandbox-drawer')?.addEventListener('click', () => drawer.close());
+        snippet = `<el-drawer placement="bottom" scale-background snap-points="0.4, 0.75, 1" handle title="Vaul-Style Sheet">\n  <p>Scrollable sheet content...</p>\n</el-drawer>`;
+      } else if (tag === 'el-slider') {
+        const el = document.createElement('el-slider');
+        el.setAttribute('value', '45');
+        el.setAttribute('min', '0');
+        el.setAttribute('max', '100');
+        el.style.width = '240px';
+        if (disabled) el.setAttribute('disabled', '');
+        el.addEventListener('input', (e) => logEvent('input', e.detail));
+        el.addEventListener('change', (e) => logEvent('change', e.detail));
+        stagePreview.appendChild(el);
+        snippet = `<el-slider value="45" min="0" max="100"${disabled ? ' disabled' : ''}></el-slider>`;
+      } else if (tag === 'el-input') {
+        const el = document.createElement('el-input');
+        el.setAttribute('placeholder', 'Type something...');
+        el.setAttribute('size', size);
+        if (disabled) el.setAttribute('disabled', '');
+        el.addEventListener('input', (e) => logEvent('input', e.detail));
+        el.addEventListener('change', (e) => logEvent('change', e.detail));
+        stagePreview.appendChild(el);
+        snippet = `<el-input placeholder="Type something..." size="${size}"${disabled ? ' disabled' : ''}></el-input>`;
+      } else if (tag === 'el-alert') {
+        const el = document.createElement('el-alert');
+        el.setAttribute('variant', variant === 'danger' ? 'destructive' : (variant === 'warning' ? 'warning' : 'info'));
+        el.setAttribute('title', 'System Notification');
+        el.textContent = 'All 64 Web Component primitives loaded with zero runtime dependencies.';
+        if (!disabled) el.setAttribute('dismissible', '');
+        el.addEventListener('dismiss', () => logEvent('dismiss', null));
+        stagePreview.appendChild(el);
+        snippet = `<el-alert variant="${el.getAttribute('variant')}" title="System Notification"${!disabled ? ' dismissible' : ''}>Message content</el-alert>`;
+      } else if (tag === 'el-prompt-input') {
+        const el = document.createElement('el-prompt-input');
+        el.setAttribute('placeholder', 'Ask Elementum AI Copilot...');
+        if (disabled) el.setAttribute('disabled', '');
+        el.style.width = '100%';
+        el.style.maxWidth = '420px';
+        el.addEventListener('submit', (e) => {
+          logEvent('submit', e.detail);
+          toast.success(`Prompt submitted: "${e.detail?.prompt}"`);
+        });
+        stagePreview.appendChild(el);
+        snippet = `<el-prompt-input placeholder="Ask Elementum AI..."${disabled ? ' disabled' : ''}></el-prompt-input>`;
+      } else if (tag === 'el-streaming-text') {
+        const el = document.createElement('el-streaming-text');
+        el.setAttribute('text', 'Streaming tokens reactively with zero DOM tearing and silky smooth 60fps animations.');
+        el.setAttribute('speed', '20');
+        el.addEventListener('finish', () => logEvent('finish', null));
+        stagePreview.appendChild(el);
+        snippet = `<el-streaming-text text="Streaming tokens reactively..." speed="20"></el-streaming-text>`;
+      } else if (tag === 'el-toast') {
+        const btn = document.createElement('el-button');
+        btn.setAttribute('variant', variant);
+        btn.setAttribute('size', size);
+        btn.textContent = 'Trigger Toast 🔔';
+        btn.onclick = () => {
+          logEvent('toast', { variant });
+          toast[variant === 'danger' ? 'error' : (variant === 'warning' ? 'warning' : 'success')]('Toast Notification', {
+            description: 'Silky 60fps GPU stacking and swipe to dismiss.'
+          });
+        };
+        stagePreview.appendChild(btn);
+        snippet = `toast.success('Toast Notification', {\n  description: 'Silky 60fps GPU stacking'\n});`;
+      } else if (tag === 'el-meter') {
+        const el = document.createElement('el-meter');
+        el.setAttribute('value', '75');
+        el.setAttribute('min', '0');
+        el.setAttribute('max', '100');
+        el.setAttribute('low', '30');
+        el.setAttribute('high', '70');
+        el.setAttribute('optimum', '85');
+        el.setAttribute('size', size);
+        el.style.width = '280px';
+        stagePreview.appendChild(el);
+        snippet = `<el-meter value="75" min="0" max="100" low="30" high="70" optimum="85" size="${size}"></el-meter>`;
       } else if (tag === 'el-autocomplete') {
         const el = document.createElement('el-autocomplete');
         el.setAttribute('size', size);
         el.setAttribute('placeholder', 'Search fruits (e.g. Apple, Banana)...');
         if (disabled) el.setAttribute('disabled', '');
         el.setData(['Apple', 'Apricot', 'Avocado', 'Banana', 'Blackberry', 'Blueberry', 'Cherry', 'Cranberry']);
-        el.addEventListener('select', (e) => toast.info(`Selected: ${e.detail.label}`));
+        el.addEventListener('select', (e) => {
+          logEvent('select', e.detail);
+          toast.info(`Selected: ${e.detail.label}`);
+        });
         stagePreview.appendChild(el);
         snippet = `<el-autocomplete size="${size}" placeholder="Search fruits..."${disabled ? ' disabled' : ''}></el-autocomplete>`;
       } else if (tag === 'el-chip') {
@@ -406,7 +720,10 @@
         el.setAttribute('removable', '');
         if (disabled) el.setAttribute('disabled', '');
         el.textContent = 'Interactive Chip';
-        el.addEventListener('remove', () => toast.info('Chip dismissed!'));
+        el.addEventListener('remove', () => {
+          logEvent('remove', null);
+          toast.info('Chip dismissed!');
+        });
         stagePreview.appendChild(el);
         snippet = `<el-chip variant="${el.getAttribute('variant')}" size="${el.getAttribute('size')}" selectable removable${disabled ? ' disabled' : ''}>Interactive Chip</el-chip>`;
       } else if (tag === 'el-pagination') {
@@ -415,7 +732,10 @@
         el.setAttribute('total', '50');
         el.setAttribute('page-size', '10');
         if (disabled) el.setAttribute('disabled', '');
-        el.addEventListener('pagechange', (e) => toast.info(`Navigated to page ${e.detail.page}`));
+        el.addEventListener('pagechange', (e) => {
+          logEvent('pagechange', e.detail);
+          toast.info(`Navigated to page ${e.detail.page}`);
+        });
         stagePreview.appendChild(el);
         snippet = `<el-pagination page="2" total="50" page-size="10"${disabled ? ' disabled' : ''}></el-pagination>`;
       } else if (tag === 'el-progress') {
@@ -444,6 +764,7 @@
         el.setAttribute('size', size);
         if (disabled) el.setAttribute('disabled', '');
         el.innerHTML = '<option value="day">Day</option><option value="week">Week</option><option value="month">Month</option>';
+        el.addEventListener('change', (e) => logEvent('change', e.detail));
         stagePreview.appendChild(el);
         snippet = `<el-segmented-control size="${size}"${disabled ? ' disabled' : ''}>\n  <option value="day">Day</option>\n  <option value="week">Week</option>\n</el-segmented-control>`;
       } else if (tag === 'el-switch') {
@@ -451,6 +772,7 @@
         el.setAttribute('size', size);
         if (disabled) el.setAttribute('disabled', '');
         el.textContent = 'Notification Alerts';
+        el.addEventListener('change', (e) => logEvent('change', e.detail));
         stagePreview.appendChild(el);
         snippet = `<el-switch size="${size}"${disabled ? ' disabled' : ''}>Notification Alerts</el-switch>`;
       } else if (tag === 'el-badge') {
@@ -468,6 +790,10 @@
     propVariant.addEventListener('change', updatePlayground);
     propSize.addEventListener('change', updatePlayground);
     propDisabled.addEventListener('change', updatePlayground);
+
+    document.getElementById('hero-install-code')?.addEventListener('copy', () => {
+      toast.success('Copied npm install command!');
+    });
 
     btnCopy.addEventListener('click', () => {
       navigator.clipboard.writeText(stageCode.textContent);

@@ -42,11 +42,33 @@ test('<el-button> handles clicks, disabled states, and form submission/reset', (
   innerResetBtn.click();
   assert.equal(reset, true);
 
-  // Disabled button
+  // Disabled button via signal
   submitBtn.disabled.value = true;
   submitted = false;
   innerSubmitBtn.click();
   assert.equal(submitted, false);
+
+  // Disabled button via HTML attribute
+  const disabledBtn = document.createElement('el-button');
+  disabledBtn.setAttribute('disabled', '');
+  document.body.appendChild(disabledBtn);
+  assert.equal(disabledBtn.disabled.value, true);
+  assert.equal(disabledBtn.getAttribute('aria-disabled'), 'true');
+  const innerDisabled = disabledBtn.shadowRoot.querySelector('button');
+  assert.equal(innerDisabled.hasAttribute('disabled'), true);
+  assert.equal(innerDisabled.getAttribute('aria-disabled'), 'true');
+
+  // Dynamic remove and re-add disabled attribute
+  disabledBtn.removeAttribute('disabled');
+  assert.equal(disabledBtn.disabled.value, false);
+  assert.equal(disabledBtn.hasAttribute('aria-disabled'), false);
+  assert.equal(innerDisabled.hasAttribute('disabled'), false);
+
+  disabledBtn.setAttribute('disabled', '');
+  assert.equal(disabledBtn.disabled.value, true);
+  assert.equal(disabledBtn.getAttribute('aria-disabled'), 'true');
+  assert.equal(innerDisabled.hasAttribute('disabled'), true);
+  document.body.removeChild(disabledBtn);
 
   document.body.removeChild(form);
 });
@@ -125,6 +147,32 @@ test('<el-calendar> navigates months and selects date', () => {
   const dayBtn = cal.shadowRoot.querySelector('.day');
   dayBtn?.click();
   assert.ok(selectedDate.length > 0);
+
+  // Direct month and year jump via methods
+  cal.setMonth(5); // June
+  assert.equal(cal.viewMonth.value, 5);
+  cal.setYear(2030);
+  assert.equal(cal.viewYear.value, 2030);
+
+  // Direct month and year jump via dropdown changes
+  const monthSelect = cal.shadowRoot.querySelector('.month-select');
+  if (monthSelect) {
+    monthSelect.value = '2'; // March
+    monthSelect.dispatchEvent(new Event('change'));
+    assert.equal(cal.viewMonth.value, 2);
+  }
+
+  const yearSelect = cal.shadowRoot.querySelector('.year-select');
+  if (yearSelect) {
+    yearSelect.value = '2028';
+    yearSelect.dispatchEvent(new Event('change'));
+    assert.equal(cal.viewYear.value, 2028);
+  }
+
+  cal.setAttribute('min-year', '2020');
+  cal.setAttribute('max-year', '2035');
+  assert.equal(cal.minYear.value, 2020);
+  assert.equal(cal.maxYear.value, 2035);
 
   document.body.removeChild(cal);
 });
@@ -249,3 +297,211 @@ test('<el-toaster> renders toasts and handles dismissal', () => {
 
   document.body.removeChild(toaster);
 });
+
+test('Components support label attribute as fallback when no slotted children provided', () => {
+  // 1. el-button with label attribute
+  const btn = document.createElement('el-button');
+  btn.setAttribute('label', 'Save Record');
+  document.body.appendChild(btn);
+  assert.equal(btn.label.value, 'Save Record');
+  assert.ok(btn.shadowRoot.textContent.includes('Save Record'));
+
+  btn.setAttribute('label', 'Updated Label');
+  assert.equal(btn.label.value, 'Updated Label');
+  assert.ok(btn.shadowRoot.textContent.includes('Updated Label'));
+
+  // 2. el-toggle with label attribute
+  const toggle = document.createElement('el-toggle');
+  toggle.setAttribute('label', 'Mute Mic');
+  document.body.appendChild(toggle);
+  assert.equal(toggle.label.value, 'Mute Mic');
+  assert.ok(toggle.shadowRoot.textContent.includes('Mute Mic'));
+
+  // 3. el-switch with label attribute
+  const sw = document.createElement('el-switch');
+  sw.setAttribute('label', 'Auto Refresh');
+  document.body.appendChild(sw);
+  assert.equal(sw.label.value, 'Auto Refresh');
+  assert.ok(sw.shadowRoot.textContent.includes('Auto Refresh'));
+
+  // 4. el-chip with label attribute
+  const chip = document.createElement('el-chip');
+  chip.setAttribute('label', 'Node.js');
+  document.body.appendChild(chip);
+  assert.equal(chip.label.value, 'Node.js');
+  assert.ok(chip.shadowRoot.textContent.includes('Node.js'));
+
+  // 5. el-badge with label attribute
+  const badge = document.createElement('el-badge');
+  badge.setAttribute('label', 'Active');
+  document.body.appendChild(badge);
+  assert.equal(badge.label.value, 'Active');
+  assert.ok(badge.shadowRoot.textContent.includes('Active'));
+
+  // 6. el-alert with label attribute
+  const alert = document.createElement('el-alert');
+  alert.setAttribute('label', 'System operational');
+  document.body.appendChild(alert);
+  assert.equal(alert.label.value, 'System operational');
+  assert.ok(alert.shadowRoot.textContent.includes('System operational'));
+
+  // 7. el-checkbox with label attribute
+  const cb = document.createElement('el-checkbox');
+  cb.setAttribute('label', 'I agree to the terms');
+  document.body.appendChild(cb);
+  assert.equal(cb.label.value, 'I agree to the terms');
+  assert.ok(cb.shadowRoot.textContent.includes('I agree to the terms'));
+
+  document.body.removeChild(btn);
+  document.body.removeChild(toggle);
+  document.body.removeChild(sw);
+  document.body.removeChild(chip);
+  document.body.removeChild(badge);
+  document.body.removeChild(alert);
+  document.body.removeChild(cb);
+});
+
+test('<el-select> supports options attribute, placeholders, and dynamic option mutations', async () => {
+  // 1. options attribute via JSON string
+  const selJson = document.createElement('el-select');
+  selJson.setAttribute('options', JSON.stringify([
+    { label: 'US East', value: 'us-east' },
+    { label: 'US West', value: 'us-west' }
+  ]));
+  document.body.appendChild(selJson);
+  assert.equal(selJson.options.value.length, 2);
+  assert.equal(selJson.value.value, 'us-east');
+
+  // Change attribute dynamically
+  selJson.setAttribute('options', JSON.stringify(['Option A', 'Option B', 'Option C']));
+  assert.equal(selJson.options.value.length, 3);
+  assert.equal(selJson.options.value[0].value, 'Option A');
+  document.body.removeChild(selJson);
+
+  // 2. options attribute via comma-separated string
+  const selCsv = document.createElement('el-select');
+  selCsv.setAttribute('options', 'Alpha, Beta, Gamma');
+  document.body.appendChild(selCsv);
+  assert.equal(selCsv.options.value.length, 3);
+  assert.equal(selCsv.options.value[1].label, 'Beta');
+  document.body.removeChild(selCsv);
+
+  // 3. placeholder and required validation
+  const selReq = document.createElement('el-select');
+  selReq.setAttribute('placeholder', 'Choose region...');
+  selReq.setAttribute('required', '');
+  document.body.appendChild(selReq);
+  assert.equal(selReq.validate(), false);
+  assert.equal(selReq.getAttribute('aria-invalid'), 'true');
+
+  selReq.setAttribute('options', 'North, South');
+  selReq.value.value = 'North';
+  assert.equal(selReq.validate(), true);
+  assert.equal(selReq.hasAttribute('aria-invalid'), false);
+  document.body.removeChild(selReq);
+
+  // 4. MutationObserver for dynamic option elements
+  const selDom = document.createElement('el-select');
+  document.body.appendChild(selDom);
+  assert.equal(selDom.options.value.length, 0);
+
+  const opt1 = document.createElement('option');
+  opt1.value = 'v1';
+  opt1.textContent = 'Val 1';
+  selDom.appendChild(opt1);
+
+  // Wait a microtask / tick for MutationObserver
+  await new Promise(r => setTimeout(r, 20));
+  assert.equal(selDom.options.value.length, 1);
+  assert.equal(selDom.options.value[0].value, 'v1');
+  assert.equal(selDom.value.value, 'v1');
+
+  document.body.removeChild(selDom);
+});
+
+test('<el-radio> supports label attribute as fallback', () => {
+  const radio = document.createElement('el-radio');
+  radio.setAttribute('value', 'opt1');
+  radio.setAttribute('label', 'Developer License');
+  document.body.appendChild(radio);
+  assert.equal(radio.label.value, 'Developer License');
+  assert.ok(radio.shadowRoot.textContent.includes('Developer License'));
+  document.body.removeChild(radio);
+});
+
+test('<el-badge> supports all semantic variants and size attributes', () => {
+  const badge = document.createElement('el-badge');
+  badge.setAttribute('variant', 'primary');
+  badge.setAttribute('size', 'lg');
+  badge.setAttribute('count', '42');
+  document.body.appendChild(badge);
+  assert.equal(badge.variant.value, 'primary');
+  assert.equal(badge.size.value, 'lg');
+  assert.ok(badge.shadowRoot.textContent.includes('42'));
+  badge.setAttribute('variant', 'warning');
+  assert.equal(badge.variant.value, 'warning');
+  document.body.removeChild(badge);
+});
+
+test('<el-table> parses slotted native table into reactive columns and data', () => {
+  const table = document.createElement('el-table');
+  table.innerHTML = `
+    <table>
+      <thead>
+        <tr><th data-key="name">User</th><th data-key="role">Permission</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Alice</td><td>Admin</td></tr>
+        <tr><td>Bob</td><td>Viewer</td></tr>
+      </tbody>
+    </table>
+  `;
+  document.body.appendChild(table);
+  assert.equal(table.tableColumns.length, 2);
+  assert.equal(table.tableData.length, 2);
+  assert.equal(table.tableData[0].name, 'Alice');
+  assert.equal(table.tableData[1].role, 'Viewer');
+  document.body.removeChild(table);
+});
+
+test('<el-chart> accepts {x, y} coordinate data objects as well as {label, value}', () => {
+  const chart = document.createElement('el-chart');
+  chart.setAttribute('data', JSON.stringify([
+    { x: '10:00', y: 150 },
+    { x: '11:00', y: 350 }
+  ]));
+  document.body.appendChild(chart);
+  const textElements = Array.from(chart.shadowRoot.querySelectorAll('text.axis-label'));
+  const texts = textElements.map(t => t.textContent.trim());
+  assert.ok(texts.includes('10:00'));
+  assert.ok(texts.includes('11:00'));
+  document.body.removeChild(chart);
+});
+
+test('<el-radio-group> and <el-radio-card-group> safely sync un-upgraded or dynamic children without throwing', () => {
+  const container = document.createElement('div');
+  container.innerHTML = `
+    <el-radio-group value="plan-b">
+      <el-radio value="plan-a">Plan A</el-radio>
+      <el-radio value="plan-b">Plan B</el-radio>
+    </el-radio-group>
+    <el-radio-card-group value="card-b">
+      <el-radio-card value="card-a">Card A</el-radio-card>
+      <el-radio-card value="card-b">Card B</el-radio-card>
+    </el-radio-card-group>
+  `;
+  document.body.appendChild(container);
+
+  const group = container.querySelector('el-radio-group');
+  const cardGroup = container.querySelector('el-radio-card-group');
+
+  // Trigger attribute changes
+  group.setAttribute('value', 'plan-a');
+  assert.equal(group.value.value, 'plan-a');
+
+  cardGroup.setAttribute('value', 'card-a');
+  assert.equal(cardGroup.value.value, 'card-a');
+
+  document.body.removeChild(container);
+});
+

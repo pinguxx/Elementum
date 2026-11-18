@@ -134,6 +134,41 @@ Because Elementum components use Shadow DOM for encapsulation and performance, s
 | `<el-pagination>` | `part="pagination"`, `part="prev-button"`, `part="next-button"`, `part="page-button"`, `part="active-page"` | Full pagination nav and page buttons |
 | `<el-chip>` | `part="chip"`, `part="remove-button"` | Tag/pill container and remove button |
 | `<el-autocomplete>` | `part="wrapper"`, `part="input"`, `part="listbox"`, `part="option"`, `part="clear-button"`, `part="spinner"` | Combobox input, floating listbox, options, clear button, and spinner |
+| `<el-number-flow>` | `part="wrapper"`, `part="digit"`, `part="prefix"`, `part="suffix"`, `part="char"` | Rolling odometer container and digit columns |
+| `<el-otp-input>` | `part="container"`, `part="cell"` | Segmented verification PIN box container and input cells |
+| `<el-command>` | `part="backdrop"`, `part="dialog"`, `part="search-bar"`, `part="input"`, `part="list"`, `part="footer"` | Command palette backdrop, dialog, search input, and item list |
+| `<el-prompt-input>` | `part="container"`, `part="textarea"`, `part="bottom-bar"`, `part="tools"`, `part="actions"`, `part="submit-button"` | Auto-expanding prompt composer and action strip |
+| `<el-reasoning-card>` | `part="container"`, `part="header"`, `part="indicator"`, `part="title"`, `part="chevron"`, `part="body"` | Collapsible thought disclosure card |
+| `<el-border-beam>` | `part="track"` | Luminous perimeter border highlight |
+| `<el-streaming-text>` | `part="text"`, `part="cursor"` | Streaming token text output and blinking cursor |
+
+---
+
+## 5. Penpot (Free & Open-Source) & Figma Design Token Sync
+
+Elementum supports both **Penpot** (using the W3C Design Tokens Community Group DTCG `$value` / `$type` standard) and **Figma Variables** JSON exports.
+
+To regenerate `src/tokens.css` from your Penpot or Figma design export:
+
+```bash
+# Sync from Penpot W3C DTCG tokens (Free & Open Source)
+node tools/sync-tokens.js tokens/penpot-tokens.json
+
+# Or sync from Figma tokens
+node tools/sync-tokens.js tokens/figma-tokens.json
+```
+
+The synchronizer automatically generates physical motion easing curves and multi-layer ambient elevation shadows:
+```css
+/* Physical Spring / Exponential Easing (Emil Kowalski curve) */
+--el-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+--el-transition-fluid: 280ms var(--el-ease-out-expo);
+
+/* Layered Ambient Elevation (Banishes flat 1px borders) */
+--el-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+--el-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 8px 16px -4px rgba(0, 0, 0, 0.04);
+--el-border-translucent: rgba(15, 23, 42, 0.08);
+```
 
 ---
 

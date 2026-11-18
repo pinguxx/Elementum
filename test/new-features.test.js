@@ -134,6 +134,17 @@ test('<el-drawer> opens, closes, fires events, restores focus, and handles Escap
   backdrop.dispatchEvent(new MouseEvent('click', { bubbles: true }));
   assert.equal(drawer.isOpen.value, false);
 
+  // Property setter drawer.open
+  drawer.open = true;
+  assert.equal(drawer.isOpen.value, true);
+  assert.equal(drawer.open, true);
+  drawer.open = false;
+  assert.equal(drawer.isOpen.value, false);
+
+  // Heading attribute
+  drawer.setAttribute('heading', 'Settings Panel');
+  assert.equal(drawer.titleText.value, 'Settings Panel');
+
   document.body.removeChild(drawer);
   document.body.removeChild(btn);
 });
@@ -174,6 +185,37 @@ test('<el-segmented-control> options selection, keyboard arrows, and formReset',
   assert.equal(seg.value.value, 'list');
 
   document.body.removeChild(seg);
+});
+
+test('<el-segmented-control> supports options attribute and dynamic option attributes', () => {
+  // 1. JSON options
+  const segJson = document.createElement('el-segmented-control');
+  segJson.setAttribute('options', JSON.stringify([
+    { label: 'Day', value: 'day' },
+    { label: 'Week', value: 'week' },
+    { label: 'Month', value: 'month' }
+  ]));
+  document.body.appendChild(segJson);
+  assert.equal(segJson.value.value, 'day');
+  const btnsJson = segJson.root.querySelectorAll('button[role="radio"]');
+  assert.equal(btnsJson.length, 3);
+  document.body.removeChild(segJson);
+
+  // 2. Comma-separated options
+  const segCsv = document.createElement('el-segmented-control');
+  segCsv.setAttribute('options', 'Analytics, Reports, Settings');
+  document.body.appendChild(segCsv);
+  assert.equal(segCsv.value.value, 'Analytics');
+  const btnsCsv = segCsv.root.querySelectorAll('button[role="radio"]');
+  assert.equal(btnsCsv.length, 3);
+  assert.equal(btnsCsv[1].textContent.trim(), 'Reports');
+
+  // Change attribute dynamically
+  segCsv.setAttribute('options', 'Red, Green, Blue, Alpha');
+  const btnsCsvUpdated = segCsv.root.querySelectorAll('button[role="radio"]');
+  assert.equal(btnsCsvUpdated.length, 4);
+
+  document.body.removeChild(segCsv);
 });
 
 test('Declarative Shadow DOM (DSD) SSR: renderTemplateToString and renderComponentToDSD', () => {

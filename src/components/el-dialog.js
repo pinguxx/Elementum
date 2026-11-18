@@ -9,7 +9,7 @@ import { html, css } from '../template.js';
 import { signal } from '../signal.js';
 
 export class ElDialog extends Elementum {
-  static observedAttributes = ['open', 'title'];
+  static observedAttributes = ['open', 'title', 'heading'];
 
   isOpen = signal(false);
   titleText = signal('');
@@ -31,6 +31,21 @@ export class ElDialog extends Elementum {
       width: min(90vw, 500px);
       box-sizing: border-box;
       overscroll-behavior: contain;
+      opacity: 0;
+      transform: scale(0.96) translateY(8px);
+      transition: opacity 180ms ease, transform 180ms cubic-bezier(0.16, 1, 0.3, 1), display 180ms allow-discrete, overlay 180ms allow-discrete;
+    }
+
+    dialog[open] {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    @starting-style {
+      dialog[open] {
+        opacity: 0;
+        transform: scale(0.96) translateY(8px);
+      }
     }
 
     dialog::backdrop {
@@ -38,6 +53,18 @@ export class ElDialog extends Elementum {
       backdrop-filter: blur(2px);
       overflow: hidden;
       overscroll-behavior: contain;
+      opacity: 0;
+      transition: opacity 180ms ease, display 180ms allow-discrete, overlay 180ms allow-discrete;
+    }
+
+    dialog[open]::backdrop {
+      opacity: 1;
+    }
+
+    @starting-style {
+      dialog[open]::backdrop {
+        opacity: 0;
+      }
     }
 
     .dialog-container {
@@ -111,7 +138,32 @@ export class ElDialog extends Elementum {
   #previousActiveElement = null;
 
   #getNativeDialog() {
-    return this.root.querySelector('dialog');
+    return this.root?.querySelector('dialog') || null;
+  }
+
+  connected() {
+    this.titleText.value = this.getAttribute('heading') || this.getAttribute('title') || '';
+    this.setAttribute('data-state', this.isOpen.value ? 'open' : 'closed');
+  }
+
+  rendered() {
+    if (this.hasAttribute('open') && this.getAttribute('open') !== 'false') {
+      this.showModal();
+    }
+  }
+
+  attributeChanged(name, oldValue, newValue) {
+    if (name === 'open') {
+      const shouldOpen = newValue !== null && newValue !== 'false';
+      if (shouldOpen) this.showModal();
+      else this.close();
+    } else if (name === 'title' || name === 'heading') {
+      this.titleText.value = newValue || this.getAttribute('heading') || this.getAttribute('title') || '';
+    }
+  }
+
+  show() {
+    this.showModal();
   }
 
   showModal() {
@@ -122,6 +174,8 @@ export class ElDialog extends Elementum {
       }
       dlg.showModal();
       this.isOpen.value = true;
+      this.setAttribute('data-state', 'open');
+      dlg.setAttribute('data-state', 'open');
       this.emit('open');
     }
   }
@@ -131,6 +185,11 @@ export class ElDialog extends Elementum {
     if (dlg && dlg.open) {
       dlg.close(returnValue);
       this.isOpen.value = false;
+      this.setAttribute('data-state', 'closed');
+      dlg.setAttribute('data-state', 'closed');
+      if (this.hasAttribute('open')) {
+        this.removeAttribute('open');
+      }
       this.emit('close', { returnValue });
       this.#restoreFocus();
     }

@@ -35,7 +35,7 @@ export class ElAutocomplete extends Elementum {
   static observedAttributes = [
     'name', 'value', 'placeholder', 'disabled', 'required',
     'multiple', 'url', 'query-param', 'debounce', 'min-chars',
-    'label-key', 'value-key', 'size'
+    'label-key', 'value-key', 'size', 'options', 'data'
   ];
 
   name = signal('');
@@ -289,6 +289,32 @@ export class ElAutocomplete extends Elementum {
     };
 
     document.addEventListener('pointerdown', onDocPointerDown, { signal: this.signal });
+
+    if (this.hasAttribute('options')) {
+      this.#applyOptions(this.getAttribute('options'));
+    } else if (this.hasAttribute('data')) {
+      this.#applyOptions(this.getAttribute('data'));
+    }
+  }
+
+  get options() {
+    return this.data.value;
+  }
+
+  set options(val) {
+    this.#applyOptions(val);
+  }
+
+  #applyOptions(val) {
+    if (Array.isArray(val)) {
+      this.data.value = val;
+    } else if (typeof val === 'string') {
+      try {
+        this.data.value = JSON.parse(val);
+      } catch {
+        this.data.value = [];
+      }
+    }
   }
 
   attributeChanged(name, oldValue, newValue) {
@@ -305,6 +331,8 @@ export class ElAutocomplete extends Elementum {
       this.value.value = newValue;
       this.#syncFormValue();
       this.validate();
+    } else if (name === 'options' || name === 'data') {
+      this.#applyOptions(newValue);
     }
   }
 

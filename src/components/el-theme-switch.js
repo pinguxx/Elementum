@@ -8,7 +8,9 @@ import { html, css } from '../template.js';
 import { signal } from '../signal.js';
 
 export class ElThemeSwitch extends Elementum {
-  theme = signal('light'); // 'light' | 'dark'
+  static observedAttributes = ['theme'];
+
+  theme = signal('light'); // 'light' | 'dark' | 'system'
 
   static styles = css`
     :host {
@@ -24,7 +26,7 @@ export class ElThemeSwitch extends Elementum {
       padding: 6px 12px;
       font-size: 0.8125rem;
       font-weight: 500;
-      color: var(--el-text-base, #111827);
+      color: var(--el-text-primary, #0f172a);
       background: var(--el-surface-muted, #f3f4f6);
       border: 1px solid var(--el-surface-border, #e5e7eb);
       border-radius: var(--el-radius-full, 9999px);
@@ -34,6 +36,8 @@ export class ElThemeSwitch extends Elementum {
     }
 
     button:hover {
+      background: var(--el-step-4, var(--el-surface-border, #e2e8f0));
+      color: var(--el-text-primary, #0f172a);
       border-color: var(--el-color-primary, #2563eb);
     }
 
@@ -47,6 +51,11 @@ export class ElThemeSwitch extends Elementum {
   `;
 
   connected() {
+    if (this.hasAttribute('theme')) {
+      this.#applyThemeValue(this.getAttribute('theme'));
+      return;
+    }
+
     // Detect existing or saved theme
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('elementum-theme');
@@ -57,6 +66,21 @@ export class ElThemeSwitch extends Elementum {
       } else {
         this.setTheme('light');
       }
+    }
+  }
+
+  attributeChanged(name, oldValue, newValue) {
+    if (name === 'theme') {
+      this.#applyThemeValue(newValue);
+    }
+  }
+
+  #applyThemeValue(val) {
+    if (val === 'dark' || val === 'light') {
+      this.setTheme(val);
+    } else if (val === 'system') {
+      const isDark = typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+      this.setTheme(isDark ? 'dark' : 'light');
     }
   }
 

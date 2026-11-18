@@ -98,6 +98,24 @@ test('<el-autocomplete> filters local data, handles keyboard navigation, and sel
   assert.equal(ac.isOpen.value, false);
   assert.equal(ac.suggestions.value.length, 0);
 
+  // Test options attribute with string array and case-insensitive search
+  ac.setAttribute('options', JSON.stringify(['Web Components', 'React', 'Vue', 'Svelte', 'Solid']));
+  assert.equal(ac.options.length, 5);
+
+  // Search 'Rea'
+  await ac.search('Rea');
+  assert.equal(ac.suggestions.value.length, 1);
+  assert.equal(ac.suggestions.value[0], 'React');
+
+  // Search 'rea'
+  await ac.search('rea');
+  assert.equal(ac.suggestions.value.length, 1);
+  assert.equal(ac.suggestions.value[0], 'React');
+
+  // Property assignment
+  ac.options = ['Alpha', 'Beta'];
+  assert.equal(ac.options.length, 2);
+
   ac.remove();
 });
 

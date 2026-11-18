@@ -88,14 +88,32 @@ Elementum runs directly in any modern browser without Webpack, Vite, or Babel.
 | **Pagination** | `<el-pagination>` | Accessible numeric page navigation with ellipsis windowing and `pagechange` events. |
 | **Chip / Pill** | `<el-chip>` | Interactive tag with `selectable` and `removable` dismiss modes (`role="button"`). |
 | **Autocomplete** | `<el-autocomplete>` | Form-associated combobox supporting single or multiselect (`multiple`) with inline chips, remote URL debouncing, and ARIA 1.2 / WCAG 2.2 accessibility. |
+| **Number Flow** | `<el-number-flow>` | Smooth vertical rolling odometer number reels (*NumberFlow* style) with physical easing and reduced-motion fallback. |
+| **OTP Input** | `<el-otp-input>` | Form-associated segmented PIN / verification code input with auto-advance, backspace retreat, and paste splitting. |
+| **Command Palette** | `<el-command>` | Accessible keyboard-first command menu (*cmdk* style) with <kbd>⌘K</kbd> / <kbd>Ctrl+K</kbd> shortcut, fuzzy search, and group headers. |
+| **Prompt Input** | `<el-prompt-input>` | Beautiful UI-style auto-expanding AI prompt composer with action bar slots, model chips, and Enter-to-submit handling. |
+| **Reasoning Card** | `<el-reasoning-card>` | Collapsible AI thought disclosure with active breathing pulse dot, elapsed duration timer, and smooth accordion expansion. |
+| **Border Beam** | `<el-border-beam>` | Hardware-accelerated luminous gradient ray traveling around container perimeters (Magic UI style). |
+| **Streaming Text** | `<el-streaming-text>` | Organic token-by-token streaming typewriter text with customizable cadence, blinking cursor, and completion events. |
 
 ---
 
 ## Interactive Examples & Showcase
 
+- **[examples/ledgerflow.html](examples/ledgerflow.html)**: **LedgerFlow (Penpot → MCP Generated App)**: End-to-end fintech dashboard designed in **[Penpot](https://design.penpot.app/?screen=viewer&file-id=42288968-6e5e-808d-8008-f77162b618ca&page-id=d8ded059-05ee-80c0-8008-f774c97dd053&section=interactions&index=0&share-id=8218fc5e-f68d-4bab-8fd7-283dd92586e8)** and compiled via `npm run penpot:generate` into 15 validated Elementum Web Components (`<el-number-flow>`, `<el-chart>`, `<el-meter>`, `<el-drawer>`, `<el-dialog>`, `<el-toaster>`).
+- **[examples/references.html](file:///c:/dev/Elementum/examples/references.html)**: **Reference Hub (Anti-AI Slop)**: Real-world patterns reconstructed from curated galleries (SaaS Pricing with rolling odometers & border beams, Linear-style command menu, and segmented PIN auth).
+- **[examples/agent-studio.html](file:///c:/dev/Elementum/examples/agent-studio.html)**: **AI Agent Studio & Command Center** demonstrating `<el-command>` (⌘K), `<el-prompt-input>`, `<el-reasoning-card>`, `<el-number-flow>` live token odometer, `<el-otp-input>` security key authorization, and `<el-border-beam>`.
 - **[index.html](file:///c:/dev/Elementum/index.html)**: Interactive landing portal directing to the applications. Run `npx serve .` to launch locally.
 - **[examples/app.html](file:///c:/dev/Elementum/examples/app.html)**: Complete **Skyline Travel** booking dashboard demonstrating native form validation, confirmation modal dialogs, toast notifications, tabs, and theme toggling.
 - **[examples/index.html](file:///c:/dev/Elementum/examples/index.html)**: Component showcase with standalone controls and live signal-reactive counter.
+
+---
+
+## Design Engineering & Agent Guides
+
+- **[docs/penpot-workflow.md](file:///c:/dev/Elementum/docs/penpot-workflow.md)**: Free & open-source design token workflow with Penpot (W3C DTCG JSON) and automated compilation.
+- **[docs/agent-craft-guide.md](file:///c:/dev/Elementum/docs/agent-craft-guide.md)**: Guide and system prompt rules for AI coding agents to banish generic AI look and adhere to high-craft standards.
+- **[docs/theming.md](file:///c:/dev/Elementum/docs/theming.md)**: Complete design tokens, CSS custom properties, and `::part()` customization guide.
 
 ---
 
@@ -147,7 +165,8 @@ Elementum/
 │       ├── el-chip.js       # Interactive filter chips & pills
 │       └── el-autocomplete.js # Form-associated combobox & remote search
 ├── tools/
-│   ├── sync-tokens.js       # CLI to compile figma-tokens.json into tokens.css
+│   ├── sync-tokens.js       # CLI to compile penpot/figma DTCG tokens into tokens.css
+│   ├── sync-penpot-mcp.js   # CLI to generate tokens, colors & 105 components in Penpot via MCP
 │   └── create-component.js  # CLI to scaffold new components (npm run create)
 ├── custom-elements.json     # W3C Custom Elements Manifest (for agents & Storybook)
 ├── AGENT_GUIDE.md           # Instructions for AI coding agents & developers
@@ -186,13 +205,25 @@ const html = renderComponentToDSD('el-button', ElButton, { variant: 'primary' },
 
 ---
 
-## Figma Token Synchronization
+## Penpot & Figma Design System Sync
 
-Synchronize design tokens from `tokens/figma-tokens.json` to `src/tokens.css`:
+### Code → Penpot (MCP Server Sync)
+Generate all **54 W3C DTCG tokens** (Core, Light, Dark sets), **28 library colors**, and **105 Master Components** (across 8 categories) directly inside an open **[Penpot](https://design.penpot.app)** file connected via the Penpot MCP Plugin:
 
 ```bash
-npm run tokens:sync
+npm run penpot:mcp -- --url "https://design.penpot.app/mcp/stream?userToken=<YOUR_TOKEN>"
+# Or via environment variable:
+PENPOT_MCP_URL="https://design.penpot.app/mcp/stream?userToken=<YOUR_TOKEN>" npm run penpot:mcp
 ```
+
+### Penpot / Figma → Code (Token Compiler)
+Synchronize exported W3C DTCG tokens from `tokens/penpot-tokens.json` (or `tokens/figma-tokens.json`) into `src/tokens.css`:
+
+```bash
+npm run tokens:sync tokens/penpot-tokens.json
+```
+
+See **[docs/penpot-workflow.md](docs/penpot-workflow.md)** for full setup instructions, CLI flags (`--url`, `--token`, `--dry-run`), and Penpot MCP security notes.
 
 ---
 

@@ -10,7 +10,7 @@ import { signal } from '../signal.js';
 let nextItemId = 0;
 
 export class ElAccordionItem extends Elementum {
-  static observedAttributes = ['title', 'value', 'open', 'disabled'];
+  static observedAttributes = ['title', 'heading', 'value', 'open', 'disabled'];
 
   itemTitle = signal('');
   value = signal('');
@@ -86,7 +86,7 @@ export class ElAccordionItem extends Elementum {
   `;
 
   connected() {
-    this.itemTitle.value = this.getAttribute('title') || '';
+    this.itemTitle.value = this.getAttribute('title') || this.getAttribute('heading') || '';
     this.value.value = this.getAttribute('value') || this.#id;
     this.isOpen.value = this.hasAttribute('open');
     this.disabled.value = this.hasAttribute('disabled');
@@ -95,7 +95,7 @@ export class ElAccordionItem extends Elementum {
   attributeChanged(name, oldValue, newValue) {
     if (name === 'open') {
       this.isOpen.value = newValue !== null && newValue !== 'false';
-    } else if (name === 'title') {
+    } else if (name === 'title' || name === 'heading') {
       this.itemTitle.value = newValue || '';
     } else if (name === 'disabled') {
       this.disabled.value = newValue !== null && newValue !== 'false';
