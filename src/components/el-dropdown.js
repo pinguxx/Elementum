@@ -6,11 +6,13 @@
 import { Elementum } from '../elementum.js';
 import { html, css } from '../template.js';
 import { signal } from '../signal.js';
+import { createPresenceBehavior } from '../behaviors/index.js';
 
 export class ElDropdown extends Elementum {
   static observedAttributes = ['open'];
 
   isOpen = signal(false);
+  #presence = null;
 
   static styles = css`
     :host {
@@ -89,6 +91,11 @@ export class ElDropdown extends Elementum {
 
     document.addEventListener('pointerdown', onDocPointerDown, { signal: this.signal });
     document.addEventListener('keydown', onDocKeyDown, { signal: this.signal });
+
+    this.#presence = createPresenceBehavior(() => this.root?.querySelector('.panel'), {
+      initialOpen: this.isOpen.value,
+      signal: this.signal,
+    });
   }
 
   rendered() {
@@ -123,6 +130,7 @@ export class ElDropdown extends Elementum {
       this.#updateAnchorMetrics();
       this.isOpen.value = true;
       this.setAttribute('data-state', 'open');
+      this.#presence?.setOpen(true);
       this.emit('open');
     }
   }
@@ -135,6 +143,7 @@ export class ElDropdown extends Elementum {
     if (this.isOpen.value) {
       this.isOpen.value = false;
       this.setAttribute('data-state', 'closed');
+      this.#presence?.setOpen(false);
       this.emit('close');
     }
   }

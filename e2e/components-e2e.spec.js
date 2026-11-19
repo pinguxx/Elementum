@@ -373,4 +373,85 @@ test.describe('Real-Browser Interactive Component Suite (Playwright + axe-core)'
     expect(result.sklCircularWidth).toBe(20);
     expect(result.sklCircularHeight).toBe(20);
   });
+
+  test('createPresenceBehavior & prefersReducedMotion drive real-browser enter/exit CSS transitions', async ({ page }) => {
+    await page.goto('/examples/index.html');
+    await page.waitForLoadState('networkidle');
+
+    const res = await page.evaluate(async () => {
+      const { createPresenceBehavior, prefersReducedMotion } = await import('/src/behaviors/index.js');
+      const style = document.createElement('style');
+      style.textContent = `
+        #presence-box {
+          opacity: 0;
+          transform: translateY(-6px);
+          transition: opacity 80ms ease, transform 80ms ease;
+        }
+        #presence-box[data-state="open"] {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        #presence-box[data-starting-style],
+        #presence-box[data-ending-style] {
+          opacity: 0;
+          transform: translateY(-6px);
+        }
+      `;
+      document.head.appendChild(style);
+
+      const box = document.createElement('div');
+      box.id = 'presence-box';
+      box.textContent = 'Animated overlay';
+      document.body.appendChild(box);
+
+      const reduced = prefersReducedMotion();
+      let enterDone = false;
+      let exitDone = false;
+      const presence = createPresenceBehavior(box, {
+        onEnterComplete: () => { enterDone = true; },
+        onExitComplete: () => { exitDone = true; },
+      });
+
+      presence.setOpen(true);
+      const hadStartingAttr = box.hasAttribute('data-starting-style');
+      const statusWhileEntering = presence.status.value;
+
+      await new Promise((r) => setTimeout(r, 150));
+      const statusAfterEnter = presence.status.value;
+
+      presence.setOpen(false);
+      const hadEndingAttr = box.hasAttribute('data-ending-style');
+      const statusWhileExiting = presence.status.value;
+
+      await new Promise((r) => setTimeout(r, 150));
+      const statusAfterExit = presence.status.value;
+
+      presence.destroy();
+      reduced.dispose();
+      box.remove();
+      style.remove();
+
+      return {
+        reducedValue: reduced.value,
+        hadStartingAttr,
+        statusWhileEntering,
+        statusAfterEnter,
+        enterDone,
+        hadEndingAttr,
+        statusWhileExiting,
+        statusAfterExit,
+        exitDone,
+      };
+    });
+
+    expect(res.reducedValue).toBe(false);
+    expect(res.hadStartingAttr).toBe(true);
+    expect(res.statusWhileEntering).toBe('entering');
+    expect(res.statusAfterEnter).toBe('entered');
+    expect(res.enterDone).toBe(true);
+    expect(res.hadEndingAttr).toBe(true);
+    expect(res.statusWhileExiting).toBe('exiting');
+    expect(res.statusAfterExit).toBe('unmounted');
+    expect(res.exitDone).toBe(true);
+  });
 });

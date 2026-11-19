@@ -8,6 +8,7 @@
 import { Elementum } from '../elementum.js';
 import { html, css } from '../template.js';
 import { signal } from '../signal.js';
+import { createPresenceBehavior } from '../behaviors/index.js';
 
 export class ElPopover extends Elementum {
   static observedAttributes = ['open', 'placement', 'offset', 'arrow'];
@@ -16,6 +17,7 @@ export class ElPopover extends Elementum {
   placement = signal('bottom');
   offset = signal(8);
   hasArrow = signal(false);
+  #presence = null;
 
   static styles = css`
     :host {
@@ -236,6 +238,13 @@ export class ElPopover extends Elementum {
       this.#updateAnchorMetrics();
       this.isOpen.value = true;
       this.setAttribute('data-state', 'open');
+      if (!this.#presence) {
+        this.#presence = createPresenceBehavior(() => this.root?.querySelector('.popup'), {
+          initialOpen: false,
+          signal: this.signal,
+        });
+      }
+      this.#presence.setOpen(true);
       this.emit('open');
     }
   }
@@ -244,6 +253,7 @@ export class ElPopover extends Elementum {
     if (this.isOpen.value) {
       this.isOpen.value = false;
       this.setAttribute('data-state', 'closed');
+      this.#presence?.setOpen(false);
       this.emit('close');
     }
   }

@@ -1,7 +1,7 @@
 import { Elementum } from '../elementum.js';
 import { html, css } from '../template.js';
 import { signal, effect } from '../signal.js';
-import { formatLocaleNumber } from '../behaviors/index.js';
+import { formatLocaleNumber, prefersReducedMotion } from '../behaviors/index.js';
 
 /**
  * <el-number-flow>
@@ -25,9 +25,11 @@ export class ElNumberFlow extends Elementum {
 
   #hasRenderedOnce = false;
   #disposeEffect = null;
+  #reducedMotion = null;
 
   connected() {
     this.#sync();
+    this.#reducedMotion = prefersReducedMotion({ signal: this.signal });
   }
 
   rendered() {
@@ -94,7 +96,7 @@ export class ElNumberFlow extends Elementum {
     const track = this.root?.querySelector('.digits-track');
     if (!track || typeof document === 'undefined') return;
 
-    const shouldAnimateNew = this.#hasRenderedOnce && this.animated.value;
+    const shouldAnimateNew = this.#hasRenderedOnce && this.animated.value && !this.#reducedMotion?.value;
     const newlyAdded = [];
 
     // Reconcile right-aligned so existing place-value digit reels preserve DOM identity
@@ -241,7 +243,7 @@ export class ElNumberFlow extends Elementum {
         part="wrapper"
         role="text"
         aria-label=${fullText}
-        style=${() => `--flow-duration: ${this.animated.value ? this.duration.value : 0}ms;`}
+        style=${() => `--flow-duration: ${this.animated.value && !this.#reducedMotion?.value ? this.duration.value : 0}ms;`}
       >
         ${() => this.prefix.value ? html`<span class="affix prefix" part="prefix">${this.prefix}</span>` : null}
 

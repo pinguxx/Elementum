@@ -111,4 +111,6 @@ export {
   createReorderBehavior,
   splitMatchSegments,
   highlightMatch,
+  prefersReducedMotion,
+  createPresenceBehavior,
 } from './behaviors/index.js';

@@ -811,3 +811,215 @@ export function highlightMatch(text, query) {
     seg.match ? html`<mark class="match-highlight" part="highlight">${seg.text}</mark>` : seg.text
   );
 }
+
+// ==========================================
+// 8. Motion & Presence Lifecycle Behavior
+// ==========================================
+
+function isReducedMotionNow() {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false;
+  try {
+    return Boolean(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Reactive signal tracking the user's `prefers-reduced-motion: reduce` OS preference.
+ * Automatically cleans up its MediaQueryList listener when `options.signal` aborts or `.dispose()` is called.
+ *
+ * @param {{ signal?: AbortSignal }} [options]
+ */
+export function prefersReducedMotion(options = {}) {
+  const reduced = createSignal(isReducedMotionNow());
+  let mql = null;
+  let onChange = null;
+
+  if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+    try {
+      mql = window.matchMedia('(prefers-reduced-motion: reduce)');
+      reduced.value = Boolean(mql.matches);
+      onChange = (e) => {
+        reduced.value = Boolean(e.matches);
+      };
+      if (typeof mql.addEventListener === 'function') {
+        mql.addEventListener('change', onChange);
+      } else if (typeof mql.addListener === 'function') {
+        mql.addListener(onChange);
+      }
+    } catch {
+      // Ignore in mock DOM environments without matchMedia support
+    }
+  }
+
+  const dispose = () => {
+    if (!mql || !onChange) return;
+    try {
+      if (typeof mql.removeEventListener === 'function') {
+        mql.removeEventListener('change', onChange);
+      } else if (typeof mql.removeListener === 'function') {
+        mql.removeListener(onChange);
+      }
+    } catch {
+      // Ignore cleanup errors
+    }
+    mql = null;
+    onChange = null;
+  };
+
+  if (options.signal) {
+    if (options.signal.aborted) dispose();
+    else options.signal.addEventListener('abort', dispose, { once: true });
+  }
+
+  reduced.dispose = dispose;
+  return reduced;
+}
+
+/**
+ * Coordinates CSS enter/exit transitions with DOM presence and standardized state attributes
+ * (`data-state`, `data-starting-style`, `data-ending-style`).
+ * Works identically for styled Shadow DOM components and `unstyled` headless consumers.
+ *
+ * @param {Element | (() => Element | null)} target - Element or getter returning the animated element
+ * @param {object} [options]
+ * @param {boolean} [options.initialOpen=false]
+ * @param {boolean} [options.respectReducedMotion=true]
+ * @param {() => void} [options.onEnterComplete]
+ * @param {() => void} [options.onExitComplete]
+ * @param {AbortSignal} [options.signal]
+ */
+export function createPresenceBehavior(target, options = {}) {
+  const {
+    initialOpen = false,
+    respectReducedMotion = true,
+    onEnterComplete,
+    onExitComplete,
+    signal: abortSignal,
+  } = options;
+
+  const status = createSignal(initialOpen ? 'entered' : 'unmounted');
+  const mounted = createSignal(Boolean(initialOpen));
+
+  let generation = 0;
+  let pendingRaf = null;
+  let destroyed = false;
+
+  const scheduleFrame = (cb) => {
+    if (typeof requestAnimationFrame === 'function') {
+      return requestAnimationFrame(cb);
+    }
+    return setTimeout(cb, 0);
+  };
+
+  const cancelFrame = (id) => {
+    if (id === null) return;
+    if (typeof cancelAnimationFrame === 'function') {
+      cancelAnimationFrame(id);
+    } else {
+      clearTimeout(id);
+    }
+  };
+
+  const resolveEl = () => (typeof target === 'function' ? target() : target);
+
+  const waitForAnimations = (el, gen, onDone) => {
+    if (destroyed || gen !== generation) return;
+    const anims =
+      el && typeof el.getAnimations === 'function'
+        ? el.getAnimations().filter((a) => a.playState === 'running' || a.playState === 'pending')
+        : [];
+    if (anims.length === 0) {
+      onDone();
+      return;
+    }
+    Promise.allSettled(anims.map((a) => a.finished)).then(() => {
+      if (!destroyed && gen === generation) {
+        onDone();
+      }
+    });
+  };
+
+  const setOpen = (nextOpen) => {
+    if (destroyed) return;
+    const gen = ++generation;
+    cancelFrame(pendingRaf);
+    pendingRaf = null;
+
+    const el = resolveEl();
+    const reduced = respectReducedMotion && isReducedMotionNow();
+
+    if (nextOpen) {
+      mounted.value = true;
+      if (!el || reduced) {
+        if (el) {
+          el.removeAttribute('data-starting-style');
+          el.removeAttribute('data-ending-style');
+          el.setAttribute('data-state', 'open');
+        }
+        status.value = 'entered';
+        onEnterComplete?.();
+        return;
+      }
+
+      status.value = 'entering';
+      el.removeAttribute('data-ending-style');
+      el.setAttribute('data-starting-style', '');
+      el.setAttribute('data-state', 'open');
+
+      pendingRaf = scheduleFrame(() => {
+        pendingRaf = null;
+        if (destroyed || gen !== generation) return;
+        // Flush before-change style so CSS transitions from [data-starting-style]
+        void el.offsetWidth;
+        el.removeAttribute('data-starting-style');
+        waitForAnimations(el, gen, () => {
+          status.value = 'entered';
+          onEnterComplete?.();
+        });
+      });
+    } else {
+      if (!el || reduced) {
+        if (el) {
+          el.removeAttribute('data-starting-style');
+          el.removeAttribute('data-ending-style');
+          el.setAttribute('data-state', 'closed');
+        }
+        status.value = 'unmounted';
+        mounted.value = false;
+        onExitComplete?.();
+        return;
+      }
+
+      status.value = 'exiting';
+      el.removeAttribute('data-starting-style');
+      el.setAttribute('data-ending-style', '');
+      el.setAttribute('data-state', 'closed');
+
+      pendingRaf = scheduleFrame(() => {
+        pendingRaf = null;
+        waitForAnimations(el, gen, () => {
+          el.removeAttribute('data-ending-style');
+          status.value = 'unmounted';
+          mounted.value = false;
+          onExitComplete?.();
+        });
+      });
+    }
+  };
+
+  const destroy = () => {
+    destroyed = true;
+    generation++;
+    cancelFrame(pendingRaf);
+    pendingRaf = null;
+  };
+
+  if (abortSignal) {
+    if (abortSignal.aborted) destroy();
+    else abortSignal.addEventListener('abort', destroy, { once: true });
+  }
+
+  return { status, mounted, setOpen, destroy };
+}

@@ -867,6 +867,23 @@ export function createReorderBehavior(
 ): () => void;
 export function splitMatchSegments(text: string, query: string): Array<{ text: string; match: boolean }>;
 export function highlightMatch(text: string, query: string): string | Array<string | TemplateResult>;
+export function prefersReducedMotion(options?: { signal?: AbortSignal }): Signal<boolean> & { dispose(): void };
+export type PresenceStatus = 'unmounted' | 'entering' | 'entered' | 'exiting';
+export function createPresenceBehavior(
+  target: Element | (() => Element | null),
+  options?: {
+    initialOpen?: boolean;
+    respectReducedMotion?: boolean;
+    onEnterComplete?: () => void;
+    onExitComplete?: () => void;
+    signal?: AbortSignal;
+  }
+): {
+  status: Signal<PresenceStatus>;
+  mounted: Signal<boolean>;
+  setOpen: (open: boolean) => void;
+  destroy: () => void;
+};
 
 // ==========================================
 // DOM & JSX Global Typings

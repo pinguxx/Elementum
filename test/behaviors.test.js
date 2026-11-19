@@ -15,6 +15,8 @@ import {
   createReorderBehavior,
   splitMatchSegments,
   highlightMatch,
+  prefersReducedMotion,
+  createPresenceBehavior,
 } from '../src/behaviors/index.js';
 import '../src/components/el-command.js';
 import '../src/components/el-button.js';
@@ -531,4 +533,105 @@ test('Behaviors 14: splitMatchSegments & highlightMatch power <el-command> searc
   assert.equal(item.root.querySelector('mark.match-highlight'), null);
 
   cmd.remove();
+});
+
+test('Behaviors 15: prefersReducedMotion tracks media query changes and cleans up on abort', () => {
+  const listeners = new Set();
+  const origMatchMedia = window.matchMedia;
+  window.matchMedia = () => ({
+    matches: false,
+    addEventListener: (_type, cb) => listeners.add(cb),
+    removeEventListener: (_type, cb) => listeners.delete(cb),
+  });
+
+  try {
+    const ac = new AbortController();
+    const reduced = prefersReducedMotion({ signal: ac.signal });
+    assert.equal(reduced.value, false);
+    assert.equal(listeners.size, 1);
+
+    // Simulate OS toggling Reduce Motion ON
+    for (const cb of listeners) cb({ matches: true });
+    assert.equal(reduced.value, true);
+
+    // Aborting cleans up listener
+    ac.abort();
+    assert.equal(listeners.size, 0);
+  } finally {
+    window.matchMedia = origMatchMedia;
+  }
+});
+
+test('Behaviors 16: createPresenceBehavior manages enter/exit lifecycle, getAnimations() wait, and rapid toggle cancellation', async () => {
+  const el = document.createElement('div');
+  document.body.appendChild(el);
+
+  let resolveExit;
+  let mockAnimations = [];
+  el.getAnimations = () => mockAnimations;
+
+  let enters = 0;
+  let exits = 0;
+  const ac = new AbortController();
+  const presence = createPresenceBehavior(el, {
+    onEnterComplete: () => { enters++; },
+    onExitComplete: () => { exits++; },
+    signal: ac.signal,
+  });
+
+  assert.equal(presence.status.value, 'unmounted');
+  assert.equal(presence.mounted.value, false);
+
+  // Open -> entering -> data-starting-style set -> next frame removes it & enters
+  presence.setOpen(true);
+  assert.equal(presence.status.value, 'entering');
+  assert.equal(presence.mounted.value, true);
+  assert.equal(el.getAttribute('data-state'), 'open');
+  assert.equal(el.hasAttribute('data-starting-style'), true);
+
+  await new Promise((r) => setTimeout(r, 25));
+  assert.equal(el.hasAttribute('data-starting-style'), false);
+  assert.equal(presence.status.value, 'entered');
+  assert.equal(enters, 1);
+
+  // Close with active CSS exit animation -> stays mounted until animation finishes
+  mockAnimations = [{
+    playState: 'running',
+    finished: new Promise((r) => { resolveExit = r; }),
+  }];
+  presence.setOpen(false);
+  assert.equal(presence.status.value, 'exiting');
+  assert.equal(presence.mounted.value, true);
+  assert.equal(el.hasAttribute('data-ending-style'), true);
+  assert.equal(el.getAttribute('data-state'), 'closed');
+
+  await new Promise((r) => setTimeout(r, 25));
+  assert.equal(presence.status.value, 'exiting', 'Should remain exiting while animation runs');
+  assert.equal(exits, 0);
+
+  // Finish exit animation -> unmounts & clears data-ending-style
+  resolveExit();
+  await new Promise((r) => setTimeout(r, 10));
+  assert.equal(presence.status.value, 'unmounted');
+  assert.equal(presence.mounted.value, false);
+  assert.equal(el.hasAttribute('data-ending-style'), false);
+  assert.equal(exits, 1);
+
+  // Rapid close->reopen cancels stale exit
+  mockAnimations = [{
+    playState: 'running',
+    finished: new Promise((r) => { resolveExit = r; }),
+  }];
+  presence.setOpen(true);
+  await new Promise((r) => setTimeout(r, 25));
+  presence.setOpen(false);
+  presence.setOpen(true); // cancel exit immediately
+  resolveExit();
+  mockAnimations = [];
+  await new Promise((r) => setTimeout(r, 25));
+  assert.equal(presence.status.value, 'entered');
+  assert.equal(exits, 1, 'Cancelled exit must not invoke onExitComplete');
+
+  ac.abort();
+  el.remove();
 });
