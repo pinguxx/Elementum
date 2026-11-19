@@ -117,5 +117,6 @@ export {
   createShortcuts,
   createDisclosureBehavior,
   createPopupPositioner,
+  createHistory,
 } from './behaviors/index.js';
-export { snapshot, act } from './agent/index.js';
+export { snapshot, act, registerWebMCP } from './agent/index.js';

@@ -228,17 +228,26 @@ function findElement(root, command) {
 /**
  * Executes a semantic agent action (`click`, `type`, `toggle`, `open`, `close`, `focus`, `press`)
  * against an element identified by `ref` (from `snapshot()`), `selector`, or `role`/`name`.
+ * Supports an optional `options.guard(context)` safety hook to gate destructive actions.
  *
  * @param {Element | Document | ShadowRoot} root
  * @param {{ ref?: string, selector?: string, role?: string, name?: string, action: string, value?: any, key?: string }} command
+ * @param {{ guard?: (ctx: { element: Element, action: string, command: object }) => boolean }} [options]
  */
-export function act(root, command) {
+export function act(root, command, options = {}) {
   const el = findElement(root, command);
   if (!el) {
     return { ok: false, error: 'Target element not found', command };
   }
 
   const action = String(command.action || 'click').toLowerCase();
+
+  if (typeof options.guard === 'function') {
+    const allowed = options.guard({ element: el, action, command });
+    if (!allowed) {
+      return { ok: false, blocked: true, error: 'Blocked by action guard', action, tag: el.tagName.toLowerCase() };
+    }
+  }
 
   if (action === 'click') {
     const innerBtn = el.shadowRoot?.querySelector?.('button, a, [role="button"]');
@@ -304,4 +313,59 @@ export function act(root, command) {
   }
 
   return { ok: false, error: `Unsupported action: ${action}`, command };
+}
+
+/**
+ * Registers `elementum_snapshot` and `elementum_act` with the browser's W3C WebMCP
+ * `navigator.modelContext` API when available, returning a cleanup function.
+ *
+ * @param {Element | Document | ShadowRoot} [root]
+ * @param {{ prefix?: string, guard?: (ctx: { element: Element, action: string, command: object }) => boolean, modelContext?: any }} [options]
+ */
+export function registerWebMCP(root = typeof document !== 'undefined' ? document.body : null, options = {}) {
+  const mc = options.modelContext || (typeof navigator !== 'undefined' ? navigator.modelContext : null);
+  if (!mc || typeof mc.registerTool !== 'function') {
+    return { registered: false, unregister: () => {} };
+  }
+
+  const prefix = options.prefix || 'elementum';
+  const snapshotName = `${prefix}_snapshot`;
+  const actName = `${prefix}_act`;
+
+  mc.registerTool({
+    name: snapshotName,
+    description: 'Inspect interactive Elementum Web Components across open Shadow DOM.',
+    inputSchema: { type: 'object', properties: { maxNodes: { type: 'number' } } },
+    execute: (args = {}) => snapshot(root, args),
+  });
+
+  mc.registerTool({
+    name: actName,
+    description: 'Execute a semantic UI action (click, type, toggle, open, close, focus, press) on an Elementum component.',
+    inputSchema: {
+      type: 'object',
+      required: ['action'],
+      properties: {
+        ref: { type: 'string' },
+        role: { type: 'string' },
+        name: { type: 'string' },
+        selector: { type: 'string' },
+        action: { type: 'string' },
+        value: {},
+        key: { type: 'string' },
+      },
+    },
+    execute: (args = {}) => act(root, args, { guard: options.guard }),
+  });
+
+  return {
+    registered: true,
+    tools: [snapshotName, actName],
+    unregister: () => {
+      if (typeof mc.unregisterTool === 'function') {
+        mc.unregisterTool(snapshotName);
+        mc.unregisterTool(actName);
+      }
+    },
+  };
 }

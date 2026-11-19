@@ -21,6 +21,7 @@ import {
   createShortcuts,
   createDisclosureBehavior,
   createPopupPositioner,
+  createHistory,
 } from '../src/behaviors/index.js';
 import '../src/components/el-command.js';
 import '../src/components/el-button.js';
@@ -761,4 +762,31 @@ test('Behaviors 20: createPopupPositioner computes coordinates and flips on view
   ac.abort();
   anchor.remove();
   floating.remove();
+});
+
+test('Behaviors 21: createHistory manages undo/redo stacks, max limit, and reset', () => {
+  const h = createHistory('v0', { limit: 2 });
+  assert.equal(h.state.value, 'v0');
+  assert.equal(h.canUndo.value, false);
+  assert.equal(h.canRedo.value, false);
+
+  h.push('v1');
+  h.push('v2');
+  h.push('v3'); // exceeds limit 2 -> v0 evicted
+  assert.equal(h.state.value, 'v3');
+  assert.deepEqual(h.past.value, ['v1', 'v2']);
+  assert.equal(h.canUndo.value, true);
+
+  assert.equal(h.undo(), true);
+  assert.equal(h.state.value, 'v2');
+  assert.equal(h.canRedo.value, true);
+
+  assert.equal(h.redo(), true);
+  assert.equal(h.state.value, 'v3');
+  assert.equal(h.redo(), false);
+
+  h.reset('fresh');
+  assert.equal(h.state.value, 'fresh');
+  assert.equal(h.canUndo.value, false);
+  assert.equal(h.canRedo.value, false);
 });

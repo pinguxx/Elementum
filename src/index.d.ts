@@ -933,6 +933,20 @@ export function createPopupPositioner(
   update: () => { side: string; top: number; left: number; availableHeight?: number };
   destroy: () => void;
 };
+export function createHistory<T>(
+  initialState: T,
+  options?: { limit?: number }
+): {
+  state: Signal<T>;
+  past: Signal<T[]>;
+  future: Signal<T[]>;
+  canUndo: Signal<boolean>;
+  canRedo: Signal<boolean>;
+  push: (nextState: T) => void;
+  undo: () => boolean;
+  redo: () => boolean;
+  reset: (nextInitial?: T) => void;
+};
 
 // Agent Runtime Bridge (@wcomp/elementum/agent)
 export interface AgentSnapshotNode {
@@ -958,8 +972,19 @@ export function act(
     action: 'click' | 'toggle' | 'type' | 'fill' | 'open' | 'close' | 'focus' | 'press' | string;
     value?: unknown;
     key?: string;
+  },
+  options?: {
+    guard?: (ctx: { element: Element; action: string; command: Record<string, unknown> }) => boolean;
   }
-): { ok: boolean; action?: string; tag?: string; value?: unknown; state?: Record<string, boolean | string>; error?: string };
+): { ok: boolean; blocked?: boolean; action?: string; tag?: string; value?: unknown; state?: Record<string, boolean | string>; error?: string };
+export function registerWebMCP(
+  root?: Element | Document | ShadowRoot | null,
+  options?: {
+    prefix?: string;
+    guard?: (ctx: { element: Element; action: string; command: Record<string, unknown> }) => boolean;
+    modelContext?: unknown;
+  }
+): { registered: boolean; tools?: string[]; unregister: () => void };
 
 // WAI-ARIA, RTL & SSR Contract Checkers (@wcomp/elementum/testing)
 export type AriaPattern = 'button' | 'checkbox' | 'switch' | 'dialog' | 'tabs' | 'accordion' | 'combobox' | 'slider' | 'progressbar';

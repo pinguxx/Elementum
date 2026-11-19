@@ -24,6 +24,7 @@ Use any `<el-*>` component with the `unstyled` attribute to strip default Shadow
 | `splitMatchSegments` / `highlightMatch` | XSS-safe case-insensitive search highlighting with `<mark part="highlight">` |
 | `announce` / `clearAnnouncer` | Polite & assertive ARIA live-region announcements |
 | `setHostState` | Dual state reflection to `data-<state>` attributes and `ElementInternals.states` (`:state(...)`) |
+| `createHistory` | Signal-backed undo/redo state history (`push`, `undo`, `redo`, `canUndo`, `canRedo`, `limit`) |
 | `isRTL` / `formatLocaleNumber` / `formatLocaleDate` | Provider-free RTL detection and native `Intl` formatting |
 
 ```js
@@ -41,7 +42,8 @@ const stopShortcuts = createShortcuts(window, {
 Standard browser automation struggles with Shadow DOM encapsulation. `@wcomp/elementum/agent` provides a zero-dependency WebMCP runtime bridge:
 
 - **`snapshot(root)`** — Pierces open Shadow DOM and emits a compact, deterministic list of interactive controls (`ref` handles `@e1`, `@e2`, `tag`, `role`, `name`, `value`, `state`, and supported `actions`).
-- **`act(root, command)`** — Executes semantic actions (`click`, `type`, `toggle`, `open`, `close`, `focus`, `press`) by `ref`, CSS `selector`, or `role` + `name`.
+- **`act(root, command, { guard })`** — Executes semantic actions (`click`, `type`, `toggle`, `open`, `close`, `focus`, `press`) by `ref`, CSS `selector`, or `role` + `name`, with an optional `guard` hook to gate destructive actions.
+- **`registerWebMCP(root, { guard })`** — Registers `elementum_snapshot` and `elementum_act` with the browser's `navigator.modelContext` API when available.
 
 ```js
 import { snapshot, act } from '@wcomp/elementum/agent';

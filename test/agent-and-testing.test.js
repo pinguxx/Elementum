@@ -3,8 +3,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import '../test-helpers/setup.js';
 
-import { snapshot, act } from '../src/agent/index.js';
+import { snapshot, act, registerWebMCP } from '../src/agent/index.js';
 import { checkAriaPattern, checkDirection, checkServerRender } from '../src/testing/index.js';
+import '../src/components/el-toggle.js';
 
 import { ElButton } from '../src/components/el-button.js';
 import { ElInput } from '../src/components/el-input.js';
@@ -70,7 +71,87 @@ test('Agent Runtime: snapshot() extracts structured refs/roles/states and act() 
   assert.equal(act(stage, { ref: '@e999', action: 'click' }).ok, false);
   assert.equal(act(stage, { ref: btnNode.ref, action: 'unknown-op' }).ok, false);
 
+  // Action guard blocks destructive clicks cleanly
+  clicked = false;
+  const blocked = act(stage, { ref: btnNode.ref, action: 'click' }, { guard: () => false });
+  assert.equal(blocked.ok, false);
+  assert.equal(blocked.blocked, true);
+  assert.equal(clicked, false);
+
+  // registerWebMCP registers & unregisters tools on navigator.modelContext
+  const tools = new Map();
+  const mockMC = {
+    registerTool: (t) => tools.set(t.name, t),
+    unregisterTool: (n) => tools.delete(n),
+  };
+  const reg = registerWebMCP(stage, { modelContext: mockMC });
+  assert.equal(reg.registered, true);
+  assert.equal(tools.has('elementum_snapshot'), true);
+  assert.equal(tools.has('elementum_act'), true);
+  assert.ok(tools.get('elementum_snapshot').execute().count >= 4);
+  reg.unregister();
+  assert.equal(tools.size, 0);
+
   stage.remove();
+});
+
+test('<el-toggle-group> syncs value, single/multiple modes, single-click unselect, and disabled', () => {
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `
+    <el-toggle-group type="single" value="bold">
+      <el-toggle value="bold">B</el-toggle>
+      <el-toggle value="italic">I</el-toggle>
+      <el-toggle value="underline">U</el-toggle>
+    </el-toggle-group>
+  `;
+  document.body.appendChild(wrap);
+  const group = wrap.querySelector('el-toggle-group');
+  const [bold, italic, underline] = group.querySelectorAll('el-toggle');
+
+  // Initial value="bold" presses bold immediately
+  assert.equal(bold.isPressed.value, true);
+  assert.equal(bold.getAttribute('data-state'), 'on');
+  assert.equal(italic.isPressed.value, false);
+
+  // Clicking italic in single mode unpresses bold (including data-state="off") in ONE click
+  italic.toggle();
+  assert.equal(italic.isPressed.value, true);
+  assert.equal(bold.isPressed.value, false);
+  assert.equal(bold.getAttribute('data-state'), 'off');
+  assert.equal(group.value.value, 'italic');
+
+  // Clicking italic again unselects it on the FIRST click
+  italic.toggle();
+  assert.equal(italic.isPressed.value, false);
+  assert.equal(italic.getAttribute('data-state'), 'off');
+  assert.equal(group.value.value, '');
+
+  // Switching to type="multiple" allows multiple active toggles
+  group.setAttribute('type', 'multiple');
+  bold.toggle();
+  underline.toggle();
+  assert.equal(bold.isPressed.value, true);
+  assert.equal(underline.isPressed.value, true);
+  assert.equal(group.value.value, 'bold,underline');
+
+  // Setting value attribute updates children directly
+  group.setAttribute('value', 'italic,underline');
+  assert.equal(bold.isPressed.value, false);
+  assert.equal(italic.isPressed.value, true);
+  assert.equal(underline.isPressed.value, true);
+
+  // Switching back to type="single" keeps at most one pressed
+  group.setAttribute('type', 'single');
+  assert.equal(italic.isPressed.value, true);
+  assert.equal(underline.isPressed.value, false);
+
+  // Disabled propagates to children
+  group.setAttribute('disabled', '');
+  assert.equal(bold.disabled.value, true);
+  group.removeAttribute('disabled');
+  assert.equal(bold.disabled.value, false);
+
+  wrap.remove();
 });
 
 test('Testing Contracts: checkAriaPattern validates 9 WAI-ARIA APG patterns across Elementum components', () => {

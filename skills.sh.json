@@ -20,6 +20,11 @@
       "name": "elementum-mobile",
       "path": "skills/elementum-mobile",
       "description": "Design mobile-first responsive layouts and touch-friendly drawers/sheets with Elementum."
+    },
+    {
+      "name": "elementum-unslop",
+      "path": "skills/elementum-unslop",
+      "description": "Remove redundant comments, filler JSDoc, and section banners from diffs without changing behavior."
     }
   ]
 }

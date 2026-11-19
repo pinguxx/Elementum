@@ -222,10 +222,20 @@ export class ElToggle extends Elementum {
 
   toggle() {
     if (this.disabled.value) return;
-    this.isPressed.value = !this.isPressed.value;
-    this.setAttribute('data-state', this.isPressed.value ? 'on' : 'off');
+    this.setPressed(!this.isPressed.value);
     this.emit('toggle', { pressed: this.isPressed.value, value: this.value.value });
     this.emit('change', { pressed: this.isPressed.value, value: this.value.value });
+  }
+
+  setPressed(pressed) {
+    const next = Boolean(pressed);
+    this.isPressed.value = next;
+    this.setAttribute('data-state', next ? 'on' : 'off');
+    if (next) {
+      if (!this.hasAttribute('pressed')) this.setAttribute('pressed', '');
+    } else if (this.hasAttribute('pressed')) {
+      this.removeAttribute('pressed');
+    }
   }
 
   render() {
@@ -234,7 +244,7 @@ export class ElToggle extends Elementum {
         type="button"
         class=${() => (this.isPressed.value ? 'pressed' : '')}
         aria-pressed=${() => (this.isPressed.value ? 'true' : 'false')}
-        disabled=${() => this.disabled.value}
+        ?disabled=${this.disabled}
         @click=${() => this.toggle()}
         part="button"
       >
@@ -250,6 +260,8 @@ export class ElToggleGroup extends Elementum {
   type = signal('single'); // 'single' | 'multiple'
   value = signal('');
   disabled = signal(false);
+
+  #syncing = false;
 
   static styles = css`
     :host {
@@ -268,40 +280,112 @@ export class ElToggleGroup extends Elementum {
     }
   `;
 
+  #getToggles() {
+    return Array.from(this.querySelectorAll('el-toggle'));
+  }
+
+  #syncChildrenFromValue() {
+    const raw = String(this.value.value || '').trim();
+    const selected = raw
+      ? this.type.value === 'multiple'
+        ? new Set(raw.split(',').map((s) => s.trim()).filter(Boolean))
+        : new Set([raw.split(',')[0].trim()])
+      : new Set();
+
+    for (const t of this.#getToggles()) {
+      const val = t.getAttribute('value') || t.value?.value || '';
+      const shouldPress = val !== '' && selected.has(val);
+      if (typeof t.setPressed === 'function') {
+        t.setPressed(shouldPress);
+      } else {
+        if (shouldPress) t.setAttribute('pressed', '');
+        else t.removeAttribute('pressed');
+        t.setAttribute('data-state', shouldPress ? 'on' : 'off');
+      }
+    }
+  }
+
+  #syncDisabled() {
+    const isDis = this.disabled.value;
+    for (const t of this.#getToggles()) {
+      if (isDis) t.setAttribute('disabled', '');
+      else t.removeAttribute('disabled');
+    }
+  }
+
   connected() {
-    if (this.hasAttribute('type')) this.type.value = this.getAttribute('type');
-    if (this.hasAttribute('value')) this.value.value = this.getAttribute('value');
-    this.disabled.value = this.hasAttribute('disabled');
+    this.type.value = this.getAttribute('type') === 'multiple' ? 'multiple' : 'single';
+    this.value.value = this.getAttribute('value') || '';
+    this.disabled.value = this.hasAttribute('disabled') && this.getAttribute('disabled') !== 'false';
     this.setAttribute('role', 'group');
 
-    this.addEventListener('toggle', (e) => {
-      const toggleEl = e.target;
-      if (toggleEl.tagName.toLowerCase() !== 'el-toggle') return;
+    this.#syncChildrenFromValue();
+    if (this.disabled.value) this.#syncDisabled();
 
-      const itemVal = toggleEl.getAttribute('value') || '';
-      if (this.type.value === 'single') {
-        const toggles = this.querySelectorAll('el-toggle');
-        toggles.forEach((t) => {
-          if (t !== toggleEl) {
-            t.removeAttribute('pressed');
-            t.isPressed.value = false;
+    this.addEventListener(
+      'toggle',
+      (e) => {
+        const toggleEl = e.target;
+        if (!toggleEl || toggleEl.tagName?.toLowerCase() !== 'el-toggle') return;
+        if (this.disabled.value) return;
+
+        const itemVal = toggleEl.getAttribute('value') || toggleEl.value?.value || '';
+        this.#syncing = true;
+        try {
+          if (this.type.value === 'single') {
+            for (const t of this.#getToggles()) {
+              if (t !== toggleEl) {
+                if (typeof t.setPressed === 'function') t.setPressed(false);
+                else {
+                  t.removeAttribute('pressed');
+                  t.setAttribute('data-state', 'off');
+                }
+              }
+            }
+            const nextVal = toggleEl.isPressed.value ? itemVal : '';
+            this.value.value = nextVal;
+            if (nextVal) this.setAttribute('value', nextVal);
+            else this.removeAttribute('value');
+            this.emit('change', { value: nextVal });
+          } else {
+            const activeVals = [];
+            for (const t of this.#getToggles()) {
+              if (t.isPressed?.value) {
+                const v = t.getAttribute('value') || t.value?.value || '';
+                if (v) activeVals.push(v);
+              }
+            }
+            const joined = activeVals.join(',');
+            this.value.value = joined;
+            if (joined) this.setAttribute('value', joined);
+            else this.removeAttribute('value');
+            this.emit('change', { value: activeVals });
           }
-        });
-        this.value.value = toggleEl.isPressed.value ? itemVal : '';
-        this.emit('change', { value: this.value.value });
-      } else {
-        const activeVals = [];
-        this.querySelectorAll('el-toggle').forEach((t) => {
-          if (t.isPressed.value) activeVals.push(t.getAttribute('value') || '');
-        });
-        this.value.value = activeVals.join(',');
-        this.emit('change', { value: activeVals });
-      }
-    });
+        } finally {
+          this.#syncing = false;
+        }
+      },
+      { signal: this.signal }
+    );
+  }
+
+  attributeChanged(name, oldValue, newValue) {
+    if (name === 'type') {
+      this.type.value = newValue === 'multiple' ? 'multiple' : 'single';
+      if (!this.#syncing) this.#syncChildrenFromValue();
+    } else if (name === 'value') {
+      if (this.#syncing) return true;
+      this.value.value = newValue || '';
+      this.#syncChildrenFromValue();
+    } else if (name === 'disabled') {
+      this.disabled.value = newValue !== null && newValue !== 'false';
+      this.#syncDisabled();
+    }
+    return true;
   }
 
   render() {
-    return html`<slot></slot>`;
+    return html`<slot @slotchange=${() => { this.#syncChildrenFromValue(); if (this.disabled.value) this.#syncDisabled(); }}></slot>`;
   }
 }
 

@@ -1302,3 +1302,64 @@ export function createPopupPositioner(anchor, floating, options = {}) {
 
   return { update, destroy: () => controller.abort() };
 }
+
+/**
+ * Signal-backed undo/redo state history manager for editors, form builders, and AI HITL workflows.
+ *
+ * @template T
+ * @param {T} initialState
+ * @param {{ limit?: number }} [options]
+ */
+export function createHistory(initialState, options = {}) {
+  const limit = Math.max(1, Number(options.limit) || 50);
+  const state = createSignal(initialState);
+  const past = createSignal([]);
+  const future = createSignal([]);
+  const canUndo = createSignal(false);
+  const canRedo = createSignal(false);
+
+  const syncFlags = () => {
+    canUndo.value = past.value.length > 0;
+    canRedo.value = future.value.length > 0;
+  };
+
+  const push = (nextState) => {
+    if (Object.is(nextState, state.value)) return;
+    const nextPast = [...past.value, state.value];
+    if (nextPast.length > limit) nextPast.shift();
+    past.value = nextPast;
+    state.value = nextState;
+    future.value = [];
+    syncFlags();
+  };
+
+  const undo = () => {
+    if (past.value.length === 0) return false;
+    const nextPast = [...past.value];
+    const previous = nextPast.pop();
+    future.value = [state.value, ...future.value];
+    past.value = nextPast;
+    state.value = previous;
+    syncFlags();
+    return true;
+  };
+
+  const redo = () => {
+    if (future.value.length === 0) return false;
+    const [next, ...rest] = future.value;
+    past.value = [...past.value, state.value];
+    future.value = rest;
+    state.value = next;
+    syncFlags();
+    return true;
+  };
+
+  const reset = (nextInitial = initialState) => {
+    state.value = nextInitial;
+    past.value = [];
+    future.value = [];
+    syncFlags();
+  };
+
+  return { state, past, future, canUndo, canRedo, push, undo, redo, reset };
+}
