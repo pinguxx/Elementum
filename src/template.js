@@ -35,7 +35,46 @@ export function css(strings, ...values) {
 // Marker token for template part tracking
 const MARKER = '<!--elementum-part-->';
 const ATTR_PREFIX = 'data-el-part-';
-const SVG_TAG_REGEX = /^\s*(?:<!--[\s\S]*?-->\s*)*<(?:path|line|circle|rect|g|defs|text|polygon|polyline|clipPath|linearGradient|radialGradient|mask|pattern|stop|tspan|use|symbol)\b/i;
+const SVG_START_TAG_REGEX = /^<(?:path|line|circle|rect|g|defs|text|polygon|polyline|clipPath|linearGradient|radialGradient|mask|pattern|stop|tspan|use|symbol)\b/i;
+
+/**
+ * Linear-time O(n) check for SVG child markup after optional leading whitespace/comments (ReDoS-safe).
+ */
+function isSvgStartTag(htmlString) {
+  let pos = 0;
+  const len = htmlString.length;
+  while (pos < len) {
+    while (pos < len && /\s/.test(htmlString[pos])) pos++;
+    if (htmlString.startsWith('<!--', pos)) {
+      const end = htmlString.indexOf('-->', pos + 4);
+      if (end === -1) return false;
+      pos = end + 3;
+      continue;
+    }
+    break;
+  }
+  return SVG_START_TAG_REGEX.test(htmlString.slice(pos, pos + 24));
+}
+
+/**
+ * Linear-time O(k) trailing attribute name matcher before `=` (ReDoS-safe).
+ */
+function matchTrailingAttribute(str) {
+  let i = str.length;
+  let quote = '';
+  if (i > 0 && (str[i - 1] === '"' || str[i - 1] === "'")) {
+    quote = str[i - 1];
+    i--;
+  }
+  while (i > 0 && /\s/.test(str[i - 1])) i--;
+  if (i === 0 || str[i - 1] !== '=') return null;
+  i--;
+  while (i > 0 && /\s/.test(str[i - 1])) i--;
+  const nameEnd = i;
+  while (i > 0 && /[@.?a-zA-Z0-9_-]/.test(str[i - 1])) i--;
+  if (i === nameEnd) return null;
+  return { index: i, rawName: str.slice(i, nameEnd), quote };
+}
 
 export class TemplateResult {
   constructor(strings, values, isSvg = false) {
@@ -79,10 +118,10 @@ function getCachedTemplate(strings, isSvg = false) {
 
     if (isInsideTag) {
       // Find attribute name preceding '='
-      const match = str.match(/([@.?a-zA-Z0-9_\-]+)\s*=\s*(["']?)$/);
+      const match = matchTrailingAttribute(str);
       if (match) {
-        const rawName = match[1];
-        stripLeadingQuote = match[2] || null;
+        const rawName = match.rawName;
+        stripLeadingQuote = match.quote || null;
 
         let type = 'attr';
         let name = rawName;
@@ -124,7 +163,7 @@ function getCachedTemplate(strings, isSvg = false) {
   }
   htmlString += lastStr;
 
-  const isSvgTemplate = Boolean(isSvg) || SVG_TAG_REGEX.test(htmlString);
+  const isSvgTemplate = Boolean(isSvg) || isSvgStartTag(htmlString);
   const tpl = document.createElement('template');
   if (isSvgTemplate && !htmlString.trim().toLowerCase().startsWith('<svg')) {
     tpl.innerHTML = `<svg>${htmlString}</svg>`;

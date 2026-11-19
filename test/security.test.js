@@ -28,20 +28,23 @@ test('Security 2: SSR renderTemplateToString & renderComponentToDSD escape untru
   assert.ok(!dsd.includes('<script>alert(1)</script>'), 'DSD attribute must not inject raw script');
 });
 
-test('Security 3: <el-sources> neutralizes javascript: and data: URLs', () => {
+test('Security 3: <el-sources> neutralizes javascript:, data:, and vbscript: URLs', () => {
   const el = document.createElement('el-sources');
   el.setAttribute('expanded', '');
   el.sources.value = [
     { id: '1', title: 'Bad JS', url: 'javascript:alert(1)' },
     { id: '2', title: 'Bad Data', url: 'data:text/html,<script>alert(1)</script>' },
-    { id: '3', title: 'Good HTTPS', url: 'https://example.com/docs' },
+    { id: '3', title: 'Bad VBScript', url: 'vbscript:msgbox(1)' },
+    { id: '4', title: 'Good HTTPS', url: 'https://example.com/docs' },
   ];
   document.body.appendChild(el);
   const links = [...el.shadowRoot.querySelectorAll('a')];
   for (const a of links) {
-    const href = (a.getAttribute('href') || '').toLowerCase();
+    const href = (a.getAttribute('href') || '').trim().toLowerCase();
     assert.ok(!href.startsWith('javascript:'), `unsafe javascript: href leaked: ${href}`);
     assert.ok(!href.startsWith('data:'), `unsafe data: href leaked: ${href}`);
+    assert.ok(!href.startsWith('vbscript:'), `unsafe vbscript: href leaked: ${href}`);
+    assert.ok(href === '' || href === '#' || href.startsWith('https://') || href.startsWith('http://'), `unexpected href scheme: ${href}`);
   }
   el.remove();
 });

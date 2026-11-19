@@ -65,13 +65,19 @@ export function applyJsonPatch(target, patch = []) {
     let parent = root;
     for (let i = 0; i < tokens.length - 1; i++) {
       const seg = tokens[i];
+      if (seg === '__proto__' || seg === 'constructor' || seg === 'prototype') {
+        parent = null;
+        break;
+      }
       if (parent[seg] === undefined || parent[seg] === null || typeof parent[seg] !== 'object') {
         parent[seg] = Number.isInteger(Number(tokens[i + 1])) ? [] : {};
       }
       parent = parent[seg];
     }
+    if (!parent || typeof parent !== 'object') continue;
 
     const last = tokens[tokens.length - 1];
+    if (last === '__proto__' || last === 'constructor' || last === 'prototype') continue;
     const op = operation.op;
 
     if (op === 'remove') {
@@ -80,7 +86,7 @@ export function applyJsonPatch(target, patch = []) {
         if (Number.isInteger(idx) && idx >= 0 && idx < parent.length) {
           parent.splice(idx, 1);
         }
-      } else if (parent && typeof parent === 'object') {
+      } else if (Object.prototype.hasOwnProperty.call(parent, last)) {
         delete parent[last];
       }
       continue;
@@ -101,8 +107,13 @@ export function applyJsonPatch(target, patch = []) {
             }
           }
         }
-      } else if (parent && typeof parent === 'object') {
-        parent[last] = nextVal;
+      } else {
+        Object.defineProperty(parent, last, {
+          value: nextVal,
+          writable: true,
+          enumerable: true,
+          configurable: true,
+        });
       }
     }
   }

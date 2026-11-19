@@ -1061,8 +1061,10 @@
 
     // 4. Render Component Detail View
     function renderComponentDetail(tag) {
+      if (!Object.prototype.hasOwnProperty.call(components, tag)) return;
       const comp = components[tag];
       if (!comp) return;
+      const safeTag = escapeHtml(comp.tag);
 
       // Initialize currentProps with defaults
       currentProps = {};
@@ -1077,14 +1079,14 @@
         <div class="component-header">
           <el-breadcrumb style="margin-bottom: 12px;">
             <el-breadcrumb-item href="#el-button">Components</el-breadcrumb-item>
-            <el-breadcrumb-item href="#${tag}">${catObj.title}</el-breadcrumb-item>
-            <el-breadcrumb-item current>&lt;${tag}&gt;</el-breadcrumb-item>
+            <el-breadcrumb-item href="#${safeTag}">${escapeHtml(catObj.title)}</el-breadcrumb-item>
+            <el-breadcrumb-item current>&lt;${safeTag}&gt;</el-breadcrumb-item>
           </el-breadcrumb>
 
           <div class="title-row">
-            <h1 class="component-title">&lt;${tag}&gt;</h1>
+            <h1 class="component-title">&lt;${safeTag}&gt;</h1>
             <div class="tag-badge-pill" id="copy-tag-pill" title="Click to copy custom element tag">
-              <span>&lt;${tag}&gt;&lt;/${tag}&gt;</span>
+              <span>&lt;${safeTag}&gt;&lt;/${safeTag}&gt;</span>
               <span>📋</span>
             </div>
           </div>
@@ -1350,7 +1352,8 @@
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
     // 7. Build Rich Component Markup with Slotted Content & Attributes

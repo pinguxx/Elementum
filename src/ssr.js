@@ -42,6 +42,39 @@ function resolveValue(val) {
 }
 
 /**
+ * Linear-time O(k) trailing attribute binding matcher (zero regex backtracking / ReDoS-safe).
+ * Matches `<prefix><name>=<optional whitespace>` at the end of `str`, where prefix is `@`, `?`, `.`, or `on`.
+ */
+function matchTrailingBinding(str) {
+  let end = str.length;
+  while (end > 0 && (str[end - 1] === ' ' || str[end - 1] === '\t' || str[end - 1] === '\n' || str[end - 1] === '\r')) {
+    end--;
+  }
+  if (end === 0 || str[end - 1] !== '=') return null;
+  const eqIdx = end - 1;
+  let start = eqIdx;
+  while (start > 0 && /[@.?a-zA-Z0-9_-]/.test(str[start - 1])) {
+    start--;
+  }
+  if (start === eqIdx) return null;
+  const rawName = str.slice(start, eqIdx);
+  const fullLen = str.length - start;
+  if (rawName.startsWith('@') && rawName.length > 1) {
+    return { kind: 'event', name: rawName.slice(1), length: fullLen };
+  }
+  if (rawName.length > 2 && rawName.slice(0, 2).toLowerCase() === 'on' && /^[a-z]+$/i.test(rawName.slice(2))) {
+    return { kind: 'event', name: rawName.slice(2), length: fullLen };
+  }
+  if (rawName.startsWith('?') && rawName.length > 1) {
+    return { kind: 'bool', name: rawName.slice(1), length: fullLen };
+  }
+  if (rawName.startsWith('.') && rawName.length > 1) {
+    return { kind: 'prop', name: rawName.slice(1), length: fullLen };
+  }
+  return null;
+}
+
+/**
  * Renders an Elementum TemplateResult to an HTML string
  */
 export function renderTemplateToString(templateResult) {
@@ -56,22 +89,22 @@ export function renderTemplateToString(templateResult) {
     html += strings[i];
     if (i < values.length) {
       const val = values[i];
+      const binding = matchTrailingBinding(strings[i]);
       // 1. Skip @event= and on<event>= listeners in SSR (never invoke event handlers!)
-      if (typeof val === 'function' && /(?:@[\w.-]+|on[a-z]+)=\s*$/i.test(strings[i])) {
-        html = html.replace(/(?:@[\w.-]+|on[a-z]+)=\s*$/i, '');
+      if (binding && binding.kind === 'event' && typeof val === 'function') {
+        html = html.slice(0, html.length - binding.length);
         continue;
       }
       // 2. Boolean ?attr= bindings: emit bare attribute if truthy, omit if falsy
-      const boolMatch = strings[i].match(/\?([\w.-]+)=\s*$/);
-      if (boolMatch) {
+      if (binding && binding.kind === 'bool') {
         const evaluated = resolveValue(val);
         const truthy = evaluated !== '' && evaluated !== 'false' && evaluated !== 'null' && evaluated !== 'undefined' && evaluated !== '0';
-        html = html.replace(/\?[\w.-]+=\s*$/, truthy ? boolMatch[1] : '');
+        html = html.slice(0, html.length - binding.length) + (truthy ? binding.name : '');
         continue;
       }
       // 3. Property .prop= bindings: strip from HTML markup (hydrated on client)
-      if (/\.[\w.-]+=\s*$/.test(strings[i])) {
-        html = html.replace(/\.[\w.-]+=\s*$/, '');
+      if (binding && binding.kind === 'prop') {
+        html = html.slice(0, html.length - binding.length);
         continue;
       }
       html += resolveValue(val);
