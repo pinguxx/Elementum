@@ -5,6 +5,7 @@
  */
 
 import { signal as createSignal } from '../signal.js';
+import { html } from '../template.js';
 
 let lastInteractionModality = 'pointer';
 let modalityListenersAttached = false;
@@ -771,4 +772,42 @@ export function createReorderBehavior(
     controller.abort();
     clearStates(getItems() || []);
   };
+}
+
+// ==========================================
+// 7. Search Match Highlighting Behavior
+// ==========================================
+
+/**
+ * Splits `text` into matched and unmatched segments for case-insensitive search highlighting.
+ * Escapes all RegExp metacharacters safely.
+ * @returns {Array<{ text: string, match: boolean }>}
+ */
+export function splitMatchSegments(text, query) {
+  const str = String(text ?? '');
+  const q = String(query ?? '').trim();
+  if (!q || !str) return str ? [{ text: str, match: false }] : [];
+
+  const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`(${escaped})`, 'gi');
+  const parts = str.split(regex);
+  if (parts.length === 1) return [{ text: str, match: false }];
+
+  const lowerQ = q.toLowerCase();
+  return parts
+    .filter((part) => part.length > 0)
+    .map((part) => ({ text: part, match: part.toLowerCase() === lowerQ }));
+}
+
+/**
+ * Renders `text` with XSS-safe `<mark class="match-highlight" part="highlight">` tags
+ * around substrings matching `query`. Uses Elementum `html` template parts (never innerHTML).
+ */
+export function highlightMatch(text, query) {
+  const segments = splitMatchSegments(text, query);
+  if (segments.length === 0) return '';
+  if (segments.length === 1 && !segments[0].match) return segments[0].text;
+  return segments.map((seg) =>
+    seg.match ? html`<mark class="match-highlight" part="highlight">${seg.text}</mark>` : seg.text
+  );
 }

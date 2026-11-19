@@ -1,6 +1,7 @@
 import { Elementum } from '../elementum.js';
 import { html, css } from '../template.js';
 import { signal, effect } from '../signal.js';
+import { highlightMatch } from '../behaviors/index.js';
 import './el-chip.js';
 import './el-spinner.js';
 
@@ -667,26 +668,6 @@ export class ElAutocomplete extends Elementum {
     this.clear();
   }
 
-  #renderHighlightedLabel(label) {
-    const text = String(label ?? '');
-    const query = (this.displayLabel.value || '').trim();
-    if (!query) return text;
-
-    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(`(${escaped})`, 'gi');
-    const parts = text.split(regex);
-    if (parts.length === 1) return text;
-
-    const lowerQuery = query.toLowerCase();
-    return parts
-      .filter((part) => part.length > 0)
-      .map((part) =>
-        part.toLowerCase() === lowerQuery
-          ? html`<mark class="match-highlight" part="highlight">${part}</mark>`
-          : part
-      );
-  }
-
   render() {
     const listId = this.#listboxId;
 
@@ -789,7 +770,7 @@ export class ElAutocomplete extends Elementum {
                 >
                   <span class="option-label">
                     ${isSelected ? html`<span class="check-icon" aria-hidden="true">✓ </span>` : null}
-                    ${this.#renderHighlightedLabel(label)}
+                    ${highlightMatch(label, this.displayLabel.value)}
                   </span>
                   ${meta ? html`<span class="option-meta">${meta}</span>` : null}
                 </li>

@@ -1,6 +1,7 @@
 import { Elementum } from '../elementum.js';
 import { html, css } from '../template.js';
 import { signal, effect } from '../signal.js';
+import { highlightMatch } from '../behaviors/index.js';
 
 /**
  * <el-command-item>
@@ -13,6 +14,7 @@ export class ElCommandItem extends Elementum {
   shortcut = signal('');
   disabled = signal(false);
   active = signal(false);
+  highlightQuery = signal('');
 
   connected() {
     this.setAttribute('role', 'option');
@@ -88,6 +90,14 @@ export class ElCommandItem extends Elementum {
       border-radius: 4px;
     }
 
+    .match-highlight {
+      background: color-mix(in srgb, var(--el-color-primary, #2563eb) 18%, transparent);
+      color: var(--el-color-primary, #1d4ed8);
+      font-weight: 700;
+      border-radius: 3px;
+      padding: 0 2px;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation: none !important;
@@ -99,7 +109,13 @@ export class ElCommandItem extends Elementum {
   render() {
     return html`
       <div class="item-content" part="content">
-        <slot></slot>
+        ${() => {
+          const q = (this.highlightQuery.value || '').trim();
+          const useHighlight = Boolean(q) && this.children.length === 0;
+          return useHighlight
+            ? html`<span class="item-highlighted">${highlightMatch(this.textContent.trim(), q)}</span><slot style="display:none;"></slot>`
+            : html`<slot></slot>`;
+        }}
       </div>
       ${() => this.shortcut.value ? html`<span class="shortcut" part="shortcut">${this.shortcut.value}</span>` : null}
     `;
@@ -387,6 +403,9 @@ export class ElCommand extends Elementum {
       const val = (item.getAttribute('value') || '').toLowerCase();
       const match = text.includes(q) || val.includes(q);
       item.style.display = match ? 'flex' : 'none';
+      if (item.highlightQuery) {
+        item.highlightQuery.value = match ? query.trim() : '';
+      }
       if (match) visibleCount++;
     });
 

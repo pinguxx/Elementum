@@ -865,6 +865,8 @@ export function createReorderBehavior(
     signal?: AbortSignal;
   }
 ): () => void;
+export function splitMatchSegments(text: string, query: string): Array<{ text: string; match: boolean }>;
+export function highlightMatch(text: string, query: string): string | Array<string | TemplateResult>;
 
 // ==========================================
 // DOM & JSX Global Typings

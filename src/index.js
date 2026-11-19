@@ -109,4 +109,6 @@ export {
   createDismissableLayer,
   createSelectionBehavior,
   createReorderBehavior,
+  splitMatchSegments,
+  highlightMatch,
 } from './behaviors/index.js';

@@ -13,7 +13,10 @@ import {
   createDismissableLayer,
   createSelectionBehavior,
   createReorderBehavior,
+  splitMatchSegments,
+  highlightMatch,
 } from '../src/behaviors/index.js';
+import '../src/components/el-command.js';
 import '../src/components/el-button.js';
 import '../src/components/el-code-block.js';
 import '../src/components/el-pagination.js';
@@ -493,4 +496,39 @@ test('Behaviors 13: createReorderBehavior keyboard and pointer produce identical
   ptr.dispose();
   kb.ul.remove();
   ptr.ul.remove();
+});
+
+test('Behaviors 14: splitMatchSegments & highlightMatch power <el-command> search highlighting', () => {
+  assert.deepEqual(splitMatchSegments('Open Settings', 'set'), [
+    { text: 'Open ', match: false },
+    { text: 'Set', match: true },
+    { text: 'tings', match: false },
+  ]);
+  assert.equal(highlightMatch('Plain text', ''), 'Plain text');
+
+  const cmd = document.createElement('el-command');
+  cmd.setAttribute('inline', '');
+  cmd.innerHTML = `
+    <el-command-group heading="Actions">
+      <el-command-item value="settings">Open Settings</el-command-item>
+      <el-command-item value="theme">Toggle Theme</el-command-item>
+    </el-command-group>
+  `;
+  document.body.appendChild(cmd);
+
+  const input = cmd.root.querySelector('.search-input');
+  input.value = 'set';
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+
+  const item = cmd.querySelector('el-command-item[value="settings"]');
+  const mark = item.root.querySelector('mark.match-highlight[part="highlight"]');
+  assert.ok(mark, '<el-command-item> should highlight matched text with <mark part="highlight">');
+  assert.equal(mark.textContent, 'Set');
+
+  // Clearing query removes highlight and restores default slot
+  input.value = '';
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+  assert.equal(item.root.querySelector('mark.match-highlight'), null);
+
+  cmd.remove();
 });
