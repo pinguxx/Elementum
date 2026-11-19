@@ -19,7 +19,21 @@ export class ElInset extends Elementum {
       margin: -16px;
       margin-bottom: 16px;
       overflow: hidden;
+      border-radius: inherit;
       box-sizing: border-box;
+    }
+
+    :host([clip="padding-box"]) {
+      margin: -8px;
+      margin-bottom: 12px;
+      border-radius: calc(var(--el-radius-md, 8px) - 2px);
+      overflow: hidden;
+    }
+
+    :host([clip="none"]),
+    :host([clip="false"]) {
+      overflow: visible;
+      border-radius: 0;
     }
 
     :host([side="top"]) {

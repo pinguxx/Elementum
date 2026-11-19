@@ -4511,9 +4511,14 @@ export const components = {
       },
       {
         "name": "clip",
-        "type": "boolean",
-        "default": true,
-        "description": "Clips overflowing media to parent border radius."
+        "type": "select",
+        "options": [
+          "border-box",
+          "padding-box",
+          "none"
+        ],
+        "default": "border-box",
+        "description": "Clips inset content to border-box (full bleed), padding-box (inner frame), or none (overflow visible)."
       }
     ],
     "slots": [

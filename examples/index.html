@@ -2639,12 +2639,12 @@ ${optionsHtml}
       // 62. el-inset
       if (tag === 'el-inset') {
         const side = p.side || 'all';
-        const clip = p.clip ? ' clip' : '';
-        return `<div style="max-width: 380px; width: 100%; border: 1px solid var(--el-surface-border); border-radius: 8px; overflow: hidden; background: var(--el-surface-card);">
-  <el-inset side="${side}"${clip} style="background: var(--el-surface-muted); padding: 20px; text-align: center; font-weight: 600;">
-    Inset Section (${side})
+        const clip = p.clip || 'border-box';
+        return `<div style="max-width: 380px; width: 100%; padding: 16px; border: 1px solid var(--el-surface-border); border-radius: 10px; background: var(--el-surface-card);">
+  <el-inset side="${side}" clip="${escapeHtml(clip)}" style="background: var(--el-surface-muted); padding: 20px; text-align: center; font-weight: 600;">
+    Inset Section (${side} · ${escapeHtml(clip)})
   </el-inset>
-  <div style="padding: 16px; font-size: 0.875rem; color: var(--el-text-muted);">Card body content beneath inset boundary.</div>
+  <div style="font-size: 0.875rem; color: var(--el-text-muted);">Card body content beneath inset boundary.</div>
 </div>`;
       }
 
