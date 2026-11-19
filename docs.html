@@ -715,8 +715,8 @@ const html = renderComponentToDSD('el-button', ElButton, { variant: 'primary' },
         <el-code-block copyable language="json">{
   "mcpServers": {
     "elementum": {
-      "command": "node",
-      "args": ["c:/dev/Elementum/mcp/server.js"]
+      "command": "npx",
+      "args": ["-y", "@wcomp/elementum"]
     }
   }
 }</el-code-block>
@@ -725,7 +725,7 @@ const html = renderComponentToDSD('el-button', ElButton, { variant: 'primary' },
         <div class="pill-grid">
           <el-card>
             <el-card-header><el-card-title style="font-size: 0.95rem;">list_components</el-card-title></el-card-header>
-            <el-card-content><p class="pill-desc">Returns all 84 available Web Components with descriptions and categories.</p></el-card-content>
+            <el-card-content><p class="pill-desc">Returns all 109 available Web Components with descriptions and categories.</p></el-card-content>
           </el-card>
           <el-card>
             <el-card-header><el-card-title style="font-size: 0.95rem;">get_component_doc</el-card-title></el-card-header>

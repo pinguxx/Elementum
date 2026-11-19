@@ -21,8 +21,8 @@ This guide provides concrete rules, design tokens, and components to ensure agen
 
 ### Rule 1: Always Anchor to a Reference (Never Invent From Scratch)
 Before writing HTML, identify the reference pattern:
-- **AI Studio / Prompts**: Reference [`examples/agent-studio.html`](file:///c:/dev/Elementum/examples/agent-studio.html) and *Beautiful UI*.
-- **SaaS Pricing & Dashboards**: Reference [`examples/references.html`](file:///c:/dev/Elementum/examples/references.html) and *21st.dev*.
+- **AI Studio / Prompts**: Reference [`examples/agent-studio.html`](../examples/agent-studio.html) and *Beautiful UI*.
+- **SaaS Pricing & Dashboards**: Reference [`examples/references.html`](../examples/references.html) and *21st.dev*.
 - **Command & Search**: Reference `<el-command>` and Paco Coursey's *cmdk*.
 - **PIN & Verification**: Reference `<el-otp-input>` and Emil Kowalski's *input-otp*.
 

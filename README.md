@@ -119,11 +119,11 @@ Elementum runs directly in any modern browser without Webpack, Vite, or Babel.
 ## Interactive Examples & Showcase
 
 - **[examples/ledgerflow.html](examples/ledgerflow.html)**: **LedgerFlow (Penpot → MCP Generated App)**: End-to-end fintech dashboard designed in **[Penpot](https://design.penpot.app/?screen=viewer&file-id=42288968-6e5e-808d-8008-f77162b618ca&page-id=d8ded059-05ee-80c0-8008-f774c97dd053&section=interactions&index=0&share-id=8218fc5e-f68d-4bab-8fd7-283dd92586e8)** and compiled via `npm run penpot:generate` into 15 validated Elementum Web Components (`<el-number-flow>`, `<el-chart>`, `<el-meter>`, `<el-drawer>`, `<el-dialog>`, `<el-toaster>`).
-- **[examples/references.html](file:///c:/dev/Elementum/examples/references.html)**: **Reference Hub (Anti-AI Slop)**: Real-world patterns reconstructed from curated galleries (SaaS Pricing with rolling odometers & border beams, Linear-style command menu, and segmented PIN auth).
-- **[examples/agent-studio.html](file:///c:/dev/Elementum/examples/agent-studio.html)**: **AI Agent Studio & Command Center** demonstrating `<el-command>` (⌘K), `<el-prompt-input>`, `<el-reasoning-card>`, `<el-number-flow>` live token odometer, `<el-otp-input>` security key authorization, and `<el-border-beam>`.
-- **[index.html](file:///c:/dev/Elementum/index.html)**: Interactive landing portal directing to the applications. Run `npx serve .` to launch locally.
-- **[examples/app.html](file:///c:/dev/Elementum/examples/app.html)**: Complete **Skyline Travel** booking dashboard demonstrating native form validation, confirmation modal dialogs, toast notifications, tabs, and theme toggling.
-- **[examples/index.html](file:///c:/dev/Elementum/examples/index.html)**: Component showcase with standalone controls and live signal-reactive counter.
+- **[examples/references.html](./examples/references.html)**: **Reference Hub (Anti-AI Slop)**: Real-world patterns reconstructed from curated galleries (SaaS Pricing with rolling odometers & border beams, Linear-style command menu, and segmented PIN auth).
+- **[examples/agent-studio.html](./examples/agent-studio.html)**: **AI Agent Studio & Command Center** demonstrating `<el-command>` (⌘K), `<el-prompt-input>`, `<el-reasoning-card>`, `<el-number-flow>` live token odometer, `<el-otp-input>` security key authorization, and `<el-border-beam>`.
+- **[index.html](./index.html)**: Interactive landing portal directing to the applications. Run `npm run serve` to launch locally.
+- **[examples/app.html](./examples/app.html)**: Complete **Pulse Cloud** showcase dashboard demonstrating native form validation, confirmation modal dialogs, toast notifications, tabs, and theme toggling.
+- **[examples/index.html](./examples/index.html)**: Interactive component catalog with live prop editors and signal-reactive previews.
 
 ---
 
@@ -137,21 +137,21 @@ npx skills@latest add pinguxx/Elementum
 ```
 
 Included skills under [`skills/`](skills/):
-- **`elementum-ui`**: Composing Elementum's 105 Web Components, signals, FACE forms, and AG-UI streams.
+- **`elementum-ui`**: Composing Elementum's 109 Web Components, signals, FACE forms, and AG-UI streams.
 - **`elementum-motion`**: Shadow DOM motion physics, sub-300ms `ease-out`, origin-aware overlays, and reduced-motion standards.
 - **`elementum-break-ui`**: Adversarial stress-testing checklist (320px mobile, dark mode hover contrast, keyboard-only, extreme content).
 - **`elementum-mobile`**: Mobile-native CSS standards (`touch-action`, `100dvh`, safe areas, `overscroll-behavior`, iOS 16px input zoom prevention).
 - **`elementum-penpot`**: Two-way Penpot MCP design system sync and Penpot-to-Elementum app codegen.
 
-- **[docs/penpot-workflow.md](file:///c:/dev/Elementum/docs/penpot-workflow.md)**: Free & open-source design token workflow with Penpot (W3C DTCG JSON) and automated compilation.
-- **[docs/agent-craft-guide.md](file:///c:/dev/Elementum/docs/agent-craft-guide.md)**: Guide and system prompt rules for AI coding agents to banish generic AI look and adhere to high-craft standards.
-- **[docs/theming.md](file:///c:/dev/Elementum/docs/theming.md)**: Complete design tokens, CSS custom properties, and `::part()` customization guide.
+- **[docs/penpot-workflow.md](./docs/penpot-workflow.md)**: Free & open-source design token workflow with Penpot (W3C DTCG JSON) and automated compilation.
+- **[docs/agent-craft-guide.md](./docs/agent-craft-guide.md)**: Guide and system prompt rules for AI coding agents to banish generic AI look and adhere to high-craft standards.
+- **[docs/theming.md](./docs/theming.md)**: Complete design tokens, CSS custom properties, and `::part()` customization guide.
 
 ---
 
 ## Framework Integration
 
-`@wcomp/elementum` works natively in vanilla HTML, React 19, Vue 3, Svelte 5, and Next.js. See **[docs/framework-integration.md](file:///c:/dev/Elementum/docs/framework-integration.md)** for complete setup instructions and TypeScript configuration.
+`@wcomp/elementum` works natively in vanilla HTML, React 19, Vue 3, Svelte 5, and Next.js. See **[docs/framework-integration.md](./docs/framework-integration.md)** for complete setup instructions and TypeScript configuration.
 
 ---
 
