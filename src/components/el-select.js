@@ -114,8 +114,13 @@ export class ElSelect extends Elementum {
 
   attributeChanged(name, oldValue, newValue) {
     if (name === 'value') {
-      this.setFormValue(newValue);
+      this.value.value = newValue ?? '';
+      this.setFormValue(this.value.value);
       this.validate();
+    } else if (name === 'disabled') {
+      this.disabled.value = newValue !== null && newValue !== 'false';
+    } else if (name === 'placeholder') {
+      this.placeholder.value = newValue ?? '';
     } else if (name === 'required') {
       this.required.value = newValue !== null && newValue !== 'false';
       this.validate();

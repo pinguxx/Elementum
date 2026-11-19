@@ -263,6 +263,8 @@ export class ElNumberField extends Elementum {
     } else if (name === 'required') {
       this.required.value = newValue !== null && newValue !== 'false';
       this.#validate();
+    } else if (name === 'name') {
+      this.name.value = newValue || '';
     }
   }
 
@@ -416,10 +418,12 @@ export class ElNumberField extends Elementum {
   };
 
   render() {
-    const isDis = this.disabled.value;
-    const isMin = this.min.value !== null && this.value.value <= this.min.value;
-    const isMax = this.max.value !== null && this.value.value >= this.max.value;
-    const scrubbable = this.scrub.value && !isDis && !this.readonly.value;
+    const isDecDisabled = () =>
+      Boolean(this.disabled.value) || (this.min.value !== null && this.value.value <= this.min.value);
+    const isIncDisabled = () =>
+      Boolean(this.disabled.value) || (this.max.value !== null && this.value.value >= this.max.value);
+    const isScrubbable = () =>
+      Boolean(this.scrub.value) && !this.disabled.value && !this.readonly.value;
 
     return html`
       <div
@@ -435,7 +439,7 @@ export class ElNumberField extends Elementum {
           part="decrement"
           aria-label="Decrease value"
           tabindex="-1"
-          ?disabled=${isDis || isMin}
+          ?disabled=${isDecDisabled}
           @click=${() => this.stepDown(1)}
         >
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -448,6 +452,7 @@ export class ElNumberField extends Elementum {
           ${() => {
             const p = this.prefix.value;
             if (!p) return null;
+            const scrubbable = isScrubbable();
             return html`
               <span
                 class=${`affix prefix ${scrubbable ? 'scrubbable' : ''}`}
@@ -469,9 +474,9 @@ export class ElNumberField extends Elementum {
             aria-valuemin=${() => (this.min.value !== null ? this.min.value : null)}
             aria-valuemax=${() => (this.max.value !== null ? this.max.value : null)}
             .value=${() => this.#formatValue(this.value.value)}
-            ?disabled=${isDis}
-            ?readonly=${this.readonly.value}
-            ?required=${this.required.value}
+            ?disabled=${this.disabled}
+            ?readonly=${this.readonly}
+            ?required=${this.required}
             @change=${this.#onInputChange}
             @keydown=${this.#onKeyDown}
           />
@@ -492,7 +497,7 @@ export class ElNumberField extends Elementum {
           part="increment"
           aria-label="Increase value"
           tabindex="-1"
-          ?disabled=${isDis || isMax}
+          ?disabled=${isIncDisabled}
           @click=${() => this.stepUp(1)}
         >
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">

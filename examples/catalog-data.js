@@ -794,9 +794,13 @@ export const components = {
       },
       {
         "name": "type",
-        "type": "text",
-        "default": "",
-        "description": "Configures type attribute."
+        "type": "select",
+        "options": [
+          "text",
+          "password"
+        ],
+        "default": "text",
+        "description": "Display mode: visible digits ('text') or masked PIN bullets ('password')."
       }
     ],
     "slots": [],

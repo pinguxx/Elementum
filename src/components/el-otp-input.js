@@ -222,9 +222,6 @@ export class ElOtpInput extends Elementum {
   }
 
   render() {
-    const len = this.length.value;
-    const isMasked = this.type.value === 'password';
-
     return html`
       <div
         class="otp-container"
@@ -234,6 +231,8 @@ export class ElOtpInput extends Elementum {
         @paste=${this.#onPaste}
       >
         ${() => {
+          const len = this.length.value;
+          const isMasked = this.type.value === 'password';
           const arr = [];
           for (let i = 0; i < len; i++) {
             const digitVal = this.digits.value[i] || '';

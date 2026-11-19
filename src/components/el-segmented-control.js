@@ -265,7 +265,7 @@ export class ElSegmentedControl extends Elementum {
                   `segment-btn size-${this.size.value} ${isChecked ? 'active' : ''}`}
                 aria-checked=${String(isChecked)}
                 tabindex=${isChecked ? '0' : '-1'}
-                disabled=${opt.disabled || this.disabled.value}
+                ?disabled=${Boolean(opt.disabled || this.disabled.value)}
                 @click=${() => this.selectOption(opt.value)}
               >
                 ${opt.label}

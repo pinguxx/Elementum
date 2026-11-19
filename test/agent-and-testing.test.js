@@ -17,6 +17,11 @@ import { ElAccordion } from '../src/components/el-accordion.js';
 import { ElAutocomplete } from '../src/components/el-autocomplete.js';
 import { ElSlider } from '../src/components/el-slider.js';
 import { ElProgress } from '../src/components/el-progress.js';
+import '../src/components/el-otp-input.js';
+import '../src/components/el-number-field.js';
+import '../src/components/el-segmented-control.js';
+import '../src/components/el-select.js';
+import '../src/components/el-datepicker.js';
 
 test('Agent Runtime: snapshot() extracts structured refs/roles/states and act() operates Shadow DOM components', () => {
   const stage = document.createElement('div');
@@ -152,6 +157,69 @@ test('<el-toggle-group> syncs value, single/multiple modes, single-click unselec
   assert.equal(bold.disabled.value, false);
 
   wrap.remove();
+});
+
+test('Reactivity regression: el-otp-input, el-number-field, el-segmented-control, el-select, el-datepicker react to dynamic attributes', () => {
+  // 1. el-otp-input: dynamic type="password" and length update cells reactively
+  const otp = document.createElement('el-otp-input');
+  otp.setAttribute('length', '4');
+  document.body.appendChild(otp);
+  assert.equal(otp.shadowRoot.querySelectorAll('.otp-cell').length, 4);
+  assert.equal(otp.shadowRoot.querySelector('.otp-cell').getAttribute('type'), 'text');
+  otp.setAttribute('type', 'password');
+  assert.equal(otp.shadowRoot.querySelector('.otp-cell').getAttribute('type'), 'password');
+  otp.setAttribute('length', '6');
+  assert.equal(otp.shadowRoot.querySelectorAll('.otp-cell').length, 6);
+  otp.remove();
+
+  // 2. el-number-field: stepper buttons reactively disable at min/max and on disabled toggle
+  const nf = document.createElement('el-number-field');
+  nf.setAttribute('value', '5');
+  nf.setAttribute('min', '0');
+  nf.setAttribute('max', '10');
+  document.body.appendChild(nf);
+  const dec = nf.shadowRoot.querySelector('.decrement');
+  const inc = nf.shadowRoot.querySelector('.increment');
+  assert.equal(dec.hasAttribute('disabled'), false);
+  assert.equal(inc.hasAttribute('disabled'), false);
+  nf.setAttribute('value', '0');
+  assert.equal(dec.hasAttribute('disabled'), true);
+  nf.setAttribute('value', '10');
+  assert.equal(inc.hasAttribute('disabled'), true);
+  nf.setAttribute('disabled', '');
+  assert.equal(dec.hasAttribute('disabled'), true);
+  nf.remove();
+
+  // 3. el-segmented-control: enabled options do NOT get disabled="false" attribute
+  const seg = document.createElement('el-segmented-control');
+  seg.innerHTML = '<option value="a">A</option><option value="b">B</option>';
+  document.body.appendChild(seg);
+  const segBtns = seg.shadowRoot.querySelectorAll('.segment-btn');
+  assert.equal(segBtns[0].hasAttribute('disabled'), false);
+  seg.setAttribute('disabled', '');
+  assert.equal(seg.shadowRoot.querySelectorAll('.segment-btn')[0].hasAttribute('disabled'), true);
+  seg.remove();
+
+  // 4. el-select: dynamic value and disabled update signals
+  const sel = document.createElement('el-select');
+  sel.innerHTML = '<option value="a">A</option><option value="b">B</option>';
+  document.body.appendChild(sel);
+  sel.setAttribute('value', 'b');
+  assert.equal(sel.value.value, 'b');
+  sel.setAttribute('disabled', '');
+  assert.equal(sel.disabled.value, true);
+  sel.remove();
+
+  // 5. el-datepicker: dynamic value, placeholder, and disabled update signals
+  const dp = document.createElement('el-datepicker');
+  document.body.appendChild(dp);
+  dp.setAttribute('value', '2026-11-19');
+  dp.setAttribute('placeholder', 'Pick a day');
+  dp.setAttribute('disabled', '');
+  assert.equal(dp.value.value, '2026-11-19');
+  assert.equal(dp.placeholder.value, 'Pick a day');
+  assert.equal(dp.disabled.value, true);
+  dp.remove();
 });
 
 test('Testing Contracts: checkAriaPattern validates 9 WAI-ARIA APG patterns across Elementum components', () => {
