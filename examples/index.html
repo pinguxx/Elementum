@@ -2654,7 +2654,7 @@ ${optionsHtml}
         const exact = p.exact ? ' exact' : '';
         return `<div style="max-width: 460px; width: 100%; border: 1px solid var(--el-surface-border); border-radius: 10px; padding: 16px; background: var(--el-surface-card); display: flex; flex-direction: column; gap: 14px;">
   <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-    <el-route-link data-preview-target to="${escapeHtml(to)}"${exact} style="padding: 6px 14px; background: var(--el-color-primary); color: white; border-radius: 6px; font-weight: 600; font-size: 0.85rem;">Navigate to ${escapeHtml(to)}</el-route-link>
+    <el-route-link data-preview-target to="${escapeHtml(to)}"${exact} style="padding: 6px 14px; background: var(--el-color-primary); color: white; --el-route-link-active-color: #ffffff; border-radius: 6px; font-weight: 600; font-size: 0.85rem;">Navigate to ${escapeHtml(to)}</el-route-link>
     <el-route-link to="/home" exact style="padding: 6px 14px; border: 1px solid var(--el-surface-border); border-radius: 6px; font-weight: 600; font-size: 0.85rem;">Home (/home)</el-route-link>
   </div>
   <el-router default="/home" style="padding: 12px; background: var(--el-surface-muted); border-radius: 8px; font-size: 0.875rem;">

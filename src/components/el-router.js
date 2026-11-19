@@ -239,7 +239,7 @@ export class ElRouteLink extends Elementum {
     }
 
     :host([active]) a {
-      color: var(--el-primary, #2563eb);
+      color: var(--el-route-link-active-color, var(--el-color-primary, #2563eb));
     }
   `;
 
