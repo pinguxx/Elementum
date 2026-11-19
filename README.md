@@ -11,7 +11,7 @@
 
 ---
 
-## 🧪 Verification & Browser Matrix (Beta — `v0.4.0`)
+## 🧪 Verification & Browser Matrix (Beta — `v0.5.0`)
 
 One command verifies everything end-to-end: `npm run verify:all` (see [QUALITY.md](./QUALITY.md) for the auto-generated per-component matrix).
 

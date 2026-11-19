@@ -4,6 +4,22 @@ All notable changes to `@wcomp/elementum` are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] — 2026-11-19 ("Async Signals, Agent Runtime & Full-Catalog Proof")
+
+### Added
+- **Async-First Signals & Error Details (`src/signal.js`)**: Added `batch()`, `asyncSignal()` (automatic reactive dependency tracking, `AbortSignal` stale-request cancellation, stale-while-revalidate `.value`, `.pending`, `.status`, structured `.error` details, `.refetch()`, `.abort()`, `.mutate()`, `.read()`), `NotReadyError`, `isPending()`, `Computed.error`, and `effect(fn, { onError })`.
+- **Expanded Headless Behaviors (`@wcomp/elementum/behaviors`, 16 primitives)**: Added `prefersReducedMotion()`, `createPresenceBehavior()`, `createFocusRecovery()`, `createShortcuts()`, `createDisclosureBehavior()`, `createPopupPositioner()`, and `createHistory()`.
+- **Shadow-DOM Agent Runtime Bridge (`@wcomp/elementum/agent`)**: Added `snapshot(root)`, `act(root, command, { guard })`, and `registerWebMCP(root)` (`navigator.modelContext`) so AI agents can inspect and operate Shadow DOM interfaces cleanly.
+- **Automated WAI-ARIA, RTL & DSD SSR Contract Checkers (`@wcomp/elementum/testing`)**: Added `checkAriaPattern()` (9 WAI-ARIA APG patterns across nested Shadow DOM), `checkDirection()`, and `checkServerRender()`.
+- **Per-Entrypoint Gzipped Size Budget Gate (`size-budget.json`, `npm run check:size`)**: Tracks all 86 entrypoints in CI (`core + behaviors + agent + ssr`: 31.8 KB, average component: 2.20 KB gzip).
+- **Real-Browser 109-Component Catalog Sweep (`e2e/catalog-sweep.spec.js`, `npm run test:catalog`) & CSS Enum Gate (`tools/audit-catalog-diff.js`)**: Verifies all 109 components, every `select`/`boolean` permutation, and every example in live Chromium.
+- **Distributable Agent Skills (`skills.sh.json`, `skills/elementum`, `skills/elementum-unslop`)** and **[docs/behaviors-and-agent.md](./docs/behaviors-and-agent.md)**.
+
+### Fixed
+- **Animations & Presence**: Preserved DOM identity in `<el-number-flow>` so odometer reels transition smoothly and honor `animated="false"` / `prefers-reduced-motion`; upgraded `<el-accordion>` panels to smooth CSS Grid `0fr -> 1fr` transitions; verified live `Element.getAnimations()` across 9 animated components in Playwright.
+- **Component Reactivity & Catalog Bugs**: Fixed circular `<el-skeleton>` collapsing to `0px` with percentage width, `<el-toggle-group>` `single`/`multiple`/`value`/`disabled` sync and double-click unselect, `<el-otp-input>` reactive `type="password"`/`length`, `<el-number-field>` reactive stepper states, `<el-segmented-control>` `?disabled` boolean attribute, `<el-select>` & `<el-datepicker>` dynamic `attributeChanged()`, `<el-context-menu>` named `trigger` slot, `<el-pagination>` default `total="100"`, `<el-alert>` redundant `label` prop, `<el-menubar>` example tags, and `docs.html` sidebar scrollspy & click highlighting.
+- **Security (CodeQL → 0 Open Alerts)**: Remediated ReDoS regexes in `src/ssr.js` & `src/template.js`, added `permissions: { contents: read }` to `.github/workflows/ci.yml`, escaped single quotes in catalog `escapeHtml()`, added inline prototype-pollution guards in `src/ag-ui.js`, and added `vbscript:` coverage in `test/security.test.js`.
+
 ## [0.4.0] — 2026-11-19 ("Real-Browser Proof")
 
 ### Added
