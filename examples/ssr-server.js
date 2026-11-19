@@ -57,8 +57,12 @@ export function renderSsrPage({
 } = {}) {
   const assetPrefix = staticMode ? '..' : '';
   const homeHref = staticMode ? '../index.html' : '/index.html';
-  const docsHref = staticMode ? '../docs.html#ssr-dsd' : '/docs.html#ssr-dsd';
+  const docsHref = staticMode ? '../docs.html' : '/docs.html';
   const catalogHref = staticMode ? './index.html' : '/examples/index.html';
+  const registryHref = staticMode ? './registry.html' : '/examples/registry.html';
+  const aiStudioHref = staticMode ? './agent-studio.html' : '/examples/agent-studio.html';
+  const ledgerflowHref = staticMode ? './ledgerflow.html' : '/examples/ledgerflow.html';
+  const showcaseHref = staticMode ? './app.html' : '/examples/app.html';
 
   const themeSwitchDsd = renderComponentToDSD('el-theme-switch', ElThemeSwitch, { slot: 'actions' }, '');
 
@@ -68,8 +72,12 @@ export function renderSsrPage({
     { sticky: true, brand: '⚡ Elementum', badge: 'DSD SSR', 'badge-variant': 'success', href: homeHref },
     `
       <a href="${homeHref}">Home</a>
-      <a href="${docsHref}">SSR Docs</a>
+      <a href="${docsHref}">Docs</a>
       <a href="${catalogHref}">Catalog</a>
+      <a href="${registryHref}">Registry</a>
+      <a href="${aiStudioHref}">AI Studio</a>
+      <a href="${ledgerflowHref}">LedgerFlow</a>
+      <a href="${showcaseHref}">Showcase</a>
       ${themeSwitchDsd}
     `
   );

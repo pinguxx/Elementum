@@ -8,7 +8,7 @@
   <script type="module" src="../src/index.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; width: 100%; overflow-x: hidden; }
+    html, body { margin: 0; padding: 0; width: 100%; overflow-x: clip; }
     body {
       font-family: var(--el-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
       background: var(--el-surface-muted, #f8fafc);
@@ -158,9 +158,12 @@
 
   <el-navbar sticky brand="⚡ LedgerFlow" badge="Finance" badge-variant="primary" href="../index.html">
     <a href="../index.html">Home</a>
+    <a href="../docs.html">Docs</a>
     <a href="./index.html">Catalog</a>
-    <a href="../docs.html#penpot-mcp">Penpot Docs</a>
+    <a href="./registry.html">Registry</a>
+    <a href="./agent-studio.html">AI Studio</a>
     <a href="./ledgerflow.html" active>LedgerFlow</a>
+    <a href="./app.html">Showcase</a>
     <el-theme-switch slot="actions"></el-theme-switch>
     <el-button id="open-add-btn" slot="actions" variant="primary" size="sm">+ Add Expense</el-button>
   </el-navbar>
