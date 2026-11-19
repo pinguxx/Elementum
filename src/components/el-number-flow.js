@@ -23,8 +23,24 @@ export class ElNumberFlow extends Elementum {
   animated = signal(true);
   locale = signal('');
 
+  #hasRenderedOnce = false;
+  #disposeEffect = null;
+
   connected() {
     this.#sync();
+  }
+
+  rendered() {
+    this.#hasRenderedOnce = false;
+    this.#disposeEffect?.();
+    this.#disposeEffect = effect(() => {
+      this.#reconcileDigits();
+    });
+  }
+
+  disconnected() {
+    this.#disposeEffect?.();
+    this.#disposeEffect = null;
   }
 
   attributeChanged(name, oldValue, newValue) {
@@ -38,6 +54,113 @@ export class ElNumberFlow extends Elementum {
     if (this.hasAttribute('duration')) this.duration.value = Number(this.getAttribute('duration')) || 400;
     if (this.hasAttribute('animated')) this.animated.value = this.getAttribute('animated') !== 'false';
     if (this.hasAttribute('locale')) this.locale.value = this.getAttribute('locale') || '';
+  }
+
+  #getFormattedValue() {
+    const str = String(this.value.value ?? '0');
+    const loc = (this.locale.value || '').trim();
+    if (loc && /^-?\d+(\.\d+)?$/.test(str)) {
+      return formatLocaleNumber(Number(str), loc);
+    }
+    return str;
+  }
+
+  #createDigitColumn(initialDigit) {
+    const col = document.createElement('span');
+    col.className = 'digit-column digit-reel';
+    col.setAttribute('part', 'digit');
+    col.setAttribute('aria-hidden', 'true');
+    col.style.transform = `translateY(${-initialDigit * 1.25}em)`;
+    for (let d = 0; d <= 9; d++) {
+      const cell = document.createElement('span');
+      cell.className = 'digit-cell';
+      cell.textContent = String(d);
+      col.appendChild(cell);
+    }
+    return col;
+  }
+
+  #createStaticChar(ch) {
+    const span = document.createElement('span');
+    span.className = 'static-char';
+    span.setAttribute('part', 'char');
+    span.setAttribute('aria-hidden', 'true');
+    span.textContent = ch;
+    return span;
+  }
+
+  #reconcileDigits() {
+    const chars = this.#getFormattedValue().split('');
+    const track = this.root?.querySelector('.digits-track');
+    if (!track || typeof document === 'undefined') return;
+
+    const shouldAnimateNew = this.#hasRenderedOnce && this.animated.value;
+    const newlyAdded = [];
+
+    // Reconcile right-aligned so existing place-value digit reels preserve DOM identity
+    // and smoothly CSS-transition their transform when value changes.
+    while (track.children.length > chars.length) {
+      track.removeChild(track.firstChild);
+    }
+
+    if (track.children.length < chars.length) {
+      const deficit = chars.length - track.children.length;
+      const anchor = track.firstChild;
+      for (let i = 0; i < deficit; i++) {
+        const ch = chars[i];
+        const isDigit = /^[0-9]$/.test(ch);
+        if (isDigit) {
+          const digit = Number(ch);
+          const startDigit = shouldAnimateNew ? 0 : digit;
+          const col = this.#createDigitColumn(startDigit);
+          track.insertBefore(col, anchor);
+          if (shouldAnimateNew && digit !== 0) {
+            newlyAdded.push({ col, digit });
+          }
+        } else {
+          track.insertBefore(this.#createStaticChar(ch), anchor);
+        }
+      }
+    }
+
+    for (let i = 0; i < chars.length; i++) {
+      const ch = chars[i];
+      const isDigit = /^[0-9]$/.test(ch);
+      const node = track.children[i];
+      if (!node) continue;
+
+      if (isDigit) {
+        const digit = Number(ch);
+        if (node.classList.contains('digit-column')) {
+          if (!newlyAdded.some((item) => item.col === node)) {
+            node.style.transform = `translateY(${-digit * 1.25}em)`;
+          }
+        } else {
+          const startDigit = shouldAnimateNew ? 0 : digit;
+          const col = this.#createDigitColumn(startDigit);
+          track.replaceChild(col, node);
+          if (shouldAnimateNew && digit !== 0) {
+            newlyAdded.push({ col, digit });
+          }
+        }
+      } else {
+        if (node.classList.contains('static-char')) {
+          if (node.textContent !== ch) node.textContent = ch;
+        } else {
+          track.replaceChild(this.#createStaticChar(ch), node);
+        }
+      }
+    }
+
+    if (newlyAdded.length > 0) {
+      // Force layout flush so newly inserted reels transition smoothly from 0 to target digit
+      void track.offsetWidth;
+      for (const { col, digit } of newlyAdded) {
+        col.style.transform = `translateY(${-digit * 1.25}em)`;
+      }
+    }
+
+    this.#hasRenderedOnce = true;
   }
 
   static styles = css`
@@ -60,6 +183,13 @@ export class ElNumberFlow extends Elementum {
       overflow: hidden;
     }
 
+    .digits-track {
+      display: inline-flex;
+      align-items: flex-start;
+      height: 1.25em;
+      overflow: hidden;
+    }
+
     .affix {
       display: inline-block;
       user-select: none;
@@ -77,6 +207,7 @@ export class ElNumberFlow extends Elementum {
 
     .digit-cell {
       display: flex;
+      flex: 0 0 1.25em;
       align-items: center;
       justify-content: center;
       height: 1.25em;
@@ -101,15 +232,8 @@ export class ElNumberFlow extends Elementum {
   `;
 
   render() {
-    const rawVal = () => {
-      const str = String(this.value.value ?? '0');
-      const loc = (this.locale.value || '').trim();
-      if (loc && /^-?\d+(\.\d+)?$/.test(str)) {
-        return formatLocaleNumber(Number(str), loc);
-      }
-      return str;
-    };
-    const fullText = () => `${this.prefix.value}${rawVal()}${this.suffix.value}`;
+    const fullText = () => `${this.prefix.value}${this.#getFormattedValue()}${this.suffix.value}`;
+    const isSSR = typeof document === 'undefined';
 
     return html`
       <div
@@ -117,41 +241,11 @@ export class ElNumberFlow extends Elementum {
         part="wrapper"
         role="text"
         aria-label=${fullText}
-        style=${() => `--flow-duration: ${this.duration.value}ms;`}
+        style=${() => `--flow-duration: ${this.animated.value ? this.duration.value : 0}ms;`}
       >
         ${() => this.prefix.value ? html`<span class="affix prefix" part="prefix">${this.prefix}</span>` : null}
 
-        ${() => {
-          const chars = rawVal().split('');
-          return chars.map((ch, idx) => {
-            const digit = parseInt(ch, 10);
-            if (!isNaN(digit)) {
-              // Roll to digit index: 0 is top, 9 is bottom
-              const translateY = -digit * 1.25;
-              return html`
-                <span
-                  class="digit-column digit-reel"
-                  part="digit"
-                  style=${`transform: translateY(${translateY}em);`}
-                  aria-hidden="true"
-                >
-                  <span class="digit-cell">0</span>
-                  <span class="digit-cell">1</span>
-                  <span class="digit-cell">2</span>
-                  <span class="digit-cell">3</span>
-                  <span class="digit-cell">4</span>
-                  <span class="digit-cell">5</span>
-                  <span class="digit-cell">6</span>
-                  <span class="digit-cell">7</span>
-                  <span class="digit-cell">8</span>
-                  <span class="digit-cell">9</span>
-                </span>
-              `;
-            } else {
-              return html`<span class="static-char" part="char" aria-hidden="true">${ch}</span>`;
-            }
-          });
-        }}
+        <span class="digits-track" part="digits" aria-hidden="true">${isSSR ? this.#getFormattedValue() : ''}</span>
 
         ${() => this.suffix.value ? html`<span class="affix suffix" part="suffix">${this.suffix}</span>` : null}
       </div>

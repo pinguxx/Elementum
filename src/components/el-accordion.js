@@ -73,15 +73,37 @@ export class ElAccordionItem extends Elementum {
     }
 
     .panel {
-      display: none;
-      padding-bottom: var(--el-spacing-md, 16px);
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      visibility: hidden;
+      transition: grid-template-rows 220ms cubic-bezier(0.16, 1, 0.3, 1),
+                  opacity 180ms ease,
+                  visibility 220ms;
       color: var(--el-text-base, #374151);
       font-size: 0.9375rem;
       line-height: 1.6;
     }
 
     .panel.open {
-      display: block;
+      grid-template-rows: 1fr;
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .panel-inner {
+      overflow: hidden;
+    }
+
+    .panel.open .panel-inner {
+      padding-bottom: var(--el-spacing-md, 16px);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .chevron,
+      .panel {
+        transition: none !important;
+      }
     }
   `;
 
@@ -138,7 +160,9 @@ export class ElAccordionItem extends Elementum {
         class=${() => `panel ${this.isOpen.value ? 'open' : ''}`}
         part="panel"
       >
-        <slot></slot>
+        <div class="panel-inner">
+          <slot></slot>
+        </div>
       </div>
     `;
   }

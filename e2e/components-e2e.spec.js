@@ -246,4 +246,120 @@ test.describe('Real-Browser Interactive Component Suite (Playwright + axe-core)'
     const severe = results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious');
     expect(severe, `axe-core violations on interactive stage: ${JSON.stringify(severe, null, 2)}`).toEqual([]);
   });
+
+  test('real-browser CSS transitions & keyframe animations fire across animated components', async ({ page }) => {
+    await page.goto('/examples/index.html');
+    await page.waitForLoadState('networkidle');
+
+    const result = await page.evaluate(async () => {
+      await Promise.all([
+        import('/src/components/el-number-flow.js'),
+        import('/src/components/el-accordion.js'),
+        import('/src/components/el-collapsible.js'),
+        import('/src/components/el-switch.js'),
+        import('/src/components/el-progress.js'),
+        import('/src/components/el-drawer.js'),
+        import('/src/components/el-popover.js'),
+        import('/src/components/el-spinner.js'),
+        import('/src/components/el-skeleton.js'),
+      ]);
+
+      const host = document.createElement('div');
+      host.id = 'e2e-anim-stage';
+      host.style.cssText = 'position:fixed;top:0;left:0;z-index:9999;background:#fff;padding:20px;width:480px;';
+      host.innerHTML = `
+        <el-number-flow id="nf" value="48290" prefix="$" duration="500"></el-number-flow>
+        <el-accordion id="acc">
+          <el-accordion-item id="acc-item" title="Section 1">Accordion content body</el-accordion-item>
+        </el-accordion>
+        <el-collapsible id="col">
+          <button slot="trigger">Toggle</button>
+          <div>Collapsible body</div>
+        </el-collapsible>
+        <el-switch id="sw" label="Notifications"></el-switch>
+        <el-progress id="prog" value="20"></el-progress>
+        <el-drawer id="drw" title="Drawer">Drawer body</el-drawer>
+        <el-popover id="pop"><button slot="trigger">Open</button><div slot="content">Popover</div></el-popover>
+        <el-spinner id="spn"></el-spinner>
+        <el-skeleton id="skl" width="200px" height="20px"></el-skeleton>
+      `;
+      document.body.appendChild(host);
+
+      // Allow initial layout & paint to settle
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      const nf = host.querySelector('#nf');
+      const prevCols = Array.from(nf.shadowRoot.querySelectorAll('.digit-column'));
+      nf.setAttribute('value', '49540');
+
+      const accItem = host.querySelector('#acc-item');
+      accItem.toggle();
+
+      const col = host.querySelector('#col');
+      col.toggle();
+
+      const sw = host.querySelector('#sw');
+      sw.checked.value = true;
+
+      const prog = host.querySelector('#prog');
+      prog.setAttribute('value', '80');
+
+      const drw = host.querySelector('#drw');
+      drw.show();
+
+      const pop = host.querySelector('#pop');
+      pop.open();
+
+      // Wait one frame so browser starts CSS transitions
+      await new Promise((r) => requestAnimationFrame(r));
+
+      const nextCols = Array.from(nf.shadowRoot.querySelectorAll('.digit-column'));
+      const nfSameNodes = prevCols.length === nextCols.length && prevCols.every((n, i) => n === nextCols[i]);
+      const nfRunningTransitions = nextCols.flatMap((c) => c.getAnimations()).filter((a) => a.playState === 'running').length;
+
+      const accPanelAnims = accItem.shadowRoot.querySelector('.panel').getAnimations().length;
+      const colContentAnims = col.shadowRoot.querySelector('.content-wrapper').getAnimations().length;
+      const swThumbAnims = sw.shadowRoot.querySelector('.thumb').getAnimations().length;
+      const progBarAnims = prog.shadowRoot.querySelector('.fill, .bar, [part="fill"], [part="bar"]').getAnimations().length;
+      const drwPanelAnims = drw.shadowRoot.querySelector('.drawer-panel').getAnimations().length;
+      const popPopupAnims = pop.shadowRoot.querySelector('.popup').getAnimations().length;
+
+      const spn = host.querySelector('#spn');
+      const spnAnims = spn.shadowRoot.querySelector('.spinner').getAnimations().length;
+      const skl = host.querySelector('#skl');
+      const sklAnims = skl.shadowRoot.getAnimations().length;
+
+      // Verify animated="false" disables transitions on el-number-flow
+      nf.setAttribute('animated', 'false');
+      await new Promise((r) => requestAnimationFrame(r));
+      const nfDisabledDuration = getComputedStyle(nextCols[1]).transitionDuration;
+
+      host.remove();
+      return {
+        nfSameNodes,
+        nfRunningTransitions,
+        nfDisabledDuration,
+        accPanelAnims,
+        colContentAnims,
+        swThumbAnims,
+        progBarAnims,
+        drwPanelAnims,
+        popPopupAnims,
+        spnAnims,
+        sklAnims,
+      };
+    });
+
+    expect(result.nfSameNodes).toBe(true);
+    expect(result.nfRunningTransitions).toBeGreaterThanOrEqual(3); // digits 8->9, 2->5, 9->4 all roll
+    expect(result.nfDisabledDuration).toBe('0s');
+    expect(result.accPanelAnims).toBeGreaterThan(0);
+    expect(result.colContentAnims).toBeGreaterThan(0);
+    expect(result.swThumbAnims).toBeGreaterThan(0);
+    expect(result.progBarAnims).toBeGreaterThan(0);
+    expect(result.drwPanelAnims).toBeGreaterThan(0);
+    expect(result.popPopupAnims).toBeGreaterThan(0);
+    expect(result.spnAnims).toBeGreaterThan(0);
+    expect(result.sklAnims).toBeGreaterThan(0);
+  });
 });

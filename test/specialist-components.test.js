@@ -31,18 +31,37 @@ test('<el-number-flow> renders rolling digits, prefixes, and suffixes reactively
   assert.ok(root.querySelector('.suffix'));
   assert.equal(root.querySelector('.suffix').textContent, '/mo');
 
-  const reels = root.querySelectorAll('.digit-reel');
+  const reels = Array.from(root.querySelectorAll('.digit-reel'));
   assert.equal(reels.length, 3); // 1, 2, 5
 
-  // Change value reactively
-  el.setAttribute('value', '1250');
-  assert.equal(el.root.querySelectorAll('.digit-reel').length, 4);
+  // Change value reactively (same length) — must reuse existing DOM nodes so CSS transitions fire
+  el.setAttribute('value', '987');
+  const reelsSameLen = Array.from(el.root.querySelectorAll('.digit-reel'));
+  assert.equal(reelsSameLen.length, 3);
+  assert.strictEqual(reelsSameLen[0], reels[0], 'Digit column 0 DOM node must persist');
+  assert.strictEqual(reelsSameLen[1], reels[1], 'Digit column 1 DOM node must persist');
+  assert.strictEqual(reelsSameLen[2], reels[2], 'Digit column 2 DOM node must persist');
+  assert.equal(reelsSameLen[0].style.transform, 'translateY(-11.25em)');
 
-  // Animated attribute
+  // Change value reactively (growing length) — right-aligned digits must persist
+  el.setAttribute('value', '1250');
+  const reelsGrown = Array.from(el.root.querySelectorAll('.digit-reel'));
+  assert.equal(reelsGrown.length, 4);
+  assert.strictEqual(reelsGrown[1], reels[0], 'Right-aligned digit column should persist when length grows');
+
+  // Change value reactively (shrinking length + static char)
+  el.setAttribute('value', '9.5');
+  assert.equal(el.root.querySelectorAll('.digit-reel').length, 2);
+  assert.equal(el.root.querySelectorAll('.static-char').length, 1);
+  assert.equal(el.root.querySelector('.static-char').textContent, '.');
+
+  // Animated attribute disables CSS transition duration
   el.setAttribute('animated', 'false');
   assert.equal(el.animated.value, false);
+  assert.ok(el.root.querySelector('.flow-wrapper').getAttribute('style').includes('--flow-duration: 0ms'));
   el.setAttribute('animated', 'true');
   assert.equal(el.animated.value, true);
+  assert.ok(el.root.querySelector('.flow-wrapper').getAttribute('style').includes('--flow-duration: 400ms'));
 
   document.body.removeChild(el);
 });
