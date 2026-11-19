@@ -53,7 +53,9 @@ export class ElSkeleton extends Elementum {
       border-radius: 9999px;
       width: 40px;
       height: 40px;
-      min-height: 40px;
+      min-width: 16px;
+      min-height: 16px;
+      aspect-ratio: 1 / 1;
     }
 
     :host([variant="rectangular"]) .skeleton {
@@ -132,8 +134,21 @@ export class ElSkeleton extends Elementum {
   render() {
     const customStyle = () => {
       const styles = [];
-      if (this.width.value) styles.push(`width: ${this.width.value};`);
-      if (this.height.value) styles.push(`height: ${this.height.value};`);
+      const w = (this.width.value || '').trim();
+      const h = (this.height.value || '').trim();
+      const isCircular = this.variant.value === 'circular';
+
+      if (isCircular) {
+        const wIsPercent = w.endsWith('%');
+        const hIsPercent = h.endsWith('%');
+        const effectiveW = !wIsPercent && w ? w : (!hIsPercent && h ? h : '');
+        const effectiveH = !hIsPercent && h ? h : effectiveW;
+        if (effectiveW) styles.push(`width: ${effectiveW};`);
+        if (effectiveH) styles.push(`height: ${effectiveH};`);
+      } else {
+        if (w) styles.push(`width: ${w};`);
+        if (h) styles.push(`height: ${h};`);
+      }
       return styles.join(' ');
     };
 

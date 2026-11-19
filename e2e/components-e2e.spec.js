@@ -329,6 +329,13 @@ test.describe('Real-Browser Interactive Component Suite (Playwright + axe-core)'
       const skl = host.querySelector('#skl');
       const sklAnims = skl.shadowRoot.getAnimations().length;
 
+      // Verify circular skeleton stays visible (non-zero width) even with percentage width="100%"
+      skl.setAttribute('width', '100%');
+      skl.setAttribute('height', '20px');
+      skl.setAttribute('variant', 'circular');
+      await new Promise((r) => requestAnimationFrame(r));
+      const sklCircularRect = skl.shadowRoot.querySelector('.skeleton').getBoundingClientRect();
+
       // Verify animated="false" disables transitions on el-number-flow
       nf.setAttribute('animated', 'false');
       await new Promise((r) => requestAnimationFrame(r));
@@ -347,6 +354,8 @@ test.describe('Real-Browser Interactive Component Suite (Playwright + axe-core)'
         popPopupAnims,
         spnAnims,
         sklAnims,
+        sklCircularWidth: Math.round(sklCircularRect.width),
+        sklCircularHeight: Math.round(sklCircularRect.height),
       };
     });
 
@@ -361,5 +370,7 @@ test.describe('Real-Browser Interactive Component Suite (Playwright + axe-core)'
     expect(result.popPopupAnims).toBeGreaterThan(0);
     expect(result.spnAnims).toBeGreaterThan(0);
     expect(result.sklAnims).toBeGreaterThan(0);
+    expect(result.sklCircularWidth).toBe(20);
+    expect(result.sklCircularHeight).toBe(20);
   });
 });
