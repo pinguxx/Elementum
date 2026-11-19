@@ -2270,7 +2270,7 @@ ${optionsHtml}
       // 48. el-pagination
       if (tag === 'el-pagination') {
         const page = p.page || 1;
-        const total = p.total || 10;
+        const total = p.total !== undefined && p.total !== '' ? p.total : 100;
         const sib = p['sibling-count'] ? ` sibling-count="${p['sibling-count']}"` : '';
         const pageSize = p['page-size'] ? ` page-size="${p['page-size']}"` : '';
         return `<el-pagination page="${page}" total="${total}"${sib}${pageSize}></el-pagination>`;

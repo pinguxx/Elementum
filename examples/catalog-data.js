@@ -3169,8 +3169,8 @@ export const components = {
       {
         "name": "total",
         "type": "number",
-        "default": 10,
-        "description": "Total number of pages."
+        "default": 100,
+        "description": "Total number of items (total pages = Math.ceil(total / page-size))."
       },
       {
         "name": "sibling-count",
