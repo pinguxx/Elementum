@@ -327,10 +327,12 @@
       <option value="#dev-architecture">2. Developer Architecture</option>
       <option value="#signals">— Micro-Signals Kernel</option>
       <option value="#signals-api">  — Signals API Reference</option>
+      <option value="#async-signals">  — Async Signals &amp; Error Details</option>
       <option value="#signals-components">  — Signals in Components</option>
       <option value="#spa-routing">— Single-Page Apps (SPA) Router</option>
       <option value="#ssr-dsd">— Declarative Shadow DOM (SSR)</option>
       <option value="#forms-face">— Form Association (FACE)</option>
+      <option value="#behaviors-agent">— Behaviors, Agent &amp; Testing</option>
       <option value="#mcp-server">3. MCP Server Integration</option>
       <option value="#ag-ui-protocol">— AG-UI Protocol Integration</option>
       <option value="#design-tokens">4. Figma & Penpot Workflow</option>
@@ -358,10 +360,12 @@
           <li class="sidebar-item"><a href="#developer-architecture">Developer Architecture</a></li>
           <li class="sidebar-item"><a href="#signals">Micro-Signals Kernel</a></li>
           <li class="sidebar-item"><a href="#signals-api">Signals API Reference</a></li>
+          <li class="sidebar-item"><a href="#async-signals">Async Signals &amp; Errors</a></li>
           <li class="sidebar-item"><a href="#signals-components">Signals in Components</a></li>
           <li class="sidebar-item"><a href="#spa-routing">Single-Page Apps (SPA) Router</a></li>
           <li class="sidebar-item"><a href="#ssr-dsd">Declarative Shadow DOM (SSR)</a></li>
           <li class="sidebar-item"><a href="#forms-face">Form Association (FACE)</a></li>
+          <li class="sidebar-item"><a href="#behaviors-agent">Behaviors, Agent &amp; Testing</a></li>
         </ul>
       </div>
 
@@ -384,7 +388,7 @@
       <section id="user-guide" class="docs-section">
         <h1>User Guide & Overview</h1>
         <p>
-          <strong>@wcomp/elementum</strong> is an ultra-lightweight, zero-dependency design system of <strong>84 accessible Web Components</strong>.
+          <strong>@wcomp/elementum</strong> is an ultra-lightweight, zero-dependency design system of <strong>109 accessible Web Components</strong>.
           It combines fine-grained signal reactivity with standard W3C Web Component APIs, 1:1 Penpot/Figma design tokens, and built-in MCP &amp; AG-UI protocol support.
         </p>
 
@@ -540,13 +544,28 @@ stop();     // Or ac.abort() to dispose effects automatically</el-code-block>
               </tr>
               <tr>
                 <td><code>effect(fn, options?)</code></td>
-                <td><code>(fn, { signal?: AbortSignal }) =&gt; () =&gt; void</code></td>
-                <td>Runs <code>fn()</code> immediately, tracks all signals read during execution (cleaning up stale dependencies on each re-run), and disposes via returned handle or optional <code>AbortSignal</code>.</td>
+                <td><code>(fn, { signal?: AbortSignal, onError?: (err) =&gt; void }) =&gt; () =&gt; void</code></td>
+                <td>Runs <code>fn()</code> immediately, tracks all signals read during execution (cleaning up stale dependencies on each re-run), isolates exceptions via optional <code>onError</code>, and disposes via returned handle or <code>AbortSignal</code>.</td>
+              </tr>
+              <tr>
+                <td><code>batch(fn)</code></td>
+                <td><code>&lt;T&gt;(fn: () =&gt; T) =&gt; T</code></td>
+                <td>Coalesces multiple signal writes into a single atomic notification pass while keeping <code>computed()</code> reads fresh inside the batch.</td>
+              </tr>
+              <tr>
+                <td><code>asyncSignal(fetcher, opts?)</code></td>
+                <td><code>AsyncSignal&lt;T&gt;</code></td>
+                <td>First-class async reactive primitive with automatic dependency tracking, <code>AbortSignal</code> race-condition cancellation, stale-while-revalidate <code>.value</code>, <code>.pending</code>, <code>.status</code>, structured <code>.error</code> details, <code>.refetch()</code>, <code>.abort()</code>, <code>.mutate()</code>, and <code>.read()</code>.</td>
+              </tr>
+              <tr>
+                <td><code>isPending(source)</code> &amp; <code>NotReadyError</code></td>
+                <td><code>(AsyncSignal | () =&gt; unknown) =&gt; boolean</code></td>
+                <td>Inspects pending state of an <code>AsyncSignal</code> or derived getter calling <code>.read()</code> without crashing on <code>NotReadyError</code>.</td>
               </tr>
               <tr>
                 <td><code>isSignal(value)</code></td>
                 <td><code>(val: unknown) =&gt; boolean</code></td>
-                <td>Returns <code>true</code> for both <code>Signal</code> and <code>Computed</code> instances (<code>val instanceof Signal</code>).</td>
+                <td>Returns <code>true</code> for <code>Signal</code>, <code>Computed</code>, and <code>AsyncSignal</code> instances (<code>val instanceof Signal</code>).</td>
               </tr>
               <tr>
                 <td>Coercion &amp; String Helpers</td>
@@ -556,6 +575,32 @@ stop();     // Or ac.abort() to dispose effects automatically</el-code-block>
             </tbody>
           </table>
         </div>
+
+        <h3 id="async-signals">2b. Async Signals, Batching &amp; Error Details</h3>
+        <p>
+          <code>asyncSignal()</code> tracks synchronous signal reads inside your fetcher, cancels stale in-flight requests via <code>AbortSignal</code> when inputs change, preserves the last resolved <code>.value</code> during refreshes (no visual tearing), and exposes structured error details (<code>message</code>, <code>name</code>, <code>cause</code>, <code>status</code>, <code>timestamp</code>, <code>attempt</code>):
+        </p>
+        <el-code-block copyable language="js">import { signal, batch, asyncSignal, isPending, effect } from '@wcomp/elementum';
+
+const query = signal('web');
+const results = asyncSignal(
+  async (abortSignal) =&gt; {
+    const q = query.value; // Tracked automatically; stale fetches auto-abort
+    const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`, { signal: abortSignal });
+    if (!res.ok) throw Object.assign(new Error('Search failed'), { status: res.status });
+    return res.json();
+  },
+  { onError: (details) =&gt; console.warn(details.message, details.status, details.attempt) }
+);
+
+// Atomic multi-write without duplicate fetches
+batch(() =&gt; { query.value = 'signals'; });
+
+effect(() =&gt; {
+  if (isPending(results)) console.log('Loading... (showing stale:', results.value, ')');
+  else if (results.error.value) console.log('Error:', results.error.value.message);
+  else console.log('Resolved:', results.value);
+}, { onError: (err) =&gt; console.error('Isolated effect error:', err) });</el-code-block>
 
         <h3>3. Three-Way Component Property &amp; Attribute Reactivity</h3>
         <p>
@@ -702,6 +747,16 @@ const html = renderComponentToDSD('el-button', ElButton, { variant: 'primary' },
           <li>Participate automatically in native <code>&lt;form&gt;</code> submission via <code>FormData</code>.</li>
           <li>Support native validation reporting with <code>setValidity()</code>.</li>
           <li>Handle form reset events cleanly via <code>formResetCallback()</code>.</li>
+        </ul>
+
+        <h2 id="behaviors-agent">Headless Behaviors, Agent Runtime &amp; Testing Contracts</h2>
+        <p>
+          Every Elementum component supports opt-in <code>unstyled</code> mode, and its underlying interaction, motion, agent, and WAI-ARIA testing primitives are exported as standalone zero-dependency subpaths:
+        </p>
+        <ul>
+          <li><strong><code>@wcomp/elementum/behaviors</code></strong> — 16 composable primitives: <code>createPressBehavior</code>, <code>createRovingFocus</code>, <code>createDismissableLayer</code>, <code>createFocusRecovery</code>, <code>createShortcuts</code>, <code>createDisclosureBehavior</code>, <code>createPopupPositioner</code>, <code>createPresenceBehavior</code>, <code>prefersReducedMotion</code>, <code>createSelectionBehavior</code>, <code>createReorderBehavior</code>, <code>createHistory</code>, <code>highlightMatch</code>, <code>announce</code>, <code>setHostState</code>, and <code>isRTL</code>.</li>
+          <li><strong><code>@wcomp/elementum/agent</code></strong> — Shadow-DOM-piercing <code>snapshot(root)</code>, <code>act(root, cmd, { guard })</code>, and <code>registerWebMCP(root)</code> for AI agents operating live interfaces.</li>
+          <li><strong><code>@wcomp/elementum/testing</code></strong> — Reusable WAI-ARIA APG (<code>checkAriaPattern</code>), provider-free RTL (<code>checkDirection</code>), and DSD SSR (<code>checkServerRender</code>) contract validators.</li>
         </ul>
       </section>
 
