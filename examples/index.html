@@ -2851,7 +2851,7 @@ ${optionsHtml}
             if (!targetEl.hasAttribute(prop.name) || targetEl.getAttribute(prop.name) === 'false') {
               targetEl.setAttribute(prop.name, '');
             }
-          } else if (DEFAULT_TRUE_BOOL_ATTRS.has(prop.name)) {
+          } else if (prop.default === true && DEFAULT_TRUE_BOOL_ATTRS.has(prop.name)) {
             targetEl.setAttribute(prop.name, 'false');
           } else {
             targetEl.removeAttribute(prop.name);

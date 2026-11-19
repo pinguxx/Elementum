@@ -86,7 +86,7 @@ export class ElCardHeader extends Elementum {
     :host([compact]) {
       padding: 14px 16px 10px 16px;
     }
-    :host([bordered]) {
+    :host([bordered]:not([bordered="false"])) {
       border-bottom: 1px solid var(--el-surface-border, #e2e8f0);
       margin-bottom: 16px;
     }
@@ -98,7 +98,7 @@ export class ElCardHeader extends Elementum {
       align-items: flex-end;
       text-align: right;
     }
-    :root[data-theme="dark"] :host([bordered]) {
+    :host-context([data-theme="dark"]):host([bordered]:not([bordered="false"])) {
       border-bottom-color: #334155;
     }
   `;
@@ -151,11 +151,11 @@ export class ElCardFooter extends Elementum {
     :host([align="center"]) { justify-content: center; }
     :host([align="end"]) { justify-content: flex-end; }
     :host([align="between"]) { justify-content: space-between; }
-    :host([bordered]) {
+    :host([bordered]:not([bordered="false"])) {
       border-top: 1px solid var(--el-surface-border, #e2e8f0);
       padding-top: 16px;
     }
-    :root[data-theme="dark"] :host([bordered]) {
+    :host-context([data-theme="dark"]):host([bordered]:not([bordered="false"])) {
       border-top-color: #334155;
     }
   `;
