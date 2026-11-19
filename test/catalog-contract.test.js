@@ -9,6 +9,8 @@ import '../src/index.js';
 import { ElButton } from '../src/components/el-button.js';
 import { components } from '../examples/catalog-data.js';
 
+import { runCatalogDiffAudit } from '../tools/audit-catalog-diff.js';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
 
@@ -237,5 +239,15 @@ test('Catalog Contract 5: Dark mode button hover contrast & isolated preview can
   assert.ok(
     indexHtml.includes('let isDarkCanvas = false;') && indexHtml.includes('class="canvas-stage${isDarkCanvas'),
     'Canvas theme selection must persist across component navigation'
+  );
+});
+
+test('Catalog Contract 6: Automated Source-vs-Catalog Diff Validator passes with 0 findings', () => {
+  const report = runCatalogDiffAudit();
+  assert.equal(report.previewGeneratorFound, true, 'Must locate buildComponentMarkup in examples/index.html');
+  assert.deepEqual(
+    report.findings,
+    [],
+    `Catalog diff audit found issues:\n${JSON.stringify(report.findings, null, 2)}`
   );
 });

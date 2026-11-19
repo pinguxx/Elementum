@@ -87,6 +87,10 @@ export { ElVisuallyHidden } from './components/el-visually-hidden.js';
 export { ElNavbar } from './components/el-navbar.js';
 export { ElCodeBlock } from './components/el-code-block.js';
 export { ElToolCall } from './components/el-tool-call.js';
+export { ElDiffViewer, computeLineDiff } from './components/el-diff-viewer.js';
+export { ElSources } from './components/el-sources.js';
+export { ElTaskList } from './components/el-task-list.js';
+export { ElInsightCard } from './components/el-insight-card.js';
 
 // AG-UI Protocol Adapter (Streaming Events, State Deltas, & Signal Bindings)
 export { createAgUiStore, applyJsonPatch, getByPointer } from './ag-ui.js';

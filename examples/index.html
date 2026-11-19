@@ -1088,7 +1088,7 @@
             </div>
           </div>
 
-          <p class="component-desc">${comp.description}</p>
+          <p class="component-desc">${escapeHtml(comp.description)}</p>
 
           <div class="badge-strip">
             <el-badge variant="outline" count="Zero Runtime Deps"></el-badge>
@@ -1494,9 +1494,10 @@
       // 8b. el-alert-dialog
       if (tag === 'el-alert-dialog') {
         const title = p.title || 'Delete Database Cluster?';
+        const headingAttr = p.heading ? ` heading="${escapeHtml(p.heading)}"` : '';
         const openAttr = p.open ? ' open' : '';
         return `<div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
-  <el-alert-dialog id="demo-alert-dialog-inst" title="${escapeHtml(title)}"${openAttr}>
+  <el-alert-dialog id="demo-alert-dialog-inst" title="${escapeHtml(title)}"${headingAttr}${openAttr}>
     <el-button slot="trigger" variant="danger">Delete Production Database</el-button>
     <p style="margin: 0 0 16px 0; color: var(--el-text-muted); line-height: 1.5;">
       This action cannot be undone. This will permanently delete the selected database shards and destroy all active replications.
@@ -1623,11 +1624,12 @@
       }
       if (tag === 'el-accordion-item') {
         const title = p.title || 'Accordion Section';
+        const headingAttr = p.heading ? ` heading="${escapeHtml(p.heading)}"` : '';
         const open = p.open ? ' open' : '';
         const dis = p.disabled ? ' disabled' : '';
         const val = p.value ? ` value="${escapeHtml(p.value)}"` : '';
         return `<el-accordion style="max-width: 440px; width: 100%;">
-  <el-accordion-item title="${escapeHtml(title)}"${open}${dis}${val}>
+  <el-accordion-item title="${escapeHtml(title)}"${headingAttr}${open}${dis}${val}>
     <p style="margin:0; color:var(--el-text-muted); line-height:1.5;">Expandable section content reacting smoothly to state changes.</p>
   </el-accordion-item>
   <el-accordion-item title="Second Topic">
@@ -1640,6 +1642,9 @@
       if (tag === 'el-chart') {
         const type = p.type || 'line';
         const curve = p.curve || 'smooth';
+        const xKey = p['x-key'] ? ` x-key="${escapeHtml(p['x-key'])}"` : '';
+        const yKey = p['y-key'] ? ` y-key="${escapeHtml(p['y-key'])}"` : '';
+        const secKey = p['secondary-key'] ? ` secondary-key="${escapeHtml(p['secondary-key'])}"` : '';
         const showGrid = p['show-grid'] === false ? ' show-grid="false"' : ' show-grid';
         const showDots = p['show-dots'] === false ? ' show-dots="false"' : ' show-dots';
         const height = p.height || 220;
@@ -1652,7 +1657,7 @@
           { label: '20:00', value: 2900, secondary: 1300 }
         ]);
         return `<div style="width: 100%; max-width: 640px;">
-  <el-chart type="${type}" curve="${curve}" height="${height}"${showGrid}${showDots} data='${chartData}'></el-chart>
+  <el-chart type="${type}" curve="${curve}" height="${height}"${xKey}${yKey}${secKey}${showGrid}${showDots} data='${chartData}'></el-chart>
 </div>`;
       }
 
@@ -1834,10 +1839,12 @@ ${optionsHtml}
         if (p.disabled) attrs.push('disabled');
         const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
         return `<div style="max-width: 360px; width: 100%;">
-  <el-radio-card${attrStr}>
-    <div style="font-weight: 600;">Compute Optimized</div>
-    <div style="font-size: 0.825rem; color: var(--el-text-muted); margin-top: 4px;">8 vCPU, 32GB RAM, 10Gbps Network</div>
-  </el-radio-card>
+  <el-radio-card-group value="${escapeHtml(p.value || 'compute')}" name="plan-card" columns="1">
+    <el-radio-card${attrStr}>
+      <div style="font-weight: 600;">Compute Optimized</div>
+      <div style="font-size: 0.825rem; color: var(--el-text-muted); margin-top: 4px;">8 vCPU, 32GB RAM, 10Gbps Network</div>
+    </el-radio-card>
+  </el-radio-card-group>
 </div>`;
       }
 
@@ -2317,19 +2324,26 @@ ${optionsHtml}
         const val = p.value || 'deploy-prod';
         const shortcut = p.shortcut !== undefined && p.shortcut !== '' ? p.shortcut : '⌘D';
         const dis = p.disabled ? ' disabled' : '';
-        return `<div style="max-width: 420px; width: 100%; border: 1px solid var(--el-surface-border); border-radius: 10px; padding: 8px; background: var(--el-surface-card);">
-  <el-command-item value="${escapeHtml(val)}" shortcut="${escapeHtml(shortcut)}"${dis} onclick="if(!this.hasAttribute('disabled')) toast('Selected command: ${escapeHtml(val)}')">
-    🚀 Deploy Service (${escapeHtml(val)})
-  </el-command-item>
+        return `<div style="max-width: 420px; width: 100%;">
+  <el-command inline placeholder="Filter commands...">
+    <el-command-group heading="Actions">
+      <el-command-item value="${escapeHtml(val)}" shortcut="${escapeHtml(shortcut)}"${dis}>
+        🚀 Deploy Service (${escapeHtml(val)})
+      </el-command-item>
+      <el-command-item value="scale" shortcut="⌘S">📈 Scale Workers</el-command-item>
+    </el-command-group>
+  </el-command>
 </div>`;
       }
       if (tag === 'el-command-group') {
         const heading = p.heading || 'Quick Actions';
-        return `<div style="max-width: 420px; width: 100%; border: 1px solid var(--el-surface-border); border-radius: 10px; padding: 8px; background: var(--el-surface-card);">
-  <el-command-group heading="${escapeHtml(heading)}">
-    <el-command-item value="deploy" shortcut="⌘D">🚀 Deploy Service</el-command-item>
-    <el-command-item value="scale" shortcut="⌘S">📈 Scale Workers</el-command-item>
-  </el-command-group>
+        return `<div style="max-width: 420px; width: 100%;">
+  <el-command inline placeholder="Filter commands...">
+    <el-command-group heading="${escapeHtml(heading)}">
+      <el-command-item value="deploy" shortcut="⌘D">🚀 Deploy Service</el-command-item>
+      <el-command-item value="scale" shortcut="⌘S">📈 Scale Workers</el-command-item>
+    </el-command-group>
+  </el-command>
 </div>`;
       }
       if (tag.startsWith('el-command')) {
@@ -2506,13 +2520,13 @@ ${optionsHtml}
         const interval = p.interval ? ` interval="${p.interval}"` : '';
         const autoPlayAttr = (p['auto-play'] || p.autoplay) ? ' auto-play' : '';
         const loopAttr = p.loop === false ? ' loop="false"' : ' loop';
-        return `<div style="max-width: 440px; width: 100%;">
-  <el-carousel${autoPlayAttr}${loopAttr}${interval}>
+        return `<div style="max-width: 520px; min-width: 300px; width: 100%;">
+  <el-carousel${autoPlayAttr}${loopAttr}${interval} style="width: 100%;">
     <el-carousel-slide>
-      <div style="height: 180px; background: linear-gradient(135deg, #2563eb, #3b82f6); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">Slide 1</div>
+      <div style="width: 100%; height: 180px; background: linear-gradient(135deg, #2563eb, #3b82f6); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">Slide 1</div>
     </el-carousel-slide>
     <el-carousel-slide>
-      <div style="height: 180px; background: linear-gradient(135deg, #059669, #10b981); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">Slide 2</div>
+      <div style="width: 100%; height: 180px; background: linear-gradient(135deg, #059669, #10b981); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">Slide 2</div>
     </el-carousel-slide>
   </el-carousel>
 </div>`;
@@ -2520,21 +2534,25 @@ ${optionsHtml}
 
       // 58. el-resizable & sub-elements
       if (tag === 'el-resizable-panel') {
-        const def = p['default-size'] ? ` default-size="${p['default-size']}"` : '';
-        const min = p['min-size'] ? ` min-size="${p['min-size']}"` : '';
-        const max = p['max-size'] ? ` max-size="${p['max-size']}"` : '';
-        return `<div style="max-width: 480px; width: 100%; height: 160px; border: 1px solid var(--el-surface-border); border-radius: 8px; display: flex; overflow: hidden;">
-  <el-resizable-panel${def}${min}${max} style="flex: 1; padding: 12px; background: var(--el-surface-muted);">Panel Left</el-resizable-panel>
-  <el-resizable-handle style="width: 4px; background: var(--el-surface-border); cursor: col-resize;"></el-resizable-handle>
-  <el-resizable-panel style="flex: 1; padding: 12px;">Panel Right</el-resizable-panel>
+        const def = p['default-size'] ? ` default-size="${p['default-size']}"` : ' default-size="50"';
+        const min = p['min-size'] ? ` min-size="${p['min-size']}"` : ' min-size="20"';
+        const max = p['max-size'] ? ` max-size="${p['max-size']}"` : ' max-size="80"';
+        return `<div style="max-width: 520px; width: 100%; height: 180px; border: 1px solid var(--el-surface-border); border-radius: 8px; overflow: hidden;">
+  <el-resizable style="width: 100%; height: 100%;">
+    <el-resizable-panel${def}${min}${max} style="padding: 14px; background: var(--el-surface-muted);">Panel Left (drag divider →)</el-resizable-panel>
+    <el-resizable-handle></el-resizable-handle>
+    <el-resizable-panel default-size="50" style="padding: 14px;">Panel Right</el-resizable-panel>
+  </el-resizable>
 </div>`;
       }
       if (tag === 'el-resizable-handle') {
         const dis = p.disabled ? ' disabled' : '';
-        return `<div style="max-width: 480px; width: 100%; height: 160px; border: 1px solid var(--el-surface-border); border-radius: 8px; display: flex; overflow: hidden;">
-  <el-resizable-panel style="flex: 1; padding: 12px; background: var(--el-surface-muted);">Panel A</el-resizable-panel>
-  <el-resizable-handle${dis} style="width: 6px; background: var(--el-color-primary); cursor: col-resize;"></el-resizable-handle>
-  <el-resizable-panel style="flex: 1; padding: 12px;">Panel B</el-resizable-panel>
+        return `<div style="max-width: 520px; width: 100%; height: 180px; border: 1px solid var(--el-surface-border); border-radius: 8px; overflow: hidden;">
+  <el-resizable style="width: 100%; height: 100%;">
+    <el-resizable-panel default-size="45" style="padding: 14px; background: var(--el-surface-muted);">Panel A</el-resizable-panel>
+    <el-resizable-handle${dis}></el-resizable-handle>
+    <el-resizable-panel default-size="55" style="padding: 14px;">Panel B (drag handle ←)</el-resizable-panel>
+  </el-resizable>
 </div>`;
       }
       if (tag.startsWith('el-resizable')) {

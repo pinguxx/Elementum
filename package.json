@@ -32,6 +32,7 @@
     "mcp": "node mcp/server.js",
     "create": "node tools/create-component.js",
     "tokens:sync": "node tools/sync-tokens.js",
+    "catalog:diff": "node tools/audit-catalog-diff.js",
     "penpot:mcp": "node tools/sync-penpot-mcp.js",
     "penpot:design-app": "node tools/design-ledgerflow-penpot.js",
     "penpot:generate": "node tools/penpot-to-elementum.js"

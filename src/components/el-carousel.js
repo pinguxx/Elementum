@@ -14,13 +14,19 @@ export class ElCarouselSlide extends Elementum {
     :host {
       flex: 0 0 100%;
       width: 100%;
+      min-width: 100%;
       height: 100%;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: stretch;
       justify-content: center;
       position: relative;
+    }
+
+    ::slotted(*) {
+      width: 100%;
+      box-sizing: border-box;
     }
   `;
 

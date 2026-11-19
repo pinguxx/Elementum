@@ -1,4 +1,3 @@
-// Auto-generated Component Catalog Schema & Metadata
 export const categories = [
   {
     "id": "actions",
@@ -919,6 +918,24 @@ export const components = {
         "type": "text",
         "default": "[{\"x\":\"00:00\",\"y\":1200},{\"x\":\"04:00\",\"y\":900},{\"x\":\"08:00\",\"y\":3400},{\"x\":\"12:00\",\"y\":5200},{\"x\":\"16:00\",\"y\":4800},{\"x\":\"20:00\",\"y\":2900}]",
         "description": "JSON dataset array with x and y coordinates."
+      },
+      {
+        "name": "x-key",
+        "type": "text",
+        "default": "label",
+        "description": "Data object key for the X-axis category."
+      },
+      {
+        "name": "y-key",
+        "type": "text",
+        "default": "value",
+        "description": "Data object key for the primary Y-axis metric."
+      },
+      {
+        "name": "secondary-key",
+        "type": "text",
+        "default": "",
+        "description": "Optional data object key for a comparison series."
       }
     ],
     "slots": [],
@@ -1247,12 +1264,6 @@ export const components = {
         "type": "text",
         "default": "Confirm Action",
         "description": "Modal title text."
-      },
-      {
-        "name": "message",
-        "type": "text",
-        "default": "Are you sure you want to proceed?",
-        "description": "Dialog message body."
       },
       {
         "name": "open",
@@ -1704,6 +1715,12 @@ export const components = {
         "type": "text",
         "default": "",
         "description": "Configures value attribute."
+      },
+      {
+        "name": "heading",
+        "type": "text",
+        "default": "Section",
+        "description": "Alias for title setting the disclosure trigger heading."
       }
     ],
     "slots": [
@@ -1738,6 +1755,12 @@ export const components = {
         "type": "text",
         "default": "Delete Database Cluster?",
         "description": "Dialog header title."
+      },
+      {
+        "name": "heading",
+        "type": "text",
+        "default": "Confirm Action",
+        "description": "Alias for title setting the alert dialog heading."
       }
     ],
     "slots": [
@@ -2119,7 +2142,7 @@ export const components = {
     "tag": "el-card-header",
     "name": "Card Header",
     "category": "layout",
-    "description": "Modern Web Component primitive <el-card-header>.",
+    "description": "Header container inside a Card for titles, subtitles, and top-level actions.",
     "formAssociated": false,
     "props": [],
     "slots": [
@@ -2140,7 +2163,7 @@ export const components = {
     "tag": "el-card-title",
     "name": "Card Title",
     "category": "layout",
-    "description": "Modern Web Component primitive <el-card-title>.",
+    "description": "Primary heading element rendered inside a Card Header.",
     "formAssociated": false,
     "props": [],
     "slots": [
@@ -2161,7 +2184,7 @@ export const components = {
     "tag": "el-card-description",
     "name": "Card Description",
     "category": "layout",
-    "description": "Modern Web Component primitive <el-card-description>.",
+    "description": "Secondary supporting description text rendered inside a Card Header.",
     "formAssociated": false,
     "props": [],
     "slots": [
@@ -2182,7 +2205,7 @@ export const components = {
     "tag": "el-card-content",
     "name": "Card Content",
     "category": "layout",
-    "description": "Modern Web Component primitive <el-card-content>.",
+    "description": "Main body content area inside a Card.",
     "formAssociated": false,
     "props": [],
     "slots": [
@@ -2203,7 +2226,7 @@ export const components = {
     "tag": "el-card-footer",
     "name": "Card Footer",
     "category": "layout",
-    "description": "Modern Web Component primitive <el-card-footer>.",
+    "description": "Footer action bar inside a Card for buttons and metadata.",
     "formAssociated": false,
     "props": [],
     "slots": [
@@ -2244,6 +2267,12 @@ export const components = {
         "type": "boolean",
         "default": true,
         "description": "Infinite looping between first and last slides."
+      },
+      {
+        "name": "autoplay",
+        "type": "boolean",
+        "default": false,
+        "description": "Alias for auto-play enabling automatic slide rotation."
       }
     ],
     "slots": [
@@ -2269,7 +2298,7 @@ export const components = {
     "tag": "el-carousel-slide",
     "name": "Carousel Slide",
     "category": "layout",
-    "description": "Modern Web Component primitive <el-carousel-slide>.",
+    "description": "Full-width slide item rendered inside a Carousel viewport.",
     "formAssociated": false,
     "props": [],
     "slots": [
@@ -3478,7 +3507,7 @@ export const components = {
     "tag": "el-sidebar-header",
     "name": "Sidebar Header",
     "category": "navigation",
-    "description": "Modern Web Component primitive <el-sidebar-header>.",
+    "description": "Top header region inside a Sidebar for brand identity and workspace switchers.",
     "formAssociated": false,
     "props": [
       {
@@ -3506,7 +3535,7 @@ export const components = {
     "tag": "el-sidebar-content",
     "name": "Sidebar Content",
     "category": "navigation",
-    "description": "Modern Web Component primitive <el-sidebar-content>.",
+    "description": "Scrollable primary navigation region inside a Sidebar.",
     "formAssociated": false,
     "props": [
       {
@@ -3534,7 +3563,7 @@ export const components = {
     "tag": "el-sidebar-footer",
     "name": "Sidebar Footer",
     "category": "navigation",
-    "description": "Modern Web Component primitive <el-sidebar-footer>.",
+    "description": "Bottom footer region inside a Sidebar for user profile and settings.",
     "formAssociated": false,
     "props": [
       {
@@ -3562,7 +3591,7 @@ export const components = {
     "tag": "el-sidebar-trigger",
     "name": "Sidebar Trigger",
     "category": "navigation",
-    "description": "Modern Web Component primitive <el-sidebar-trigger>.",
+    "description": "Toggle button that collapses or expands its associated Sidebar.",
     "formAssociated": false,
     "props": [],
     "slots": [
@@ -3694,7 +3723,7 @@ export const components = {
     "tag": "el-tab",
     "name": "Tab",
     "category": "navigation",
-    "description": "Individual tab panel inside <el-tabs>.",
+    "description": "Individual tab trigger and panel entry placed inside Tabs.",
     "formAssociated": false,
     "props": [
       {
@@ -4114,7 +4143,7 @@ export const components = {
     "tag": "el-callout",
     "name": "Callout",
     "category": "feedback",
-    "description": "Elementum <el-callout> UI component primitive.",
+    "description": "Highlighted informational, success, warning, or danger callout box with optional title slot.",
     "formAssociated": false,
     "props": [
       {
@@ -4161,7 +4190,7 @@ export const components = {
     "tag": "el-checkbox-card",
     "name": "Checkbox Card",
     "category": "forms",
-    "description": "Elementum <el-checkbox-card> UI component primitive.",
+    "description": "Selectable card-styled checkbox control for multi-option feature grids.",
     "formAssociated": false,
     "props": [
       {
@@ -4201,7 +4230,7 @@ export const components = {
     "tag": "el-command-item",
     "name": "Command Item",
     "category": "overlays",
-    "description": "Elementum <el-command-item> UI component primitive.",
+    "description": "Actionable item row inside a Command Palette with optional keyboard shortcut badge.",
     "formAssociated": false,
     "props": [
       {
@@ -4241,7 +4270,7 @@ export const components = {
     "tag": "el-command-group",
     "name": "Command Group",
     "category": "overlays",
-    "description": "Elementum <el-command-group> UI component primitive.",
+    "description": "Labeled section grouping related Command Items inside a Command Palette.",
     "formAssociated": false,
     "props": [
       {
@@ -4269,7 +4298,7 @@ export const components = {
     "tag": "el-data-list",
     "name": "Data List",
     "category": "data",
-    "description": "Elementum <el-data-list> UI component primitive.",
+    "description": "Structured key-value metadata list for displaying record attributes cleanly.",
     "formAssociated": false,
     "props": [
       {
@@ -4312,7 +4341,7 @@ export const components = {
     "tag": "el-data-list-item",
     "name": "Data List Item",
     "category": "data",
-    "description": "Elementum <el-data-list-item> UI component primitive.",
+    "description": "Individual label-and-value row rendered inside a Data List.",
     "formAssociated": false,
     "props": [
       {
@@ -4352,7 +4381,7 @@ export const components = {
     "tag": "el-inset",
     "name": "Inset",
     "category": "layout",
-    "description": "Elementum <el-inset> UI component primitive.",
+    "description": "Edge-to-edge bleed container for media or tables inside padded cards.",
     "formAssociated": false,
     "props": [
       {
@@ -4386,7 +4415,7 @@ export const components = {
     "tag": "el-navigation-menu",
     "name": "Navigation Menu",
     "category": "navigation",
-    "description": "Elementum <el-navigation-menu> UI component primitive.",
+    "description": "Accessible desktop navigation bar supporting horizontal or vertical orientation and dropdown mega-menu panels.",
     "formAssociated": false,
     "props": [
       {
@@ -4403,7 +4432,7 @@ export const components = {
     "slots": [
       {
         "name": "default",
-        "description": "Primary slotted content."
+        "description": "One or more el-navigation-menu-item children."
       }
     ],
     "events": [],
@@ -4418,13 +4447,13 @@ export const components = {
     "tag": "el-navigation-menu-item",
     "name": "Navigation Menu Item",
     "category": "layout",
-    "description": "Elementum <el-navigation-menu-item> UI component primitive.",
+    "description": "Top-level entry inside a Navigation Menu containing either a direct link or a trigger paired with dropdown content.",
     "formAssociated": false,
     "props": [],
     "slots": [
       {
         "name": "default",
-        "description": "Primary slotted content."
+        "description": "A direct anchor link or an el-navigation-menu-trigger paired with el-navigation-menu-content."
       }
     ],
     "events": [],
@@ -4439,13 +4468,13 @@ export const components = {
     "tag": "el-navigation-menu-trigger",
     "name": "Navigation Menu Trigger",
     "category": "layout",
-    "description": "Elementum <el-navigation-menu-trigger> UI component primitive.",
+    "description": "Interactive trigger button inside a Navigation Menu Item that opens and closes its associated menu content panel.",
     "formAssociated": false,
     "props": [],
     "slots": [
       {
         "name": "default",
-        "description": "Primary slotted content."
+        "description": "Visible button label text or icon for the dropdown trigger."
       }
     ],
     "events": [],
@@ -4460,13 +4489,13 @@ export const components = {
     "tag": "el-navigation-menu-content",
     "name": "Navigation Menu Content",
     "category": "layout",
-    "description": "Elementum <el-navigation-menu-content> UI component primitive.",
+    "description": "Floating mega-menu popover panel inside a Navigation Menu Item displaying grouped navigation links and descriptions.",
     "formAssociated": false,
     "props": [],
     "slots": [
       {
         "name": "default",
-        "description": "Primary slotted content."
+        "description": "Dropdown links, feature cards, or grouped navigation columns."
       }
     ],
     "events": [],
@@ -4481,7 +4510,7 @@ export const components = {
     "tag": "el-radio-card",
     "name": "Radio Card",
     "category": "forms",
-    "description": "Elementum <el-radio-card> UI component primitive.",
+    "description": "Selectable card-styled radio option rendered inside a Radio Card Group.",
     "formAssociated": false,
     "props": [
       {
@@ -4521,7 +4550,7 @@ export const components = {
     "tag": "el-radio-card-group",
     "name": "Radio Card Group",
     "category": "forms",
-    "description": "Elementum <el-radio-card-group> UI component primitive.",
+    "description": "Form-associated radio group arranging Radio Cards in a responsive multi-column grid.",
     "formAssociated": false,
     "props": [
       {
@@ -4565,7 +4594,7 @@ export const components = {
     "tag": "el-radio-group",
     "name": "Radio Group",
     "category": "forms",
-    "description": "Elementum <el-radio-group> UI component primitive.",
+    "description": "Accessible form-associated container coordinating roving keyboard focus across Radio items.",
     "formAssociated": false,
     "props": [
       {
@@ -4626,7 +4655,7 @@ export const components = {
     "tag": "el-resizable-handle",
     "name": "Resizable Handle",
     "category": "layout",
-    "description": "Elementum <el-resizable-handle> UI component primitive.",
+    "description": "Interactive drag divider placed between Resizable Panels to resize split layouts smoothly.",
     "formAssociated": false,
     "props": [
       {
@@ -4654,7 +4683,7 @@ export const components = {
     "tag": "el-resizable-panel",
     "name": "Resizable Panel",
     "category": "layout",
-    "description": "Elementum <el-resizable-panel> UI component primitive.",
+    "description": "Flexible split-pane panel placed inside a Resizable container with configurable default, min, and max sizes.",
     "formAssociated": false,
     "props": [
       {
@@ -4694,7 +4723,7 @@ export const components = {
     "tag": "el-route",
     "name": "Route",
     "category": "navigation",
-    "description": "Elementum <el-route> UI component primitive.",
+    "description": "Declarative client-side route view rendered inside a Router when its path matches the current URL.",
     "formAssociated": false,
     "props": [
       {
@@ -4728,7 +4757,7 @@ export const components = {
     "tag": "el-route-link",
     "name": "Route Link",
     "category": "navigation",
-    "description": "Elementum <el-route-link> UI component primitive.",
+    "description": "Client-side navigation link that updates the active Router path without a full page reload.",
     "formAssociated": false,
     "props": [
       {
@@ -4762,7 +4791,7 @@ export const components = {
     "tag": "el-router",
     "name": "Router",
     "category": "navigation",
-    "description": "Elementum <el-router> UI component primitive.",
+    "description": "Zero-dependency micro-signal SPA router coordinating Route views and browser history.",
     "formAssociated": false,
     "props": [
       {
@@ -4790,7 +4819,7 @@ export const components = {
     "tag": "el-toggle-group",
     "name": "Toggle Group",
     "category": "actions",
-    "description": "Elementum <el-toggle-group> UI component primitive.",
+    "description": "Container coordinating single or multiple pressed states across child Toggle buttons.",
     "formAssociated": false,
     "props": [
       {
@@ -4839,7 +4868,7 @@ export const components = {
     "tag": "el-visually-hidden",
     "name": "Visually Hidden",
     "category": "layout",
-    "description": "Elementum <el-visually-hidden> UI component primitive.",
+    "description": "Accessibility utility that hides content visually while keeping it readable by screen readers.",
     "formAssociated": false,
     "props": [],
     "slots": [
@@ -5084,6 +5113,220 @@ export const components = {
       {
         "title": "Human-in-the-Loop Tool Call",
         "code": "<el-tool-call name=\"deploy_edge_worker\" call-id=\"call_9f2a\" status=\"awaiting-approval\" approval args='{\"region\":\"us-east-1\",\"replicas\":3}'></el-tool-call>"
+      }
+    ]
+  },
+  "el-diff-viewer": {
+    "tag": "el-diff-viewer",
+    "name": "Diff Viewer",
+    "category": "ai",
+    "description": "Zero-dependency code and config diff viewer with unified/split modes and HITL patch approval.",
+    "formAssociated": false,
+    "props": [
+      {
+        "name": "filename",
+        "type": "text",
+        "default": "src/config.js",
+        "description": "File path or resource heading."
+      },
+      {
+        "name": "before",
+        "type": "text",
+        "default": "const timeout = 1000;\nconst retries = 1;",
+        "description": "Original text content."
+      },
+      {
+        "name": "after",
+        "type": "text",
+        "default": "const timeout = 3000;\nconst retries = 3;",
+        "description": "Proposed text content."
+      },
+      {
+        "name": "mode",
+        "type": "select",
+        "options": [
+          "unified",
+          "split"
+        ],
+        "default": "unified",
+        "description": "Unified or side-by-side split diff layout."
+      },
+      {
+        "name": "approval",
+        "type": "boolean",
+        "default": true,
+        "description": "Displays Accept Patch / Reject HITL buttons."
+      }
+    ],
+    "slots": [],
+    "events": [
+      {
+        "name": "accept",
+        "description": "Fired when user clicks Accept Patch."
+      },
+      {
+        "name": "reject",
+        "description": "Fired when user clicks Reject."
+      }
+    ],
+    "examples": [
+      {
+        "title": "HITL Patch Diff",
+        "code": "<el-diff-viewer filename=\"src/config.js\" mode=\"unified\" approval before=\"const retries = 1;\" after=\"const retries = 3;\"></el-diff-viewer>"
+      }
+    ]
+  },
+  "el-sources": {
+    "tag": "el-sources",
+    "name": "Sources",
+    "category": "ai",
+    "description": "Numbered grounding citation pills and expandable source cards for RAG and web-search AI responses.",
+    "formAssociated": false,
+    "props": [
+      {
+        "name": "sources",
+        "type": "text",
+        "default": "[{\"title\":\"AG-UI Protocol\",\"url\":\"https://docs.ag-ui.com\",\"snippet\":\"Event-driven agent-user interaction protocol.\"},{\"title\":\"Penpot DTCG\",\"url\":\"https://penpot.app\",\"snippet\":\"Open-source design tokens and UI kits.\"}]",
+        "description": "JSON array of source objects ({ title, url, domain?, snippet? })."
+      },
+      {
+        "name": "label",
+        "type": "text",
+        "default": "Sources",
+        "description": "Toggle button label."
+      },
+      {
+        "name": "expanded",
+        "type": "boolean",
+        "default": true,
+        "description": "Expands the full source preview cards."
+      }
+    ],
+    "slots": [],
+    "events": [
+      {
+        "name": "source-select",
+        "description": "Fired when a citation pill or source card is clicked."
+      }
+    ],
+    "examples": [
+      {
+        "title": "Grounding Citations",
+        "code": "<el-sources label=\"Sources\" expanded sources='[{\"title\":\"AG-UI Docs\",\"url\":\"https://docs.ag-ui.com\",\"snippet\":\"Standard event stream for agent UIs.\"}]'></el-sources>"
+      }
+    ]
+  },
+  "el-task-list": {
+    "tag": "el-task-list",
+    "name": "Task List",
+    "category": "ai",
+    "description": "Multi-step AI agent execution plan checklist with status indicators, durations, and surgical step updates.",
+    "formAssociated": false,
+    "props": [
+      {
+        "name": "heading",
+        "type": "text",
+        "default": "Agent Execution Plan",
+        "description": "Header title for the task checklist."
+      },
+      {
+        "name": "tasks",
+        "type": "text",
+        "default": "[{\"id\":\"1\",\"label\":\"Inspect Penpot boards\",\"status\":\"completed\",\"duration\":\"420ms\"},{\"id\":\"2\",\"label\":\"Generate Elementum HTML\",\"status\":\"running\",\"detail\":\"Validating 15 component tags\"},{\"id\":\"3\",\"label\":\"Run contract tests\",\"status\":\"pending\"}]",
+        "description": "JSON array of task objects ({ id, label, status, detail?, duration? })."
+      },
+      {
+        "name": "compact",
+        "type": "boolean",
+        "default": false,
+        "description": "Compact dense row spacing."
+      }
+    ],
+    "slots": [],
+    "events": [],
+    "examples": [
+      {
+        "title": "Agent Execution Plan",
+        "code": "<el-task-list heading=\"Deploy Pipeline\" tasks='[{\"id\":\"1\",\"label\":\"Run unit tests\",\"status\":\"completed\",\"duration\":\"3.1s\"},{\"id\":\"2\",\"label\":\"Publish edge worker\",\"status\":\"running\"}]'></el-task-list>"
+      }
+    ]
+  },
+  "el-insight-card": {
+    "tag": "el-insight-card",
+    "name": "Insight Card",
+    "category": "ai",
+    "description": "Structured AI insight or artifact card with metric delta, action button, and thumbs up/down feedback.",
+    "formAssociated": false,
+    "props": [
+      {
+        "name": "title",
+        "type": "text",
+        "default": "Reduce Cold Start Latency",
+        "description": "Insight heading."
+      },
+      {
+        "name": "category",
+        "type": "text",
+        "default": "Optimization",
+        "description": "Category pill text."
+      },
+      {
+        "name": "metric",
+        "type": "text",
+        "default": "-42ms",
+        "description": "Optional key metric figure."
+      },
+      {
+        "name": "delta",
+        "type": "text",
+        "default": "p95 improvement",
+        "description": "Optional metric comparison note."
+      },
+      {
+        "name": "variant",
+        "type": "select",
+        "options": [
+          "info",
+          "success",
+          "warning",
+          "danger"
+        ],
+        "default": "success",
+        "description": "Semantic badge accent."
+      },
+      {
+        "name": "summary",
+        "type": "text",
+        "default": "Pre-rendering Declarative Shadow DOM removes initial client layout shift.",
+        "description": "Summary description."
+      },
+      {
+        "name": "action-label",
+        "type": "text",
+        "default": "Apply Recommendation",
+        "description": "Primary CTA button text."
+      }
+    ],
+    "slots": [
+      {
+        "name": "default",
+        "description": "Optional custom body content inside the insight card."
+      }
+    ],
+    "events": [
+      {
+        "name": "action",
+        "description": "Fired when primary CTA button is clicked."
+      },
+      {
+        "name": "feedback",
+        "description": "Fired when thumbs up/down feedback is toggled."
+      }
+    ],
+    "examples": [
+      {
+        "title": "AI Optimization Insight",
+        "code": "<el-insight-card category=\"Optimization\" variant=\"success\" title=\"Zero-CLS First Paint\" metric=\"-42ms\" delta=\"p95\" summary=\"Enable DSD SSR on edge routes.\" action-label=\"Apply Fix\"></el-insight-card>"
       }
     ]
   }

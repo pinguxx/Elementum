@@ -3205,6 +3205,92 @@ import './components/el-router.js';</code></pre>
       </div>
     </section>
 
+    <!-- AI & Agent Blocks (Beautiful UI Inspired · Zero Dependencies) -->
+    <section id="ai-agent-blocks" class="section-block" style="margin-top: 56px;">
+      <div class="section-header" style="margin-bottom: 24px;">
+        <span class="badge-tag" style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--el-color-primary, #2563eb); letter-spacing: 0.05em;">AI &amp; Agentic UI Blocks</span>
+        <h2 style="margin: 6px 0 8px; font-size: 1.65rem; letter-spacing: -0.02em;">Copy-Paste AI Agent Blocks</h2>
+        <p style="margin: 0; color: var(--el-text-secondary, #475569); max-width: 65ch;">
+          Ready-to-paste zero-dependency agent blocks built from <code>&lt;el-task-list&gt;</code>, <code>&lt;el-sources&gt;</code>, <code>&lt;el-diff-viewer&gt;</code>, and <code>&lt;el-insight-card&gt;</code>—no React or Tailwind required.
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px;">
+        <!-- Block 1: Agent Plan + Grounding Sources -->
+        <el-card>
+          <el-card-header>
+            <el-card-title>1. Agent Execution Plan + Sources</el-card-title>
+            <el-card-description>Multi-step run progress paired with verifiable grounding citations.</el-card-description>
+          </el-card-header>
+          <el-card-content style="display: flex; flex-direction: column; gap: 14px;">
+            <el-task-list
+              heading="Research &amp; Patch Plan"
+              tasks='[{"id":"1","label":"Inspect Penpot design tokens","status":"completed","duration":"310ms"},{"id":"2","label":"Generate Elementum component diff","status":"running","detail":"Applying WCAG 2.2 AA contrast tokens"},{"id":"3","label":"Run automated craft contracts","status":"pending"}]'
+            ></el-task-list>
+            <el-sources
+              label="Sources"
+              expanded
+              sources='[{"title":"AG-UI Protocol","url":"https://docs.ag-ui.com","snippet":"Event-driven agent-user interaction streams."},{"title":"Penpot W3C DTCG","url":"https://penpot.app","snippet":"Open-source design tokens and component libraries."}]'
+            ></el-sources>
+            <el-code-block copyable language="html">&lt;el-task-list heading="Research Plan" tasks='[{"id":"1","label":"Inspect tokens","status":"completed","duration":"310ms"}]'&gt;&lt;/el-task-list&gt;
+&lt;el-sources expanded sources='[{"title":"AG-UI Protocol","url":"https://docs.ag-ui.com"}]'&gt;&lt;/el-sources&gt;</el-code-block>
+          </el-card-content>
+        </el-card>
+
+        <!-- Block 2: HITL Code Diff Review Panel -->
+        <el-card>
+          <el-card-header>
+            <el-card-title>2. HITL Code Diff Review</el-card-title>
+            <el-card-description>Unified or split diff with Accept Patch / Reject human-in-the-loop controls.</el-card-description>
+          </el-card-header>
+          <el-card-content style="display: flex; flex-direction: column; gap: 14px;">
+            <el-diff-viewer
+              filename="src/components/el-button.js"
+              mode="unified"
+              approval
+              before="button:active {&#10;  transform: translateY(1px);&#10;}"
+              after="button:active:not([disabled]) {&#10;  transform: scale(0.97);&#10;}"
+            ></el-diff-viewer>
+            <el-code-block copyable language="html">&lt;el-diff-viewer
+  filename="src/components/el-button.js"
+  mode="unified"
+  approval
+  before="transform: translateY(1px);"
+  after="transform: scale(0.97);"
+&gt;&lt;/el-diff-viewer&gt;</el-code-block>
+          </el-card-content>
+        </el-card>
+
+        <!-- Block 3: Actionable AI Insight Card -->
+        <el-card>
+          <el-card-header>
+            <el-card-title>3. Actionable AI Insight Card</el-card-title>
+            <el-card-description>Structured agent recommendation with metric delta, CTA, and thumbs feedback.</el-card-description>
+          </el-card-header>
+          <el-card-content style="display: flex; flex-direction: column; gap: 14px;">
+            <el-insight-card
+              category="Optimization"
+              variant="success"
+              title="Enable Declarative Shadow DOM SSR"
+              metric="-42ms"
+              delta="p95 LCP improvement"
+              summary="Pre-rendering Elementum components via renderComponentToDSD() eliminates first-paint layout shift with zero client runtime overhead."
+              action-label="Enable DSD SSR"
+            ></el-insight-card>
+            <el-code-block copyable language="html">&lt;el-insight-card
+  category="Optimization"
+  variant="success"
+  title="Enable DSD SSR"
+  metric="-42ms"
+  delta="p95 LCP"
+  summary="Zero-CLS first paint via renderComponentToDSD()."
+  action-label="Enable DSD SSR"
+&gt;&lt;/el-insight-card&gt;</el-code-block>
+          </el-card-content>
+        </el-card>
+      </div>
+    </section>
+
   </main>
 
   <!-- Full Theme Code Modal -->
