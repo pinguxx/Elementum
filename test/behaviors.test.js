@@ -367,3 +367,130 @@ test('Behaviors 10: createReorderBehavior supports keyboard grab/move/drop/cance
   dispose();
   list.remove();
 });
+
+test('Behaviors 11: createRovingFocus skips disabled/hidden items, handles dynamic DOM & Unicode typeahead', () => {
+  const wrap = document.createElement('div');
+  const makeBtn = (text, opts = {}) => {
+    const b = document.createElement('button');
+    b.textContent = text;
+    if (opts.disabled) b.setAttribute('disabled', '');
+    if (opts.hidden) b.setAttribute('hidden', '');
+    if (opts.displayNone) b.style.display = 'none';
+    wrap.appendChild(b);
+    return b;
+  };
+
+  const b1 = makeBtn('Alpha');
+  makeBtn('DisabledItem', { disabled: true });
+  makeBtn('HiddenItem', { hidden: true });
+  makeBtn('NoneItem', { displayNone: true });
+  const b2 = makeBtn('Éclair');
+  const b3 = makeBtn('Ñandú');
+  document.body.appendChild(wrap);
+
+  let lastEl = null;
+  const dispose = createRovingFocus(wrap, {
+    getItems: () => [...wrap.querySelectorAll('button')],
+    orientation: 'horizontal',
+    onFocusItem: (el) => {
+      lastEl = el;
+    },
+  });
+
+  // ArrowRight from Alpha skips disabled, hidden, and display:none straight to Éclair
+  b1.focus();
+  b1.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+  assert.equal(lastEl, b2);
+
+  // Unicode typeahead 'ñ' jumps directly to Ñandú
+  b2.dispatchEvent(new KeyboardEvent('keydown', { key: 'ñ', bubbles: true }));
+  assert.equal(lastEl, b3);
+
+  // Dynamic insertion works immediately without re-initializing controller
+  const b4 = makeBtn('Zebra');
+  b3.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true }));
+  assert.equal(lastEl, b4);
+
+  dispose();
+  wrap.remove();
+});
+
+test('Behaviors 12: createDismissableLayer cleans up on AbortSignal disconnect and supports 3-level nesting', () => {
+  const l1 = document.createElement('div');
+  const l2 = document.createElement('div');
+  const l3 = document.createElement('div');
+  document.body.append(l1, l2, l3);
+
+  const ac3 = new AbortController();
+  const order = [];
+  let open1 = true;
+  let open2 = true;
+  let open3 = true;
+
+  const off1 = createDismissableLayer(l1, { isOpen: () => open1, onDismiss: () => { open1 = false; order.push('l1'); } });
+  const off2 = createDismissableLayer(l2, { isOpen: () => open2, onDismiss: () => { open2 = false; order.push('l2'); } });
+  createDismissableLayer(l3, { isOpen: () => open3, onDismiss: () => { open3 = false; order.push('l3'); }, signal: ac3.signal });
+
+  // Simulate l3 disconnecting via AbortSignal -> Escape should dismiss l2 (now topmost), NOT l3
+  ac3.abort();
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  assert.deepEqual(order, ['l2']);
+
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  assert.deepEqual(order, ['l2', 'l1']);
+
+  off1();
+  off2();
+  l1.remove();
+  l2.remove();
+  l3.remove();
+});
+
+test('Behaviors 13: createReorderBehavior keyboard and pointer produce identical final order', () => {
+  const applyMove = (arr, from, to) => {
+    const copy = [...arr];
+    const [moved] = copy.splice(from, 1);
+    copy.splice(to, 0, moved);
+    return copy;
+  };
+
+  let kbOrder = ['A', 'B', 'C'];
+  let ptrOrder = ['A', 'B', 'C'];
+
+  const makeList = (onMove) => {
+    const ul = document.createElement('ul');
+    const lis = ['A', 'B', 'C'].map((t) => {
+      const li = document.createElement('li');
+      li.textContent = t;
+      li.setAttribute('tabindex', '0');
+      li.setAttribute('draggable', 'true');
+      ul.appendChild(li);
+      return li;
+    });
+    document.body.appendChild(ul);
+    const dispose = createReorderBehavior(ul, { getItems: () => lis, onReorder: onMove });
+    return { ul, lis, dispose };
+  };
+
+  const kb = makeList(({ fromIndex, toIndex }) => { kbOrder = applyMove(kbOrder, fromIndex, toIndex); });
+  const ptr = makeList(({ fromIndex, toIndex }) => { ptrOrder = applyMove(ptrOrder, fromIndex, toIndex); });
+
+  // Move index 0 -> index 2 via keyboard
+  kb.lis[0].dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+  kb.lis[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+  kb.lis[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+  kb.lis[0].dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+
+  // Move index 0 -> index 2 via pointer DnD
+  ptr.lis[0].dispatchEvent(new Event('dragstart', { bubbles: true }));
+  ptr.lis[2].dispatchEvent(new Event('dragover', { bubbles: true, cancelable: true }));
+  ptr.lis[2].dispatchEvent(new Event('drop', { bubbles: true, cancelable: true }));
+
+  assert.deepEqual(kbOrder, ['B', 'C', 'A']);
+  assert.deepEqual(ptrOrder, kbOrder);
+
+  kb.dispose();
+  ptr.dispose();
+  kb.ul.remove();
+  ptr.ul.remove();
+});

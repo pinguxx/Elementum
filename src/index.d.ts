@@ -353,9 +353,12 @@ export class ElAutocomplete extends Elementum {
 export class ElNumberFlow extends Elementum {
   value: Signal<number | string>;
   format: Signal<string>;
-  prefix: Signal<string>;
+  // Compatible with Element.prototype.prefix (string | null) and Signal<string>
+  prefix: any;
   suffix: Signal<string>;
+  duration: Signal<number>;
   animated: Signal<boolean>;
+  locale: Signal<string>;
 }
 
 export class ElOtpInput extends Elementum {
@@ -364,7 +367,8 @@ export class ElOtpInput extends Elementum {
   type: Signal<'text' | 'password'>;
   disabled: Signal<boolean>;
   required: Signal<boolean>;
-  autofocus: Signal<boolean>;
+  // Compatible with HTMLElement.prototype.autofocus (boolean) and Signal<boolean>
+  autofocus: any;
   focus(): void;
   blur(): void;
   clear(): void;

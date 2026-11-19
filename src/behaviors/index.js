@@ -340,12 +340,21 @@ export function createRovingFocus(
     'keydown',
     (e) => {
       const items = (getItems() || []).filter(
-        (el) => el && !el.disabled && !el.hasAttribute?.('disabled') && el.getAttribute?.('aria-disabled') !== 'true'
+        (el) =>
+          el &&
+          !el.disabled &&
+          !el.hidden &&
+          !el.hasAttribute?.('disabled') &&
+          !el.hasAttribute?.('hidden') &&
+          el.getAttribute?.('aria-disabled') !== 'true' &&
+          el.getAttribute?.('aria-hidden') !== 'true' &&
+          el.style?.display !== 'none'
       );
       if (!items.length) return;
 
       const activeEl = host.shadowRoot?.activeElement || document.activeElement;
       const currentIdx = items.findIndex((item) => item === activeEl || item === e.target || item.contains?.(e.target));
+      if (currentIdx === -1 && e.target !== host) return;
       const orient = typeof orientation === 'function' ? orientation() : orientation;
       const rtl = isRTL(host);
 
@@ -354,30 +363,34 @@ export function createRovingFocus(
 
       if (e.key === nextKey || (orient === 'both' && (e.key === 'ArrowRight' || e.key === 'ArrowDown'))) {
         e.preventDefault();
+        e.stopPropagation();
         focusIndex(items, currentIdx === -1 ? 0 : currentIdx + 1);
         return;
       }
 
       if (e.key === prevKey || (orient === 'both' && (e.key === 'ArrowLeft' || e.key === 'ArrowUp'))) {
         e.preventDefault();
+        e.stopPropagation();
         focusIndex(items, currentIdx === -1 ? items.length - 1 : currentIdx - 1);
         return;
       }
 
       if (e.key === 'Home') {
         e.preventDefault();
+        e.stopPropagation();
         focusIndex(items, 0);
         return;
       }
 
       if (e.key === 'End') {
         e.preventDefault();
+        e.stopPropagation();
         focusIndex(items, items.length - 1);
         return;
       }
 
       if (typeahead && e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        typeBuffer += e.key.toLowerCase();
+        typeBuffer += e.key.toLocaleLowerCase();
         if (typeTimer) clearTimeout(typeTimer);
         typeTimer = setTimeout(() => {
           typeBuffer = '';
@@ -386,9 +399,10 @@ export function createRovingFocus(
         const start = currentIdx === -1 ? 0 : (currentIdx + 1) % items.length;
         for (let offset = 0; offset < items.length; offset++) {
           const i = (start + offset) % items.length;
-          const label = (items[i].getAttribute?.('aria-label') || items[i].textContent || '').trim().toLowerCase();
+          const label = (items[i].getAttribute?.('aria-label') || items[i].textContent || '').trim().toLocaleLowerCase();
           if (label.startsWith(typeBuffer)) {
             e.preventDefault();
+            e.stopPropagation();
             focusIndex(items, i);
             break;
           }

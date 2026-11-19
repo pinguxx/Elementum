@@ -8,12 +8,12 @@ on:
 
 jobs:
   test:
-    name: Test on Node ${{ matrix.node-version }} (${{ matrix.os }})
+    name: Unit, Fuzz & Security Tests on Node ${{ matrix.node-version }} (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, windows-latest]
+        os: [ubuntu-24.04, windows-latest, macos-latest]
         node-version: [20.x, 22.x, 24.x]
 
     steps:
@@ -25,11 +25,37 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install dependencies
-        run: npm ci || npm install
+      - name: Install dependencies (strict lockfile)
+        run: npm ci
 
-      - name: Run test suite
-        run: npm test
+      - name: Run Catalog Diff & Unit Test Suite
+        run: |
+          npm run catalog:diff
+          npm test
+
+  typecheck-and-consumer:
+    name: Strict TypeScript & External Consumer Tarball Verification
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js 22.x
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22.x
+
+      - name: Install dependencies (strict lockfile)
+        run: npm ci
+
+      - name: Enforce >= 95% line coverage threshold
+        run: node --test --experimental-test-coverage --test-coverage-lines=95
+
+      - name: Strict TypeScript check (src/index.d.ts)
+        run: npm run typecheck
+
+      - name: External consumer tarball install & import test
+        run: npm run verify:consumer
 
   browser-e2e:
     name: Real Browser & axe-core E2E (Chromium, Firefox, WebKit)
@@ -43,8 +69,8 @@ jobs:
         with:
           node-version: 22.x
 
-      - name: Install dependencies
-        run: npm ci || npm install
+      - name: Install dependencies (strict lockfile)
+        run: npm ci
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium firefox webkit

@@ -1,4 +1,4 @@
-# Elementum Component Quick Catalog (8 Categories · 105 Elements)
+# Elementum Component Quick Catalog (8 Categories · 109 Elements)
 
 | Category | Key Components |
 | :--- | :--- |

@@ -158,64 +158,106 @@ test('Signal Torture 7: multiple components have zero cross-component state leak
   b2.remove();
 });
 
-test('Signal Torture 8: randomized DAG fuzzing matches reference evaluator across 100 random graphs', () => {
-  // Deterministic PRNG (Mulberry32) so CI is 100% reproducible
-  let seed = 0x51a9a1;
-  const rand = () => {
-    seed |= 0;
-    seed = (seed + 0x6d2b79f5) | 0;
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
+test('Signal Torture 8: exception inside effect restores activeEffect stack cleanly', () => {
+  const trigger = signal(0);
+  const healthy = signal('ok');
 
-  for (let trial = 0; trial < 100; trial++) {
-    const numRoots = 4;
-    const numDerived = 8;
-    const rootVals = Array.from({ length: numRoots }, () => Math.floor(rand() * 20) - 10);
-    const rootSigs = rootVals.map((v) => signal(v));
+  let threw = false;
+  const disposeBad = effect(() => {
+    if (trigger.value === 1) {
+      throw new Error('boom inside effect');
+    }
+  });
 
-    // Build random DAG where node i only depends on nodes < i
-    const nodes = rootSigs.map((sig, idx) => ({ sig, evalRef: () => rootVals[idx] }));
+  assert.throws(() => {
+    trigger.value = 1;
+  }, /boom inside effect/);
+  threw = true;
+  assert.equal(threw, true);
 
-    for (let i = 0; i < numDerived; i++) {
-      const parentA = Math.floor(rand() * nodes.length);
-      const parentB = Math.floor(rand() * nodes.length);
-      const op = Math.floor(rand() * 3); // 0: add, 1: sub, 2: conditional
+  // Subsequent effects must track cleanly (activeEffect was properly popped in finally)
+  let observed = '';
+  const disposeGood = effect(() => {
+    observed = healthy.value;
+  });
+  healthy.value = 'still-reactive';
+  assert.equal(observed, 'still-reactive');
 
-      const nodeA = nodes[parentA];
-      const nodeB = nodes[parentB];
+  disposeBad();
+  disposeGood();
+});
 
-      const sig = computed(() => {
-        if (op === 0) return nodeA.sig.value + nodeB.sig.value;
-        if (op === 1) return nodeA.sig.value - nodeB.sig.value;
-        return nodeA.sig.value > 0 ? nodeB.sig.value * 2 : -nodeB.sig.value;
+test('Signal Torture 9: 1,000-graph multi-seed DAG fuzzer with deep chains & random disposal', () => {
+  const SEEDS = [0x51a9a1, 0xc0ffee, 0xdeadbeef, 0x20260301, 0x99887766];
+  const GRAPHS_PER_SEED = 200; // 5 seeds x 200 = 1,000 randomized graphs
+
+  for (const initialSeed of SEEDS) {
+    let seed = initialSeed;
+    const rand = () => {
+      seed |= 0;
+      seed = (seed + 0x6d2b79f5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+
+    for (let trial = 0; trial < GRAPHS_PER_SEED; trial++) {
+      const numRoots = 5;
+      const numDerived = 12; // Deeper chains
+      const rootVals = Array.from({ length: numRoots }, () => Math.floor(rand() * 20) - 10);
+      const rootSigs = rootVals.map((v) => signal(v));
+
+      const nodes = rootSigs.map((sig, idx) => ({ sig, evalRef: () => rootVals[idx] }));
+
+      for (let i = 0; i < numDerived; i++) {
+        const parentA = Math.floor(rand() * nodes.length);
+        const parentB = Math.floor(rand() * nodes.length);
+        const op = Math.floor(rand() * 4); // add, sub, conditional, max
+
+        const nodeA = nodes[parentA];
+        const nodeB = nodes[parentB];
+
+        const sig = computed(() => {
+          if (op === 0) return nodeA.sig.value + nodeB.sig.value;
+          if (op === 1) return nodeA.sig.value - nodeB.sig.value;
+          if (op === 2) return nodeA.sig.value > 0 ? nodeB.sig.value * 2 : -nodeB.sig.value;
+          return Math.max(nodeA.sig.value, nodeB.sig.value);
+        });
+        const evalRef = () => {
+          if (op === 0) return nodeA.evalRef() + nodeB.evalRef();
+          if (op === 1) return nodeA.evalRef() - nodeB.evalRef();
+          if (op === 2) return nodeA.evalRef() > 0 ? nodeB.evalRef() * 2 : -nodeB.evalRef();
+          return Math.max(nodeA.evalRef(), nodeB.evalRef());
+        };
+        nodes.push({ sig, evalRef });
+      }
+
+      const leaf = nodes[nodes.length - 1];
+      let observed = null;
+      let auxObserved = null;
+      const disposeLeaf = effect(() => {
+        observed = leaf.sig.value;
       });
-      const evalRef = () => {
-        if (op === 0) return nodeA.evalRef() + nodeB.evalRef();
-        if (op === 1) return nodeA.evalRef() - nodeB.evalRef();
-        return nodeA.evalRef() > 0 ? nodeB.evalRef() * 2 : -nodeB.evalRef();
-      };
-      nodes.push({ sig, evalRef });
+      const disposeAux = effect(() => {
+        auxObserved = nodes[Math.floor(nodes.length / 2)].sig.value;
+      });
+
+      assert.equal(observed, leaf.evalRef(), `Initial mismatch seed=${initialSeed} trial=${trial}`);
+
+      for (let step = 0; step < 8; step++) {
+        if (step === 4) disposeAux(); // Mid-run subscription disposal
+        const idx = Math.floor(rand() * numRoots);
+        const nextVal = Math.floor(rand() * 40) - 20;
+        rootVals[idx] = nextVal;
+        rootSigs[idx].value = nextVal;
+        assert.equal(observed, leaf.evalRef(), `Mismatch seed=${initialSeed} trial=${trial} step=${step}`);
+      }
+
+      const frozenAux = auxObserved;
+      rootSigs[0].value = rootVals[0] + 99;
+      assert.equal(auxObserved, frozenAux, 'Disposed aux effect must not re-run');
+
+      disposeLeaf();
     }
-
-    const leaf = nodes[nodes.length - 1];
-    let observed = null;
-    const dispose = effect(() => {
-      observed = leaf.sig.value;
-    });
-
-    assert.equal(observed, leaf.evalRef());
-
-    // Mutate random roots 10 times per graph and verify exact equivalence
-    for (let step = 0; step < 10; step++) {
-      const idx = Math.floor(rand() * numRoots);
-      const nextVal = Math.floor(rand() * 40) - 20;
-      rootVals[idx] = nextVal;
-      rootSigs[idx].value = nextVal;
-      assert.equal(observed, leaf.evalRef(), `Mismatch at trial=${trial} step=${step}`);
-    }
-
-    dispose();
   }
 });

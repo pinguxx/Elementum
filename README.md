@@ -11,7 +11,9 @@
 
 ---
 
-## 🧪 Verification & Browser Matrix (Beta — `v0.2.0`)
+## 🧪 Verification & Browser Matrix (Beta — `v0.3.0`)
+
+One command verifies everything end-to-end: `npm run verify:all` (see [QUALITY.md](./QUALITY.md) for the auto-generated per-component matrix).
 
 Every architectural claim in Elementum is backed by automated verification in CI:
 
