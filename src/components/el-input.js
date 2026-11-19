@@ -213,6 +213,7 @@ export class ElInput extends Elementum {
           type=${this.type}
           .value=${this.value}
           placeholder=${this.placeholder}
+          aria-label=${() => this.getAttribute?.('aria-label') || this.placeholder.value || this.getAttribute?.('name') || 'Input'}
           ?disabled=${this.disabled}
           ?readonly=${this.readonly}
           @input=${this.#onInput}

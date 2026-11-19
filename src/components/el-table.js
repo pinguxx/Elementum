@@ -145,7 +145,7 @@ export class ElTable extends Elementum {
       background: var(--el-surface-muted, #f8fafc);
       padding: 12px 16px;
       font-weight: 600;
-      color: var(--el-text-muted, #475569);
+      color: var(--el-text-secondary, #475569);
       border-bottom: 2px solid var(--el-surface-border, #e2e8f0);
       user-select: none;
     }
@@ -319,6 +319,7 @@ export class ElTable extends Elementum {
                     <th class="checkbox-cell">
                       <input
                         type="checkbox"
+                        aria-label="Select all rows"
                         .checked=${() =>
                           this.data.value.length > 0 &&
                           this.selected.value.length === this.data.value.length}
@@ -372,6 +373,7 @@ export class ElTable extends Elementum {
                           <td class="checkbox-cell">
                             <input
                               type="checkbox"
+                              aria-label=${`Select row ${idx + 1}`}
                               .checked=${() => this.isRowSelected(idx)}
                               @change=${() => this.toggleRow(idx)}
                             />

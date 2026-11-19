@@ -33,6 +33,8 @@ export class ElCheckbox extends Elementum {
       user-select: none;
       outline: none;
       line-height: 1;
+      min-height: 24px;
+      min-width: 24px;
     }
 
     :host([disabled]) {

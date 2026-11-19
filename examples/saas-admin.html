@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Console — Built with @wcomp/elementum</title>
+  <link rel="stylesheet" href="../src/tokens.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; width: 100%; max-width: 100%; overflow-x: clip; }
+    body {
+      font-family: var(--el-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+      background: var(--el-surface-muted, #f8fafc);
+      color: var(--el-text-primary, #0f172a);
+      min-height: 100vh;
+      min-block-size: 100dvh;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .auth-shell {
+      min-block-size: calc(100dvh - 64px);
+      display: grid;
+      place-items: center;
+      padding: 24px 16px;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .form-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--el-text-primary, #0f172a);
+    }
+
+    .admin-shell {
+      max-width: 1200px;
+      margin: 24px auto 48px auto;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .page-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .page-head h1 {
+      margin: 0;
+      font-size: clamp(1.4rem, 1.1rem + 1.2vw, 1.9rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+    }
+
+    .head-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+      gap: 14px;
+    }
+
+    .kpi-val {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-top: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .toolbar-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .toolbar-filters {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      flex: 1 1 280px;
+      min-inline-size: 0;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 640px) {
+      .admin-shell { padding: 0 14px; }
+    }
+  </style>
+</head>
+<body>
+  <el-navbar sticky brand="⚡ Elementum" badge="SaaS Admin" badge-variant="primary" href="../index.html">
+    <a href="../index.html">Home</a>
+    <a href="../docs.html">Docs</a>
+    <a href="./index.html">Catalog</a>
+    <a href="./registry.html">Registry</a>
+    <a href="./agent-studio.html">AI Studio</a>
+    <a href="./ledgerflow.html">LedgerFlow</a>
+    <a href="./app.html">Showcase</a>
+    <el-button id="btn-open-cmd" slot="actions" variant="secondary" size="sm" aria-label="Open command palette">⌘K</el-button>
+    <el-theme-switch slot="actions"></el-theme-switch>
+  </el-navbar>
+
+  <!-- 1. Authentication Screen -->
+  <main id="auth-view" class="auth-shell">
+    <el-card class="auth-card">
+      <el-card-header bordered>
+        <el-card-title size="lg">Sign in to Admin Console</el-card-title>
+        <el-card-description>Zero-shortcut SaaS admin built exclusively with @wcomp/elementum.</el-card-description>
+      </el-card-header>
+      <el-card-content>
+        <el-form id="auth-form" class="form-stack">
+          <div>
+            <label class="field-label" for="auth-email">Work Email</label>
+            <el-input id="auth-email" name="email" type="email" aria-label="Work Email" value="admin@acme.dev" required></el-input>
+          </div>
+          <div>
+            <label class="field-label" for="auth-pass">Password</label>
+            <el-input id="auth-pass" name="password" type="password" aria-label="Password" value="secret123" required minlength="6"></el-input>
+          </div>
+          <el-button id="btn-signin" type="submit" variant="primary" style="width: 100%;">Sign In</el-button>
+        </el-form>
+      </el-card-content>
+    </el-card>
+  </main>
+
+  <!-- 2. Authenticated SaaS Admin Workspace -->
+  <main id="admin-view" class="admin-shell hidden">
+    <div class="page-head">
+      <div>
+        <h1>Workspace Administration</h1>
+      </div>
+      <div class="head-actions">
+        <el-button id="btn-open-drawer" variant="secondary" size="sm">Inspect Activity</el-button>
+        <el-button id="btn-open-invite" variant="primary" size="sm">+ Invite Member</el-button>
+        <el-button id="btn-signout" variant="ghost" size="sm">Sign Out</el-button>
+      </div>
+    </div>
+
+    <!-- KPI Row -->
+    <section class="kpi-grid" aria-label="Workspace KPIs">
+      <el-card>
+        <el-card-header compact>
+          <el-card-title size="sm">Active Members</el-card-title>
+        </el-card-header>
+        <el-card-content compact>
+          <div class="kpi-val"><el-number-flow id="kpi-members" value="4"></el-number-flow></div>
+        </el-card-content>
+      </el-card>
+      <el-card>
+        <el-card-header compact>
+          <el-card-title size="sm">Monthly Revenue</el-card-title>
+        </el-card-header>
+        <el-card-content compact>
+          <div class="kpi-val"><el-number-flow value="48290" prefix="$" locale="en-US"></el-number-flow></div>
+        </el-card-content>
+      </el-card>
+      <el-card>
+        <el-card-header compact>
+          <el-card-title size="sm">System Health</el-card-title>
+        </el-card-header>
+        <el-card-content compact>
+          <el-badge variant="success" count="99.98% Uptime"></el-badge>
+        </el-card-content>
+      </el-card>
+    </section>
+
+    <!-- Directory Table & Filters -->
+    <el-card>
+      <el-card-header bordered>
+        <el-card-title>Team Directory</el-card-title>
+        <el-card-description>Search, filter, sort, and manage workspace roles.</el-card-description>
+      </el-card-header>
+      <el-card-content>
+        <div class="toolbar-row">
+          <div class="toolbar-filters">
+            <el-input id="member-search" aria-label="Filter members" placeholder="Search name or email..." style="flex: 1 1 200px; max-width: 300px;"></el-input>
+            <el-select id="role-filter" aria-label="Filter by role" value="all" style="width: 160px;">
+              <option value="all">All Roles</option>
+              <option value="Admin">Admin</option>
+              <option value="Engineer">Engineer</option>
+              <option value="Designer">Designer</option>
+            </el-select>
+          </div>
+          <el-badge id="visible-count-badge" variant="default" count="4 members"></el-badge>
+        </div>
+
+        <el-table id="members-table" sortable selectable></el-table>
+      </el-card-content>
+    </el-card>
+  </main>
+
+  <!-- Invite Member Modal Dialog -->
+  <el-dialog id="invite-dialog" heading="Invite Team Member">
+    <el-form id="invite-form" class="form-stack">
+      <div>
+        <label class="field-label" for="invite-name">Full Name</label>
+        <el-input id="invite-name" name="name" aria-label="Full Name" placeholder="e.g. Grace Hopper" required></el-input>
+      </div>
+      <div>
+        <label class="field-label" for="invite-email">Email</label>
+        <el-input id="invite-email" name="email" type="email" aria-label="Invite Email" placeholder="grace@acme.dev" required></el-input>
+      </div>
+      <div>
+        <label class="field-label" for="invite-role">Role</label>
+        <el-select id="invite-role" name="role" aria-label="Member Role" value="Engineer">
+          <option value="Admin">Admin</option>
+          <option value="Engineer">Engineer</option>
+          <option value="Designer">Designer</option>
+        </el-select>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px;">
+        <el-button id="btn-cancel-invite" type="button" variant="secondary">Cancel</el-button>
+        <el-button id="btn-submit-invite" type="submit" variant="primary">Send Invite</el-button>
+      </div>
+    </el-form>
+  </el-dialog>
+
+  <!-- Activity Inspector Slide-Over Drawer -->
+  <el-drawer id="activity-drawer" placement="right" title="Audit Activity">
+    <p style="margin:0 0 12px 0; color:var(--el-text-secondary, #475569);">Recent workspace actions recorded in this session.</p>
+    <el-timeline id="activity-timeline">
+      <el-timeline-item status="success" date="Just now">Authenticated as admin@acme.dev</el-timeline-item>
+      <el-timeline-item status="active" date="2m ago">WCAG 2.2 AA audit passed on production</el-timeline-item>
+    </el-timeline>
+  </el-drawer>
+
+  <!-- Quick Command Palette (⌘K) -->
+  <el-command id="admin-command" placeholder="Jump to action...">
+    <el-command-group heading="Workspace Actions">
+      <el-command-item value="invite">Invite Team Member</el-command-item>
+      <el-command-item value="activity">Inspect Audit Activity</el-command-item>
+      <el-command-item value="signout">Sign Out</el-command-item>
+    </el-command-group>
+  </el-command>
+
+  <el-toaster></el-toaster>
+
+  <script type="module">
+    import '../src/index.js';
+    import { toast } from '../src/index.js';
+
+    const authView = document.getElementById('auth-view');
+    const adminView = document.getElementById('admin-view');
+    const authForm = document.getElementById('auth-form');
+    const tableEl = document.getElementById('members-table');
+    const searchEl = document.getElementById('member-search');
+    const roleFilterEl = document.getElementById('role-filter');
+    const kpiMembers = document.getElementById('kpi-members');
+    const countBadge = document.getElementById('visible-count-badge');
+    const inviteDialog = document.getElementById('invite-dialog');
+    const inviteForm = document.getElementById('invite-form');
+    const activityDrawer = document.getElementById('activity-drawer');
+    const adminCommand = document.getElementById('admin-command');
+
+    const members = [
+      { id: '1', name: 'Ada Lovelace', email: 'ada@acme.dev', role: 'Admin', status: 'Active' },
+      { id: '2', name: 'Alan Turing', email: 'alan@acme.dev', role: 'Engineer', status: 'Active' },
+      { id: '3', name: 'Margaret Hamilton', email: 'margaret@acme.dev', role: 'Engineer', status: 'Active' },
+      { id: '4', name: 'Dieter Rams', email: 'dieter@acme.dev', role: 'Designer', status: 'Invited' },
+    ];
+
+    tableEl.columns.value = [
+      { key: 'name', label: 'Name', sortable: true },
+      { key: 'email', label: 'Email', sortable: true },
+      { key: 'role', label: 'Role', sortable: true },
+      { key: 'status', label: 'Status', sortable: true },
+    ];
+
+    function renderTable() {
+      const q = String(searchEl.value.value || '').trim().toLowerCase();
+      const role = String(roleFilterEl.value.value || 'all');
+      const filtered = members.filter((m) => {
+        const matchesRole = role === 'all' || m.role === role;
+        const matchesText = !q || m.name.toLowerCase().includes(q) || m.email.toLowerCase().includes(q);
+        return matchesRole && matchesText;
+      });
+      tableEl.data.value = filtered;
+      kpiMembers.setAttribute('value', String(members.length));
+      countBadge.setAttribute('count', `${filtered.length} members`);
+    }
+
+    authForm.addEventListener('form-invalid', () => {
+      toast.error('Please enter a valid email and 6+ character password.');
+    });
+
+    authForm.addEventListener('form-submit', () => {
+      authView.classList.add('hidden');
+      adminView.classList.remove('hidden');
+      renderTable();
+      toast.success('Signed in to Workspace Administration');
+    });
+
+    document.getElementById('btn-signout').addEventListener('click', () => {
+      adminView.classList.add('hidden');
+      authView.classList.remove('hidden');
+      toast.info('Signed out');
+    });
+
+    searchEl.addEventListener('input', renderTable);
+    roleFilterEl.addEventListener('change', renderTable);
+
+    document.getElementById('btn-open-invite').addEventListener('click', () => inviteDialog.showModal());
+    document.getElementById('btn-cancel-invite').addEventListener('click', () => inviteDialog.close());
+    document.getElementById('btn-open-drawer').addEventListener('click', () => activityDrawer.show());
+    document.getElementById('btn-open-cmd').addEventListener('click', () => adminCommand.show());
+
+    inviteForm.addEventListener('form-invalid', () => {
+      toast.error('Please complete all required invite fields.');
+    });
+
+    inviteForm.addEventListener('form-submit', (e) => {
+      const { name = '', email = '', role = 'Engineer' } = e.detail?.data || {};
+      members.push({ id: String(members.length + 1), name: String(name).trim(), email: String(email).trim(), role: String(role), status: 'Invited' });
+      inviteForm.reset();
+      inviteDialog.close();
+      renderTable();
+      toast.success(`Invitation sent to ${name}`);
+    });
+
+    adminCommand.addEventListener('select', (e) => {
+      if (e.detail?.value === 'invite') inviteDialog.showModal();
+      else if (e.detail?.value === 'activity') activityDrawer.show();
+      else if (e.detail?.value === 'signout') document.getElementById('btn-signout').click();
+    });
+  </script>
+</body>
+</html>

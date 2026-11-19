@@ -172,7 +172,7 @@ export class ElForm extends Elementum {
 
   render() {
     return html`
-      <form part="form" ?novalidate=${() => this.novalidate.value} onsubmit=${this.#onSubmit}>
+      <form part="form" ?novalidate=${() => this.novalidate.value} @submit=${this.#onSubmit}>
         <slot></slot>
       </form>
     `;

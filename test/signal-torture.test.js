@@ -261,3 +261,64 @@ test('Signal Torture 9: 1,000-graph multi-seed DAG fuzzer with deep chains & ran
     }
   }
 });
+
+test('Signal Torture 10: dynamic topology rewiring fuzzer (500 runs) verifies exact values & zero stale subscribers', () => {
+  let seed = 0x70f0106;
+  const rand = () => {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+
+  const mode = signal(0); // dynamically selects which branch is active: 0, 1, or 2
+  const branches = [signal(1), signal(2), signal(3)];
+  const nested = [
+    computed(() => branches[0].value * 10),
+    computed(() => branches[1].value * 20),
+    computed(() => branches[2].value * 30),
+  ];
+  const dynamicRouter = computed(() => nested[mode.value].value + mode.value);
+
+  let observed = null;
+  let effectRuns = 0;
+  const dispose = effect(() => {
+    effectRuns++;
+    observed = dynamicRouter.value;
+  });
+
+  const evalRef = () => {
+    const m = mode.peek();
+    const mult = (m + 1) * 10;
+    return branches[m].peek() * mult + m;
+  };
+
+  assert.equal(observed, evalRef());
+
+  for (let i = 0; i < 500; i++) {
+    const action = Math.floor(rand() * 3);
+    if (action === 0) {
+      // Switch active topology branch
+      mode.value = Math.floor(rand() * 3);
+      assert.equal(observed, evalRef(), `Mode switch mismatch at step ${i}`);
+      // Verify ONLY the currently active nested computed is subscribed to the active branch
+      const activeIdx = mode.peek();
+      for (let b = 0; b < 3; b++) {
+        if (b !== activeIdx) {
+          const runsBefore = effectRuns;
+          branches[b].value = branches[b].peek() + 1;
+          assert.equal(effectRuns, runsBefore, `Inactive branch ${b} leaked subscriber at step ${i}`);
+        }
+      }
+    } else {
+      // Mutate active branch
+      const activeIdx = mode.peek();
+      branches[activeIdx].value = Math.floor(rand() * 100) - 50;
+      assert.equal(observed, evalRef(), `Active branch mismatch at step ${i}`);
+    }
+  }
+
+  dispose();
+  assert.equal(dynamicRouter.subscribers.size, 0);
+});

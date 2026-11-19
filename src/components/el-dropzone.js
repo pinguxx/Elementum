@@ -207,6 +207,8 @@ export class ElDropzone extends Elementum {
         <input
           type="file"
           class="file-input"
+          aria-label="Upload file"
+          tabindex="-1"
           accept=${() => this.accept.value}
           ?multiple=${() => this.multiple.value}
           onchange=${this.#onFileInputChange}

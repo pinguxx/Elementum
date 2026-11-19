@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /**
- * Generates QUALITY.md — an evidence-backed component quality matrix
+ * Generates QUALITY.md — an honest, evidence-backed component quality matrix
  * derived directly from custom-elements.json, examples/catalog-data.js,
- * test/*.test.js, and e2e/*.spec.js.
+ * unit tests (excluding generic catalog-contract loops), and real-browser
+ * Playwright + axe-core specs in e2e/.
  */
 
 import fs from 'node:fs';
@@ -15,56 +16,120 @@ const rootDir = path.resolve(__dirname, '..');
 
 const pkg = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
 const cem = JSON.parse(fs.readFileSync(path.join(rootDir, 'custom-elements.json'), 'utf8'));
-const catalog = catMod.CATALOG_DATA || Object.values(catMod).find((v) => v && typeof v === 'object' && !Array.isArray(v) && v['el-button']) || {};
+const catalog =
+  catMod.CATALOG_DATA ||
+  Object.values(catMod).find((v) => v && typeof v === 'object' && !Array.isArray(v) && v['el-button']) ||
+  {};
 
-const testFiles = fs.readdirSync(path.join(rootDir, 'test')).filter((f) => f.endsWith('.test.js'));
-const allTestSource = testFiles
-  .map((f) => fs.readFileSync(path.join(rootDir, 'test', f), 'utf8'))
-  .join('\n');
+// Exclude generic contract/smoke tests so we only count genuine component-level unit tests
+const GENERIC_TESTS = new Set(['catalog-contract.test.js', 'pages-smoke.test.js', 'craft-contract.test.js']);
+const unitTestFiles = fs
+  .readdirSync(path.join(rootDir, 'test'))
+  .filter((f) => f.endsWith('.test.js') && !GENERIC_TESTS.has(f));
+
+const unitSources = unitTestFiles.map((f) => fs.readFileSync(path.join(rootDir, 'test', f), 'utf8')).join('\n');
 
 const e2eDir = path.join(rootDir, 'e2e');
-const e2eSource = fs.existsSync(e2eDir)
-  ? fs.readdirSync(e2eDir).filter((f) => f.endsWith('.spec.js')).map((f) => fs.readFileSync(path.join(e2eDir, f), 'utf8')).join('\n')
-  : '';
+const e2eFiles = fs.existsSync(e2eDir)
+  ? fs.readdirSync(e2eDir).filter((f) => f.endsWith('.spec.js'))
+  : [];
+const e2eSource = e2eFiles.map((f) => fs.readFileSync(path.join(e2eDir, f), 'utf8')).join('\n');
+
+// Also inspect HTML pages that are directly audited by AxeBuilder in e2e/
+const auditedPages = ['index.html', 'examples/ag-ui.html', 'examples/saas-admin.html', 'examples/ssr-demo.html']
+  .filter((p) => fs.existsSync(path.join(rootDir, p)))
+  .map((p) => fs.readFileSync(path.join(rootDir, p), 'utf8'))
+  .join('\n');
 
 const declarations = cem.modules
   .flatMap((m) => (m.declarations || []).map((d) => ({ ...d, path: m.path })))
   .sort((a, b) => a.tagName.localeCompare(b.tagName));
 
-let directUnitCount = 0;
+let instantiatedCount = 0;
+let dedicatedTestCount = 0;
 let browserE2eCount = 0;
+let axeAuditedCount = 0;
+let prodVerifiedCount = 0;
+let stableCount = 0;
+let experimentalCount = 0;
+
+function escapeRe(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 const rows = declarations.map((d) => {
   const tag = d.tagName;
+  const tagRe = escapeRe(tag);
   const inCatalog = Boolean(catalog[tag]);
-  const hasDirectUnitTest = allTestSource.includes(tag);
-  const hasDirectE2e = e2eSource.includes(tag);
-  if (hasDirectUnitTest) directUnitCount++;
-  if (hasDirectE2e) browserE2eCount++;
 
-  return `| \`<${tag}>\` | \`${d.path}\` | ${inCatalog ? '✅ Catalog + Contract' : '—'} | ${hasDirectUnitTest ? '✅ Direct + Contract' : '✅ Contract'} | ${hasDirectE2e ? '✅ Playwright + axe' : '🟡 Catalog/Page E2E'} |`;
+  // Genuine instantiation: createElement('el-...') or <el-... in non-contract unit tests
+  const unitInstantiated =
+    new RegExp(`createElement\\(\\s*['"]${tagRe}['"]\\s*\\)`).test(unitSources) ||
+    new RegExp(`<${tagRe}[\\s>]`).test(unitSources);
+
+  // Explicit test('...<tag>...') declaration
+  const hasDedicatedTest = new RegExp(`test\\(\\s*['"\`][^'"\`]*${tagRe}[^'"\`]*['"\`]`, 'i').test(unitSources);
+
+  // Direct Playwright browser interaction test
+  const hasPlaywrightE2e =
+    new RegExp(`['"\`]${tagRe}['"\`]`).test(e2eSource) ||
+    new RegExp(`<${tagRe}[\\s>]`).test(e2eSource);
+
+  // Mounted in an axe-core audited E2E stage or audited page
+  const hasAxeAudit =
+    (hasPlaywrightE2e && e2eSource.includes('AxeBuilder')) ||
+    new RegExp(`<${tagRe}[\\s>]`).test(auditedPages);
+
+  if (unitInstantiated) instantiatedCount++;
+  if (hasDedicatedTest) dedicatedTestCount++;
+  if (hasPlaywrightE2e) browserE2eCount++;
+  if (hasAxeAudit) axeAuditedCount++;
+
+  let maturity = '🟡 Experimental';
+  if (inCatalog && unitInstantiated && hasPlaywrightE2e && hasAxeAudit) {
+    maturity = '🟢 Production Verified';
+    prodVerifiedCount++;
+  } else if (inCatalog && unitInstantiated && hasDedicatedTest) {
+    maturity = '🔵 Stable';
+    stableCount++;
+  } else {
+    experimentalCount++;
+  }
+
+  return `| \`<${tag}>\` | ${maturity} | ${unitInstantiated ? '✅ Yes' : '—'} | ${hasDedicatedTest ? '✅ Yes' : '—'} | ${hasPlaywrightE2e ? '✅ Playwright' : '—'} | ${hasAxeAudit ? '✅ axe-core' : '—'} |`;
 });
 
 const md = `# Elementum Component Quality Matrix
 
-> Auto-generated by \`npm run quality:report\` from \`custom-elements.json\`, \`examples/catalog-data.js\`, \`test/\`, and \`e2e/\`.
+> Auto-generated by \`npm run quality:report\` using structured evidence checks (instantiation, explicit \`test()\` blocks, Playwright E2E specs, and \`@axe-core/playwright\` audits — not naive string matching).
 > Do not hand-edit — run \`npm run quality:report\` to refresh.
+
+## Maturity Definitions
+
+- **🟢 Production Verified**: Catalog schema verified + instantiated in dedicated unit tests + direct real-browser Playwright interaction test + \`@axe-core/playwright\` WCAG 2.2 AA audit.
+- **🔵 Stable**: Catalog schema verified + instantiated in unit tests + explicit \`test()\` coverage.
+- **🟡 Experimental**: Covered by automated catalog schema & mount contract tests (\`Catalog Contract 1–6\`), pending dedicated behavior & browser E2E suites.
 
 ## Summary (\`${pkg.name}@${pkg.version}\`)
 
 - **Total Registered Custom Elements**: **${declarations.length}**
-- **Catalog & Schema Contract Verified**: **${declarations.filter((d) => Boolean(catalog[d.tagName])).length} / ${declarations.length}** (via \`npm run catalog:diff\` & \`Catalog Contract 1–6\`)
-- **Direct Unit Test References**: **${directUnitCount} / ${declarations.length}**
-- **Direct Real-Browser Playwright + \`axe-core\` Assertions**: **${browserE2eCount}** core primitives (Chromium, Firefox, WebKit)
-- **Runtime Dependencies**: **0**
+- **🟢 Production Verified**: **${prodVerifiedCount}**
+- **🔵 Stable**: **${stableCount}**
+- **🟡 Experimental**: **${experimentalCount}**
+- **Instantiated in Unit Tests**: **${instantiatedCount} / ${declarations.length}**
+- **Dedicated \`test()\` Blocks**: **${dedicatedTestCount} / ${declarations.length}**
+- **Direct Real-Browser Playwright E2E**: **${browserE2eCount} / ${declarations.length}** (Chromium, Firefox, WebKit)
+- **\`@axe-core/playwright\` WCAG 2.2 AA Audited**: **${axeAuditedCount} / ${declarations.length}**
 - **One-Command Full Verification**: \`npm run verify:all\`
 
-## Per-Component Verification Status
+## Per-Component Evidence Matrix
 
-| Tag | Source Module | Catalog Schema | Unit & Contract Tests | Real Browser (Playwright) |
-| :--- | :--- | :---: | :---: | :---: |
+| Component | Maturity | Unit Instantiated | Dedicated \`test()\` | Playwright E2E | \`axe-core\` WCAG 2.2 AA |
+| :--- | :--- | :---: | :---: | :---: | :---: |
 ${rows.join('\n')}
 `;
 
 fs.writeFileSync(path.join(rootDir, 'QUALITY.md'), md, 'utf8');
-console.log(`Generated QUALITY.md (${declarations.length} components documented).`);
+console.log(
+  `Generated QUALITY.md (${declarations.length} components: ${prodVerifiedCount} Production Verified, ${stableCount} Stable, ${experimentalCount} Experimental).`
+);

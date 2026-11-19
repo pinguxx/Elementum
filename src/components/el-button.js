@@ -32,6 +32,8 @@ export class ElButton extends Elementum {
 
     button {
       display: inline-flex;
+      width: 100%;
+      box-sizing: border-box;
       align-items: center;
       justify-content: center;
       gap: var(--el-spacing-sm, 8px);
@@ -209,11 +211,18 @@ export class ElButton extends Elementum {
             const form = this.internals?.form || this.closest('form');
             if (form) {
               form.requestSubmit();
+            } else {
+              const elForm = this.closest('el-form');
+              if (elForm) {
+                elForm.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+              }
             }
           } else if (btnType === 'reset') {
             const form = this.internals?.form || this.closest('form');
             if (form) {
               form.reset();
+            } else {
+              this.closest('el-form')?.reset?.();
             }
           }
         }}

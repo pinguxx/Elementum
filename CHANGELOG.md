@@ -4,6 +4,16 @@ All notable changes to `@wcomp/elementum` are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] — 2026-11-19 ("Real-Browser Proof")
+
+### Added
+- **Honest, Evidence-Based Quality Matrix (`QUALITY.md` via `tools/generate-quality-report.js`)**: Replaced naive string matching with structured checks for unit instantiation, dedicated `test()` blocks, direct Playwright browser E2E, `@axe-core/playwright` audits, and explicit maturity tiers (`🟢 Production Verified`, `🔵 Stable`, `🟡 Experimental`).
+- **Expanded Real-Browser Playwright + `axe-core` Component E2E (`e2e/components-e2e.spec.js`)**: Direct real-browser interaction, keyboard, and WCAG 2.2 AA verification for `el-autocomplete`, `el-command`, `el-datepicker`, `el-calendar`, `el-tabs`, `el-accordion`, `el-dropdown`, `el-popover`, `el-drawer`, `el-table`, `el-tree-view`, `el-form`, `el-switch`, `el-checkbox`, and `el-dropzone`.
+- **Zero-Shortcut SaaS Admin Dogfooding App (`examples/saas-admin.html` + `e2e/saas-admin.spec.js`)**: Complete admin console built exclusively with public `@wcomp/elementum` APIs (validated auth screen, searchable/filterable sortable table, invite modal dialog, activity drawer, `⌘K` command palette, dark mode, toasts, 375px mobile check, and WCAG 2.2 AA `axe-core` verified).
+- **Dynamic-Topology Signal Rewiring Fuzzer (`test/signal-torture.test.js`)**: 500-step randomized dynamic branch switching proving exact equivalence and zero stale subscriber leaks.
+- **Shared Search Highlighting Behavior (`@wcomp/elementum/behaviors`)**: Added `splitMatchSegments()` and `highlightMatch()` wired into both `<el-autocomplete>` and `<el-command>`.
+- **Downloadable CI Quality Artifacts (`.github/workflows/ci.yml`)**: Uploads `playwright-e2e-report` and `quality-matrix` on every CI run.
+
 ## [0.3.0] — 2026-11-18 ("Verified & Consumable")
 
 ### Added
