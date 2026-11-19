@@ -308,6 +308,7 @@ export class ElContextMenu extends Elementum {
   render() {
     return html`
       <div class="trigger-area" part="trigger">
+        <slot name="trigger"></slot>
         <slot></slot>
       </div>
       <div

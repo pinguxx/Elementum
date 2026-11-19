@@ -7,7 +7,6 @@ const NON_BOX_DEFAULT_TAGS = new Set([
   'el-alert-dialog',
   'el-drawer',
   'el-toast',
-  'el-context-menu',
   'el-router',
   'el-route',
   'el-border-beam',
