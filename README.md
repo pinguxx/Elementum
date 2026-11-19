@@ -27,7 +27,7 @@ Every architectural claim in Elementum is backed by automated verification in CI
 | **Declarative Shadow DOM SSR** | Playwright (`/?hydrate=0` Zero-JS & `/?hydrate=1` Hydrated) | Native `<template shadowrootmode="open">` attachment with JS disabled + clean client hydration |
 | **Accessibility** | `@axe-core/playwright` (WCAG 2.2 AA ruleset) + `@wcomp/elementum/testing` | Automated real-browser `axe-core` audits + WAI-ARIA APG pattern validators + static MCP `lint_accessibility` |
 | **Security & MCP Hardening** | `test/security.test.js` + GitHub CodeQL | XSS escaping in `template.js` & `ssr.js`, URL scheme allowlist, prototype-pollution guards, ReDoS-safe parsers, 128 KB MCP payload cap |
-| **Performance Benchmarks** | `npm run bench` (`tools/benchmark.js`) | 10,000 signal updates in ~7 ms · 1,000 DSD SSR renders in ~15 ms · 1,000 DOM mounts in ~60 ms |
+| **Performance Benchmarks** | `npm run bench` ([`BENCHMARKS.md`](./BENCHMARKS.md)) | Reproducible median & p95 suite with CPU/OS/Node metadata (`node tools/benchmark.js --write`) |
 
 ---
 

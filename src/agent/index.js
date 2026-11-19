@@ -2,6 +2,10 @@
  * @wcomp/elementum/agent — Shadow-DOM-Aware Agent Runtime Bridge (WebMCP)
  * Lets AI agents inspect live Elementum interfaces (`snapshot`) and operate them
  * semantically (`act`) across open Shadow DOM boundaries without brittle CSS scraping.
+ *
+ * Experimental: distinguishes declared semantics (roles/attributes) from verified accessibility
+ * by surfacing structural `warnings` on `snapshot()`, rejecting stale refs, disabled controls,
+ * and ambiguous duplicate-name matches.
  */
 
 const INTERACTIVE_ROLES = new Set([
@@ -25,31 +29,73 @@ const INTERACTIVE_ROLES = new Set([
 
 const INTERACTIVE_NATIVE_TAGS = new Set(['button', 'a', 'input', 'select', 'textarea', 'dialog']);
 
+const LEAF_CUSTOM_TAGS = new Set([
+  'el-button',
+  'el-input',
+  'el-textarea',
+  'el-select',
+  'el-checkbox',
+  'el-switch',
+  'el-radio',
+  'el-slider',
+  'el-otp-input',
+  'el-number-field',
+  'el-autocomplete',
+  'el-datepicker',
+  'el-chip',
+  'el-toggle',
+  'el-theme-switch',
+  'el-rating',
+]);
+
+const ROLES_REQUIRING_NAME = new Set([
+  'button',
+  'link',
+  'textbox',
+  'searchbox',
+  'combobox',
+  'checkbox',
+  'switch',
+  'radio',
+  'slider',
+  'dialog',
+  'alertdialog',
+]);
+
 const lastSnapshotRefs = new WeakMap();
 
-function isHidden(el) {
+function isHiddenOrInert(el) {
   if (!el || el.nodeType !== 1) return true;
-  if (el.hidden || el.getAttribute('aria-hidden') === 'true') return true;
+  if (el.hidden || el.hasAttribute('inert') || el.getAttribute('aria-hidden') === 'true') return true;
   if (el.style && (el.style.display === 'none' || el.style.visibility === 'hidden')) return true;
   return false;
+}
+
+function isDisabled(el) {
+  if (!el) return false;
+  return Boolean(
+    el.hasAttribute?.('disabled') ||
+    el.disabled === true ||
+    el.disabled?.value === true ||
+    el.getAttribute?.('aria-disabled') === 'true'
+  );
 }
 
 function inferRole(el) {
   const explicit = el.getAttribute?.('role');
   if (explicit) return explicit;
   const tag = (el.tagName || '').toLowerCase();
-  if (tag === 'button' || tag === 'el-button') return 'button';
-  if (tag === 'a') return 'link';
-  if (tag === 'input' || tag === 'el-input' || tag === 'el-textarea' || tag === 'textarea') return 'textbox';
-  if (tag === 'select' || tag === 'el-select' || tag === 'el-autocomplete') return 'combobox';
+  if (tag === 'button' || tag === 'el-button' || tag === 'el-toggle') return 'button';
+  if (tag === 'a' || tag === 'el-route-link') return 'link';
+  if (tag === 'input' || tag === 'el-input' || tag === 'el-textarea' || tag === 'textarea' || tag === 'el-number-field' || tag === 'el-otp-input') return 'textbox';
+  if (tag === 'select' || tag === 'el-select' || tag === 'el-autocomplete' || tag === 'el-datepicker') return 'combobox';
   if (tag === 'el-checkbox') return 'checkbox';
-  if (tag === 'el-switch') return 'switch';
+  if (tag === 'el-switch' || tag === 'el-theme-switch') return 'switch';
   if (tag === 'el-radio') return 'radio';
   if (tag === 'el-tab') return 'tab';
   if (tag === 'el-slider') return 'slider';
-  if (tag === 'el-dialog' || tag === 'dialog') return 'dialog';
+  if (tag === 'el-dialog' || tag === 'dialog' || tag === 'el-drawer') return 'dialog';
   if (tag === 'el-alert-dialog') return 'alertdialog';
-  if (tag === 'el-drawer') return 'dialog';
   if (tag === 'el-popover' || tag === 'el-dropdown') return 'region';
   if (tag === 'el-accordion-item' || tag === 'el-collapsible') return 'button';
   if (tag === 'el-command-item') return 'option';
@@ -58,12 +104,34 @@ function inferRole(el) {
 
 function getAccessibleName(el) {
   const ariaLabel = el.getAttribute?.('aria-label');
-  if (ariaLabel) return ariaLabel.trim();
+  if (ariaLabel && ariaLabel.trim()) return ariaLabel.trim();
+  const labelledBy = el.getAttribute?.('aria-labelledby');
+  if (labelledBy && typeof document !== 'undefined') {
+    const rootNode = el.getRootNode?.() || document;
+    const labelEl = rootNode.getElementById?.(labelledBy) || document.getElementById?.(labelledBy);
+    if (labelEl?.textContent?.trim()) return labelEl.textContent.trim().slice(0, 120);
+  }
   const labelAttr = el.getAttribute?.('label') || el.getAttribute?.('title') || el.getAttribute?.('heading') || el.getAttribute?.('placeholder');
-  if (labelAttr) return labelAttr.trim();
+  if (labelAttr && labelAttr.trim()) return labelAttr.trim();
   const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
   if (text) return text.slice(0, 120);
   return '';
+}
+
+function auditDeclaredSemantics(el, role, name) {
+  const warnings = [];
+  if (ROLES_REQUIRING_NAME.has(role) && !name) {
+    warnings.push(`Missing accessible name on <${el.tagName.toLowerCase()}> (role="${role}")`);
+  }
+  const expanded = el.getAttribute?.('aria-expanded');
+  if (expanded !== null && expanded !== undefined && expanded !== 'true' && expanded !== 'false') {
+    warnings.push(`Invalid aria-expanded="${expanded}" on <${el.tagName.toLowerCase()}>`);
+  }
+  const checked = el.getAttribute?.('aria-checked');
+  if (checked !== null && checked !== undefined && !['true', 'false', 'mixed'].includes(checked)) {
+    warnings.push(`Invalid aria-checked="${checked}" on <${el.tagName.toLowerCase()}>`);
+  }
+  return warnings;
 }
 
 function readValue(el) {
@@ -79,9 +147,7 @@ function readState(el) {
   const dataState = el.getAttribute?.('data-state');
   if (dataState) state.dataState = dataState;
 
-  if (el.hasAttribute?.('disabled') || el.disabled === true || el.disabled?.value === true) {
-    state.disabled = true;
-  }
+  if (isDisabled(el)) state.disabled = true;
   if (el.checked === true || el.checked?.value === true || el.hasAttribute?.('checked') || el.getAttribute?.('aria-checked') === 'true') {
     state.checked = true;
   }
@@ -124,8 +190,9 @@ function inferActions(el, role) {
 }
 
 /**
- * Produces a structured, Shadow-DOM-piercing snapshot of interactive elements
+ * Produces a structured, nested-Shadow-DOM-piercing snapshot of interactive elements
  * for AI agents, assigning deterministic `@e1`, `@e2`, ... handles usable by `act()`.
+ * Also surfaces `warnings` for missing accessible names or malformed ARIA attributes.
  *
  * @param {Element | Document | ShadowRoot} [root]
  * @param {{ includeShadow?: boolean, maxNodes?: number }} [options]
@@ -133,10 +200,11 @@ function inferActions(el, role) {
 export function snapshot(root = typeof document !== 'undefined' ? document.body : null, options = {}) {
   const { includeShadow = true, maxNodes = 250 } = options;
   const nodes = [];
+  const warnings = [];
   const refMap = new Map();
   let counter = 0;
 
-  if (!root) return { nodes, count: 0 };
+  if (!root) return { nodes, count: 0, warnings };
 
   const visited = new Set();
 
@@ -145,9 +213,10 @@ export function snapshot(root = typeof document !== 'undefined' ? document.body 
     visited.add(node);
 
     if (node.nodeType === 1) {
-      if (isHidden(node)) return;
+      if (isHiddenOrInert(node)) return;
       const tag = node.tagName.toLowerCase();
       const isCustom = tag.startsWith('el-');
+      const isLeafCustom = LEAF_CUSTOM_TAGS.has(tag);
       const role = inferRole(node);
       const isInteractive =
         isCustom ||
@@ -157,26 +226,30 @@ export function snapshot(root = typeof document !== 'undefined' ? document.body 
       if (isInteractive && role) {
         const ref = `@e${++counter}`;
         refMap.set(ref, node);
+        const name = getAccessibleName(node);
+        const nodeWarnings = auditDeclaredSemantics(node, role, name);
+        if (nodeWarnings.length > 0) warnings.push(...nodeWarnings);
+
         const entry = {
           ref,
           tag,
           role,
-          name: getAccessibleName(node),
+          name,
           state: readState(node),
           actions: inferActions(node, role),
         };
+        if (nodeWarnings.length > 0) entry.warnings = nodeWarnings;
         const val = readValue(node);
         if (val !== undefined && val !== '') entry.value = val;
         nodes.push(entry);
       }
 
-      // Traverse children in Light DOM
       for (const child of node.children || []) {
         walk(child);
       }
 
-      // Pierce open Shadow DOM for non-leaf containers (skip duplicating inner controls of leaf el-* widgets)
-      if (includeShadow && node.shadowRoot && !isCustom) {
+      // Pierce open Shadow DOM recursively (skipping internal chrome of leaf el-* controls)
+      if (includeShadow && node.shadowRoot && !isLeafCustom) {
         for (const shadowChild of node.shadowRoot.children || []) {
           walk(shadowChild);
         }
@@ -184,7 +257,6 @@ export function snapshot(root = typeof document !== 'undefined' ? document.body 
       return;
     }
 
-    // Document or ShadowRoot
     for (const child of node.children || []) {
       walk(child);
     }
@@ -194,58 +266,94 @@ export function snapshot(root = typeof document !== 'undefined' ? document.body 
   if (typeof root === 'object' && root !== null) {
     lastSnapshotRefs.set(root, refMap);
   }
-  return { nodes, count: nodes.length };
+  return { nodes, count: nodes.length, warnings };
 }
 
 function findElement(root, command) {
-  if (!root || !command) return null;
+  if (!root || !command) return { el: null };
   if (command.ref) {
-    const map = lastSnapshotRefs.get(root);
-    if (map?.has(command.ref)) return map.get(command.ref);
-    // Re-snapshot if map wasn't populated yet
-    snapshot(root);
-    const refreshed = lastSnapshotRefs.get(root);
-    if (refreshed?.has(command.ref)) return refreshed.get(command.ref);
+    let map = lastSnapshotRefs.get(root);
+    if (!map) {
+      snapshot(root);
+      map = lastSnapshotRefs.get(root);
+    }
+    if (map?.has(command.ref)) {
+      const el = map.get(command.ref);
+      if (!el.isConnected) {
+        return { el: null, stale: true, ref: command.ref };
+      }
+      return { el };
+    }
+    return { el: null };
   }
   if (command.selector && typeof root.querySelector === 'function') {
     const direct = root.querySelector(command.selector);
-    if (direct) return direct;
+    if (direct) return { el: direct };
   }
   if (command.name || command.role) {
     const snap = snapshot(root);
     const map = lastSnapshotRefs.get(root);
     const wantedName = (command.name || '').toLowerCase();
-    const match = snap.nodes.find((n) => {
+    const matches = snap.nodes.filter((n) => {
       const roleOk = !command.role || n.role === command.role;
       const nameOk = !wantedName || n.name.toLowerCase().includes(wantedName);
       return roleOk && nameOk;
     });
-    if (match) return map.get(match.ref);
+    if (matches.length === 0) return { el: null };
+    if (matches.length > 1 && command.index === undefined && command.strict !== false) {
+      return {
+        el: null,
+        ambiguous: true,
+        matchCount: matches.length,
+        matches: matches.map((m) => m.ref),
+      };
+    }
+    const chosen = matches[command.index ?? 0];
+    return { el: chosen ? map.get(chosen.ref) : null };
   }
-  return null;
+  return { el: null };
 }
 
 /**
  * Executes a semantic agent action (`click`, `type`, `toggle`, `open`, `close`, `focus`, `press`)
  * against an element identified by `ref` (from `snapshot()`), `selector`, or `role`/`name`.
- * Supports an optional `options.guard(context)` safety hook to gate destructive actions.
+ * Rejects stale refs, disabled controls, ambiguous duplicate-name matches, and guard-blocked actions.
  *
  * @param {Element | Document | ShadowRoot} root
- * @param {{ ref?: string, selector?: string, role?: string, name?: string, action: string, value?: any, key?: string }} command
+ * @param {{ ref?: string, selector?: string, role?: string, name?: string, index?: number, strict?: boolean, action: string, value?: any, key?: string }} command
  * @param {{ guard?: (ctx: { element: Element, action: string, command: object }) => boolean }} [options]
  */
 export function act(root, command, options = {}) {
-  const el = findElement(root, command);
+  const lookup = findElement(root, command);
+  if (lookup.stale) {
+    return { ok: false, stale: true, error: `Stale ref: ${lookup.ref} is no longer connected to the DOM`, command };
+  }
+  if (lookup.ambiguous) {
+    return {
+      ok: false,
+      ambiguous: true,
+      matchCount: lookup.matchCount,
+      matches: lookup.matches,
+      error: `Ambiguous target: ${lookup.matchCount} elements matched; pass ref or index`,
+      command,
+    };
+  }
+  const el = lookup.el;
   if (!el) {
     return { ok: false, error: 'Target element not found', command };
   }
 
   const action = String(command.action || 'click').toLowerCase();
+  const tag = el.tagName.toLowerCase();
+
+  if (isDisabled(el) && action !== 'focus') {
+    return { ok: false, disabled: true, error: `Cannot perform "${action}" on disabled <${tag}>`, action, tag };
+  }
 
   if (typeof options.guard === 'function') {
     const allowed = options.guard({ element: el, action, command });
     if (!allowed) {
-      return { ok: false, blocked: true, error: 'Blocked by action guard', action, tag: el.tagName.toLowerCase() };
+      return { ok: false, blocked: true, error: 'Blocked by action guard', action, tag };
     }
   }
 
@@ -253,7 +361,7 @@ export function act(root, command, options = {}) {
     const innerBtn = el.shadowRoot?.querySelector?.('button, a, [role="button"]');
     if (innerBtn && typeof innerBtn.click === 'function') innerBtn.click();
     else if (typeof el.click === 'function') el.click();
-    return { ok: true, action, tag: el.tagName.toLowerCase(), state: readState(el) };
+    return { ok: true, action, tag, state: readState(el) };
   }
 
   if (action === 'toggle') {
@@ -265,7 +373,7 @@ export function act(root, command, options = {}) {
     } else if (typeof el.click === 'function') {
       el.click();
     }
-    return { ok: true, action, tag: el.tagName.toLowerCase(), state: readState(el) };
+    return { ok: true, action, tag, state: readState(el) };
   }
 
   if (action === 'type' || action === 'fill') {
@@ -281,7 +389,7 @@ export function act(root, command, options = {}) {
     } else {
       el.setAttribute('value', nextVal);
     }
-    return { ok: true, action, tag: el.tagName.toLowerCase(), value: readValue(el), state: readState(el) };
+    return { ok: true, action, tag, value: readValue(el), state: readState(el) };
   }
 
   if (action === 'open') {
@@ -289,27 +397,27 @@ export function act(root, command, options = {}) {
     else if (typeof el.open === 'function') el.open();
     else if (typeof el.show === 'function') el.show();
     else el.setAttribute('open', '');
-    return { ok: true, action, tag: el.tagName.toLowerCase(), state: readState(el) };
+    return { ok: true, action, tag, state: readState(el) };
   }
 
   if (action === 'close') {
     if (typeof el.close === 'function') el.close();
     else if (typeof el.hide === 'function') el.hide();
     else el.removeAttribute('open');
-    return { ok: true, action, tag: el.tagName.toLowerCase(), state: readState(el) };
+    return { ok: true, action, tag, state: readState(el) };
   }
 
   if (action === 'focus') {
     const focusTarget = el.shadowRoot?.querySelector?.('button, input, textarea, select, [tabindex="0"]') || el;
     focusTarget.focus?.();
-    return { ok: true, action, tag: el.tagName.toLowerCase(), state: readState(el) };
+    return { ok: true, action, tag, state: readState(el) };
   }
 
   if (action === 'press') {
     const key = command.key || 'Enter';
     el.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, composed: true }));
     el.dispatchEvent(new KeyboardEvent('keyup', { key, bubbles: true, composed: true }));
-    return { ok: true, action, key, tag: el.tagName.toLowerCase(), state: readState(el) };
+    return { ok: true, action, key, tag, state: readState(el) };
   }
 
   return { ok: false, error: `Unsupported action: ${action}`, command };
@@ -349,6 +457,7 @@ export function registerWebMCP(root = typeof document !== 'undefined' ? document
         ref: { type: 'string' },
         role: { type: 'string' },
         name: { type: 'string' },
+        index: { type: 'number' },
         selector: { type: 'string' },
         action: { type: 'string' },
         value: {},

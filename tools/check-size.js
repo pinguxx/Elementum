@@ -39,6 +39,36 @@ function measureGzipBytes(relPath) {
   return zlib.gzipSync(buf, { level: 9 }).length;
 }
 
+function resolveTransitiveGraph(entryRelPath, seen = new Set()) {
+  const abs = path.resolve(ROOT, entryRelPath);
+  if (seen.has(abs) || !fs.existsSync(abs)) return seen;
+  seen.add(abs);
+  const src = fs.readFileSync(abs, 'utf8');
+  const importRe = /(?:import|export)\s+(?:[^'"]*?\s+from\s+)?['"](\.[^'"]+)['"]/g;
+  let m;
+  while ((m = importRe.exec(src)) !== null) {
+    const dep = path.resolve(path.dirname(abs), m[1]);
+    resolveTransitiveGraph(path.relative(ROOT, dep), seen);
+  }
+  return seen;
+}
+
+function measureTransitiveGzip(entryRelPath) {
+  const files = Array.from(resolveTransitiveGraph(entryRelPath)).sort();
+  const combined = Buffer.concat(files.map((f) => fs.readFileSync(f)));
+  return { files: files.length, raw: combined.length, gzip: zlib.gzipSync(combined, { level: 9 }).length };
+}
+
+const PUBLIC_GRAPHS = [
+  ['Core Runtime (elementum + signal + template)', 'src/elementum.js'],
+  ['@wcomp/elementum/behaviors (transitive)', 'src/behaviors/index.js'],
+  ['@wcomp/elementum/agent (transitive)', 'src/agent/index.js'],
+  ['@wcomp/elementum/testing (transitive)', 'src/testing/index.js'],
+  ['@wcomp/elementum/ssr (transitive)', 'src/ssr.js'],
+  ['@wcomp/elementum/ag-ui (transitive)', 'src/ag-ui.js'],
+  ['Single component: el-button (transitive)', 'src/components/el-button.js'],
+];
+
 const measured = {};
 let totalGzip = 0;
 for (const [name, rel] of allEntries) {
@@ -83,3 +113,8 @@ console.log(
     compFiles.reduce((s, [n]) => s + measured[n], 0) / compFiles.length / 1024
   ).toFixed(2)} KB gzip)`
 );
+console.log('\nTransitive Import Graph Sizes (unminified source -> gzip level 9):');
+for (const [label, rel] of PUBLIC_GRAPHS) {
+  const g = measureTransitiveGzip(rel);
+  console.log(`  ${label.padEnd(46)} ${(g.gzip / 1024).toFixed(2).padStart(6)} KB gzip (${g.files} file${g.files === 1 ? '' : 's'})`);
+}

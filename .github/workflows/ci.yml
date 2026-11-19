@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     name: Unit, Fuzz & Security Tests on Node ${{ matrix.node-version }} (${{ matrix.os }})

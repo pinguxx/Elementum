@@ -56,17 +56,28 @@ act(document.body, { role: 'button', name: 'Save Settings', action: 'click' });
 
 ---
 
-## 3. WAI-ARIA, RTL & SSR Contract Testing (`@wcomp/elementum/testing`)
+## 3. WAI-ARIA, RTL, SSR & Declarative Component Testing (`@wcomp/elementum/testing`)
 
-Validate any Elementum component or custom composition against WAI-ARIA Authoring Practices Guide (APG) rules, provider-free RTL detection, and pure Node.js Declarative Shadow DOM SSR:
+> **Scope note:** `checkAriaPattern` is a **structural contract validator** (roles and ARIA attributes), not a substitute for real-browser focus/keyboard and `@axe-core/playwright` verification. Combine it with `testComponent()` and Playwright E2E for full behavioral coverage.
 
 ```js
-import { checkAriaPattern, checkDirection, checkServerRender } from '@wcomp/elementum/testing';
+import { checkAriaPattern, checkDirection, checkServerRender, testComponent } from '@wcomp/elementum/testing';
 import { ElDialog } from '@wcomp/elementum';
 
 const aria = checkAriaPattern(dialogEl, 'dialog');      // button, checkbox, switch, dialog, tabs, accordion, combobox, slider, progressbar
 const rtl  = checkDirection(dialogEl);                  // verifies dir="ltr" and dir="rtl" without a provider
 const ssr  = checkServerRender('el-dialog', ElDialog);  // verifies DSD <template shadowrootmode="open"> + XSS attribute escaping
+
+// Declarative agent-powered component test
+const result = await testComponent('el-switch', {
+  attrs: { label: 'Email Digest' },
+  actions: [{ action: 'toggle' }],
+  assertions: [
+    { type: 'checked', equals: true },
+    { type: 'accessible-name', includes: 'Email Digest' },
+    { type: 'aria-pattern', pattern: 'switch' },
+  ],
+});
 ```
 
 ---

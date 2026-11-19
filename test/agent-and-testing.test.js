@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import '../test-helpers/setup.js';
 
 import { snapshot, act, registerWebMCP } from '../src/agent/index.js';
-import { checkAriaPattern, checkDirection, checkServerRender } from '../src/testing/index.js';
+import { checkAriaPattern, checkDirection, checkServerRender, testComponent } from '../src/testing/index.js';
 import '../src/components/el-toggle.js';
 
 import { ElButton } from '../src/components/el-button.js';
@@ -220,6 +220,133 @@ test('Reactivity regression: el-otp-input, el-number-field, el-segmented-control
   assert.equal(dp.placeholder.value, 'Pick a day');
   assert.equal(dp.disabled.value, true);
   dp.remove();
+});
+
+test('Agent Runtime Hardening: nested Shadow DOM, duplicate names, stale refs, disabled, hidden/inert, and ARIA warnings', () => {
+  const stage = document.createElement('div');
+  stage.innerHTML = `
+    <el-button id="dup-1">Delete</el-button>
+    <el-button id="dup-2">Delete</el-button>
+    <el-button id="dis-btn" disabled>Locked</el-button>
+    <el-button id="hid-btn" hidden>Hidden Action</el-button>
+    <div inert><el-button id="inert-btn">Inert Action</el-button></div>
+    <button id="unnamed-btn" aria-expanded="maybe"></button>
+  `;
+
+  // 3-level nested Shadow DOM
+  const outer = document.createElement('div');
+  const outerShadow = outer.attachShadow({ mode: 'open' });
+  const middle = document.createElement('div');
+  const middleShadow = middle.attachShadow({ mode: 'open' });
+  const innerBtn = document.createElement('el-button');
+  innerBtn.textContent = 'Deep Nested Save';
+  middleShadow.appendChild(innerBtn);
+  outerShadow.appendChild(middle);
+  stage.appendChild(outer);
+
+  document.body.appendChild(stage);
+
+  const snap = snapshot(stage);
+  const names = snap.nodes.map((n) => n.name);
+
+  // Nested Shadow DOM pierced 3 levels deep
+  assert.ok(names.includes('Deep Nested Save'), 'Should pierce nested open Shadow DOM');
+
+  // Hidden & inert excluded
+  assert.ok(!names.includes('Hidden Action'), 'Hidden element must be excluded');
+  assert.ok(!names.includes('Inert Action'), 'Inert subtree must be excluded');
+
+  // Declared semantics warnings surfaced
+  assert.ok(snap.warnings.some((w) => w.includes('Missing accessible name')), 'Should warn on unnamed button');
+  assert.ok(snap.warnings.some((w) => w.includes('Invalid aria-expanded')), 'Should warn on invalid aria-expanded');
+
+  // Ambiguous duplicate accessible names rejected unless index or ref is given
+  const ambig = act(stage, { role: 'button', name: 'Delete', action: 'click' });
+  assert.equal(ambig.ok, false);
+  assert.equal(ambig.ambiguous, true);
+  assert.equal(ambig.matchCount, 2);
+
+  let secondClicks = 0;
+  stage.querySelector('#dup-2').addEventListener('click', () => { secondClicks++; });
+  const disambig = act(stage, { role: 'button', name: 'Delete', index: 1, action: 'click' });
+  assert.equal(disambig.ok, true);
+  assert.equal(secondClicks, 1);
+
+  // Disabled control refused
+  let disClicks = 0;
+  stage.querySelector('#dis-btn').addEventListener('click', () => { disClicks++; });
+  const disRes = act(stage, { role: 'button', name: 'Locked', action: 'click' });
+  assert.equal(disRes.ok, false);
+  assert.equal(disRes.disabled, true);
+  assert.equal(disClicks, 0);
+
+  // Stale ref detection when element is removed after snapshot()
+  const dup1Ref = snap.nodes.find((n) => n.name === 'Delete').ref;
+  stage.querySelector('#dup-1').remove();
+  const staleRes = act(stage, { ref: dup1Ref, action: 'click' });
+  assert.equal(staleRes.ok, false);
+  assert.equal(staleRes.stale, true);
+
+  stage.remove();
+});
+
+test('Declarative Agent Testing Framework: testComponent() executes actions and assertions end-to-end', async () => {
+  const switchRes = await testComponent('el-switch', {
+    attrs: { label: 'Email Digest' },
+    actions: [{ action: 'toggle' }],
+    assertions: [
+      { type: 'checked', equals: true },
+      { type: 'accessible-name', includes: 'Email Digest' },
+      { type: 'aria-pattern', pattern: 'switch' },
+      { type: 'direction' },
+    ],
+  });
+  assert.equal(switchRes.ok, true, `testComponent(el-switch) failed: ${switchRes.failures.join('; ')}`);
+
+  const inputRes = await testComponent('el-input', {
+    attrs: { label: 'Project Name' },
+    actions: [{ action: 'type', value: 'Elementum' }],
+    assertions: [
+      { type: 'value', equals: 'Elementum' },
+      { type: 'accessible-name', includes: 'Project Name' },
+    ],
+  });
+  assert.equal(inputRes.ok, true, `testComponent(el-input) failed: ${inputRes.failures.join('; ')}`);
+
+  const dlgRes = await testComponent('el-dialog', {
+    attrs: { heading: 'Confirm Export' },
+    actions: [{ action: 'open' }, { action: 'close' }],
+    assertions: [
+      { type: 'closed' },
+      { type: 'aria-pattern', pattern: 'dialog' },
+    ],
+  });
+  assert.equal(dlgRes.ok, true, `testComponent(el-dialog) failed: ${dlgRes.failures.join('; ')}`);
+
+  // Failing assertion reports clean failure message
+  const failRes = await testComponent('el-switch', {
+    attrs: { label: 'Off Switch' },
+    assertions: [{ type: 'checked', equals: true }],
+  });
+  assert.equal(failRes.ok, false);
+  assert.equal(failRes.failures.length, 1);
+});
+
+test('Quality Report Audit: QUALITY.md counts match custom-elements.json and sum consistently', () => {
+  const cem = JSON.parse(fs.readFileSync('custom-elements.json', 'utf8'));
+  const cemTags = cem.modules.flatMap((m) => (m.declarations || []).map((d) => d.tagName).filter(Boolean));
+  const qualityMd = fs.readFileSync('QUALITY.md', 'utf8');
+
+  const totalMatch = qualityMd.match(/Total Registered Custom Elements\*\*:\s*\*\*(\d+)\*\*/);
+  const prodMatch = qualityMd.match(/Production Verified\*\*:\s*\*\*(\d+)\*\*/);
+  const stableMatch = qualityMd.match(/Stable\*\*:\s*\*\*(\d+)\*\*/);
+  const expMatch = qualityMd.match(/Experimental\*\*:\s*\*\*(\d+)\*\*/);
+
+  assert.ok(totalMatch && prodMatch && stableMatch && expMatch, 'QUALITY.md summary metrics missing');
+  const total = Number(totalMatch[1]);
+  const sum = Number(prodMatch[1]) + Number(stableMatch[1]) + Number(expMatch[1]);
+  assert.equal(total, cemTags.length, 'QUALITY.md total must match custom-elements.json tag count');
+  assert.equal(sum, total, 'Maturity tier counts must sum to total components');
 });
 
 test('Testing Contracts: checkAriaPattern validates 9 WAI-ARIA APG patterns across Elementum components', () => {

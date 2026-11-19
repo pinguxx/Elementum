@@ -1,80 +1,156 @@
 #!/usr/bin/env node
 /**
  * Reproducible Performance Benchmark for @wcomp/elementum
- * Measures:
- *   1. Reactive signal propagation (1,000 & 10,000 updates)
- *   2. Component mount/unmount throughput (100, 500, 1,000 instances)
- *   3. Declarative Shadow DOM SSR throughput (1,000 components)
+ * Reports hardware/OS/Node environment, warmup iterations, repetitions, median, and p95.
  *
  * Usage:
  *   npm run bench
+ *   node tools/benchmark.js --write   # Generates BENCHMARKS.md
  */
 
+import fs from 'node:fs';
+import os from 'node:os';
 import { performance } from 'node:perf_hooks';
 import '../test-helpers/setup.js';
-import { signal, computed, effect } from '../src/signal.js';
+import { signal, computed, effect, batch } from '../src/signal.js';
 import { ElButton } from '../src/components/el-button.js';
 import { ElBadge } from '../src/components/el-badge.js';
 import { renderComponentToDSD } from '../src/ssr.js';
 
+const WARMUP = 3;
+const RUNS = 15;
+const WRITE_MD = process.argv.includes('--write');
+
+function percentile(sorted, p) {
+  const idx = Math.min(sorted.length - 1, Math.ceil((p / 100) * sorted.length) - 1);
+  return sorted[Math.max(0, idx)];
+}
+
 function bench(label, fn) {
-  const start = performance.now();
-  fn();
-  const ms = performance.now() - start;
-  console.log(`${label.padEnd(46)} ${ms.toFixed(2).padStart(8)} ms`);
-  return ms;
-}
-
-console.log('\n⚡ @wcomp/elementum Performance Benchmark\n' + '─'.repeat(58));
-
-// 1. Signal propagation
-bench('Signals: 1,000 updates (signal -> computed -> effect)', () => {
-  const s = signal(0);
-  const c = computed(() => s.value * 2 + 1);
-  let sink = 0;
-  const dispose = effect(() => {
-    sink = c.value;
-  });
-  for (let i = 1; i <= 1000; i++) s.value = i;
-  dispose();
-  if (sink !== 2001) throw new Error('Unexpected sink value');
-});
-
-bench('Signals: 10,000 updates (signal -> computed -> effect)', () => {
-  const s = signal(0);
-  const c = computed(() => s.value * 2 + 1);
-  let sink = 0;
-  const dispose = effect(() => {
-    sink = c.value;
-  });
-  for (let i = 1; i <= 10000; i++) s.value = i;
-  dispose();
-  if (sink !== 20001) throw new Error('Unexpected sink value');
-});
-
-// 2. Component mount + unmount
-for (const count of [100, 500, 1000]) {
-  bench(`DOM Mount + Unmount: ${count} <el-badge> elements`, () => {
-    const frag = document.createDocumentFragment();
-    const els = [];
-    for (let i = 0; i < count; i++) {
-      const el = document.createElement('el-badge');
-      el.setAttribute('count', String(i));
-      frag.appendChild(el);
-      els.push(el);
-    }
-    document.body.appendChild(frag);
-    for (const el of els) el.remove();
-  });
-}
-
-// 3. Pure-Node DSD SSR throughput
-bench('SSR DSD: 1,000 <el-button> renders', () => {
-  let bytes = 0;
-  for (let i = 0; i < 1000; i++) {
-    bytes += renderComponentToDSD('el-button', ElButton, { variant: 'primary', size: 'md' }, `Action ${i}`).length;
+  for (let w = 0; w < WARMUP; w++) fn();
+  const samples = [];
+  for (let r = 0; r < RUNS; r++) {
+    const start = performance.now();
+    fn();
+    samples.push(performance.now() - start);
   }
-  if (bytes === 0) throw new Error('Empty SSR output');
-});
+  samples.sort((a, b) => a - b);
+  const median = percentile(samples, 50);
+  const p95 = percentile(samples, 95);
+  console.log(`${label.padEnd(50)} median ${median.toFixed(2).padStart(7)} ms  |  p95 ${p95.toFixed(2).padStart(7)} ms`);
+  return { label, median, p95, min: samples[0], max: samples[samples.length - 1] };
+}
 
-console.log('─'.repeat(58) + '\nDone.\n');
+const env = {
+  node: process.version,
+  platform: `${os.platform()} ${os.release()} (${os.arch()})`,
+  cpu: os.cpus()[0]?.model || 'unknown',
+  cores: os.cpus().length,
+  date: new Date().toISOString().slice(0, 10),
+};
+
+console.log(`\n⚡ @wcomp/elementum Reproducible Benchmark (${WARMUP} warmup, ${RUNS} runs)`);
+console.log(`Environment: Node ${env.node} · ${env.platform} · ${env.cpu} (${env.cores} cores)`);
+console.log('─'.repeat(82));
+
+const results = [];
+
+results.push(
+  bench('Signals: 1,000 updates (signal->computed->effect)', () => {
+    const s = signal(0);
+    const c = computed(() => s.value * 2 + 1);
+    let sink = 0;
+    const dispose = effect(() => { sink = c.value; });
+    for (let i = 1; i <= 1000; i++) s.value = i;
+    dispose();
+    if (sink !== 2001) throw new Error('Unexpected sink');
+  })
+);
+
+results.push(
+  bench('Signals: 10,000 updates (signal->computed->effect)', () => {
+    const s = signal(0);
+    const c = computed(() => s.value * 2 + 1);
+    let sink = 0;
+    const dispose = effect(() => { sink = c.value; });
+    for (let i = 1; i <= 10000; i++) s.value = i;
+    dispose();
+    if (sink !== 20001) throw new Error('Unexpected sink');
+  })
+);
+
+results.push(
+  bench('Signals: 10,000 batched writes (batch())', () => {
+    const s = signal(0);
+    const c = computed(() => s.value * 2 + 1);
+    let runs = 0;
+    const dispose = effect(() => { void c.value; runs++; });
+    batch(() => {
+      for (let i = 1; i <= 10000; i++) s.value = i;
+    });
+    dispose();
+    if (runs !== 2) throw new Error('Expected 2 runs');
+  })
+);
+
+for (const count of [100, 500, 1000]) {
+  results.push(
+    bench(`DOM Mount + Unmount: ${count} <el-badge> (happy-dom)`, () => {
+      const frag = document.createDocumentFragment();
+      const els = [];
+      for (let i = 0; i < count; i++) {
+        const el = document.createElement('el-badge');
+        el.setAttribute('count', String(i));
+        frag.appendChild(el);
+        els.push(el);
+      }
+      document.body.appendChild(frag);
+      for (const el of els) el.remove();
+    })
+  );
+}
+
+results.push(
+  bench('SSR DSD: 1,000 <el-button> pure-Node renders', () => {
+    let bytes = 0;
+    for (let i = 0; i < 1000; i++) {
+      bytes += renderComponentToDSD('el-button', ElButton, { variant: 'primary', size: 'md' }, `Action ${i}`).length;
+    }
+    if (bytes === 0) throw new Error('Empty SSR output');
+  })
+);
+
+console.log('─'.repeat(82) + '\nDone.\n');
+
+if (WRITE_MD) {
+  const rows = results
+    .map((r) => `| ${r.label} | ${r.median.toFixed(2)} ms | ${r.p95.toFixed(2)} ms | ${r.min.toFixed(2)} ms | ${r.max.toFixed(2)} ms |`)
+    .join('\n');
+  const md = `# Elementum Benchmarks
+
+> Generated by \`node tools/benchmark.js --write\` (source: [\`tools/benchmark.js\`](./tools/benchmark.js)).
+> DOM mount benchmarks run in \`happy-dom\` (Node.js) and measure JS framework overhead, not browser layout/paint.
+
+## Methodology & Environment
+
+- **Date:** ${env.date}
+- **Node.js:** \`${env.node}\`
+- **OS:** ${env.platform}
+- **CPU:** ${env.cpu} (${env.cores} logical cores)
+- **Protocol:** ${WARMUP} unmeasured warm-up iterations followed by ${RUNS} measured repetitions per case; reporting median (p50), p95, min, and max.
+
+## Results
+
+| Benchmark | Median (p50) | p95 | Min | Max |
+| :--- | ---: | ---: | ---: | ---: |
+${rows}
+
+## Reproduce Locally
+
+\`\`\`bash
+npm run bench
+\`\`\`
+`;
+  fs.writeFileSync('BENCHMARKS.md', md, 'utf8');
+  console.log('Wrote BENCHMARKS.md');
+}

@@ -998,11 +998,12 @@ export interface AgentSnapshotNode {
   value?: string | number;
   state: Record<string, boolean | string>;
   actions: string[];
+  warnings?: string[];
 }
 export function snapshot(
   root?: Element | Document | ShadowRoot | null,
   options?: { includeShadow?: boolean; maxNodes?: number }
-): { nodes: AgentSnapshotNode[]; count: number };
+): { nodes: AgentSnapshotNode[]; count: number; warnings: string[] };
 export function act(
   root: Element | Document | ShadowRoot,
   command: {
@@ -1010,6 +1011,8 @@ export function act(
     selector?: string;
     role?: string;
     name?: string;
+    index?: number;
+    strict?: boolean;
     action: 'click' | 'toggle' | 'type' | 'fill' | 'open' | 'close' | 'focus' | 'press' | string;
     value?: unknown;
     key?: string;
@@ -1017,7 +1020,20 @@ export function act(
   options?: {
     guard?: (ctx: { element: Element; action: string; command: Record<string, unknown> }) => boolean;
   }
-): { ok: boolean; blocked?: boolean; action?: string; tag?: string; value?: unknown; state?: Record<string, boolean | string>; error?: string };
+): {
+  ok: boolean;
+  blocked?: boolean;
+  stale?: boolean;
+  disabled?: boolean;
+  ambiguous?: boolean;
+  matchCount?: number;
+  matches?: string[];
+  action?: string;
+  tag?: string;
+  value?: unknown;
+  state?: Record<string, boolean | string>;
+  error?: string;
+};
 export function registerWebMCP(
   root?: Element | Document | ShadowRoot | null,
   options?: {
@@ -1027,7 +1043,7 @@ export function registerWebMCP(
   }
 ): { registered: boolean; tools?: string[]; unregister: () => void };
 
-// WAI-ARIA, RTL & SSR Contract Checkers (@wcomp/elementum/testing)
+// WAI-ARIA, RTL, SSR & Declarative Component Testing (@wcomp/elementum/testing)
 export type AriaPattern = 'button' | 'checkbox' | 'switch' | 'dialog' | 'tabs' | 'accordion' | 'combobox' | 'slider' | 'progressbar';
 export function checkAriaPattern(
   el: HTMLElement,
@@ -1041,6 +1057,22 @@ export function checkServerRender(
   ComponentClass: typeof Elementum,
   attrs?: Record<string, unknown>
 ): { ok: boolean; html: string; violations: string[] };
+export function testComponent(
+  tagOrElement: string | HTMLElement,
+  spec?: {
+    attrs?: Record<string, string | boolean>;
+    html?: string;
+    actions?: Array<Record<string, unknown>>;
+    assertions?: Array<Record<string, unknown>>;
+    cleanup?: boolean;
+  }
+): Promise<{
+  ok: boolean;
+  tag: string;
+  actionResults: Array<Record<string, unknown>>;
+  assertionResults: Array<Record<string, unknown>>;
+  failures: string[];
+}>;
 
 // ==========================================
 // DOM & JSX Global Typings
