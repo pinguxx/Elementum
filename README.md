@@ -69,7 +69,7 @@ Elementum runs directly in any modern browser without Webpack, Vite, or Babel.
 
 `Elementum` is inspired by minimalist libraries like `uce`, modernizing the developer experience with standard browser primitives:
 - **Shadow DOM by default** with automatic Constructable Stylesheet adoption (`new CSSStyleSheet()`).
-- **Fine-grained micro-signals** (`signal`, `computed`, `effect`): state updates mutate **only the exact bound DOM text or attribute node**—the component never re-renders, preserving child component state and input focus.
+- **Fine-grained & Async-First Signals** (`signal`, `computed`, `effect`, `batch`, `asyncSignal`, `isPending`, `NotReadyError`): state updates mutate **only the exact bound DOM text or attribute node**, while `asyncSignal` adds `AbortSignal` race-condition cancellation, stale-while-revalidate `.value`, and structured `.error` details.
 - **Form-Associated Custom Elements (FACE)**: `static formAssociated = true` enables native `<form>` submission, reset, and validation via `ElementInternals`.
 - **Zero build requirement**: Plain ES modules (`<script type="module">`), no Babel, decorators, or compile step needed. Runs in SSR / Node.js cleanly.
 - **Light & Dark Mode**: Built-in CSS custom property theme tokens with automatic `prefers-color-scheme` and `<el-theme-switch>`.

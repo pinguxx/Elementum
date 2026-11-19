@@ -4,7 +4,19 @@
 
 export { Elementum } from './elementum.js';
 export { html, svg, css, render, CSSResult, TemplateResult } from './template.js';
-export { signal, computed, effect, isSignal, Signal, Computed } from './signal.js';
+export {
+  signal,
+  computed,
+  effect,
+  batch,
+  asyncSignal,
+  isPending,
+  isSignal,
+  Signal,
+  Computed,
+  AsyncSignal,
+  NotReadyError,
+} from './signal.js';
 
 // Component Exports
 export { ElButton } from './components/el-button.js';

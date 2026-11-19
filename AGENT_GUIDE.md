@@ -53,16 +53,24 @@ Elementum/
 
 Elementum reactive state is managed through Signals:
 
-### Creating Signals
+### Creating Signals, Batching & Async Signals
 ```javascript
-import { signal, computed, effect } from '../signal.js';
+import { signal, computed, effect, batch, asyncSignal, isPending } from '@wcomp/elementum';
 
-const count = signal(0);
-const doubled = computed(() => count.value * 2);
+const query = signal('web');
+const results = asyncSignal(async (abortSignal) => {
+  const q = query.value; // automatically tracked; stale in-flight fetches auto-abort
+  const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`, { signal: abortSignal });
+  return res.json();
+});
 
-console.log(count.value); // 0
-count.value = 5;
-console.log(doubled.value); // 10
+// Atomic multi-write without intermediate glitches
+batch(() => {
+  query.value = 'signals';
+});
+
+// Inspect loading & structured error details (stale-while-revalidate preserves last `.value`)
+// results.pending.value | results.status.value | results.error.value | isPending(() => results.read())
 ```
 
 ### Critical Rules of Reactivity:
@@ -70,9 +78,10 @@ console.log(doubled.value); // 10
    - ❌ WRONG: `html`\`<div>${this.label.value}</div>\`` (evaluates once at initial render, losing reactivity)
    - ✅ RIGHT: `html`\`<div>${() => this.label.value}</div>\`` (evaluates as a reactive getter attached to DOM text node)
 2. **Dynamic attributes and properties**:
-   - Passing an arrow function `${() => this.disabled.value ? '' : null}` updates the boolean attribute reactively.
-3. **Automatic Cleanup**:
-   - `effect(fn, { signal })` accepts an `AbortSignal` (such as `this.signal` from the component base class) to automatically tear down listeners when disconnected.
+   - Passing an arrow function `${() => this.disabled.value ? '' : null}` or `?disabled=${this.disabled}` updates boolean attributes reactively.
+3. **Automatic Cleanup & Error Boundaries**:
+   - `effect(fn, { signal, onError })` accepts an `AbortSignal` (`this.signal`) for leak-free teardown and an optional `onError` handler to isolate reactive exceptions without crashing sibling bindings.
+   - `asyncSignal(fetcher, { signal, onError })` automatically aborts stale in-flight requests on dependency updates and exposes structured `.error` details (`message`, `cause`, `status`, `timestamp`, `attempt`).
 
 ---
 

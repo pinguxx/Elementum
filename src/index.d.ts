@@ -36,10 +36,51 @@ export function isSignal(val: any): val is Signal<any>;
 
 export class Computed<T = any> extends Signal<T> {
   constructor(getter: () => T);
+  readonly error: unknown;
+}
+
+export class NotReadyError extends Error {
+  constructor(message?: string);
+}
+
+export interface AsyncErrorDetails {
+  message: string;
+  name: string;
+  cause: unknown;
+  status?: number;
+  timestamp: number;
+  attempt: number;
+}
+
+export type AsyncSignalStatus = 'idle' | 'pending' | 'resolved' | 'errored';
+
+export class AsyncSignal<T = any> extends Signal<T | undefined> {
+  readonly pending: Signal<boolean>;
+  readonly status: Signal<AsyncSignalStatus>;
+  readonly error: Signal<AsyncErrorDetails | null>;
+  readonly latest: T | undefined;
+  read(): T;
+  refetch(): void;
+  abort(): void;
+  mutate(nextValue: T): void;
+  dispose(): void;
 }
 
 export function computed<T>(getter: () => T): Computed<T>;
-export function effect(fn: () => void, options?: AbortableOptions): () => void;
+export function effect(
+  fn: () => void,
+  options?: AbortableOptions & { onError?: (err: unknown) => void }
+): () => void;
+export function batch<T>(fn: () => T): T;
+export function asyncSignal<T>(
+  fetcher: (abortSignal: AbortSignal) => Promise<T> | T,
+  options?: AbortableOptions & {
+    initialValue?: T;
+    immediate?: boolean;
+    onError?: (err: AsyncErrorDetails) => void;
+  }
+): AsyncSignal<T>;
+export function isPending(source: AsyncSignal<any> | (() => unknown)): boolean;
 
 // ==========================================
 // Template & CSS Engine

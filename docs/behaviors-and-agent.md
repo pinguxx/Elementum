@@ -68,3 +68,32 @@ const aria = checkAriaPattern(dialogEl, 'dialog');      // button, checkbox, swi
 const rtl  = checkDirection(dialogEl);                  // verifies dir="ltr" and dir="rtl" without a provider
 const ssr  = checkServerRender('el-dialog', ElDialog);  // verifies DSD <template shadowrootmode="open"> + XSS attribute escaping
 ```
+
+---
+
+## 4. Async Signals, Batching & Error Details (`@wcomp/elementum`)
+
+Elementum's micro-signal engine (`src/signal.js`) includes first-class async primitives inspired by async-first reactive graphs:
+
+- **`batch(fn)`** — Coalesces multiple signal writes into a single atomic notification pass while keeping `computed()` reads fresh inside the batch.
+- **`asyncSignal(fetcher, { initialValue, immediate, signal, onError })`** — Tracks synchronous signal reads inside `fetcher(abortSignal)`, cancels stale in-flight requests automatically via `AbortSignal`, preserves the last resolved `.value` during refreshes (stale-while-revalidate), and exposes `.pending`, `.status` (`'idle' | 'pending' | 'resolved' | 'errored'`), structured `.error` (`{ message, name, cause, status, timestamp, attempt }`), `.refetch()`, `.abort()`, `.mutate()`, and `.read()` (throws `NotReadyError` while initial load is unresolved).
+- **`isPending(source)`** — Checks whether an `AsyncSignal` or reactive getter calling `.read()` is pending, safely catching `NotReadyError`.
+- **`effect(fn, { signal, onError })` & `Computed.error`** — Isolates and reports reactive exceptions cleanly without crashing sibling bindings.
+
+```js
+import { signal, asyncSignal, batch, isPending, effect } from '@wcomp/elementum';
+
+const userId = signal(1);
+const user = asyncSignal(async (abortSignal) => {
+  const id = userId.value;
+  const res = await fetch(`/api/users/${id}`, { signal: abortSignal });
+  if (!res.ok) throw Object.assign(new Error('Failed to load user'), { status: res.status });
+  return res.json();
+});
+
+effect(() => {
+  if (isPending(user)) console.log('Loading...');
+  else if (user.error.value) console.log('Error:', user.error.value.message, user.error.value.status);
+  else console.log('User:', user.value);
+});
+```
