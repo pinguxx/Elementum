@@ -185,6 +185,7 @@ export class ElSelect extends Elementum {
       <div class="wrapper" part="wrapper">
         <select
           part="select"
+          aria-label=${() => this.getAttribute('aria-label') || this.placeholder.value || this.getAttribute('name') || 'Select option'}
           ?disabled=${this.disabled}
           @change=${this.#onChange}
         >

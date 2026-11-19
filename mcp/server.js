@@ -15,9 +15,41 @@ const rootDir = path.resolve(__dirname, '..');
 // Load Custom Elements Manifest and Figma Tokens
 const manifestPath = path.join(rootDir, 'custom-elements.json');
 const tokensPath = path.join(rootDir, 'tokens', 'figma-tokens.json');
+const pkgPath = path.join(rootDir, 'package.json');
 
 const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 const tokens = JSON.parse(fs.readFileSync(tokensPath, 'utf8'));
+const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+
+const MAX_PAYLOAD_BYTES = 128 * 1024;
+const SAFE_TAG_RE = /^[a-z][a-z0-9]*-[a-z0-9-]+$/;
+const SAFE_CLASS_RE = /^[A-Z][A-Za-z0-9_]*$/;
+const SAFE_ATTR_RE = /^[a-z][a-z0-9-]*$/;
+const GLOBAL_HTML_ATTRS = new Set([
+  'id', 'class', 'style', 'slot', 'part', 'title', 'lang', 'dir', 'hidden',
+  'tabindex', 'role', 'draggable', 'contenteditable', 'spellcheck', 'translate',
+  'unstyled', 'name', 'value', 'disabled', 'required', 'readonly', 'autofocus',
+]);
+
+function escapeAttr(val) {
+  return String(val ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function escapeText(val) {
+  return String(val ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+const allDeclarations = manifest.modules.flatMap((m) =>
+  (m.declarations || []).map((d) => ({ ...d, modulePath: m.path }))
+);
+const declByTag = new Map(allDeclarations.map((d) => [d.tagName, d]));
 
 const TOOLS = [
   {
@@ -91,8 +123,8 @@ const TOOLS = [
     },
   },
   {
-    name: 'validate_accessibility',
-    description: 'Audits Elementum component usage or HTML markup against WCAG 2.2 accessibility standards.',
+    name: 'lint_accessibility',
+    description: 'Static HTML accessibility linter for common WCAG 2.2 labeling and attribute issues (not a substitute for real-browser axe-core auditing).',
     inputSchema: {
       type: 'object',
       properties: {
@@ -101,33 +133,74 @@ const TOOLS = [
       required: ['markup'],
     },
   },
+  {
+    name: 'validate_accessibility',
+    description: 'Alias for lint_accessibility: static HTML accessibility linter for common WCAG 2.2 labeling issues.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        markup: { type: 'string', description: 'HTML markup snippet to inspect' },
+      },
+      required: ['markup'],
+    },
+  },
+  {
+    name: 'suggest_component',
+    description: 'Recommends Elementum Web Components that best match a UI requirement or natural-language query.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: 'UI requirement, e.g. "date picker", "code diff", "command palette"' },
+        limit: { type: 'number', description: 'Maximum results to return (default 5)' },
+      },
+      required: ['query'],
+    },
+  },
+  {
+    name: 'validate_component_usage',
+    description: 'Validates <el-*> tags and attributes in an HTML snippet against the live Custom Elements Manifest to catch hallucinated tags or props.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        markup: { type: 'string', description: 'HTML snippet containing <el-*> components' },
+      },
+      required: ['markup'],
+    },
+  },
+  {
+    name: 'get_component_maturity',
+    description: 'Returns machine-readable package version, component count, stability tier, and browser/testing verification metadata.',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
 ];
 
-function handleToolCall(name, args) {
+export function handleToolCall(name, rawArgs) {
+  const args = rawArgs && typeof rawArgs === 'object' && !Array.isArray(rawArgs) ? rawArgs : {};
+
   if (name === 'list_components') {
-    const list = manifest.modules.flatMap((m) =>
-      m.declarations.map((d) => ({
-        tag: d.tagName,
-        name: d.name,
-        description: d.description,
-      }))
-    );
-    return { components: list };
+    const list = allDeclarations.map((d) => ({
+      tag: d.tagName,
+      name: d.name,
+      description: d.description,
+    }));
+    return { count: list.length, components: list };
   }
 
   if (name === 'get_component_doc') {
-    const match = manifest.modules
-      .flatMap((m) => m.declarations)
-      .find((d) => d.tagName === args.tag);
+    const tag = typeof args.tag === 'string' ? args.tag.trim().toLowerCase() : '';
+    const match = declByTag.get(tag);
 
     if (!match) {
-      return { error: `Component <${args.tag}> not found in manifest.` };
+      return { error: `Component <${tag || 'unknown'}> not found in manifest.` };
     }
     return match;
   }
 
   if (name === 'list_tokens') {
-    const category = args?.category || 'all';
+    const category = typeof args.category === 'string' ? args.category : 'all';
     if (category === 'all') {
       return tokens;
     }
@@ -135,29 +208,36 @@ function handleToolCall(name, args) {
   }
 
   if (name === 'generate_snippet') {
-    const { tag, variant, size, label, disabled } = args;
+    const tag = typeof args.tag === 'string' ? args.tag.trim().toLowerCase() : '';
+    if (!SAFE_TAG_RE.test(tag)) {
+      return { error: `Invalid custom element tag name: '${tag}'. Expected lowercase kebab-case with hyphen.` };
+    }
+    const { variant, size, label, disabled } = args;
     const attrs = [];
-    if (variant) attrs.push(`variant="${variant}"`);
-    if (size) attrs.push(`size="${size}"`);
+    if (variant !== undefined && variant !== '') attrs.push(`variant="${escapeAttr(variant)}"`);
+    if (size !== undefined && size !== '') attrs.push(`size="${escapeAttr(size)}"`);
     if (disabled) attrs.push('disabled');
 
     const attrStr = attrs.length > 0 ? ' ' + attrs.join(' ') : '';
-    const content = label || '';
+    const content = escapeText(label || '');
     return {
       snippet: `<${tag}${attrStr}>${content}</${tag}>`,
     };
   }
 
   if (name === 'scaffold_component') {
-    const tag = args.tag.toLowerCase();
-    const className =
-      args.name ||
-      tag
-        .split('-')
-        .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
-        .join('');
+    const tag = typeof args.tag === 'string' ? args.tag.trim().toLowerCase() : '';
+    if (!SAFE_TAG_RE.test(tag)) {
+      return { error: `Invalid custom element tag name: '${tag}'. Expected lowercase kebab-case with hyphen.` };
+    }
+    const derivedName = tag
+      .split('-')
+      .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+      .join('');
+    const className = typeof args.name === 'string' && SAFE_CLASS_RE.test(args.name) ? args.name : derivedName;
     const formAssociated = !!args.formAssociated;
-    const attrs = args.attributes || ['disabled', 'size'];
+    const rawAttrs = Array.isArray(args.attributes) ? args.attributes : ['disabled', 'size'];
+    const attrs = rawAttrs.filter((a) => typeof a === 'string' && SAFE_ATTR_RE.test(a));
     const observed = attrs.map((a) => `'${a}'`).join(', ');
 
     const signalDefs = attrs
@@ -243,8 +323,8 @@ if (typeof customElements !== 'undefined' && !customElements.get('${tag}')) {
     };
   }
 
-  if (name === 'validate_accessibility') {
-    const markup = args.markup || '';
+  if (name === 'validate_accessibility' || name === 'lint_accessibility') {
+    const markup = typeof args.markup === 'string' ? args.markup : '';
     const violations = [];
     const warnings = [];
     const passed = [];
@@ -327,6 +407,9 @@ if (typeof customElements !== 'undefined' && !customElements.get('${tag}')) {
     }
 
     return {
+      scope: 'static-html-lint',
+      disclaimer:
+        'Static HTML lint only — run `npm run test:e2e` (@axe-core/playwright) in real browsers for full WCAG 2.2 AA auditing.',
       valid: violations.length === 0,
       violationsCount: violations.length,
       warningsCount: warnings.length,
@@ -336,38 +419,120 @@ if (typeof customElements !== 'undefined' && !customElements.get('${tag}')) {
     };
   }
 
+  if (name === 'suggest_component') {
+    const query = typeof args.query === 'string' ? args.query.trim().toLowerCase() : '';
+    if (!query) return { suggestions: [] };
+    const limit = Math.max(1, Math.min(20, Number(args.limit) || 5));
+    const terms = query.split(/\s+/).filter(Boolean);
+
+    const scored = allDeclarations
+      .map((d) => {
+        const hay = `${d.tagName} ${d.name} ${d.description || ''} ${(d.attributes || []).map((a) => a.name).join(' ')}`.toLowerCase();
+        let score = 0;
+        for (const t of terms) {
+          if (d.tagName.includes(t)) score += 4;
+          if ((d.name || '').toLowerCase().includes(t)) score += 3;
+          if (hay.includes(t)) score += 1;
+        }
+        return { tag: d.tagName, name: d.name, description: d.description || '', score };
+      })
+      .filter((s) => s.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit);
+
+    return { query, suggestions: scored };
+  }
+
+  if (name === 'validate_component_usage') {
+    const markup = typeof args.markup === 'string' ? args.markup : '';
+    const issues = [];
+    const checkedTags = [];
+
+    for (const match of markup.matchAll(/<(el-[a-z0-9-]+)([^>]*)>/gi)) {
+      const tag = match[1].toLowerCase();
+      const attrChunk = match[2] || '';
+      checkedTags.push(tag);
+      const decl = declByTag.get(tag);
+      if (!decl) {
+        issues.push({ severity: 'error', tag, message: `Unknown Elementum tag <${tag}> (not in custom-elements.json).` });
+        continue;
+      }
+      const allowed = new Set((decl.attributes || []).map((a) => a.name));
+      for (const attrMatch of attrChunk.matchAll(/\s([a-zA-Z_:][a-zA-Z0-9_.:-]*)(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+))?/g)) {
+        const attr = attrMatch[1].toLowerCase();
+        if (
+          allowed.has(attr) ||
+          GLOBAL_HTML_ATTRS.has(attr) ||
+          attr.startsWith('aria-') ||
+          attr.startsWith('data-') ||
+          attr.startsWith('on')
+        ) {
+          continue;
+        }
+        issues.push({
+          severity: 'warning',
+          tag,
+          attribute: attr,
+          message: `Attribute "${attr}" is not declared on <${tag}>. Allowed: ${[...allowed].join(', ') || '(none)'}.`,
+        });
+      }
+    }
+
+    return {
+      valid: issues.filter((i) => i.severity === 'error').length === 0,
+      checkedCount: checkedTags.length,
+      issues,
+    };
+  }
+
+  if (name === 'get_component_maturity') {
+    return {
+      package: pkg.name,
+      version: pkg.version,
+      maturity: 'beta',
+      componentCount: allDeclarations.length,
+      zeroRuntimeDependencies: !pkg.dependencies || Object.keys(pkg.dependencies).length === 0,
+      testing: {
+        unitRunner: 'node:test + happy-dom',
+        browserE2E: 'playwright (Chromium, Firefox, WebKit) + @axe-core/playwright',
+      },
+      subpathExports: Object.keys(pkg.exports || {}),
+    };
+  }
+
   throw new Error(`Unknown tool: ${name}`);
 }
 
-// JSON-RPC stdio protocol loop
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-  terminal: false,
-});
-
-rl.on('line', (line) => {
-  if (!line.trim()) return;
+export function handleJsonRpcLine(line) {
+  if (typeof line !== 'string' || !line.trim()) return null;
+  if (Buffer.byteLength(line, 'utf8') > MAX_PAYLOAD_BYTES) {
+    return {
+      jsonrpc: '2.0',
+      id: null,
+      error: { code: -32600, message: `Payload exceeds maximum size of ${MAX_PAYLOAD_BYTES} bytes.` },
+    };
+  }
 
   try {
     const request = JSON.parse(line);
+    if (!request || typeof request !== 'object') {
+      return { jsonrpc: '2.0', id: null, error: { code: -32600, message: 'Invalid JSON-RPC request object.' } };
+    }
 
     if (request.method === 'tools/list') {
-      const response = {
+      return {
         jsonrpc: '2.0',
-        id: request.id,
+        id: request.id ?? null,
         result: { tools: TOOLS },
       };
-      process.stdout.write(JSON.stringify(response) + '\n');
-      return;
     }
 
     if (request.method === 'tools/call') {
-      const { name, arguments: toolArgs } = request.params;
-      const result = handleToolCall(name, toolArgs);
-      const response = {
+      const params = request.params && typeof request.params === 'object' ? request.params : {};
+      const result = handleToolCall(params.name, params.arguments);
+      return {
         jsonrpc: '2.0',
-        id: request.id,
+        id: request.id ?? null,
         result: {
           content: [
             {
@@ -377,32 +542,52 @@ rl.on('line', (line) => {
           ],
         },
       };
-      process.stdout.write(JSON.stringify(response) + '\n');
-      return;
     }
 
     if (request.method === 'initialize') {
-      const response = {
+      return {
         jsonrpc: '2.0',
-        id: request.id,
+        id: request.id ?? null,
         result: {
           protocolVersion: '2024-11-05',
           capabilities: { tools: {} },
           serverInfo: {
             name: 'elementum-design-system-mcp',
-            version: '0.1.0',
+            version: pkg.version,
           },
         },
       };
-      process.stdout.write(JSON.stringify(response) + '\n');
-      return;
     }
+
+    return {
+      jsonrpc: '2.0',
+      id: request.id ?? null,
+      error: { code: -32601, message: `Method not found: ${request.method}` },
+    };
   } catch (err) {
-    const errorResponse = {
+    return {
       jsonrpc: '2.0',
       id: null,
       error: { code: -32603, message: err.message },
     };
-    process.stdout.write(JSON.stringify(errorResponse) + '\n');
   }
-});
+}
+
+// Start JSON-RPC stdio loop only when executed directly as CLI
+const isDirectRun =
+  process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));
+
+if (isDirectRun) {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    terminal: false,
+  });
+
+  rl.on('line', (line) => {
+    const response = handleJsonRpcLine(line);
+    if (response) {
+      process.stdout.write(JSON.stringify(response) + '\n');
+    }
+  });
+}

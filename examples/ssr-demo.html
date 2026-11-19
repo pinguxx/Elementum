@@ -732,9 +732,9 @@ el-sidebar[collapsed] el-sidebar-content div {
         type="button"
         part="button"
         
-        aria-label="Toggle color theme"
+        aria-label=Light — toggle color theme
       >
-        <span class="icon">☀️</span>
+        <span class="icon" aria-hidden="true">☀️</span>
         <span>Light</span>
       </button>
     </template></el-theme-switch>
@@ -785,26 +785,26 @@ el-sidebar[collapsed] el-sidebar-content div {
 
     :host([variant="success"]) span {
       background: #dcfce7;
-      color: var(--el-color-success, #16a34a);
-      border: 1px solid rgba(22, 163, 74, 0.2);
+      color: #15803d;
+      border: 1px solid rgba(21, 128, 61, 0.25);
     }
 
     :host([variant="danger"]) span {
       background: #fee2e2;
-      color: var(--el-color-danger, #dc2626);
-      border: 1px solid rgba(220, 38, 38, 0.2);
+      color: #b91c1c;
+      border: 1px solid rgba(185, 28, 28, 0.25);
     }
 
     :host([variant="warning"]) span {
       background: #fef3c7;
-      color: #b45309;
-      border: 1px solid rgba(180, 83, 9, 0.2);
+      color: #92400e;
+      border: 1px solid rgba(146, 64, 14, 0.25);
     }
 
     :host([variant="info"]) span {
       background: #e0f2fe;
-      color: #0284c7;
-      border: 1px solid rgba(2, 132, 199, 0.2);
+      color: #0369a1;
+      border: 1px solid rgba(3, 105, 161, 0.25);
     }
 
     :host([variant="outline"]) span {
@@ -869,26 +869,26 @@ el-sidebar[collapsed] el-sidebar-content div {
 
     :host([variant="success"]) span {
       background: #dcfce7;
-      color: var(--el-color-success, #16a34a);
-      border: 1px solid rgba(22, 163, 74, 0.2);
+      color: #15803d;
+      border: 1px solid rgba(21, 128, 61, 0.25);
     }
 
     :host([variant="danger"]) span {
       background: #fee2e2;
-      color: var(--el-color-danger, #dc2626);
-      border: 1px solid rgba(220, 38, 38, 0.2);
+      color: #b91c1c;
+      border: 1px solid rgba(185, 28, 28, 0.25);
     }
 
     :host([variant="warning"]) span {
       background: #fef3c7;
-      color: #b45309;
-      border: 1px solid rgba(180, 83, 9, 0.2);
+      color: #92400e;
+      border: 1px solid rgba(146, 64, 14, 0.25);
     }
 
     :host([variant="info"]) span {
       background: #e0f2fe;
-      color: #0284c7;
-      border: 1px solid rgba(2, 132, 199, 0.2);
+      color: #0369a1;
+      border: 1px solid rgba(3, 105, 161, 0.25);
     }
 
     :host([variant="outline"]) span {
@@ -953,26 +953,26 @@ el-sidebar[collapsed] el-sidebar-content div {
 
     :host([variant="success"]) span {
       background: #dcfce7;
-      color: var(--el-color-success, #16a34a);
-      border: 1px solid rgba(22, 163, 74, 0.2);
+      color: #15803d;
+      border: 1px solid rgba(21, 128, 61, 0.25);
     }
 
     :host([variant="danger"]) span {
       background: #fee2e2;
-      color: var(--el-color-danger, #dc2626);
-      border: 1px solid rgba(220, 38, 38, 0.2);
+      color: #b91c1c;
+      border: 1px solid rgba(185, 28, 28, 0.25);
     }
 
     :host([variant="warning"]) span {
       background: #fef3c7;
-      color: #b45309;
-      border: 1px solid rgba(180, 83, 9, 0.2);
+      color: #92400e;
+      border: 1px solid rgba(146, 64, 14, 0.25);
     }
 
     :host([variant="info"]) span {
       background: #e0f2fe;
-      color: #0284c7;
-      border: 1px solid rgba(2, 132, 199, 0.2);
+      color: #0369a1;
+      border: 1px solid rgba(3, 105, 161, 0.25);
     }
 
     :host([variant="outline"]) span {
@@ -1119,7 +1119,7 @@ el-sidebar[collapsed] el-sidebar-content div {
         <slot name="title"></slot>
         <slot></slot>
       </div>
-    </template><span slot="title">Rendered on the Server at 2026-11-19T04:08:57.113Z</span>
+    </template><span slot="title">Rendered on the Server at 2026-11-19T04:57:04.384Z</span>
      Every component below was serialized in pure Node.js via <code>renderComponentToDSD()</code> into standard
      <code>&lt;template shadowrootmode="open"&gt;</code>. Even with JavaScript disabled (<code>?hydrate=0</code>),
      Shadow DOM styles and slots paint immediately with zero FOUC or layout shift.</el-callout>
@@ -2034,6 +2034,7 @@ el-sidebar[collapsed] el-sidebar-content div {
       <div
         class="meter-container"
         role="meter"
+        aria-label=Meter
         aria-valuenow=72
         aria-valuemin=0
         aria-valuemax=100
@@ -2200,24 +2201,24 @@ el-sidebar[collapsed] el-sidebar-content div {
             </div>
           
         <div class="code-body" part="body">
-          <pre part="pre"><code part="code"><el-button variant="primary" size="md"><template shadowrootmode="open"><style>
+          <pre part="pre" tabindex="0"><code part="code">&lt;el-button variant=&quot;primary&quot; size=&quot;md&quot;&gt;&lt;template shadowrootmode=&quot;open&quot;&gt;&lt;style&gt;
     :host {
       display: inline-block;
       vertical-align: middle;
     }
 
     :host([disabled]),
-    :host([aria-disabled="true"]) {
+    :host([aria-disabled=&quot;true&quot;]) {
       cursor: not-allowed;
     }
 
     button
   /* ...encapsulated shadow styles... */
- <slot name="prefix"></slot>
-        <slot></slot>
-        <slot name="suffix"></slot>
-      </button>
-    </template>Deploy Now</el-button><slot style=display:none;></slot></code></pre>
+ &lt;slot name=&quot;prefix&quot;&gt;&lt;/slot&gt;
+        &lt;slot&gt;&lt;/slot&gt;
+        &lt;slot name=&quot;suffix&quot;&gt;&lt;/slot&gt;
+      &lt;/button&gt;
+    &lt;/template&gt;Deploy Now&lt;/el-button&gt;<slot style=display:none;></slot></code></pre>
           
         </div>
       </div>

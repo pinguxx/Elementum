@@ -30,3 +30,24 @@ jobs:
 
       - name: Run test suite
         run: npm test
+
+  browser-e2e:
+    name: Real Browser & axe-core E2E (Chromium, Firefox, WebKit)
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js 22.x
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22.x
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Run Playwright + axe-core E2E suite
+        run: npm run test:e2e

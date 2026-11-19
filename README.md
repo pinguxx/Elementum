@@ -5,9 +5,25 @@
 ![Zero Dependencies](https://img.shields.io/badge/runtime%20deps-0-success)
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 
-> **Elementum** (*Latin*: /e.leˈmen.tum/) — Direct Latin for *element*, *first principle*, or *foundational matter*.
-> 
-> Just as classical philosophy identified *elementa* as the indivisible building blocks of the physical world, **Elementum** returns web UI to its purest primitives: standard Custom Elements, fine-grained micro-signals, and Shadow DOM encapsulation. No virtual DOM diffing, no hydration mismatches, no vendor lock-in, and zero build tool prerequisites.
+> **Elementum** (*Latin*: /e.leˈmen.tum/) — **An AI-native, framework-independent UI engineering platform** built on standard Custom Elements, fine-grained micro-signals, W3C DTCG tokens, Declarative Shadow DOM SSR, and MCP/AG-UI tooling.
+>
+> **Live Showcase:** https://elementum-sage.vercel.app/ · **Catalog (109 elements):** https://elementum-sage.vercel.app/examples/index.html · **AG-UI Demo:** https://elementum-sage.vercel.app/examples/ag-ui.html · **Live DSD SSR:** https://elementum-sage.vercel.app/ssr
+
+---
+
+## 🧪 Verification & Browser Matrix (Beta — `v0.1.0`)
+
+Every architectural claim in Elementum is backed by automated verification in CI:
+
+| Verification Layer | Tooling | Scope |
+| :--- | :--- | :--- |
+| **Core Signals & Fuzzing** | `node:test` (`test/signal-torture.test.js`) | Cycle detection, stale-dep cleanup, AbortSignal disposal, 100-graph randomized DAG fuzzer |
+| **Unit & Contract Suite** | `node:test` + `happy-dom` (Node 20/22/24, Ubuntu & Windows) | **208+ tests**, **≥ 95% line coverage**, automated Source-vs-Catalog Diff (`npm run catalog:diff`) |
+| **Real Browser E2E** | Playwright (`npm run test:e2e`) — Chromium, Firefox, WebKit | Native `<dialog>` focus restoration, `ElementInternals` `<form>` submit/reset, mobile `375px` overflow, AG-UI SSE |
+| **Declarative Shadow DOM SSR** | Playwright (`/?hydrate=0` Zero-JS & `/?hydrate=1` Hydrated) | Native `<template shadowrootmode="open">` attachment with JS disabled + clean client hydration |
+| **Accessibility** | `@axe-core/playwright` (WCAG 2.2 AA ruleset) + MCP `lint_accessibility` | Automated real-browser `axe-core` checks on Home, AG-UI, and SSR pages |
+| **Security & MCP Hardening** | `test/security.test.js` | XSS escaping in `template.js` & `ssr.js`, URL sanitization, prototype-pollution guards, 128 KB MCP payload cap |
+| **Performance Benchmarks** | `npm run bench` (`tools/benchmark.js`) | 10,000 signal updates in ~7 ms · 1,000 DSD SSR renders in ~15 ms · 1,000 DOM mounts in ~60 ms |
 
 ---
 

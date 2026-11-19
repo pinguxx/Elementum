@@ -160,6 +160,7 @@ export class ElMeter extends Elementum {
       <div
         class="meter-container"
         role="meter"
+        aria-label=${() => this.getAttribute?.('aria-label') || 'Meter'}
         aria-valuenow=${() => this.value.value}
         aria-valuemin=${() => this.min.value}
         aria-valuemax=${() => this.max.value}

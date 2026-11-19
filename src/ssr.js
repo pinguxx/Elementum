@@ -38,7 +38,7 @@ function resolveValue(val) {
   if (val instanceof TemplateResult) {
     return renderTemplateToString(val);
   }
-  return String(val);
+  return escapeHtml(String(val));
 }
 
 /**

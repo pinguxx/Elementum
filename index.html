@@ -200,7 +200,7 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--el-text-muted, #64748b);
+      color: var(--el-text-secondary, #475569);
     }
 
     .stage-panel {
@@ -485,7 +485,7 @@
     <!-- Hero Section -->
     <header class="hero">
       <div class="badge-bar">
-        <el-badge variant="success" count="105 Web Components"></el-badge>
+        <el-badge variant="success" count="109 Web Components"></el-badge>
         <el-badge variant="default" count="0 Runtime Deps"></el-badge>
         <el-badge variant="default" count="W3C DTCG Tokens"></el-badge>
         <el-badge variant="default" count="DSD SSR Ready"></el-badge>
@@ -499,7 +499,7 @@
 
       <div class="hero-actions">
         <el-button variant="primary" onclick="window.location.href='./examples/index.html'">
-          Explore 105 Components 🚀
+          Explore 109 Components 🚀
         </el-button>
         <el-button variant="secondary" onclick="window.location.href='./docs.html'">
           Read Documentation 📖
@@ -568,7 +568,7 @@
             <span>⚡ Component Sandbox</span>
           </div>
           <div class="playground-header-actions">
-            <el-select id="component-picker" value="el-button" size="sm">
+            <el-select id="component-picker" aria-label="Select component" value="el-button" size="sm">
               <option value="el-button">Button</option>
               <option value="el-drawer">Drawer (Vaul Bottom Sheet)</option>
               <option value="el-slider">Slider</option>
@@ -597,7 +597,7 @@
           <div class="controls-panel">
             <div class="control-group">
               <label class="control-label">Variant</label>
-              <el-select id="prop-variant" value="primary">
+              <el-select id="prop-variant" aria-label="Component variant" value="primary">
                 <option value="primary">Primary</option>
                 <option value="secondary">Secondary</option>
                 <option value="danger">Danger</option>
@@ -609,7 +609,7 @@
 
             <div class="control-group">
               <label class="control-label">Size</label>
-              <el-select id="prop-size" value="md">
+              <el-select id="prop-size" aria-label="Component size" value="md">
                 <option value="sm">Small (sm)</option>
                 <option value="md">Medium (md)</option>
                 <option value="lg">Large (lg)</option>
@@ -637,7 +637,7 @@
 
             <!-- Live Event Monitor Bar -->
             <div id="sandbox-event-bar" class="sandbox-event-bar">
-              <span style="color:#64748b;">Event Monitor:</span>
+              <span style="color:#94a3b8;">Event Monitor:</span>
               <span id="sandbox-event-text">Ready. Interact with the component above to stream events.</span>
             </div>
           </div>

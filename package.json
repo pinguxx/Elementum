@@ -42,6 +42,8 @@
   },
   "scripts": {
     "test": "node --test --experimental-test-coverage",
+    "test:e2e": "playwright test",
+    "bench": "node tools/benchmark.js",
     "serve": "node tools/serve.js",
     "serve:proxy": "node tools/serve.js --proxy",
     "ssr": "node examples/ssr-server.js",
@@ -70,6 +72,8 @@
   "author": "wcomp",
   "license": "MIT",
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.1",
     "happy-dom": "^21.0.4"
   }
 }

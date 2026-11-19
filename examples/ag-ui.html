@@ -151,7 +151,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--el-text-muted, #64748b);
+      color: var(--el-text-secondary, #475569);
     }
 
     .metric-val {
@@ -426,8 +426,8 @@ await store.connectSSE(res);"
             <h2 class="panel-title">📡 Live AG-UI SSE Wire Stream</h2>
             <el-badge id="event-count-badge" variant="primary" count="0 events"></el-badge>
           </div>
-          <div id="agui-event-log" class="event-log" role="log" aria-live="polite">
-            <div style="color:#64748b;">Waiting for SSE frames...</div>
+          <div id="agui-event-log" class="event-log" role="log" aria-live="polite" tabindex="0">
+            <div style="color:#94a3b8;">Waiting for SSE frames...</div>
           </div>
         </section>
 
@@ -435,7 +435,7 @@ await store.connectSSE(res);"
           <div class="panel-header">
             <h2 class="panel-title">🗂️ Live Store State JSON</h2>
           </div>
-          <pre id="agui-state-json" class="state-pre">{}</pre>
+          <pre id="agui-state-json" class="state-pre" tabindex="0">{}</pre>
         </section>
       </div>
     </div>
@@ -621,7 +621,7 @@ await store.connectSSE(res);"
     function resetDemo() {
       pendingApprovalResolver = null;
       eventCounter = 0;
-      eventLogEl.innerHTML = '<div style="color:#64748b;">Waiting for SSE frames...</div>';
+      eventLogEl.innerHTML = '<div style="color:#94a3b8;">Waiting for SSE frames...</div>';
       eventCountBadge.setAttribute('count', '0 events');
       store.thinkingText.value = '';
       store.currentText.value = '';

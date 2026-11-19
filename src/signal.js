@@ -110,7 +110,9 @@ export class Computed extends Signal {
     super(undefined);
     this._getter = getter;
     this._dirty = true;
+    this._computing = false;
     this._computedEffect = new ReactiveEffect(() => {
+      if (this._dirty) return;
       this._dirty = true;
       // Notify downstreams
       const subs = Array.from(this.subscribers);
@@ -120,21 +122,37 @@ export class Computed extends Signal {
     });
   }
 
+  #evaluate() {
+    if (this._computing) {
+      throw new Error('Circular dependency detected in computed signal');
+    }
+    this._computing = true;
+    effectStack.push(activeEffect);
+    activeEffect = this._computedEffect;
+    this._computedEffect.cleanup();
+    try {
+      this._value = this._getter();
+      this._dirty = false;
+    } finally {
+      activeEffect = effectStack.pop();
+      this._computing = false;
+    }
+  }
+
   get value() {
     if (this._dirty) {
-      effectStack.push(activeEffect);
-      activeEffect = this._computedEffect;
-      this._computedEffect.cleanup();
-      try {
-        this._value = this._getter();
-        this._dirty = false;
-      } finally {
-        activeEffect = effectStack.pop();
-      }
+      this.#evaluate();
     }
     if (activeEffect) {
       this.subscribers.add(activeEffect);
       activeEffect.dependencies.add(this);
+    }
+    return this._value;
+  }
+
+  peek() {
+    if (this._dirty) {
+      this.#evaluate();
     }
     return this._value;
   }
@@ -149,10 +167,12 @@ class ReactiveEffect {
     this.fn = fn;
     this.dependencies = new Set();
     this.active = true;
+    this._running = false;
   }
 
   run() {
-    if (!this.active) return;
+    if (!this.active || this._running) return;
+    this._running = true;
     this.cleanup();
     effectStack.push(activeEffect);
     activeEffect = this;
@@ -160,6 +180,7 @@ class ReactiveEffect {
       this.fn();
     } finally {
       activeEffect = effectStack.pop();
+      this._running = false;
     }
   }
 

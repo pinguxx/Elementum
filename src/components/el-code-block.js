@@ -211,7 +211,7 @@ export class ElCodeBlock extends Elementum {
           `;
         }}
         <div class="code-body" part="body">
-          <pre part="pre"><code part="code">${() => this.code.value}<slot style=${() => (this.code.value ? 'display:none;' : '')}></slot></code></pre>
+          <pre part="pre" tabindex="0"><code part="code">${() => this.code.value}<slot style=${() => (this.code.value ? 'display:none;' : '')}></slot></code></pre>
           ${() => {
             const langLabel = this.#getLanguageLabel();
             const hasHeader = Boolean(langLabel) && !this.compact.value;

@@ -106,9 +106,9 @@ export class ElThemeSwitch extends Elementum {
         type="button"
         part="button"
         @click=${this.toggle}
-        aria-label="Toggle color theme"
+        aria-label=${() => `${this.theme.value === 'dark' ? 'Dark' : 'Light'} — toggle color theme`}
       >
-        <span class="icon">${() => (this.theme.value === 'dark' ? '🌙' : '☀️')}</span>
+        <span class="icon" aria-hidden="true">${() => (this.theme.value === 'dark' ? '🌙' : '☀️')}</span>
         <span>${() => (this.theme.value === 'dark' ? 'Dark' : 'Light')}</span>
       </button>
     `;

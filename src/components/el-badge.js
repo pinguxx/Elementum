@@ -78,26 +78,26 @@ export class ElBadge extends Elementum {
 
     :host([variant="success"]) span {
       background: #dcfce7;
-      color: var(--el-color-success, #16a34a);
-      border: 1px solid rgba(22, 163, 74, 0.2);
+      color: #15803d;
+      border: 1px solid rgba(21, 128, 61, 0.25);
     }
 
     :host([variant="danger"]) span {
       background: #fee2e2;
-      color: var(--el-color-danger, #dc2626);
-      border: 1px solid rgba(220, 38, 38, 0.2);
+      color: #b91c1c;
+      border: 1px solid rgba(185, 28, 28, 0.25);
     }
 
     :host([variant="warning"]) span {
       background: #fef3c7;
-      color: #b45309;
-      border: 1px solid rgba(180, 83, 9, 0.2);
+      color: #92400e;
+      border: 1px solid rgba(146, 64, 14, 0.25);
     }
 
     :host([variant="info"]) span {
       background: #e0f2fe;
-      color: #0284c7;
-      border: 1px solid rgba(2, 132, 199, 0.2);
+      color: #0369a1;
+      border: 1px solid rgba(3, 105, 161, 0.25);
     }
 
     :host([variant="outline"]) span {

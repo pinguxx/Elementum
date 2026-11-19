@@ -777,6 +777,31 @@ export function renderComponentToDSD(
 ): string;
 
 // ==========================================
+// AG-UI Protocol Adapter
+// ==========================================
+
+export function getByPointer(obj: any, pointer: string): any;
+export function applyJsonPatch<T = any>(target: T, patch?: Array<{ op: 'add' | 'replace' | 'remove'; path: string; value?: any }>): T;
+export function createAgUiStore<T extends Record<string, any> = Record<string, any>>(initialState?: T): {
+  state: Signal<T>;
+  status: Signal<'idle' | 'running' | 'finished' | 'error'>;
+  runId: Signal<string>;
+  stepName: Signal<string>;
+  thinking: Signal<boolean>;
+  thinkingText: Signal<string>;
+  currentText: Signal<string>;
+  messages: Signal<any[]>;
+  toolCalls: Signal<any[]>;
+  error: Signal<string | null>;
+  events: Signal<any[]>;
+  dispatch: (event: any) => void;
+  pathSignal: <V = any>(pointer: string, fallback?: V) => Signal<V>;
+  onEvent: (listener: (event: any) => void) => () => void;
+  bindComponents: (bindings?: Record<string, any>) => () => void;
+  connectSSE: (source: Response | ReadableStream | AsyncIterable<any>) => Promise<void>;
+};
+
+// ==========================================
 // Behavior Controllers (React-Aria-Inspired)
 // ==========================================
 

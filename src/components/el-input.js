@@ -5,7 +5,7 @@
 
 import { Elementum } from '../elementum.js';
 import { html, css } from '../template.js';
-import { signal } from '../signal.js';
+import { signal, effect } from '../signal.js';
 
 export class ElInput extends Elementum {
   static formAssociated = true;
@@ -23,8 +23,11 @@ export class ElInput extends Elementum {
 
   connected() {
     this.required.value = this.hasAttribute('required');
-    this.setFormValue(this.value.value);
-    this.validate();
+    effect(() => {
+      const val = String(this.value.value ?? '');
+      this.setFormValue(val);
+      this.validate();
+    }, { signal: this.signal });
   }
 
   formReset() {
@@ -34,7 +37,21 @@ export class ElInput extends Elementum {
   }
 
   attributeChanged(name, oldValue, newValue) {
-    if (name === 'required') {
+    if (name === 'value') {
+      this.value.value = newValue ?? '';
+      this.setFormValue(this.value.value);
+      this.validate();
+    } else if (name === 'placeholder') {
+      this.placeholder.value = newValue ?? '';
+    } else if (name === 'disabled') {
+      this.disabled.value = newValue !== null && newValue !== 'false';
+    } else if (name === 'readonly') {
+      this.readonly.value = newValue !== null && newValue !== 'false';
+    } else if (name === 'type') {
+      this.type.value = newValue || 'text';
+    } else if (name === 'size') {
+      this.size.value = newValue || 'md';
+    } else if (name === 'required') {
       this.required.value = newValue !== null && newValue !== 'false';
       this.validate();
     } else if (name === 'pattern') {
