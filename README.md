@@ -11,7 +11,7 @@
 
 ---
 
-## 🧪 Verification & Browser Matrix (Beta — `v0.1.0`)
+## 🧪 Verification & Browser Matrix (Beta — `v0.2.0`)
 
 Every architectural claim in Elementum is backed by automated verification in CI:
 
