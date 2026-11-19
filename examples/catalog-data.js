@@ -2144,7 +2144,31 @@ export const components = {
     "category": "layout",
     "description": "Header container inside a Card for titles, subtitles, and top-level actions.",
     "formAssociated": false,
-    "props": [],
+    "props": [
+      {
+        "name": "bordered",
+        "type": "boolean",
+        "default": false,
+        "description": "Adds a bottom divider line separating the header from content."
+      },
+      {
+        "name": "compact",
+        "type": "boolean",
+        "default": false,
+        "description": "Reduces header padding for dense card layouts."
+      },
+      {
+        "name": "align",
+        "type": "select",
+        "options": [
+          "left",
+          "center",
+          "right"
+        ],
+        "default": "left",
+        "description": "Horizontal alignment of header title and description."
+      }
+    ],
     "slots": [
       {
         "name": "default",
@@ -2165,7 +2189,30 @@ export const components = {
     "category": "layout",
     "description": "Primary heading element rendered inside a Card Header.",
     "formAssociated": false,
-    "props": [],
+    "props": [
+      {
+        "name": "size",
+        "type": "select",
+        "options": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "default": "md",
+        "description": "Typography scale for the card heading."
+      },
+      {
+        "name": "align",
+        "type": "select",
+        "options": [
+          "left",
+          "center",
+          "right"
+        ],
+        "default": "left",
+        "description": "Text alignment of the card title."
+      }
+    ],
     "slots": [
       {
         "name": "default",
@@ -2186,7 +2233,25 @@ export const components = {
     "category": "layout",
     "description": "Secondary supporting description text rendered inside a Card Header.",
     "formAssociated": false,
-    "props": [],
+    "props": [
+      {
+        "name": "align",
+        "type": "select",
+        "options": [
+          "left",
+          "center",
+          "right"
+        ],
+        "default": "left",
+        "description": "Text alignment of the supporting description."
+      },
+      {
+        "name": "truncate",
+        "type": "boolean",
+        "default": false,
+        "description": "Clamps long descriptions to a single line with ellipsis."
+      }
+    ],
     "slots": [
       {
         "name": "default",
@@ -2207,7 +2272,20 @@ export const components = {
     "category": "layout",
     "description": "Main body content area inside a Card.",
     "formAssociated": false,
-    "props": [],
+    "props": [
+      {
+        "name": "compact",
+        "type": "boolean",
+        "default": false,
+        "description": "Reduces inner body padding for dense layouts."
+      },
+      {
+        "name": "flush",
+        "type": "boolean",
+        "default": false,
+        "description": "Removes padding completely for full-bleed tables, charts, or media."
+      }
+    ],
     "slots": [
       {
         "name": "default",
@@ -2228,7 +2306,26 @@ export const components = {
     "category": "layout",
     "description": "Footer action bar inside a Card for buttons and metadata.",
     "formAssociated": false,
-    "props": [],
+    "props": [
+      {
+        "name": "align",
+        "type": "select",
+        "options": [
+          "start",
+          "center",
+          "end",
+          "between"
+        ],
+        "default": "end",
+        "description": "Flex justification for footer buttons and metadata."
+      },
+      {
+        "name": "bordered",
+        "type": "boolean",
+        "default": false,
+        "description": "Adds a top divider line separating the footer from content."
+      }
+    ],
     "slots": [
       {
         "name": "default",

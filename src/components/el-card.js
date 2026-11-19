@@ -10,6 +10,11 @@ import { html, css } from '../template.js';
 import { signal } from '../signal.js';
 
 export class ElCardTitle extends Elementum {
+  static observedAttributes = ['size', 'align'];
+
+  size = signal('md');
+  align = signal('left');
+
   static styles = css`
     :host {
       display: block;
@@ -20,6 +25,10 @@ export class ElCardTitle extends Elementum {
       color: var(--el-text-primary, #0f172a);
       margin: 0;
     }
+    :host([size="sm"]) { font-size: 1rem; }
+    :host([size="lg"]) { font-size: 1.5rem; }
+    :host([align="center"]) { text-align: center; }
+    :host([align="right"]) { text-align: right; }
     :root[data-theme="dark"] :host {
       color: #f8fafc;
     }
@@ -30,6 +39,11 @@ export class ElCardTitle extends Elementum {
 }
 
 export class ElCardDescription extends Elementum {
+  static observedAttributes = ['align', 'truncate'];
+
+  align = signal('left');
+  truncate = signal(false);
+
   static styles = css`
     :host {
       display: block;
@@ -37,6 +51,13 @@ export class ElCardDescription extends Elementum {
       line-height: 1.4;
       color: var(--el-text-muted, #64748b);
       margin-top: 4px;
+    }
+    :host([align="center"]) { text-align: center; }
+    :host([align="right"]) { text-align: right; }
+    :host([truncate]) {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     :root[data-theme="dark"] :host {
       color: #94a3b8;
@@ -48,6 +69,12 @@ export class ElCardDescription extends Elementum {
 }
 
 export class ElCardHeader extends Elementum {
+  static observedAttributes = ['bordered', 'compact', 'align'];
+
+  bordered = signal(false);
+  compact = signal(false);
+  align = signal('left');
+
   static styles = css`
     :host {
       display: flex;
@@ -56,6 +83,24 @@ export class ElCardHeader extends Elementum {
       padding: 24px 24px 16px 24px;
       box-sizing: border-box;
     }
+    :host([compact]) {
+      padding: 14px 16px 10px 16px;
+    }
+    :host([bordered]) {
+      border-bottom: 1px solid var(--el-surface-border, #e2e8f0);
+      margin-bottom: 16px;
+    }
+    :host([align="center"]) {
+      align-items: center;
+      text-align: center;
+    }
+    :host([align="right"]) {
+      align-items: flex-end;
+      text-align: right;
+    }
+    :root[data-theme="dark"] :host([bordered]) {
+      border-bottom-color: #334155;
+    }
   `;
   render() {
     return html`<slot></slot>`;
@@ -63,12 +108,23 @@ export class ElCardHeader extends Elementum {
 }
 
 export class ElCardContent extends Elementum {
+  static observedAttributes = ['compact', 'flush'];
+
+  compact = signal(false);
+  flush = signal(false);
+
   static styles = css`
     :host {
       display: block;
       padding: 0 24px 24px 24px;
       box-sizing: border-box;
       flex: 1;
+    }
+    :host([compact]) {
+      padding: 0 16px 16px 16px;
+    }
+    :host([flush]) {
+      padding: 0;
     }
   `;
   render() {
@@ -77,13 +133,30 @@ export class ElCardContent extends Elementum {
 }
 
 export class ElCardFooter extends Elementum {
+  static observedAttributes = ['align', 'bordered'];
+
+  align = signal('end');
+  bordered = signal(false);
+
   static styles = css`
     :host {
       display: flex;
       align-items: center;
+      justify-content: flex-end;
       padding: 0 24px 24px 24px;
       box-sizing: border-box;
       gap: 12px;
+    }
+    :host([align="start"]) { justify-content: flex-start; }
+    :host([align="center"]) { justify-content: center; }
+    :host([align="end"]) { justify-content: flex-end; }
+    :host([align="between"]) { justify-content: space-between; }
+    :host([bordered]) {
+      border-top: 1px solid var(--el-surface-border, #e2e8f0);
+      padding-top: 16px;
+    }
+    :root[data-theme="dark"] :host([bordered]) {
+      border-top-color: #334155;
     }
   `;
   render() {

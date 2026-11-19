@@ -5,6 +5,7 @@ import { renderComponentToDSD, renderTemplateToString } from '../src/ssr.js';
 import { html } from '../src/template.js';
 import { ElButton, ElBadge, ElNavbar } from '../src/index.js';
 import { renderSsrPage, startServer } from '../examples/ssr-server.js';
+import vercelSsrHandler from '../api/ssr.js';
 
 test('DSD SSR: renderTemplateToString cleanly handles ?bool, .prop, and @event bindings', () => {
   const tpl = html`<button ?disabled=${() => true} ?hidden=${() => false} .value=${() => 'abc'} @click=${() => {}}>Go</button>`;
@@ -88,4 +89,29 @@ test('DSD SSR: live HTTP server serves hydrated DSD, zero-JS DSD, static assets,
   } finally {
     await new Promise((resolve) => server.close(resolve));
   }
+});
+
+test('DSD SSR: Vercel serverless handler api/ssr.js serves /ssr in hydrated and zero-JS modes', () => {
+  const callHandler = (url) => {
+    const headers = {};
+    let body = '';
+    const res = {
+      statusCode: 0,
+      setHeader(k, v) { headers[k.toLowerCase()] = v; },
+      end(chunk) { body = String(chunk || ''); },
+    };
+    vercelSsrHandler({ url }, res);
+    return { statusCode: res.statusCode, headers, body };
+  };
+
+  const zeroJs = callHandler('/ssr?hydrate=0');
+  assert.equal(zeroJs.statusCode, 200);
+  assert.match(zeroJs.headers['content-type'], /text\/html/);
+  assert.ok(zeroJs.body.includes('<template shadowrootmode="open">'));
+  assert.ok(zeroJs.body.includes('href="/ssr?hydrate=1"'));
+  assert.ok(!zeroJs.body.includes("import '/src/index.js'"));
+
+  const hydrated = callHandler('/ssr?hydrate=1');
+  assert.equal(hydrated.statusCode, 200);
+  assert.ok(hydrated.body.includes("import '/src/index.js'"));
 });

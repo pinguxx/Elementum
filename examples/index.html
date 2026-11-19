@@ -2273,16 +2273,32 @@ ${optionsHtml}
 
       // 50. el-card compound items
       if (tag === 'el-card-header' || tag === 'el-card-title' || tag === 'el-card-description' || tag === 'el-card-content' || tag === 'el-card-footer') {
+        const headerAttrs = tag === 'el-card-header'
+          ? `${p.bordered ? ' bordered' : ''}${p.compact ? ' compact' : ''}${p.align ? ` align="${escapeHtml(p.align)}"` : ''}`
+          : '';
+        const titleAttrs = tag === 'el-card-title'
+          ? `${p.size ? ` size="${escapeHtml(p.size)}"` : ''}${p.align ? ` align="${escapeHtml(p.align)}"` : ''}`
+          : '';
+        const descAttrs = tag === 'el-card-description'
+          ? `${p.align ? ` align="${escapeHtml(p.align)}"` : ''}${p.truncate ? ' truncate' : ''}`
+          : '';
+        const contentAttrs = tag === 'el-card-content'
+          ? `${p.compact ? ' compact' : ''}${p.flush ? ' flush' : ''}`
+          : '';
+        const footerAttrs = tag === 'el-card-footer'
+          ? `${p.align ? ` align="${escapeHtml(p.align)}"` : ''}${p.bordered ? ' bordered' : ''}`
+          : '';
         return `<el-card style="max-width: 380px; width: 100%;">
-  <el-card-header>
-    <el-card-title>Deployment Metrics</el-card-title>
-    <el-card-description>Real-time cluster telemetry</el-card-description>
+  <el-card-header${headerAttrs}>
+    <el-card-title${titleAttrs}>Deployment Metrics</el-card-title>
+    <el-card-description${descAttrs}>Real-time cluster telemetry across global edge regions and workers</el-card-description>
   </el-card-header>
-  <el-card-content>
+  <el-card-content${contentAttrs}>
     <p style="margin: 0; font-size: 0.875rem;">18 pods active across us-east-1 and eu-west-1 with zero downtime.</p>
   </el-card-content>
-  <el-card-footer style="display: flex; justify-content: flex-end; gap: 8px;">
-    <el-button size="sm" variant="secondary">View Logs</el-button>
+  <el-card-footer${footerAttrs}>
+    <el-button size="sm" variant="secondary">Dismiss</el-button>
+    <el-button size="sm" variant="primary">View Logs</el-button>
   </el-card-footer>
 </el-card>`;
       }

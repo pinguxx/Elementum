@@ -51,6 +51,7 @@ function escapeHtml(str) {
 export function renderSsrPage({
   hydrate = true,
   staticMode = false,
+  basePath = '/',
   serverTime = new Date().toISOString(),
   requestPath = '/',
 } = {}) {
@@ -194,8 +195,8 @@ export function renderSsrPage({
   const modeSwitcher = staticMode
     ? `<p class="muted">Static DSD snapshot pre-rendered by <code>node examples/ssr-server.js --static examples/ssr-demo.html</code>. Run <code>npm run ssr</code> to test live <code>?hydrate=0</code> vs <code>?hydrate=1</code> on <code>http://localhost:3333</code>.</p>`
     : `<div class="mode-links">
-        <a href="/?hydrate=1" class="${hydrate ? 'active' : ''}">Hydrated Mode (?hydrate=1)</a>
-        <a href="/?hydrate=0" class="${!hydrate ? 'active' : ''}">Pure Zero-JS Mode (?hydrate=0)</a>
+        <a href="${basePath}?hydrate=1" class="${hydrate ? 'active' : ''}">Hydrated Mode (?hydrate=1)</a>
+        <a href="${basePath}?hydrate=0" class="${!hydrate ? 'active' : ''}">Pure Zero-JS Mode (?hydrate=0)</a>
       </div>`;
 
   const hydrationScripts = hydrate
