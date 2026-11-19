@@ -19,12 +19,14 @@ Every architectural claim in Elementum is backed by automated verification in CI
 
 | Verification Layer | Tooling | Scope |
 | :--- | :--- | :--- |
-| **Core Signals & Fuzzing** | `node:test` (`test/signal-torture.test.js`) | Cycle detection, stale-dep cleanup, AbortSignal disposal, 100-graph randomized DAG fuzzer |
-| **Unit & Contract Suite** | `node:test` + `happy-dom` (Node 20/22/24, Ubuntu & Windows) | **208+ tests**, **≥ 95% line coverage**, automated Source-vs-Catalog Diff (`npm run catalog:diff`) |
-| **Real Browser E2E** | Playwright (`npm run test:e2e`) — Chromium, Firefox, WebKit | Native `<dialog>` focus restoration, `ElementInternals` `<form>` submit/reset, mobile `375px` overflow, AG-UI SSE |
+| **Core Signals & Fuzzing** | `node:test` (`test/signal-torture.test.js`) | Cycle detection, stale-dep cleanup, AbortSignal disposal, **1,000-graph multi-seed DAG fuzzer** + **500-step dynamic topology fuzzer** |
+| **Unit, Behavior & Contract Suite** | `node:test` + `happy-dom` (Node 20/22/24, Ubuntu, Windows & macOS) | **226+ tests**, **≥ 95% line coverage** enforced in CI, WAI-ARIA/RTL/SSR contract checks (`@wcomp/elementum/testing`), Source-vs-Catalog Diff (`npm run catalog:diff`) |
+| **Gzipped Size Budgets** | `npm run check:size` (`size-budget.json`) | **86 entrypoints** gated in CI (`core + behaviors + agent + ssr`: **29.1 KB**, avg component: **2.19 KB gzip**) |
+| **External Consumer Tarball** | `npm run verify:consumer` (`tools/verify-consumer.js`) | Packs real `.tgz`, installs into isolated temp app, verifies all ESM subpaths & strict `tsc --noEmit --strict` |
+| **Real Browser E2E** | Playwright (`npm run test:e2e`) — Chromium, Firefox, WebKit | **17 E2E tests**: `<dialog>` focus restoration, `ElementInternals` `<form>` submit/reset, live CSS transitions (`getAnimations()`), Shadow-DOM agent `snapshot`/`act`, AG-UI SSE |
 | **Declarative Shadow DOM SSR** | Playwright (`/?hydrate=0` Zero-JS & `/?hydrate=1` Hydrated) | Native `<template shadowrootmode="open">` attachment with JS disabled + clean client hydration |
-| **Accessibility** | `@axe-core/playwright` (WCAG 2.2 AA ruleset) + MCP `lint_accessibility` | Automated real-browser `axe-core` checks on Home, AG-UI, and SSR pages |
-| **Security & MCP Hardening** | `test/security.test.js` | XSS escaping in `template.js` & `ssr.js`, URL sanitization, prototype-pollution guards, 128 KB MCP payload cap |
+| **Accessibility** | `@axe-core/playwright` (WCAG 2.2 AA ruleset) + `@wcomp/elementum/testing` | Automated real-browser `axe-core` audits + WAI-ARIA APG pattern validators + static MCP `lint_accessibility` |
+| **Security & MCP Hardening** | `test/security.test.js` + GitHub CodeQL | XSS escaping in `template.js` & `ssr.js`, URL scheme allowlist, prototype-pollution guards, ReDoS-safe parsers, 128 KB MCP payload cap |
 | **Performance Benchmarks** | `npm run bench` (`tools/benchmark.js`) | 10,000 signal updates in ~7 ms · 1,000 DSD SSR renders in ~15 ms · 1,000 DOM mounts in ~60 ms |
 
 ---
@@ -127,22 +129,36 @@ Elementum runs directly in any modern browser without Webpack, Vite, or Babel.
 
 ---
 
+## Headless Behaviors, Agent Runtime & Testing Contracts
+
+Beyond 109 ready-to-use styled Web Components (all supporting opt-in `unstyled` headless mode), Elementum exports three focused zero-dependency subpaths:
+
+- **`@wcomp/elementum/behaviors`** — 15 composable interaction, focus, motion, and overlay primitives (`createPressBehavior`, `createRovingFocus`, `createDismissableLayer`, `createFocusRecovery`, `createShortcuts`, `createDisclosureBehavior`, `createPopupPositioner`, `createPresenceBehavior`, `prefersReducedMotion`, `createSelectionBehavior`, `createReorderBehavior`, `highlightMatch`, `announce`, `setHostState`, `isRTL`).
+- **`@wcomp/elementum/agent`** — Shadow-DOM-piercing `snapshot(root)` and `act(root, command)` so AI agents can inspect live UI state and execute semantic actions (`click`, `type`, `toggle`, `open`, `close`) without brittle DOM scraping.
+- **`@wcomp/elementum/testing`** — Reusable WAI-ARIA APG (`checkAriaPattern`), provider-free RTL (`checkDirection`), and DSD SSR (`checkServerRender`) contract validators.
+
+See **[docs/behaviors-and-agent.md](./docs/behaviors-and-agent.md)** for full API examples.
+
+---
+
 ## Design Engineering & Agent Guides
 
 ### Installable Agent Skills (`npx skills add`)
-Install Elementum's modular AI coding skills directly into Antigravity, Claude Code, Cursor, or Gemini CLI:
+Install Elementum's modular AI coding skills directly into Antigravity, Claude Code, Cursor, or Gemini CLI (configured via [`skills.sh.json`](./skills.sh.json)):
 
 ```bash
-npx skills@latest add pinguxx/Elementum
+npx skills@latest add pinguxx/Elementum --skill elementum
 ```
 
 Included skills under [`skills/`](skills/):
+- **`elementum`**: Canonical platform skill covering components, `unstyled` mode, `@wcomp/elementum/behaviors`, `@wcomp/elementum/agent`, `@wcomp/elementum/testing`, and DSD SSR.
 - **`elementum-ui`**: Composing Elementum's 109 Web Components, signals, FACE forms, and AG-UI streams.
 - **`elementum-motion`**: Shadow DOM motion physics, sub-300ms `ease-out`, origin-aware overlays, and reduced-motion standards.
 - **`elementum-break-ui`**: Adversarial stress-testing checklist (320px mobile, dark mode hover contrast, keyboard-only, extreme content).
 - **`elementum-mobile`**: Mobile-native CSS standards (`touch-action`, `100dvh`, safe areas, `overscroll-behavior`, iOS 16px input zoom prevention).
 - **`elementum-penpot`**: Two-way Penpot MCP design system sync and Penpot-to-Elementum app codegen.
 
+- **[docs/behaviors-and-agent.md](./docs/behaviors-and-agent.md)**: API reference for `@wcomp/elementum/behaviors`, `@wcomp/elementum/agent`, and `@wcomp/elementum/testing`.
 - **[docs/penpot-workflow.md](./docs/penpot-workflow.md)**: Free & open-source design token workflow with Penpot (W3C DTCG JSON) and automated compilation.
 - **[docs/agent-craft-guide.md](./docs/agent-craft-guide.md)**: Guide and system prompt rules for AI coding agents to banish generic AI look and adhere to high-craft standards.
 - **[docs/theming.md](./docs/theming.md)**: Complete design tokens, CSS custom properties, and `::part()` customization guide.
@@ -159,59 +175,28 @@ Included skills under [`skills/`](skills/):
 
 ```
 Elementum/
-├── .github/
-│   ├── dependabot.yml       # Automated weekly dependencies & actions updates
-│   └── workflows/
-│       └── ci.yml           # Multi-node, multi-OS CI test workflow
-├── docs/
-│   └── framework-integration.md # React 19, Vue 3, Svelte 5, and Next.js guide
+├── .github/workflows/ci.yml   # Multi-OS/Node CI: coverage >= 95%, strict TS, size budgets, tarball & 3-browser E2E
 ├── src/
-│   ├── signal.js            # Micro-signals (~80 lines: signal, computed, effect)
-│   ├── template.js          # Tagged template engine (html, css, surgical DOM parts)
-│   ├── elementum.js         # Base class with Shadow DOM, styles, and formAssociated
-│   ├── tokens.css           # Light & Dark CSS custom properties from Figma
-│   ├── index.js             # Public library exports
-│   ├── index.d.ts           # Complete TypeScript ambient definitions
-│   └── components/
-│       ├── el-button.js     # Reference button matching Figma variants
-│       ├── el-badge.js      # Reference badge component
-│       ├── el-input.js      # Form-associated input
-│       ├── el-dropdown.js   # Light-dismiss dropdown overlay
-│       ├── el-calendar.js   # Standalone calendar grid
-│       ├── el-datepicker.js # Composite datepicker
-│       ├── el-dialog.js     # Native modal dialog with backdrop containment
-│       ├── el-tabs.js       # Accessible W3C tabs with keyboard navigation
-│       ├── el-select.js     # Form-associated custom select
-│       ├── el-switch.js     # Form-associated toggle switch
-│       ├── el-tooltip.js    # Accessible anchored tooltip
-│       ├── el-accordion.js  # Accessible disclosure accordion
-│       ├── el-table.js      # Reactive data table with sorting and selection
-│       ├── el-toast.js      # Programmatic toast notification system
-│       ├── el-theme-switch.js # Light / Dark mode toggle
-│       ├── el-progress.js   # Determinate & indeterminate progress bar
-│       ├── el-spinner.js    # Animated accessible SVG spinner
-│       ├── el-avatar.js     # User avatar & avatar group with fallback
-│       ├── el-drawer.js     # Accessible slide-over drawer overlay
-│       ├── el-segmented-control.js # Form-associated pill switcher
-│       ├── el-pagination.js # Accessible numeric pagination controls
-│       ├── el-chip.js       # Interactive filter chips & pills
-│       └── el-autocomplete.js # Form-associated combobox & remote search
-├── tools/
-│   ├── sync-tokens.js       # CLI to compile penpot/figma DTCG tokens into tokens.css
-│   ├── sync-penpot-mcp.js   # CLI to generate tokens, colors & 105 components in Penpot via MCP
-│   └── create-component.js  # CLI to scaffold new components (npm run create)
-├── custom-elements.json     # W3C Custom Elements Manifest (for agents & Storybook)
-├── AGENT_GUIDE.md           # Instructions for AI coding agents & developers
-├── docs/
-│   ├── theming.md           # Design tokens and ::part() customization guide
-│   └── framework-integration.md # React, Vue, Svelte, Angular integration
-├── examples/
-│   ├── app.html             # Full travel booking mini-app
-│   └── index.html           # Component showcase
-├── index.html               # Live documentation and demo portal
-├── mcp/
-│   └── server.js            # Model Context Protocol server for AI coding agents
-└── test/                    # Node.js automated test runner suite
+│   ├── signal.js              # Fine-grained signals with cycle detection & re-entrancy guards
+│   ├── template.js            # Tagged template engine (html, svg, css, surgical DOM parts)
+│   ├── elementum.js           # Base class: Shadow DOM, Constructable Stylesheets, unstyled mode, FACE
+│   ├── ssr.js                 # Pure Node.js Declarative Shadow DOM SSR
+│   ├── ag-ui.js               # AG-UI streaming event store & RFC 6902 JSON Patch
+│   ├── behaviors/index.js     # 15 composable headless interaction, focus, motion & overlay behaviors
+│   ├── agent/index.js         # Shadow-DOM-piercing agent runtime bridge (snapshot, act)
+│   ├── testing/index.js       # WAI-ARIA APG, RTL & DSD SSR contract validators
+│   ├── tokens.css             # Light & Dark W3C DTCG CSS custom properties
+│   ├── index.js / index.d.ts  # Public exports & strict TypeScript definitions
+│   └── components/            # 109 zero-dependency Custom Elements (avg 2.19 KB gzip)
+├── docs/                      # behaviors-and-agent.md, theming.md, framework-integration.md, penpot-workflow.md
+├── skills/ & skills.sh.json   # Installable AI agent skills (npx skills@latest add pinguxx/Elementum)
+├── mcp/server.js              # Hardened Model Context Protocol stdio server (elementum-mcp)
+├── tools/                     # check-size.js, verify-consumer.js, generate-quality-report.js, audit-catalog-diff.js, benchmark.js
+├── size-budget.json           # Per-entrypoint gzipped byte budgets enforced in CI
+├── custom-elements.json       # W3C Custom Elements Manifest (109 tags)
+├── QUALITY.md                 # Auto-generated evidence-based per-component maturity matrix
+├── e2e/                       # Playwright + @axe-core/playwright real-browser tests
+└── test/                      # 226+ Node.js unit, fuzz, behavior, contract & security tests
 ```
 
 ---
@@ -277,9 +262,12 @@ npx elementum-mcp
 ```
 
 Exposed tools:
-- `list_components`: Lists all components in Elementum
-- `get_component_doc`: Retrieves attributes, slots, events, and CSS parts
+- `list_components`: Lists all 109 components in Elementum
+- `get_component_doc`: Retrieves attributes, slots, events, and CSS parts from `custom-elements.json`
+- `get_component_maturity`: Reports evidence-based maturity tier (`production-verified`, `stable`, `experimental`)
+- `suggest_component`: Recommends components for a given UI goal
+- `validate_component_usage`: Checks HTML markup against declared attributes and slots
 - `list_tokens`: Queries design tokens by category (color, spacing, radius)
-- `generate_snippet`: Generates valid HTML markup matching Figma variants
+- `generate_snippet`: Generates valid HTML markup matching variants
 - `scaffold_component`: Scaffolds standard boilerplate code for new components
-- `validate_accessibility`: Audits component markup against WCAG 2.2 rules
+- `lint_accessibility`: Static HTML accessibility linter (`static-html-lint`; pair with Playwright `axe-core` for full WCAG verification)
