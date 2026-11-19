@@ -30,8 +30,7 @@ export class ElInset extends Elementum {
       overflow: hidden;
     }
 
-    :host([clip="none"]),
-    :host([clip="false"]) {
+    :host([clip="none"]) {
       overflow: visible;
       border-radius: 0;
     }
