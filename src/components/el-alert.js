@@ -10,7 +10,7 @@ import { html, css } from '../template.js';
 import { signal } from '../signal.js';
 
 export class ElAlert extends Elementum {
-  static observedAttributes = ['variant', 'title', 'dismissible', 'label', 'message'];
+  static observedAttributes = ['variant', 'title', 'dismissible', 'message'];
 
   variant = signal('default');
   alertTitle = signal('');

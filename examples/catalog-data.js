@@ -1149,12 +1149,6 @@ export const components = {
         "description": "Alert body text."
       },
       {
-        "name": "label",
-        "type": "text",
-        "default": "",
-        "description": "Alternative label text."
-      },
-      {
         "name": "dismissible",
         "type": "boolean",
         "default": true,
