@@ -46,6 +46,7 @@
   "scripts": {
     "test": "node --test --experimental-test-coverage",
     "test:e2e": "playwright test",
+    "test:catalog": "playwright test e2e/catalog-sweep.spec.js",
     "typecheck": "tsc --noEmit --strict --lib es2022,dom --target es2022 src/index.d.ts",
     "verify:consumer": "node tools/verify-consumer.js",
     "quality:report": "node tools/generate-quality-report.js",

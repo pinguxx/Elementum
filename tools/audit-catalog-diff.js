@@ -186,6 +186,49 @@ export function runCatalogDiffAudit() {
     }
   }
 
+  // 6. CSS :host([attr="val"]) enum completeness check against catalog-data.js
+  const compDir = path.join(rootDir, 'src', 'components');
+  for (const file of fs.readdirSync(compDir).filter((f) => f.endsWith('.js'))) {
+    const src = fs.readFileSync(path.join(compDir, file), 'utf8');
+    const tagDefs = src.match(/customElements\.define\(['"]([a-z0-9-]+)['"]/g) || [];
+    const tags = tagDefs.map((m) => m.match(/['"]([a-z0-9-]+)['"]/)[1]);
+    if (tags.length !== 1) continue;
+    const tag = tags[0];
+    const comp = components[tag];
+    if (!comp) continue;
+
+    const cssEnums = new Map();
+    const re = /:host\(\[([a-z-]+)=["']([^"']+)["']\]\)/g;
+    let m;
+    while ((m = re.exec(src)) !== null) {
+      const [, attr, val] = m;
+      if (attr.startsWith('data-') || attr.startsWith('aria-') || attr === 'dir') continue;
+      if (!cssEnums.has(attr)) cssEnums.set(attr, new Set());
+      cssEnums.get(attr).add(val);
+    }
+
+    const enumIssues = [];
+    for (const [attr, vals] of cssEnums.entries()) {
+      if (vals.size < 2) continue;
+      const prop = (comp.props || []).find((p) => p.name === attr);
+      if (!prop) continue;
+      if (prop.type !== 'select') {
+        enumIssues.push(`Prop "${attr}" is type "${prop.type}" but CSS defines enum [${[...vals].join(', ')}]`);
+      } else {
+        const opts = new Set(prop.options || []);
+        const missing = [...vals].filter((v) => !opts.has(v));
+        if (missing.length > 0) {
+          enumIssues.push(`Prop "${attr}" missing select options [${missing.join(', ')}]`);
+        }
+      }
+    }
+    if (enumIssues.length > 0) {
+      const existing = findings.find((f) => f.tag === tag);
+      if (existing) existing.issues.push(...enumIssues);
+      else findings.push({ tag, issues: enumIssues });
+    }
+  }
+
   return {
     totalComponents: Object.keys(components).length,
     previewGeneratorFound: Boolean(generatePreview),

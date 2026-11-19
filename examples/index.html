@@ -2389,9 +2389,10 @@ ${optionsHtml}
       // 53. el-navigation-menu compound items
       if (tag === 'el-navigation-menu' || tag === 'el-navigation-menu-item' || tag === 'el-navigation-menu-trigger' || tag === 'el-navigation-menu-content') {
         const orient = p.orientation || 'horizontal';
+        const openItem = tag === 'el-navigation-menu-content' ? ' open' : '';
         return `<div style="padding: 12px 0 110px 0;">
   <el-navigation-menu orientation="${orient}">
-    <el-navigation-menu-item>
+    <el-navigation-menu-item${openItem}>
       <el-navigation-menu-trigger>Platform</el-navigation-menu-trigger>
       <el-navigation-menu-content style="display: flex; flex-direction: column; gap: 6px; min-width: 240px;">
         <a href="#edge" onclick="event.preventDefault(); toast('Selected: Serverless Functions')" style="display: block; padding: 8px 10px; border-radius: 6px; text-decoration: none; color: inherit; background: var(--el-surface-muted);">

@@ -63,6 +63,7 @@ export const components = {
         "options": [
           "primary",
           "secondary",
+          "outline",
           "danger",
           "ghost"
         ],
@@ -961,8 +962,10 @@ export const components = {
         "name": "variant",
         "type": "select",
         "options": [
+          "default",
           "primary",
           "secondary",
+          "outline",
           "success",
           "danger",
           "warning",
@@ -1126,7 +1129,9 @@ export const components = {
           "info",
           "success",
           "warning",
-          "danger"
+          "danger",
+          "destructive",
+          "error"
         ],
         "default": "info",
         "description": "Alert styling."
@@ -3023,7 +3028,7 @@ export const components = {
     "examples": [
       {
         "title": "Application Menubar",
-        "code": "<el-menubar>\n  <el-menu label=\"File\">\n    <el-menu-item>New File</el-menu-item>\n    <el-menu-item>Open...</el-menu-item>\n  </el-menu>\n  <el-menu label=\"Edit\">\n    <el-menu-item>Undo</el-menu-item>\n    <el-menu-item>Redo</el-menu-item>\n  </el-menu>\n</el-menubar>"
+        "code": "<el-menubar>\n  <el-dropdown>\n    <el-button slot=\"trigger\" variant=\"ghost\" size=\"sm\">File</el-button>\n    <el-button variant=\"ghost\" size=\"sm\">New File</el-button>\n    <el-button variant=\"ghost\" size=\"sm\">Open...</el-button>\n  </el-dropdown>\n  <el-dropdown>\n    <el-button slot=\"trigger\" variant=\"ghost\" size=\"sm\">Edit</el-button>\n    <el-button variant=\"ghost\" size=\"sm\">Undo</el-button>\n    <el-button variant=\"ghost\" size=\"sm\">Redo</el-button>\n  </el-dropdown>\n</el-menubar>"
       }
     ]
   },
@@ -4499,9 +4504,16 @@ export const components = {
     "props": [
       {
         "name": "side",
-        "type": "text",
-        "default": "",
-        "description": "Configures side attribute."
+        "type": "select",
+        "options": [
+          "all",
+          "top",
+          "bottom",
+          "x",
+          "y"
+        ],
+        "default": "all",
+        "description": "Which edges bleed flush to the parent container."
       },
       {
         "name": "clip",
