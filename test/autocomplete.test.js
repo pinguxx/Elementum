@@ -184,6 +184,33 @@ test('<el-autocomplete> form association, validation, and reset', () => {
   form.remove();
 });
 
+test('<el-autocomplete> highlights matched query text with <mark part="highlight"> safely', async () => {
+  const ac = document.createElement('el-autocomplete');
+  ac.setAttribute('debounce', '0');
+  document.body.appendChild(ac);
+  ac.setData(['Apple', 'Pineapple', 'San Francisco (SFO)']);
+
+  const input = ac.root.querySelector('.combobox-input');
+  input.value = 'app';
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 30));
+
+  const marks = [...ac.root.querySelectorAll('mark.match-highlight[part="highlight"]')];
+  assert.equal(marks.length, 2);
+  assert.equal(marks[0].textContent, 'App');
+  assert.equal(marks[1].textContent, 'app');
+
+  // Regex special characters like (SFO) are escaped safely
+  input.value = '(sfo)';
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 30));
+  const sfoMarks = [...ac.root.querySelectorAll('mark.match-highlight')];
+  assert.equal(sfoMarks.length, 1);
+  assert.equal(sfoMarks[0].textContent, '(SFO)');
+
+  ac.remove();
+});
+
 test('<el-autocomplete multiple> renders inline chips, handles Backspace and remove events', async () => {
   const form = document.createElement('form');
   const ac = document.createElement('el-autocomplete');
@@ -251,4 +278,31 @@ test('<el-autocomplete multiple> renders inline chips, handles Backspace and rem
   assert.deepEqual(ac.value.value, []);
 
   form.remove();
+});
+
+test('<el-autocomplete> highlights matched query text with <mark part="highlight"> safely', async () => {
+  const ac = document.createElement('el-autocomplete');
+  ac.setAttribute('debounce', '0');
+  document.body.appendChild(ac);
+  ac.setData(['Apple', 'Pineapple', 'San Francisco (SFO)']);
+
+  const input = ac.root.querySelector('.combobox-input');
+  input.value = 'app';
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 30));
+
+  const marks = [...ac.root.querySelectorAll('mark.match-highlight[part="highlight"]')];
+  assert.equal(marks.length, 2);
+  assert.equal(marks[0].textContent, 'App');
+  assert.equal(marks[1].textContent, 'app');
+
+  // Regex special characters like (SFO) are escaped safely
+  input.value = '(sfo)';
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 30));
+  const sfoMarks = [...ac.root.querySelectorAll('mark.match-highlight')];
+  assert.equal(sfoMarks.length, 1);
+  assert.equal(sfoMarks[0].textContent, '(SFO)');
+
+  ac.remove();
 });

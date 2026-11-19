@@ -254,6 +254,18 @@ export class ElAutocomplete extends Elementum {
       border: 0;
     }
 
+    .match-highlight {
+      background: color-mix(in srgb, var(--el-color-primary, #2563eb) 18%, transparent);
+      color: var(--el-color-primary, #1d4ed8);
+      font-weight: 700;
+      border-radius: 3px;
+      padding: 0 2px;
+    }
+
+    .option-item.is-active .match-highlight {
+      background: color-mix(in srgb, var(--el-color-primary, #2563eb) 26%, transparent);
+    }
+
     @media (pointer: coarse) {
       input {
         font-size: max(16px, 1em);
@@ -655,6 +667,26 @@ export class ElAutocomplete extends Elementum {
     this.clear();
   }
 
+  #renderHighlightedLabel(label) {
+    const text = String(label ?? '');
+    const query = (this.displayLabel.value || '').trim();
+    if (!query) return text;
+
+    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(${escaped})`, 'gi');
+    const parts = text.split(regex);
+    if (parts.length === 1) return text;
+
+    const lowerQuery = query.toLowerCase();
+    return parts
+      .filter((part) => part.length > 0)
+      .map((part) =>
+        part.toLowerCase() === lowerQuery
+          ? html`<mark class="match-highlight" part="highlight">${part}</mark>`
+          : part
+      );
+  }
+
   render() {
     const listId = this.#listboxId;
 
@@ -757,7 +789,7 @@ export class ElAutocomplete extends Elementum {
                 >
                   <span class="option-label">
                     ${isSelected ? html`<span class="check-icon" aria-hidden="true">✓ </span>` : null}
-                    ${label}
+                    ${this.#renderHighlightedLabel(label)}
                   </span>
                   ${meta ? html`<span class="option-meta">${meta}</span>` : null}
                 </li>
