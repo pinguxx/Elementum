@@ -97,3 +97,16 @@ export { createAgUiStore, applyJsonPatch, getByPointer } from './ag-ui.js';
 
 // Server-Side Rendering (Declarative Shadow DOM)
 export { renderTemplateToString, renderComponentToDSD } from './ssr.js';
+export {
+  setHostState,
+  isRTL,
+  formatLocaleNumber,
+  formatLocaleDate,
+  announce,
+  clearAnnouncer,
+  createPressBehavior,
+  createRovingFocus,
+  createDismissableLayer,
+  createSelectionBehavior,
+  createReorderBehavior,
+} from './behaviors/index.js';

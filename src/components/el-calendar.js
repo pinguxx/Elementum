@@ -6,6 +6,7 @@
 import { Elementum } from '../elementum.js';
 import { html, css } from '../template.js';
 import { signal, computed } from '../signal.js';
+import { formatLocaleDate } from '../behaviors/index.js';
 
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -13,6 +14,21 @@ const MONTH_NAMES = [
 ];
 
 const WEEKDAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
+function getLocalizedMonths(locale) {
+  if (!locale || locale === 'en-US') return MONTH_NAMES;
+  return Array.from({ length: 12 }, (_, m) =>
+    formatLocaleDate(new Date(2026, m, 15), locale, { month: 'long' })
+  );
+}
+
+function getLocalizedWeekdays(locale) {
+  if (!locale || locale === 'en-US') return WEEKDAYS;
+  // 2026-01-04 is a Sunday
+  return Array.from({ length: 7 }, (_, d) =>
+    formatLocaleDate(new Date(2026, 0, 4 + d), locale, { weekday: 'short' }).slice(0, 2)
+  );
+}
 
 function padZero(n) {
   return n < 10 ? '0' + n : String(n);
@@ -23,16 +39,18 @@ function formatDateString(year, month, day) {
 }
 
 export class ElCalendar extends Elementum {
-  static observedAttributes = ['value', 'min-year', 'max-year'];
+  static observedAttributes = ['value', 'min-year', 'max-year', 'locale'];
 
   value = signal(''); // 'YYYY-MM-DD'
   viewYear = signal(new Date().getFullYear());
   viewMonth = signal(new Date().getMonth()); // 0 - 11
   minYear = signal(new Date().getFullYear() - 50);
   maxYear = signal(new Date().getFullYear() + 20);
+  locale = signal('en-US');
 
   monthTitle = computed(() => {
-    return `${MONTH_NAMES[this.viewMonth.value]} ${this.viewYear.value}`;
+    const months = getLocalizedMonths(this.locale.value);
+    return `${months[this.viewMonth.value]} ${this.viewYear.value}`;
   });
 
   static styles = css`
@@ -187,6 +205,9 @@ export class ElCalendar extends Elementum {
       const parsed = Number(this.getAttribute('max-year'));
       if (!isNaN(parsed)) this.maxYear.value = parsed;
     }
+    if (this.hasAttribute('locale')) {
+      this.locale.value = this.getAttribute('locale') || 'en-US';
+    }
     if (this.value.value) {
       const parts = this.value.value.split('-').map(Number);
       if (parts.length === 3) {
@@ -210,6 +231,8 @@ export class ElCalendar extends Elementum {
     } else if (name === 'max-year' && newValue) {
       const parsed = Number(newValue);
       if (!isNaN(parsed)) this.maxYear.value = parsed;
+    } else if (name === 'locale') {
+      this.locale.value = newValue || 'en-US';
     }
     return true;
   }
@@ -349,7 +372,7 @@ export class ElCalendar extends Elementum {
               @change=${this.#onMonthSelect}
             >
               ${() =>
-                MONTH_NAMES.map(
+                getLocalizedMonths(this.locale.value).map(
                   (name, idx) => html`
                     <option
                       value="${idx}"
@@ -382,7 +405,7 @@ export class ElCalendar extends Elementum {
         </div>
 
         <div class="weekdays">
-          ${WEEKDAYS.map((w) => html`<div>${w}</div>`)}
+          ${() => getLocalizedWeekdays(this.locale.value).map((w) => html`<div>${w}</div>`)}
         </div>
 
         <div class="grid" role="grid">

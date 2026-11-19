@@ -5,6 +5,7 @@
 
 import { render, CSSResult, html, css } from './template.js';
 import { signal, isSignal, effect } from './signal.js';
+import { setHostState } from './behaviors/index.js';
 
 export { html, css };
 
@@ -138,6 +139,15 @@ export class Elementum extends BaseElement {
         this.internals.setValidity(flags, message);
       }
     }
+    this.setHostState('invalid', isInvalid);
+  }
+
+  /**
+   * Reflect a standardized component state onto the host element via both
+   * `data-<name>` attributes and `ElementInternals.states` (`:state(<name>)`).
+   */
+  setHostState(name, active) {
+    setHostState(this, name, active);
   }
 
   setCustomValidity(message = '') {
@@ -368,8 +378,8 @@ export class Elementum extends BaseElement {
       }
       this.root = this.shadowRoot;
 
-      // 2. Adopt Constructable Stylesheets
-      if (this.constructor.styles) {
+      // 2. Adopt Constructable Stylesheets (skip when `unstyled` attribute is present for headless styling)
+      if (this.constructor.styles && !this.hasAttribute('unstyled')) {
         const rawStyles = Array.isArray(this.constructor.styles)
           ? this.constructor.styles
           : [this.constructor.styles];
@@ -417,6 +427,11 @@ export class Elementum extends BaseElement {
       }
     }
 
+    // Reflect initial disabled host state if present
+    if (this.hasAttribute('disabled') && this.getAttribute('disabled') !== 'false') {
+      this.setHostState('disabled', true);
+    }
+
     // 4. User lifecycle hook
     if (typeof this.connected === 'function') {
       this.connected();
@@ -454,6 +469,10 @@ export class Elementum extends BaseElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     if (oldValue === newValue) return;
+
+    if (name === 'disabled') {
+      this.setHostState('disabled', newValue !== null && newValue !== 'false');
+    }
 
     this.#syncingAttr = true;
     try {

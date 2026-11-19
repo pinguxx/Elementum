@@ -27,6 +27,7 @@
     },
     "./ssr": "./src/ssr.js",
     "./ag-ui": "./src/ag-ui.js",
+    "./behaviors": "./src/behaviors/index.js",
     "./tokens.css": "./src/tokens.css",
     "./custom-elements.json": "./custom-elements.json",
     "./components/*": "./src/components/*.js"

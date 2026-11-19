@@ -2258,8 +2258,9 @@ ${optionsHtml}
         const val = p.value || '2026-11-15';
         const minYear = p['min-year'] ? ` min-year="${p['min-year']}"` : '';
         const maxYear = p['max-year'] ? ` max-year="${p['max-year']}"` : '';
+        const locale = p.locale && p.locale !== 'en-US' ? ` locale="${escapeHtml(p.locale)}"` : '';
         return `<div style="max-width: 320px; width: 100%;">
-  <el-calendar value="${escapeHtml(val)}"${minYear}${maxYear}></el-calendar>
+  <el-calendar value="${escapeHtml(val)}"${minYear}${maxYear}${locale}></el-calendar>
 </div>`;
       }
 
@@ -2618,8 +2619,9 @@ ${optionsHtml}
         const suffix = p.suffix || '';
         const duration = p.duration !== undefined ? p.duration : 400;
         const animated = p.animated === false ? ' animated="false"' : '';
+        const locale = p.locale ? ` locale="${escapeHtml(p.locale)}"` : '';
         return `<div style="display: flex; align-items: center; justify-content: center; padding: 24px 0; font-size: 2.75rem; font-weight: 700; color: var(--el-text-primary, #0f172a);">
-  <el-number-flow value="${escapeHtml(String(val))}" prefix="${escapeHtml(prefix)}" suffix="${escapeHtml(suffix)}" duration="${duration}"${animated}></el-number-flow>
+  <el-number-flow value="${escapeHtml(String(val))}" prefix="${escapeHtml(prefix)}" suffix="${escapeHtml(suffix)}" duration="${duration}"${animated}${locale}></el-number-flow>
 </div>`;
       }
 

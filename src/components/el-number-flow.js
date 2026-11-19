@@ -1,6 +1,7 @@
 import { Elementum } from '../elementum.js';
 import { html, css } from '../template.js';
 import { signal, effect } from '../signal.js';
+import { formatLocaleNumber } from '../behaviors/index.js';
 
 /**
  * <el-number-flow>
@@ -10,15 +11,17 @@ import { signal, effect } from '../signal.js';
  * @attr {string} prefix - Optional prefix (e.g. '$' or '+')
  * @attr {string} suffix - Optional suffix (e.g. '%' or 'ms')
  * @attr {number} duration - Animation duration in ms (default: 400)
+ * @attr {string} locale - Optional BCP 47 locale for Intl.NumberFormat (e.g. 'en-US', 'de-DE')
  */
 export class ElNumberFlow extends Elementum {
-  static observedAttributes = ['value', 'prefix', 'suffix', 'duration', 'animated'];
+  static observedAttributes = ['value', 'prefix', 'suffix', 'duration', 'animated', 'locale'];
 
   value = signal('0');
   prefix = signal('');
   suffix = signal('');
   duration = signal(400);
   animated = signal(true);
+  locale = signal('');
 
   connected() {
     this.#sync();
@@ -34,6 +37,7 @@ export class ElNumberFlow extends Elementum {
     if (this.hasAttribute('suffix')) this.suffix.value = this.getAttribute('suffix') || '';
     if (this.hasAttribute('duration')) this.duration.value = Number(this.getAttribute('duration')) || 400;
     if (this.hasAttribute('animated')) this.animated.value = this.getAttribute('animated') !== 'false';
+    if (this.hasAttribute('locale')) this.locale.value = this.getAttribute('locale') || '';
   }
 
   static styles = css`
@@ -97,7 +101,14 @@ export class ElNumberFlow extends Elementum {
   `;
 
   render() {
-    const rawVal = () => String(this.value.value ?? '0');
+    const rawVal = () => {
+      const str = String(this.value.value ?? '0');
+      const loc = (this.locale.value || '').trim();
+      if (loc && /^-?\d+(\.\d+)?$/.test(str)) {
+        return formatLocaleNumber(Number(str), loc);
+      }
+      return str;
+    };
     const fullText = () => `${this.prefix.value}${rawVal()}${this.suffix.value}`;
 
     return html`

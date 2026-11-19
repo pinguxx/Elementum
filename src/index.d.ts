@@ -777,6 +777,67 @@ export function renderComponentToDSD(
 ): string;
 
 // ==========================================
+// Behavior Controllers (React-Aria-Inspired)
+// ==========================================
+
+export function setHostState(host: Element, name: string, active: boolean): void;
+export function isRTL(el?: Element | null): boolean;
+export function formatLocaleNumber(value: number | string, locale?: string, options?: Intl.NumberFormatOptions): string;
+export function formatLocaleDate(date: Date | number | string, locale?: string, options?: Intl.DateTimeFormatOptions): string;
+export function announce(message: string, politeness?: 'polite' | 'assertive'): void;
+export function clearAnnouncer(): void;
+export function createPressBehavior(
+  host: Element,
+  target?: EventTarget,
+  options?: { isDisabled?: () => boolean; onPress?: (e: Event) => void; signal?: AbortSignal }
+): () => void;
+export function createRovingFocus(
+  host: Element,
+  options?: {
+    getItems: () => HTMLElement[];
+    orientation?: 'horizontal' | 'vertical' | 'both' | (() => 'horizontal' | 'vertical' | 'both');
+    loop?: boolean;
+    typeahead?: boolean;
+    onFocusItem?: (el: HTMLElement, index: number) => void;
+    signal?: AbortSignal;
+  }
+): () => void;
+export function createDismissableLayer(
+  host: Element,
+  options?: {
+    isOpen?: () => boolean;
+    onDismiss: (reason: 'escape' | 'outside-click', event: Event) => void;
+    closeOnEscape?: boolean;
+    closeOnOutsideClick?: boolean;
+    signal?: AbortSignal;
+  }
+): () => void;
+export function createSelectionBehavior<K = string>(options?: {
+  mode?: 'single' | 'multiple' | 'none';
+  getKeys?: () => K[];
+  initialKeys?: K[];
+  disabledKeys?: K[];
+  onSelectionChange?: (selected: Set<K>) => void;
+}): {
+  selectedKeys: Signal<Set<K>>;
+  isSelected: (key: K) => boolean;
+  select: (key: K, opts?: { shiftKey?: boolean; ctrlKey?: boolean; metaKey?: boolean; toggle?: boolean }) => void;
+  toggle: (key: K) => void;
+  selectRange: (fromKey: K, toKey: K) => void;
+  selectAll: () => void;
+  clear: () => void;
+};
+export function createReorderBehavior(
+  host: Element,
+  options: {
+    getItems: () => HTMLElement[];
+    orientation?: 'vertical' | 'horizontal';
+    onReorder: (detail: { fromIndex: number; toIndex: number; item: HTMLElement }) => void;
+    signal?: AbortSignal;
+  }
+): () => void;
+
+// ==========================================
 // DOM & JSX Global Typings
 // ==========================================
 

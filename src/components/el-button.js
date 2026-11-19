@@ -6,6 +6,7 @@
 import { Elementum } from '../elementum.js';
 import { html, css } from '../template.js';
 import { signal } from '../signal.js';
+import { createPressBehavior } from '../behaviors/index.js';
 
 export class ElButton extends Elementum {
   static formAssociated = true;
@@ -177,6 +178,16 @@ export class ElButton extends Elementum {
     }
     if (name in this) {
       this[name].value = newValue !== null ? newValue : '';
+    }
+  }
+
+  rendered() {
+    const btn = this.root?.querySelector?.('button');
+    if (btn) {
+      createPressBehavior(this, btn, {
+        isDisabled: () => Boolean(this.disabled.value),
+        signal: this.signal,
+      });
     }
   }
 

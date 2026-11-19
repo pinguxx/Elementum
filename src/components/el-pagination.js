@@ -1,6 +1,7 @@
 import { Elementum } from '../elementum.js';
 import { html, css } from '../template.js';
 import { signal, computed } from '../signal.js';
+import { announce } from '../behaviors/index.js';
 
 export class ElPagination extends Elementum {
   static observedAttributes = ['page', 'total', 'page-size', 'sibling-count'];
@@ -42,6 +43,7 @@ export class ElPagination extends Elementum {
       this.page.value = target;
       this.setAttribute('page', String(target));
       this.emit('pagechange', { page: target, pageSize: this.pageSize.value });
+      announce(`Page ${target} of ${this.totalPages.value}`, 'polite');
     }
   }
 

@@ -2117,6 +2117,12 @@ export const components = {
         "type": "number",
         "default": 2100,
         "description": "Maximum selectable year."
+      },
+      {
+        "name": "locale",
+        "type": "text",
+        "default": "en-US",
+        "description": "BCP 47 locale (e.g. en-US, es-ES, fr-FR, ja-JP) for localized month and weekday names via Intl.DateTimeFormat."
       }
     ],
     "slots": [
@@ -3122,6 +3128,12 @@ export const components = {
         "type": "boolean",
         "default": false,
         "description": "Configures animated attribute."
+      },
+      {
+        "name": "locale",
+        "type": "text",
+        "default": "",
+        "description": "Optional BCP 47 locale (e.g. en-US, de-DE, fr-FR) for Intl.NumberFormat grouping and decimal separators."
       }
     ],
     "slots": [

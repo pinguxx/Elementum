@@ -6,6 +6,7 @@
 import { Elementum } from '../elementum.js';
 import { html, css } from '../template.js';
 import { signal } from '../signal.js';
+import { announce } from '../behaviors/index.js';
 
 const LANGUAGE_LABELS = {
   html: 'HTML',
@@ -172,6 +173,7 @@ export class ElCodeBlock extends Elementum {
     }, 1500);
 
     this.emit('copy', { code: text });
+    announce('Code copied to clipboard', 'polite');
   }
 
   #getLanguageLabel() {
