@@ -66,7 +66,14 @@ export class ElContextMenu extends Elementum {
 
     :host([data-state="open"]) .menu {
       display: flex;
+      transform-origin: top left;
       animation: el-fade-in 120ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      :host([data-state="open"]) .menu {
+        animation: none;
+      }
     }
 
     :root[data-theme="dark"] .menu {

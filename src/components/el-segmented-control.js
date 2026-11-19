@@ -172,9 +172,24 @@ export class ElSegmentedControl extends Elementum {
       color: var(--el-text-muted, #64748b);
       font-weight: 500;
       cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
       border-radius: calc(var(--el-radius-md, 8px) - 2px);
-      transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+      transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.12s var(--el-ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
       font-family: inherit;
+    }
+
+    .segment-btn:active:not([disabled]) {
+      transform: scale(0.97);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .segment-btn {
+        transition: none;
+      }
+      .segment-btn:active:not([disabled]) {
+        transform: none;
+      }
     }
 
     /* Sizes */

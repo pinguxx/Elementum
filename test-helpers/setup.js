@@ -17,3 +17,9 @@ globalThis.MouseEvent = window.MouseEvent;
 globalThis.PointerEvent = window.PointerEvent || window.MouseEvent;
 globalThis.KeyboardEvent = window.KeyboardEvent;
 globalThis.localStorage = window.localStorage;
+if (typeof globalThis.navigator === 'undefined') {
+  Object.defineProperty(globalThis, 'navigator', {
+    configurable: true,
+    value: window.navigator,
+  });
+}

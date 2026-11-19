@@ -65,6 +65,7 @@ export class ElMeter extends Elementum {
       display: block;
       width: 100%;
       font-family: var(--el-font-sans, system-ui, sans-serif);
+      font-variant-numeric: tabular-nums;
       box-sizing: border-box;
     }
 

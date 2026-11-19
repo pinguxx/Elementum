@@ -89,6 +89,12 @@ export class ElTextarea extends Elementum {
       font-size: 0.75rem;
       color: var(--el-text-muted, #94a3b8);
     }
+
+    @media (pointer: coarse) {
+      textarea {
+        font-size: max(16px, 1em);
+      }
+    }
   `;
 
   connected() {

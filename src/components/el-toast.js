@@ -433,6 +433,13 @@ export class ElToaster extends Elementum {
       color: #f8fafc;
       background: rgba(255, 255, 255, 0.1);
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
   `;
 
   connected() {

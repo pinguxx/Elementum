@@ -76,6 +76,12 @@ export class ElSelect extends Elementum {
       font-size: 0.75rem;
       color: var(--el-text-muted, #6b7280);
     }
+
+    @media (pointer: coarse) {
+      select {
+        font-size: max(16px, 1em);
+      }
+    }
   `;
 
   connected() {

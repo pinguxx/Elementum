@@ -3,7 +3,9 @@ import { html, css } from '../template.js';
 import { signal } from '../signal.js';
 
 // Global router state
-export const currentRoute = signal(window.location.hash.slice(1) || '/');
+export const currentRoute = signal(
+  typeof window !== 'undefined' ? (window.location.hash.slice(1) || '/') : '/'
+);
 
 function normalizePath(path) {
   if (!path) return '/';
@@ -49,6 +51,13 @@ export class ElRouter extends Elementum {
     :host {
       display: block;
       width: 100%;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
     }
   `;
 

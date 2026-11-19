@@ -125,6 +125,12 @@ export class ElSpinner extends Elementum {
       white-space: nowrap;
       border: 0;
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      svg, circle {
+        animation-duration: 3s;
+      }
+    }
   `;
 
   render() {

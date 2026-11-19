@@ -7,6 +7,8 @@ import { Elementum } from '../elementum.js';
 import { html, css } from '../template.js';
 import { signal } from '../signal.js';
 
+let lastTooltipClosedAt = 0;
+
 export class ElTooltip extends Elementum {
   static observedAttributes = ['content', 'placement', 'delay', 'disabled'];
 
@@ -53,41 +55,51 @@ export class ElTooltip extends Elementum {
       visibility: visible;
     }
 
-    /* Placements */
+    /* Placements (origin-aware toward trigger edge) */
     .tooltip-bubble.top {
       bottom: calc(100% + 8px);
       left: 50%;
-      transform: translateX(-50%) translateY(4px);
+      transform-origin: bottom center;
+      transform: translateX(-50%) translateY(4px) scale(0.96);
     }
     .tooltip-bubble.top.visible {
-      transform: translateX(-50%) translateY(0);
+      transform: translateX(-50%) translateY(0) scale(1);
     }
 
     .tooltip-bubble.bottom {
       top: calc(100% + 8px);
       left: 50%;
-      transform: translateX(-50%) translateY(-4px);
+      transform-origin: top center;
+      transform: translateX(-50%) translateY(-4px) scale(0.96);
     }
     .tooltip-bubble.bottom.visible {
-      transform: translateX(-50%) translateY(0);
+      transform: translateX(-50%) translateY(0) scale(1);
     }
 
     .tooltip-bubble.left {
       right: calc(100% + 8px);
       top: 50%;
-      transform: translateY(-50%) translateX(4px);
+      transform-origin: right center;
+      transform: translateY(-50%) translateX(4px) scale(0.96);
     }
     .tooltip-bubble.left.visible {
-      transform: translateY(-50%) translateX(0);
+      transform: translateY(-50%) translateX(0) scale(1);
     }
 
     .tooltip-bubble.right {
       left: calc(100% + 8px);
       top: 50%;
-      transform: translateY(-50%) translateX(-4px);
+      transform-origin: left center;
+      transform: translateY(-50%) translateX(-4px) scale(0.96);
     }
     .tooltip-bubble.right.visible {
-      transform: translateY(-50%) translateX(0);
+      transform: translateY(-50%) translateX(0) scale(1);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .tooltip-bubble {
+        transition: none;
+      }
     }
   `;
 
@@ -104,7 +116,8 @@ export class ElTooltip extends Elementum {
   show() {
     if (this.disabled.value) return;
     clearTimeout(this.#timeoutId);
-    const delayMs = Number(this.delay.value) || 0;
+    const recentGroupSwitch = Date.now() - lastTooltipClosedAt < 350;
+    const delayMs = recentGroupSwitch ? 0 : (Number(this.delay.value) || 0);
     const doShow = () => {
       this.visible.value = true;
       this.setAttribute('data-state', 'open');
@@ -119,6 +132,9 @@ export class ElTooltip extends Elementum {
 
   hide() {
     clearTimeout(this.#timeoutId);
+    if (this.visible.value) {
+      lastTooltipClosedAt = Date.now();
+    }
     this.visible.value = false;
     this.setAttribute('data-state', 'closed');
   }

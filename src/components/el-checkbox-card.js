@@ -39,7 +39,7 @@ export class ElCheckboxCard extends Elementum {
       border-radius: var(--el-radius-lg, 12px);
       border: 2px solid var(--el-surface-border, #e2e8f0);
       background-color: var(--el-surface-card, #ffffff);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
     }
 
@@ -88,7 +88,7 @@ export class ElCheckboxCard extends Elementum {
       color: #ffffff;
       font-size: 11px;
       font-weight: 700;
-      transition: all 0.2s ease;
+      transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
 
     :host([checked]) .checkbox-box {

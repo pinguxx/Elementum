@@ -124,6 +124,13 @@ export class ElField extends Elementum {
         transform: translateY(0);
       }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
   `;
 
   connected() {

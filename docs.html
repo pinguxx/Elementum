@@ -680,6 +680,9 @@ import { ElButton } from '@wc/elementum';
 
 const html = renderComponentToDSD('el-button', ElButton, { variant: 'primary' }, 'Submit Form');
 // Output: &lt;el-button variant="primary"&gt;&lt;template shadowrootmode="open"&gt;...&lt;/template&gt;Submit Form&lt;/el-button&gt;</el-code-block>
+        <p>
+          Run the zero-dependency Node.js SSR server (<code>npm run ssr</code> → <code>http://localhost:3333/?hydrate=0</code> for pure Zero-JS DSD vs <code>?hydrate=1</code> for progressive hydration), or inspect the pre-rendered <a href="./examples/ssr-demo.html">Live DSD SSR Demo</a> (source: <code>examples/ssr-server.js</code>).
+        </p>
 
         <h2 id="forms-face">Form-Associated Custom Elements (FACE)</h2>
         <p>

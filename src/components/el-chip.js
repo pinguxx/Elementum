@@ -96,10 +96,25 @@ export class ElChip extends Elementum {
       border-radius: var(--el-radius-full, 9999px);
       font-family: var(--el-font-sans, system-ui, sans-serif);
       font-weight: 500;
-      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.12s var(--el-ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
       box-sizing: border-box;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
       border: 1px solid transparent;
       outline: none;
+    }
+
+    .chip:active:not([aria-disabled="true"]) {
+      transform: scale(0.97);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .chip {
+        transition: none;
+      }
+      .chip:active:not([aria-disabled="true"]) {
+        transform: none;
+      }
     }
 
     /* Sizes */

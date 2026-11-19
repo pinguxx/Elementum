@@ -111,6 +111,20 @@ Elementum runs directly in any modern browser without Webpack, Vite, or Babel.
 
 ## Design Engineering & Agent Guides
 
+### Installable Agent Skills (`npx skills add`)
+Install Elementum's modular AI coding skills directly into Antigravity, Claude Code, Cursor, or Gemini CLI:
+
+```bash
+npx skills@latest add pinguxx/Elementum
+```
+
+Included skills under [`skills/`](skills/):
+- **`elementum-ui`**: Composing Elementum's 105 Web Components, signals, FACE forms, and AG-UI streams.
+- **`elementum-motion`**: Shadow DOM motion physics, sub-300ms `ease-out`, origin-aware overlays, and reduced-motion standards.
+- **`elementum-break-ui`**: Adversarial stress-testing checklist (320px mobile, dark mode hover contrast, keyboard-only, extreme content).
+- **`elementum-mobile`**: Mobile-native CSS standards (`touch-action`, `100dvh`, safe areas, `overscroll-behavior`, iOS 16px input zoom prevention).
+- **`elementum-penpot`**: Two-way Penpot MCP design system sync and Penpot-to-Elementum app codegen.
+
 - **[docs/penpot-workflow.md](file:///c:/dev/Elementum/docs/penpot-workflow.md)**: Free & open-source design token workflow with Penpot (W3C DTCG JSON) and automated compilation.
 - **[docs/agent-craft-guide.md](file:///c:/dev/Elementum/docs/agent-craft-guide.md)**: Guide and system prompt rules for AI coding agents to banish generic AI look and adhere to high-craft standards.
 - **[docs/theming.md](file:///c:/dev/Elementum/docs/theming.md)**: Complete design tokens, CSS custom properties, and `::part()` customization guide.
@@ -197,10 +211,17 @@ Elementum/
 Elementum includes built-in server-side rendering support emitting standard `<template shadowrootmode="open">` for zero-CLS first paint in Next.js, Nuxt, Astro, and Node.js:
 
 ```javascript
-import { renderComponentToDSD, ElButton } from '@wc/elementum';
+import { renderComponentToDSD } from '@wc/elementum/ssr';
+import { ElButton } from '@wc/elementum';
 
 // Outputs HTML with Declarative Shadow DOM and encapsulated styles
 const html = renderComponentToDSD('el-button', ElButton, { variant: 'primary' }, 'Submit');
+```
+
+Run the live zero-dependency Node.js SSR server (`?hydrate=0` for pure Zero-JS DSD, `?hydrate=1` for progressive hydration) or view the pre-rendered snapshot [`examples/ssr-demo.html`](examples/ssr-demo.html):
+
+```bash
+npm run ssr
 ```
 
 ---

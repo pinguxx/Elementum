@@ -27,6 +27,8 @@
     "test": "node --test --experimental-test-coverage",
     "serve": "node tools/serve.js",
     "serve:proxy": "node tools/serve.js --proxy",
+    "ssr": "node examples/ssr-server.js",
+    "ssr:static": "node examples/ssr-server.js --static examples/ssr-demo.html",
     "mcp": "node mcp/server.js",
     "create": "node tools/create-component.js",
     "tokens:sync": "node tools/sync-tokens.js",

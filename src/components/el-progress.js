@@ -63,6 +63,7 @@ export class ElProgress extends Elementum {
       height: 100%;
       border-radius: var(--el-radius-full, 9999px);
       transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-variant-numeric: tabular-nums;
     }
 
     .bar[data-variant='primary'] {
@@ -132,6 +133,15 @@ export class ElProgress extends Elementum {
       }
       to {
         background-position: 0 0;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bar,
+      :host([indeterminate]) .bar,
+      :host([striped]) .bar {
+        animation: none;
+        transition: none;
       }
     }
   `;

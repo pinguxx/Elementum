@@ -158,6 +158,12 @@ export class ElInput extends Elementum {
       color: var(--el-text-muted, #6b7280);
       user-select: none;
     }
+
+    @media (pointer: coarse) {
+      input {
+        font-size: max(16px, 1em);
+      }
+    }
   `;
 
   #onInput = (e) => {

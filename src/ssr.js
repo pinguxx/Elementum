@@ -56,10 +56,22 @@ export function renderTemplateToString(templateResult) {
     html += strings[i];
     if (i < values.length) {
       const val = values[i];
-      // Skip event listeners in SSR
-      if (typeof val === 'function' && strings[i].match(/@[\w.-]+=\s*$/)) {
-        // Strip the @event= attribute prefix
-        html = html.replace(/@[\w.-]+=\s*$/, '');
+      // 1. Skip @event= and on<event>= listeners in SSR (never invoke event handlers!)
+      if (typeof val === 'function' && /(?:@[\w.-]+|on[a-z]+)=\s*$/i.test(strings[i])) {
+        html = html.replace(/(?:@[\w.-]+|on[a-z]+)=\s*$/i, '');
+        continue;
+      }
+      // 2. Boolean ?attr= bindings: emit bare attribute if truthy, omit if falsy
+      const boolMatch = strings[i].match(/\?([\w.-]+)=\s*$/);
+      if (boolMatch) {
+        const evaluated = resolveValue(val);
+        const truthy = evaluated !== '' && evaluated !== 'false' && evaluated !== 'null' && evaluated !== 'undefined' && evaluated !== '0';
+        html = html.replace(/\?[\w.-]+=\s*$/, truthy ? boolMatch[1] : '');
+        continue;
+      }
+      // 3. Property .prop= bindings: strip from HTML markup (hydrated on client)
+      if (/\.[\w.-]+=\s*$/.test(strings[i])) {
+        html = html.replace(/\.[\w.-]+=\s*$/, '');
         continue;
       }
       html += resolveValue(val);
@@ -94,8 +106,10 @@ export function renderComponentToDSD(tagName, ComponentClass, attributes = {}, l
   try {
     const instance = new ComponentClass();
     for (const [k, v] of Object.entries(attributes)) {
-      if (instance[k] && isSignal(instance[k])) {
-        instance[k].value = v;
+      const camel = k.replace(/-([a-z])/g, (_, ch) => ch.toUpperCase());
+      const targetKey = (camel in instance && isSignal(instance[camel])) ? camel : k;
+      if (instance[targetKey] && isSignal(instance[targetKey])) {
+        instance[targetKey].value = v;
       }
       if (typeof instance.setAttribute === 'function') {
         instance.setAttribute(k, String(v));

@@ -43,6 +43,7 @@ export class ElAvatar extends Elementum {
   static styles = css`
     :host {
       display: inline-flex;
+      flex-shrink: 0;
       position: relative;
       vertical-align: middle;
       box-sizing: border-box;

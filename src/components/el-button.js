@@ -40,6 +40,8 @@ export class ElButton extends Elementum {
       border-radius: var(--el-radius-md, 8px);
       cursor: pointer;
       user-select: none;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
       transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease, transform 0.1s ease;
       outline: none;
     }
@@ -49,7 +51,16 @@ export class ElButton extends Elementum {
     }
 
     button:not([disabled]):active {
-      transform: translateY(1px);
+      transform: scale(0.97);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      button {
+        transition: none;
+      }
+      button:not([disabled]):active {
+        transform: none;
+      }
     }
 
     /* Disabled State - distinct, washed-out, and accessible */

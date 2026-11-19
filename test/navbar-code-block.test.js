@@ -84,8 +84,9 @@ test('<el-navbar> mobile menu toggles, emits events, closes on outside click, li
 
 test('<el-code-block> renders code, language header, compact mode, slotted fallback, and copies to clipboard', async () => {
   let clipboardText = '';
-  const prevClipboard = navigator.clipboard;
-  Object.defineProperty(navigator, 'clipboard', {
+  const navObj = globalThis.navigator;
+  const prevClipboard = navObj.clipboard;
+  Object.defineProperty(navObj, 'clipboard', {
     configurable: true,
     value: {
       writeText: async (txt) => {
@@ -133,7 +134,7 @@ test('<el-code-block> renders code, language header, compact mode, slotted fallb
     block.remove();
     slotted.remove();
   } finally {
-    Object.defineProperty(navigator, 'clipboard', {
+    Object.defineProperty(navObj, 'clipboard', {
       configurable: true,
       value: prevClipboard,
     });

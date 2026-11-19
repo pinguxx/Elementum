@@ -131,6 +131,7 @@ export class ElDialog extends Elementum {
       .dialog-footer {
         padding-left: var(--el-spacing-md, 16px);
         padding-right: var(--el-spacing-md, 16px);
+        padding-bottom: calc(var(--el-spacing-md, 16px) + env(safe-area-inset-bottom, 0px));
       }
     }
   `;

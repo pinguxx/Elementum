@@ -34,6 +34,13 @@ export class ElNavigationMenu extends Elementum {
       flex-direction: column;
       align-items: stretch;
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
   `;
 
   connected() {

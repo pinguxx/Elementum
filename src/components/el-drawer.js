@@ -523,6 +523,9 @@ export class ElDrawer extends Elementum {
       box-sizing: border-box;
       max-width: 100vw;
       max-height: 100vh;
+      max-height: 100dvh;
+      overscroll-behavior: contain;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
       touch-action: none;
       user-select: none;
       will-change: transform;

@@ -327,6 +327,12 @@ export class ElPromptInput extends Elementum {
         animation-duration: 1.5s;
       }
     }
+
+    @media (pointer: coarse) {
+      textarea {
+        font-size: max(16px, 1em);
+      }
+    }
   `;
 
   render() {

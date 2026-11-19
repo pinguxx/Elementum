@@ -249,6 +249,13 @@ export class ElToolCall extends Elementum {
     .reject-btn:hover {
       background: rgba(220, 38, 38, 0.1);
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
   `;
 
   #statusInfo() {

@@ -54,7 +54,7 @@ export class ElBadge extends Elementum {
       border-radius: var(--el-radius-full, 9999px);
       line-height: 1.2;
       box-sizing: border-box;
-      transition: all 120ms ease;
+      transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease, transform 120ms ease;
     }
 
     :host([variant="default"]) span,

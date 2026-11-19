@@ -1,0 +1,2398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Declarative Shadow DOM (DSD) SSR Example — @wc/elementum</title>
+  <style>
+/**
+ * Elementum Design Tokens
+ * Auto-generated from penpot-tokens.json (Unified Penpot & Figma parser)
+ */
+
+:root,
+:root[data-theme="light"] {
+  /* Brand Colors */
+  --el-color-primary: #2563eb;
+  --el-color-primary-hover: #1d4ed8;
+  --el-color-secondary: #4b5563;
+  --el-color-danger: #dc2626;
+  --el-color-success: #16a34a;
+
+  /* Surfaces & Elevation */
+  --el-surface-base: #ffffff;
+  --el-surface-card: #ffffff;
+  --el-surface-elevated: #ffffff;
+  --el-surface-muted: #f3f4f6;
+  --el-surface-border: #e5e7eb;
+  --el-border-translucent: rgba(15, 23, 42, 0.08);
+
+  /* Subtle Ambient Shadows (Ban the AI look) */
+  --el-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --el-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 8px 16px -4px rgba(0, 0, 0, 0.04);
+  --el-shadow-popover: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  --el-shadow-glow: 0 0 20px -5px rgba(37, 99, 235, 0.25);
+
+  /* Physical Motion & Natural Easing Curves */
+  --el-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --el-ease-in-fast: cubic-bezier(0.7, 0, 0.84, 0);
+  --el-transition-snappy: 150ms var(--el-ease-in-fast);
+  --el-transition-fluid: 280ms var(--el-ease-out-expo);
+
+  /* Typography Colors */
+  --el-text-base: #111827;
+  --el-text-primary: #0f172a;
+  --el-text-secondary: #475569;
+  --el-text-muted: #6b7280;
+  --el-text-inverse: #ffffff;
+
+  /* Font Families */
+  --el-font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --el-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Spacing */
+  --el-spacing-xs: 4px;
+  --el-spacing-sm: 8px;
+  --el-spacing-md: 16px;
+  --el-spacing-lg: 24px;
+  --el-spacing-xl: 32px;
+
+  /* Radii */
+  --el-radius-sm: 4px;
+  --el-radius-md: 8px;
+  --el-radius-lg: 16px;
+  --el-radius-full: 9999px;
+
+  /* Chart Data Series Tokens */
+  --el-chart-1: #2563eb;
+  --el-chart-2: #10b981;
+  --el-chart-3: #f59e0b;
+  --el-chart-4: #8b5cf6;
+  --el-chart-5: #ec4899;
+
+  /* Typographic Rhythm Tokens */
+  --el-typeset-size: 1rem;
+  --el-typeset-leading: 1.75;
+  --el-typeset-flow: 1.25em;
+  --el-typeset-font-body: var(--el-font-sans);
+
+  /* Radix Colors 12-Step Accessible Scale (Light Theme) */
+  --el-step-1: #fbfcfd;  /* App canvas background */
+  --el-step-2: #f8fafc;  /* Subtle component background */
+  --el-step-3: #f1f5f9;  /* Normal component surface */
+  --el-step-4: #e2e8f0;  /* Hovered component surface */
+  --el-step-5: #cbd5e1;  /* Active/selected surface */
+  --el-step-6: #e2e8f0;  /* Subtle borders / dividers */
+  --el-step-7: #cbd5e1;  /* Interactive borders */
+  --el-step-8: #94a3b8;  /* Focus rings & hover borders */
+  --el-step-9: #2563eb;  /* Solid primary accent */
+  --el-step-10: #1d4ed8; /* Hovered solid primary */
+  --el-step-11: #475569; /* Secondary/muted text */
+  --el-step-12: #0f172a; /* High-contrast primary text */
+  --el-typeset-font-heading: var(--el-font-sans);
+
+  /* Component specific tokens (Light) */
+  --el-tooltip-bg: #0f172a;
+  --el-tooltip-text: #ffffff;
+  --el-tooltip-border: rgba(255, 255, 255, 0.12);
+  --el-skeleton-bg: #e2e8f0;
+  --el-skeleton-shimmer: rgba(255, 255, 255, 0.6);
+
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  /* Brand Colors */
+  --el-color-primary: #3b82f6;
+  --el-color-primary-hover: #60a5fa;
+  --el-color-secondary: #9ca3af;
+  --el-color-danger: #ef4444;
+  --el-color-success: #22c55e;
+
+  /* Surfaces (Dark Mode) */
+  --el-surface-base: #0b0f19;
+  --el-surface-card: #111827;
+  --el-surface-elevated: #1e293b;
+  --el-surface-muted: #1e293b;
+  --el-surface-border: #334155;
+  --el-border-translucent: rgba(255, 255, 255, 0.08);
+
+  --el-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --el-shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+  --el-shadow-popover: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  --el-shadow-glow: 0 0 25px -5px rgba(59, 130, 246, 0.35);
+
+  /* Typography Colors (Dark Mode) */
+  --el-text-base: #f9fafb;
+  --el-text-primary: #f8fafc;
+  --el-text-secondary: #94a3b8;
+  --el-text-muted: #64748b;
+  --el-text-inverse: #0f172a;
+
+  /* Chart Colors (Dark Mode) */
+  --el-chart-1: #3b82f6;
+  --el-chart-2: #34d399;
+  --el-chart-3: #fbbf24;
+  --el-chart-4: #a78bfa;
+  --el-chart-5: #f472b6;
+
+  /* Radix Colors 12-Step Accessible Scale (Dark Theme) */
+  --el-step-1: #090d16;  /* App canvas background */
+  --el-step-2: #0f172a;  /* Subtle component background */
+  --el-step-3: #1e293b;  /* Normal component surface */
+  --el-step-4: #334155;  /* Hovered component surface */
+  --el-step-5: #475569;  /* Active/selected surface */
+  --el-step-6: #1e293b;  /* Subtle borders / dividers */
+  --el-step-7: #334155;  /* Interactive borders */
+  --el-step-8: #64748b;  /* Focus rings & hover borders */
+  --el-step-9: #3b82f6;  /* Solid primary accent */
+  --el-step-10: #2563eb; /* Hovered solid primary */
+  --el-step-11: #94a3b8; /* Secondary/muted text */
+  --el-step-12: #f8fafc; /* High-contrast primary text */
+
+  /* Component specific tokens (Dark) */
+  --el-tooltip-bg: #1e293b;
+  --el-tooltip-text: #f8fafc;
+  --el-tooltip-border: #475569;
+  --el-skeleton-bg: #334155;
+  --el-skeleton-shimmer: rgba(255, 255, 255, 0.15);
+
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    --el-color-primary: #3b82f6;
+    --el-color-primary-hover: #60a5fa;
+    --el-color-secondary: #9ca3af;
+    --el-color-danger: #ef4444;
+    --el-color-success: #22c55e;
+
+    --el-surface-base: #0b0f19;
+    --el-surface-card: #111827;
+    --el-surface-elevated: #1e293b;
+    --el-surface-muted: #1e293b;
+    --el-surface-border: #334155;
+    --el-border-translucent: rgba(255, 255, 255, 0.08);
+
+    --el-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --el-shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+    --el-shadow-popover: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+    --el-shadow-glow: 0 0 25px -5px rgba(59, 130, 246, 0.35);
+
+    --el-text-base: #f9fafb;
+    --el-text-primary: #f8fafc;
+    --el-text-secondary: #94a3b8;
+    --el-text-muted: #64748b;
+    --el-text-inverse: #0f172a;
+
+    --el-chart-1: #3b82f6;
+    --el-chart-2: #34d399;
+    --el-chart-3: #fbbf24;
+    --el-chart-4: #a78bfa;
+    --el-chart-5: #f472b6;
+
+    /* Radix Colors 12-Step Accessible Scale (Dark Theme) */
+    --el-step-1: #090d16;
+    --el-step-2: #0f172a;
+    --el-step-3: #1e293b;
+    --el-step-4: #334155;
+    --el-step-5: #475569;
+    --el-step-6: #1e293b;
+    --el-step-7: #334155;
+    --el-step-8: #64748b;
+    --el-step-9: #3b82f6;
+    --el-step-10: #2563eb;
+    --el-step-11: #94a3b8;
+    --el-step-12: #f8fafc;
+
+    /* Component specific tokens (Dark Media) */
+    --el-tooltip-bg: #1e293b;
+    --el-tooltip-text: #f8fafc;
+    --el-tooltip-border: #475569;
+    --el-skeleton-bg: #334155;
+    --el-skeleton-shimmer: rgba(255, 255, 255, 0.15);
+
+    color-scheme: dark;
+  }
+}
+
+/* ========================================================
+   Typographic Rhythm Container (.el-typeset)
+   ======================================================== */
+.el-typeset {
+  font-family: var(--el-typeset-font-body, var(--el-font-sans));
+  font-size: var(--el-typeset-size, 1rem);
+  line-height: var(--el-typeset-leading, 1.75);
+  color: var(--el-text-primary, #0f172a);
+}
+
+.el-typeset :is(h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, pre, table) {
+  margin-block: 0;
+}
+
+.el-typeset :is(h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, pre, table) + * {
+  margin-top: var(--el-typeset-flow, 1.25em);
+}
+
+.el-typeset h1 {
+  font-family: var(--el-typeset-font-heading, var(--el-font-sans));
+  font-size: 2.25em;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--el-text-base, #111827);
+}
+
+.el-typeset h2 {
+  font-family: var(--el-typeset-font-heading, var(--el-font-sans));
+  font-size: 1.5em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  color: var(--el-text-base, #111827);
+  border-bottom: 1px solid var(--el-surface-border, #e2e8f0);
+  padding-bottom: 0.3em;
+}
+
+.el-typeset h3 {
+  font-family: var(--el-typeset-font-heading, var(--el-font-sans));
+  font-size: 1.25em;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.4;
+  color: var(--el-text-base, #111827);
+}
+
+.el-typeset p {
+  color: var(--el-text-secondary, #475569);
+}
+
+.el-typeset blockquote {
+  border-left: 3px solid var(--el-color-primary, #2563eb);
+  padding-left: 1em;
+  font-style: italic;
+  color: var(--el-text-muted, #64748b);
+}
+
+.el-typeset ul, .el-typeset ol {
+  padding-left: 1.5em;
+  color: var(--el-text-secondary, #475569);
+}
+
+.el-typeset li + li {
+  margin-top: calc(var(--el-typeset-flow, 1.25em) * 0.35);
+}
+
+.el-typeset code {
+  font-family: var(--el-font-mono);
+  background: var(--el-surface-muted, #f1f5f9);
+  padding: 0.2em 0.4em;
+  border-radius: var(--el-radius-sm, 4px);
+  font-size: 0.875em;
+  color: var(--el-text-primary, #0f172a);
+}
+
+.el-typeset pre {
+  background: var(--el-surface-elevated, #1e293b);
+  color: #f8fafc;
+  padding: 1em 1.25em;
+  border-radius: var(--el-radius-md, 8px);
+  overflow-x: auto;
+  font-family: var(--el-font-mono);
+  font-size: 0.875em;
+  line-height: 1.6;
+}
+
+.el-typeset pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+/* ========================================================
+   FOUC & Layout-Shift Prevention for Custom Elements
+   ======================================================== */
+el-command:not(:defined),
+el-dialog:not(:defined),
+el-drawer:not(:defined),
+el-toaster:not(:defined),
+el-dropdown:not(:defined) {
+  display: none !important;
+}
+
+:not(:defined):is(
+  el-button,
+  el-badge,
+  el-input,
+  el-calendar,
+  el-datepicker,
+  el-tabs,
+  el-tab,
+  el-select,
+  el-switch,
+  el-tooltip,
+  el-accordion,
+  el-accordion-item,
+  el-table,
+  el-progress,
+  el-spinner,
+  el-avatar,
+  el-avatar-group,
+  el-segmented-control,
+  el-pagination,
+  el-chip,
+  el-autocomplete,
+  el-number-flow,
+  el-otp-input,
+  el-prompt-input,
+  el-reasoning-card,
+  el-border-beam,
+  el-streaming-text,
+  el-chart,
+  el-theme-switch
+) {
+  opacity: 0;
+}
+
+:defined {
+  animation: el-defined-in 120ms var(--el-ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+@keyframes el-defined-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ========================================================
+   Sidebar Layout & State Helpers
+   ======================================================== */
+el-sidebar[collapsed] .collapsible-text,
+[collapsed] .collapsible-text {
+  display: none !important;
+}
+
+el-sidebar[collapsed] el-sidebar-header > div,
+el-sidebar[collapsed] el-sidebar-header {
+  justify-content: center !important;
+}
+
+el-sidebar[collapsed] el-sidebar-content el-button,
+el-sidebar[collapsed] el-sidebar-content button {
+  width: 36px !important;
+  min-width: 36px !important;
+  max-width: 36px !important;
+  padding: 6px 0 !important;
+  justify-content: center !important;
+  text-align: center !important;
+  margin: 0 auto !important;
+}
+
+el-sidebar[collapsed] el-sidebar-content div {
+  align-items: center !important;
+}
+
+/* ========================================================
+   High-Contrast Button & Theme Switch Shadow Part Overrides
+   ======================================================== */
+:root[data-theme="dark"] el-button[variant="secondary"]::part(button) {
+  background-color: #1e293b;
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+:root[data-theme="dark"] el-button[variant="secondary"]::part(button):hover {
+  background-color: #334155;
+  color: #f8fafc;
+  border-color: #475569;
+}
+
+:root[data-theme="dark"] el-theme-switch::part(button) {
+  background-color: #1e293b;
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+:root[data-theme="dark"] el-theme-switch::part(button):hover {
+  background-color: #334155;
+  color: #f8fafc;
+  border-color: var(--el-color-primary, #3b82f6);
+}
+
+
+
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--el-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+      background: var(--el-surface-muted, #f8fafc);
+      color: var(--el-text-primary, #0f172a);
+      min-height: 100vh;
+      padding-bottom: 56px;
+    }
+    .shell {
+      max-width: 1080px;
+      margin: 28px auto 0;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    .hero h1 {
+      margin: 12px 0 8px;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      letter-spacing: -0.02em;
+    }
+    .hero p { margin: 0; color: var(--el-text-secondary, #475569); max-width: 65ch; }
+    .badges { display: flex; flex-wrap: wrap; gap: 8px; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .card-pad { padding: 4px; display: flex; flex-direction: column; gap: 14px; }
+    .card-pad h3 { margin: 0; font-size: 1.05rem; }
+    .muted { color: var(--el-text-secondary, #475569); font-size: 0.9rem; margin: 0; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .profile-row { display: flex; align-items: center; gap: 12px; }
+    .metric { display: flex; flex-direction: column; gap: 6px; }
+    .metric-head { display: flex; justify-content: space-between; font-size: 0.85rem; }
+    .mode-links { display: flex; gap: 12px; flex-wrap: wrap; }
+    .mode-links a {
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      background: var(--el-surface-base, #ffffff);
+      color: var(--el-text-primary, #0f172a);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .mode-links a.active {
+      background: var(--el-color-primary, #2563eb);
+      color: #ffffff;
+      border-color: var(--el-color-primary, #2563eb);
+    }
+  </style>
+</head>
+<body>
+  <el-navbar sticky brand="⚡ Elementum" badge="DSD SSR" badge-variant="success" href="../index.html"><template shadowrootmode="open"><style>
+    :host {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      position: relative;
+      z-index: 1000;
+      font-family: var(--el-font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+    }
+
+    :host([sticky]) {
+      position: sticky;
+      top: 0;
+    }
+
+    .navbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 16px;
+      width: 100%;
+      box-sizing: border-box;
+      position: relative;
+      background: var(--el-surface-card, #ffffff);
+      background: color-mix(in srgb, var(--el-surface-card, #ffffff) 92%, transparent);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--el-surface-border, #e2e8f0);
+      color: var(--el-text-primary, #0f172a);
+    }
+
+    .left-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .brand-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      max-width: 100%;
+      font-weight: 800;
+      font-size: 1.05rem;
+      text-decoration: none;
+      color: inherit;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-links {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 6px;
+      padding: 14px 16px;
+      background: var(--el-surface-card, #ffffff);
+      border-bottom: 1px solid var(--el-surface-border, #e2e8f0);
+      box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.14);
+      z-index: 1001;
+      box-sizing: border-box;
+    }
+
+    .nav-links.open,
+    :host([open]) .nav-links {
+      display: flex;
+    }
+
+    ::slotted(a),
+    ::slotted(el-route-link) {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--el-text-secondary, #475569);
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: var(--el-radius-md, 6px);
+      transition: background-color 0.15s ease, color 0.15s ease;
+      white-space: nowrap;
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    ::slotted(a:hover),
+    ::slotted(a.active),
+    ::slotted(a[active]),
+    ::slotted(el-route-link:hover),
+    ::slotted(el-route-link[active]) {
+      color: var(--el-color-primary, #2563eb);
+      background: var(--el-surface-muted, #f1f5f9);
+      font-weight: 600;
+    }
+
+    .right-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .mobile-menu-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      background: var(--el-surface-muted, #f1f5f9);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      border-radius: var(--el-radius-md, 8px);
+      color: var(--el-text-primary, #0f172a);
+      cursor: pointer;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .mobile-menu-btn:hover {
+      background: var(--el-step-4, #e2e8f0);
+    }
+
+    .mobile-menu-btn:focus-visible {
+      outline: 2px solid var(--el-color-primary, #2563eb);
+      outline-offset: 2px;
+    }
+
+    @media (min-width: 860px) {
+      .navbar-inner {
+        padding: 10px 28px;
+      }
+
+      .left-group {
+        flex: 0 0 auto;
+      }
+
+      .nav-links,
+      :host([open]) .nav-links {
+        display: flex;
+        position: static;
+        flex-direction: row;
+        align-items: center;
+        gap: 6px;
+        padding: 0;
+        background: transparent;
+        border-bottom: none;
+        box-shadow: none;
+        width: auto;
+      }
+
+      ::slotted(a),
+      ::slotted(el-route-link) {
+        width: auto;
+        font-size: 0.875rem;
+        padding: 6px 12px;
+      }
+
+      .mobile-menu-btn {
+        display: none;
+      }
+    }
+  </style>
+      <header class="navbar-inner" part="header">
+        <div class="left-group" part="start">
+          <slot name="start"></slot>
+          <slot name="brand">
+            <a class="brand-link" href=../index.html part="brand">
+              <span class="brand-text">⚡ Elementum</span>
+              <el-badge size="sm" variant=success count=DSD SSR></el-badge>
+            </a>
+          </slot>
+        </div>
+
+        <nav
+          class=nav-links
+          part="nav"
+          aria-label="Primary navigation"
+        >
+          <slot></slot>
+        </nav>
+
+        <div class="right-group" part="actions">
+          <slot name="actions"></slot>
+          <button
+            class="mobile-menu-btn"
+            part="toggle"
+            type="button"
+            aria-label="Toggle navigation"
+            aria-expanded=false
+            
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+        </div>
+      </header>
+    </template>
+      <a href="../index.html">Home</a>
+      <a href="../docs.html#ssr-dsd">SSR Docs</a>
+      <a href="./index.html">Catalog</a>
+      <el-theme-switch slot="actions"><template shadowrootmode="open"><style>
+    :host {
+      display: inline-block;
+      user-select: none;
+      font-family: inherit;
+    }
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--el-spacing-xs, 4px);
+      padding: 6px 12px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--el-text-primary, #0f172a);
+      background: var(--el-surface-muted, #f3f4f6);
+      border: 1px solid var(--el-surface-border, #e5e7eb);
+      border-radius: var(--el-radius-full, 9999px);
+      cursor: pointer;
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+      outline: none;
+    }
+
+    button:hover {
+      background: var(--el-step-4, var(--el-surface-border, #e2e8f0));
+      color: var(--el-text-primary, #0f172a);
+      border-color: var(--el-color-primary, #2563eb);
+    }
+
+    button:focus-visible {
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+    }
+
+    .icon {
+      font-size: 1rem;
+    }
+  </style>
+      <button
+        type="button"
+        part="button"
+        
+        aria-label="Toggle color theme"
+      >
+        <span class="icon">☀️</span>
+        <span>Light</span>
+      </button>
+    </template></el-theme-switch>
+    </el-navbar>
+
+  <main class="shell">
+    <header class="hero">
+      <div class="badges">
+        <el-badge variant="success"><template shadowrootmode="open"><style>
+    :host {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      font-family: var(--el-font-sans, system-ui, sans-serif);
+    }
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: var(--el-radius-full, 9999px);
+      line-height: 1.2;
+      box-sizing: border-box;
+      transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease, transform 120ms ease;
+    }
+
+    :host([variant="default"]) span,
+    :host(:not([variant])) span {
+      background: var(--el-surface-muted, #f1f5f9);
+      color: var(--el-text-primary, #0f172a);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+    }
+
+    :host([variant="primary"]) span {
+      background: var(--el-color-primary, #2563eb);
+      color: #ffffff;
+      border: 1px solid transparent;
+    }
+
+    :host([variant="secondary"]) span {
+      background: var(--el-surface-muted, #f1f5f9);
+      color: var(--el-text-muted, #475569);
+      border: 1px solid var(--el-surface-border, #cbd5e1);
+    }
+
+    :host([variant="success"]) span {
+      background: #dcfce7;
+      color: var(--el-color-success, #16a34a);
+      border: 1px solid rgba(22, 163, 74, 0.2);
+    }
+
+    :host([variant="danger"]) span {
+      background: #fee2e2;
+      color: var(--el-color-danger, #dc2626);
+      border: 1px solid rgba(220, 38, 38, 0.2);
+    }
+
+    :host([variant="warning"]) span {
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid rgba(180, 83, 9, 0.2);
+    }
+
+    :host([variant="info"]) span {
+      background: #e0f2fe;
+      color: #0284c7;
+      border: 1px solid rgba(2, 132, 199, 0.2);
+    }
+
+    :host([variant="outline"]) span {
+      background: transparent;
+      color: var(--el-text-primary, #0f172a);
+      border: 1px solid var(--el-surface-border, #cbd5e1);
+    }
+
+    :host([size="sm"]) span {
+      padding: 1px 6px;
+      font-size: 0.6875rem;
+    }
+
+    :host([size="lg"]) span {
+      padding: 4px 12px;
+      font-size: 0.875rem;
+    }
+  </style>
+      <span part="badge">
+        <slot>Badge</slot>
+      </span>
+    </template>Declarative Shadow DOM</el-badge>
+        <el-badge variant="primary"><template shadowrootmode="open"><style>
+    :host {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      font-family: var(--el-font-sans, system-ui, sans-serif);
+    }
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: var(--el-radius-full, 9999px);
+      line-height: 1.2;
+      box-sizing: border-box;
+      transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease, transform 120ms ease;
+    }
+
+    :host([variant="default"]) span,
+    :host(:not([variant])) span {
+      background: var(--el-surface-muted, #f1f5f9);
+      color: var(--el-text-primary, #0f172a);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+    }
+
+    :host([variant="primary"]) span {
+      background: var(--el-color-primary, #2563eb);
+      color: #ffffff;
+      border: 1px solid transparent;
+    }
+
+    :host([variant="secondary"]) span {
+      background: var(--el-surface-muted, #f1f5f9);
+      color: var(--el-text-muted, #475569);
+      border: 1px solid var(--el-surface-border, #cbd5e1);
+    }
+
+    :host([variant="success"]) span {
+      background: #dcfce7;
+      color: var(--el-color-success, #16a34a);
+      border: 1px solid rgba(22, 163, 74, 0.2);
+    }
+
+    :host([variant="danger"]) span {
+      background: #fee2e2;
+      color: var(--el-color-danger, #dc2626);
+      border: 1px solid rgba(220, 38, 38, 0.2);
+    }
+
+    :host([variant="warning"]) span {
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid rgba(180, 83, 9, 0.2);
+    }
+
+    :host([variant="info"]) span {
+      background: #e0f2fe;
+      color: #0284c7;
+      border: 1px solid rgba(2, 132, 199, 0.2);
+    }
+
+    :host([variant="outline"]) span {
+      background: transparent;
+      color: var(--el-text-primary, #0f172a);
+      border: 1px solid var(--el-surface-border, #cbd5e1);
+    }
+
+    :host([size="sm"]) span {
+      padding: 1px 6px;
+      font-size: 0.6875rem;
+    }
+
+    :host([size="lg"]) span {
+      padding: 4px 12px;
+      font-size: 0.875rem;
+    }
+  </style>
+      <span part="badge">
+        <slot>Badge</slot>
+      </span>
+    </template>Zero Runtime Deps</el-badge>
+        <el-badge variant="info"><template shadowrootmode="open"><style>
+    :host {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      font-family: var(--el-font-sans, system-ui, sans-serif);
+    }
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: var(--el-radius-full, 9999px);
+      line-height: 1.2;
+      box-sizing: border-box;
+      transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease, transform 120ms ease;
+    }
+
+    :host([variant="default"]) span,
+    :host(:not([variant])) span {
+      background: var(--el-surface-muted, #f1f5f9);
+      color: var(--el-text-primary, #0f172a);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+    }
+
+    :host([variant="primary"]) span {
+      background: var(--el-color-primary, #2563eb);
+      color: #ffffff;
+      border: 1px solid transparent;
+    }
+
+    :host([variant="secondary"]) span {
+      background: var(--el-surface-muted, #f1f5f9);
+      color: var(--el-text-muted, #475569);
+      border: 1px solid var(--el-surface-border, #cbd5e1);
+    }
+
+    :host([variant="success"]) span {
+      background: #dcfce7;
+      color: var(--el-color-success, #16a34a);
+      border: 1px solid rgba(22, 163, 74, 0.2);
+    }
+
+    :host([variant="danger"]) span {
+      background: #fee2e2;
+      color: var(--el-color-danger, #dc2626);
+      border: 1px solid rgba(220, 38, 38, 0.2);
+    }
+
+    :host([variant="warning"]) span {
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid rgba(180, 83, 9, 0.2);
+    }
+
+    :host([variant="info"]) span {
+      background: #e0f2fe;
+      color: #0284c7;
+      border: 1px solid rgba(2, 132, 199, 0.2);
+    }
+
+    :host([variant="outline"]) span {
+      background: transparent;
+      color: var(--el-text-primary, #0f172a);
+      border: 1px solid var(--el-surface-border, #cbd5e1);
+    }
+
+    :host([size="sm"]) span {
+      padding: 1px 6px;
+      font-size: 0.6875rem;
+    }
+
+    :host([size="lg"]) span {
+      padding: 4px 12px;
+      font-size: 0.875rem;
+    }
+  </style>
+      <span part="badge">
+        <slot>Badge</slot>
+      </span>
+    </template>Hydration: ON</el-badge>
+      </div>
+      <h1>Declarative Shadow DOM (DSD) SSR</h1>
+      <p>
+        Server-rendered in pure Node.js using <code>renderComponentToDSD()</code>. Inspect Page Source to see real
+        <code>&lt;template shadowrootmode="open"&gt;</code> markup emitted before any client JavaScript runs.
+      </p>
+    </header>
+
+    <p class="muted">Static DSD snapshot pre-rendered by <code>node examples/ssr-server.js --static examples/ssr-demo.html</code>. Run <code>npm run ssr</code> to test live <code>?hydrate=0</code> vs <code>?hydrate=1</code> on <code>http://localhost:3333</code>.</p>
+    <el-callout variant="success"><template shadowrootmode="open"><style>
+    :host {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: var(--el-radius-md, 8px);
+      border: 1px solid transparent;
+      font-family: inherit;
+      font-size: var(--el-text-sm, 0.875rem);
+      line-height: 1.5;
+      box-sizing: border-box;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    :host([size="sm"]) {
+      padding: 8px 12px;
+      font-size: 0.8125rem;
+      gap: 8px;
+    }
+
+    :host([size="lg"]) {
+      padding: 16px 20px;
+      font-size: 1rem;
+      gap: 16px;
+    }
+
+    /* Info & Primary */
+    :host, :host([variant="info"]), :host([variant="primary"]) {
+      background-color: rgba(37, 99, 235, 0.08);
+      border-color: rgba(37, 99, 235, 0.2);
+      color: #1e40af;
+    }
+    :host-context([data-theme="dark"]), :host-context([data-theme="dark"])[variant="info"], :host-context([data-theme="dark"])[variant="primary"] {
+      background-color: rgba(59, 130, 246, 0.12);
+      border-color: rgba(59, 130, 246, 0.25);
+      color: #93c5fd;
+    }
+
+    /* Secondary */
+    :host([variant="secondary"]) {
+      background-color: var(--el-surface-muted, #f1f5f9);
+      border-color: var(--el-surface-border, #e2e8f0);
+      color: var(--el-text-secondary, #475569);
+    }
+    :host-context([data-theme="dark"])[variant="secondary"] {
+      background-color: rgba(30, 41, 59, 0.7);
+      border-color: #334155;
+      color: #cbd5e1;
+    }
+
+    /* Success */
+    :host([variant="success"]) {
+      background-color: rgba(16, 185, 129, 0.08);
+      border-color: rgba(16, 185, 129, 0.25);
+      color: #065f46;
+    }
+    :host-context([data-theme="dark"])[variant="success"] {
+      background-color: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.25);
+      color: #6ee7b7;
+    }
+
+    /* Warning */
+    :host([variant="warning"]) {
+      background-color: rgba(245, 158, 11, 0.08);
+      border-color: rgba(245, 158, 11, 0.25);
+      color: #92400e;
+    }
+    :host-context([data-theme="dark"])[variant="warning"] {
+      background-color: rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.25);
+      color: #fcd34d;
+    }
+
+    /* Danger */
+    :host([variant="danger"]) {
+      background-color: rgba(239, 68, 68, 0.08);
+      border-color: rgba(239, 68, 68, 0.25);
+      color: #991b1b;
+    }
+    :host-context([data-theme="dark"])[variant="danger"] {
+      background-color: rgba(239, 68, 68, 0.12);
+      border-color: rgba(239, 68, 68, 0.25);
+      color: #fca5a5;
+    }
+
+    .icon-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      font-size: 1.15em;
+    }
+
+    .content-wrapper {
+      flex: 1;
+      min-width: 0;
+    }
+
+    ::slotted([slot="title"]) {
+      font-weight: 600;
+      margin-bottom: 2px;
+      display: block;
+      color: inherit;
+    }
+  </style>
+      <div class="icon-wrapper" aria-hidden="true">
+        <slot name="icon">✓</slot>
+      </div>
+      <div class="content-wrapper">
+        <slot name="title"></slot>
+        <slot></slot>
+      </div>
+    </template><span slot="title">Rendered on the Server at 2026-11-18T23:41:25.653Z</span>
+     Every component below was serialized in pure Node.js via <code>renderComponentToDSD()</code> into standard
+     <code>&lt;template shadowrootmode="open"&gt;</code>. Even with JavaScript disabled (<code>?hydrate=0</code>),
+     Shadow DOM styles and slots paint immediately with zero FOUC or layout shift.</el-callout>
+
+    <section class="grid-2">
+      <el-card><template shadowrootmode="open"><style>
+    :host {
+      display: flex;
+      flex-direction: column;
+      background: var(--el-surface-base, #ffffff);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      border-radius: var(--el-radius-lg, 12px);
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+      color: var(--el-text-primary, #0f172a);
+      font-family: var(--el-font-sans, system-ui, sans-serif);
+      box-sizing: border-box;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    :root[data-theme="dark"] :host {
+      background: #1e293b;
+      border-color: #334155;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+
+    :host([bordered="false"]) {
+      border-color: transparent !important;
+      box-shadow: none;
+    }
+
+    :host([glass]) {
+      background: rgba(255, 255, 255, 0.68);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-color: rgba(148, 163, 184, 0.35);
+      box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
+    }
+
+    :root[data-theme="dark"] :host([glass]) {
+      background: rgba(30, 41, 59, 0.68);
+      border-color: rgba(148, 163, 184, 0.25);
+    }
+
+    :host([hoverable]) {
+      cursor: pointer;
+    }
+
+    :host([hoverable]:hover) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+      border-color: var(--el-color-primary, #2563eb);
+    }
+
+    .card-auto-header {
+      padding: 18px 24px 0 24px;
+      font-size: 1.125rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--el-text-primary, #0f172a);
+    }
+
+    :root[data-theme="dark"] .card-auto-header {
+      color: #f8fafc;
+    }
+
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      box-sizing: border-box;
+    }
+
+    :host(:not([data-compound])) .card-body {
+      padding: 16px 24px 20px 24px;
+    }
+  </style>
+      
+      <div class="card-body" part="body">
+        <slot></slot>
+      </div>
+    </template><div class="card-pad">
+      <h3>1. Server-Painted Actions</h3>
+      <p class="muted">Buttons render with full Shadow DOM styling before client JS downloads. When hydrated, the primary button becomes reactive.</p>
+      <div class="btn-row">
+        <el-button id="ssr-counter-btn" variant="primary" size="md"><template shadowrootmode="open"><style>
+    :host {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    :host([disabled]),
+    :host([aria-disabled="true"]) {
+      cursor: not-allowed;
+    }
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--el-spacing-sm, 8px);
+      font-family: inherit;
+      font-weight: 500;
+      border: 1px solid transparent;
+      border-radius: var(--el-radius-md, 8px);
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease, transform 0.1s ease;
+      outline: none;
+    }
+
+    button:focus-visible {
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4);
+    }
+
+    button:not([disabled]):active {
+      transform: scale(0.97);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      button {
+        transition: none;
+      }
+      button:not([disabled]):active {
+        transform: none;
+      }
+    }
+
+    /* Disabled State - distinct, washed-out, and accessible */
+    button[disabled],
+    button:disabled,
+    :host([disabled]) button,
+    :host([aria-disabled="true"]) button {
+      opacity: 0.45;
+      cursor: not-allowed !important;
+      pointer-events: none !important;
+      box-shadow: none !important;
+      transform: none !important;
+      filter: grayscale(0.2);
+    }
+
+    :root[data-theme="dark"] button[disabled],
+    :root[data-theme="dark"] button:disabled,
+    :root[data-theme="dark"] :host([disabled]) button,
+    :root[data-theme="dark"] :host([aria-disabled="true"]) button {
+      opacity: 0.38;
+      filter: grayscale(0.3);
+    }
+
+    /* Size Variants */
+    :host([size="sm"]) button {
+      padding: var(--el-spacing-xs, 4px) var(--el-spacing-sm, 8px);
+      font-size: 0.8125rem;
+    }
+
+    :host([size="md"]) button,
+    :host(:not([size])) button {
+      padding: var(--el-spacing-sm, 8px) var(--el-spacing-md, 16px);
+      font-size: 0.9375rem;
+    }
+
+    :host([size="lg"]) button {
+      padding: var(--el-spacing-md, 16px) var(--el-spacing-lg, 24px);
+      font-size: 1.0625rem;
+    }
+
+    /* Color Variants (from Figma tokens) */
+    :host([variant="primary"]) button,
+    :host(:not([variant])) button {
+      background-color: var(--el-color-primary, #2563eb);
+      color: #ffffff;
+    }
+    :host([variant="primary"]:not([disabled])) button:not([disabled]):hover,
+    :host(:not([variant]):not([disabled])) button:not([disabled]):hover {
+      background-color: var(--el-color-primary-hover, #1d4ed8);
+    }
+
+    :host([variant="secondary"]) button {
+      background-color: var(--el-surface-muted, #f3f4f6);
+      color: var(--el-text-primary, #0f172a);
+      border-color: var(--el-surface-border, #e5e7eb);
+    }
+    :host([variant="secondary"]:not([disabled])) button:not([disabled]):hover {
+      background-color: var(--el-step-4, var(--el-surface-border, #e2e8f0));
+      color: var(--el-text-primary, #0f172a);
+      border-color: var(--el-step-7, var(--el-surface-border, #cbd5e1));
+    }
+
+    :host([variant="outline"]) button {
+      background-color: transparent;
+      color: var(--el-text-primary, #0f172a);
+      border-color: var(--el-surface-border, #cbd5e1);
+    }
+    :host([variant="outline"]:not([disabled])) button:not([disabled]):hover {
+      background-color: var(--el-step-4, var(--el-surface-border, #e2e8f0));
+      color: var(--el-text-primary, #0f172a);
+      border-color: var(--el-step-7, var(--el-surface-border, #94a3b8));
+    }
+
+    :host([variant="danger"]) button {
+      background-color: var(--el-color-danger, #dc2626);
+      color: #ffffff;
+    }
+    :host([variant="danger"]:not([disabled])) button:not([disabled]):hover {
+      background-color: #b91c1c;
+    }
+
+    :host([variant="ghost"]) button {
+      background-color: transparent;
+      color: var(--el-color-primary, #2563eb);
+    }
+    :host([variant="ghost"]:not([disabled])) button:not([disabled]):hover {
+      background-color: var(--el-step-3, var(--el-surface-muted, #f1f5f9));
+      color: var(--el-color-primary-hover, #1d4ed8);
+    }
+  </style>
+      <button
+        part="button"
+        
+        aria-disabled=false
+        
+      >
+        <slot name="prefix"></slot>
+        <slot></slot>
+        <slot name="suffix"></slot>
+      </button>
+    </template>Interactive Hydrated Clicks: 0</el-button>
+        <el-button variant="secondary" size="md"><template shadowrootmode="open"><style>
+    :host {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    :host([disabled]),
+    :host([aria-disabled="true"]) {
+      cursor: not-allowed;
+    }
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--el-spacing-sm, 8px);
+      font-family: inherit;
+      font-weight: 500;
+      border: 1px solid transparent;
+      border-radius: var(--el-radius-md, 8px);
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease, transform 0.1s ease;
+      outline: none;
+    }
+
+    button:focus-visible {
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4);
+    }
+
+    button:not([disabled]):active {
+      transform: scale(0.97);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      button {
+        transition: none;
+      }
+      button:not([disabled]):active {
+        transform: none;
+      }
+    }
+
+    /* Disabled State - distinct, washed-out, and accessible */
+    button[disabled],
+    button:disabled,
+    :host([disabled]) button,
+    :host([aria-disabled="true"]) button {
+      opacity: 0.45;
+      cursor: not-allowed !important;
+      pointer-events: none !important;
+      box-shadow: none !important;
+      transform: none !important;
+      filter: grayscale(0.2);
+    }
+
+    :root[data-theme="dark"] button[disabled],
+    :root[data-theme="dark"] button:disabled,
+    :root[data-theme="dark"] :host([disabled]) button,
+    :root[data-theme="dark"] :host([aria-disabled="true"]) button {
+      opacity: 0.38;
+      filter: grayscale(0.3);
+    }
+
+    /* Size Variants */
+    :host([size="sm"]) button {
+      padding: var(--el-spacing-xs, 4px) var(--el-spacing-sm, 8px);
+      font-size: 0.8125rem;
+    }
+
+    :host([size="md"]) button,
+    :host(:not([size])) button {
+      padding: var(--el-spacing-sm, 8px) var(--el-spacing-md, 16px);
+      font-size: 0.9375rem;
+    }
+
+    :host([size="lg"]) button {
+      padding: var(--el-spacing-md, 16px) var(--el-spacing-lg, 24px);
+      font-size: 1.0625rem;
+    }
+
+    /* Color Variants (from Figma tokens) */
+    :host([variant="primary"]) button,
+    :host(:not([variant])) button {
+      background-color: var(--el-color-primary, #2563eb);
+      color: #ffffff;
+    }
+    :host([variant="primary"]:not([disabled])) button:not([disabled]):hover,
+    :host(:not([variant]):not([disabled])) button:not([disabled]):hover {
+      background-color: var(--el-color-primary-hover, #1d4ed8);
+    }
+
+    :host([variant="secondary"]) button {
+      background-color: var(--el-surface-muted, #f3f4f6);
+      color: var(--el-text-primary, #0f172a);
+      border-color: var(--el-surface-border, #e5e7eb);
+    }
+    :host([variant="secondary"]:not([disabled])) button:not([disabled]):hover {
+      background-color: var(--el-step-4, var(--el-surface-border, #e2e8f0));
+      color: var(--el-text-primary, #0f172a);
+      border-color: var(--el-step-7, var(--el-surface-border, #cbd5e1));
+    }
+
+    :host([variant="outline"]) button {
+      background-color: transparent;
+      color: var(--el-text-primary, #0f172a);
+      border-color: var(--el-surface-border, #cbd5e1);
+    }
+    :host([variant="outline"]:not([disabled])) button:not([disabled]):hover {
+      background-color: var(--el-step-4, var(--el-surface-border, #e2e8f0));
+      color: var(--el-text-primary, #0f172a);
+      border-color: var(--el-step-7, var(--el-surface-border, #94a3b8));
+    }
+
+    :host([variant="danger"]) button {
+      background-color: var(--el-color-danger, #dc2626);
+      color: #ffffff;
+    }
+    :host([variant="danger"]:not([disabled])) button:not([disabled]):hover {
+      background-color: #b91c1c;
+    }
+
+    :host([variant="ghost"]) button {
+      background-color: transparent;
+      color: var(--el-color-primary, #2563eb);
+    }
+    :host([variant="ghost"]:not([disabled])) button:not([disabled]):hover {
+      background-color: var(--el-step-3, var(--el-surface-muted, #f1f5f9));
+      color: var(--el-color-primary-hover, #1d4ed8);
+    }
+  </style>
+      <button
+        part="button"
+        
+        aria-disabled=false
+        
+      >
+        <slot name="prefix"></slot>
+        <slot></slot>
+        <slot name="suffix"></slot>
+      </button>
+    </template>Secondary Action</el-button>
+        <el-button variant="danger" size="md"><template shadowrootmode="open"><style>
+    :host {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    :host([disabled]),
+    :host([aria-disabled="true"]) {
+      cursor: not-allowed;
+    }
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--el-spacing-sm, 8px);
+      font-family: inherit;
+      font-weight: 500;
+      border: 1px solid transparent;
+      border-radius: var(--el-radius-md, 8px);
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease, transform 0.1s ease;
+      outline: none;
+    }
+
+    button:focus-visible {
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4);
+    }
+
+    button:not([disabled]):active {
+      transform: scale(0.97);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      button {
+        transition: none;
+      }
+      button:not([disabled]):active {
+        transform: none;
+      }
+    }
+
+    /* Disabled State - distinct, washed-out, and accessible */
+    button[disabled],
+    button:disabled,
+    :host([disabled]) button,
+    :host([aria-disabled="true"]) button {
+      opacity: 0.45;
+      cursor: not-allowed !important;
+      pointer-events: none !important;
+      box-shadow: none !important;
+      transform: none !important;
+      filter: grayscale(0.2);
+    }
+
+    :root[data-theme="dark"] button[disabled],
+    :root[data-theme="dark"] button:disabled,
+    :root[data-theme="dark"] :host([disabled]) button,
+    :root[data-theme="dark"] :host([aria-disabled="true"]) button {
+      opacity: 0.38;
+      filter: grayscale(0.3);
+    }
+
+    /* Size Variants */
+    :host([size="sm"]) button {
+      padding: var(--el-spacing-xs, 4px) var(--el-spacing-sm, 8px);
+      font-size: 0.8125rem;
+    }
+
+    :host([size="md"]) button,
+    :host(:not([size])) button {
+      padding: var(--el-spacing-sm, 8px) var(--el-spacing-md, 16px);
+      font-size: 0.9375rem;
+    }
+
+    :host([size="lg"]) button {
+      padding: var(--el-spacing-md, 16px) var(--el-spacing-lg, 24px);
+      font-size: 1.0625rem;
+    }
+
+    /* Color Variants (from Figma tokens) */
+    :host([variant="primary"]) button,
+    :host(:not([variant])) button {
+      background-color: var(--el-color-primary, #2563eb);
+      color: #ffffff;
+    }
+    :host([variant="primary"]:not([disabled])) button:not([disabled]):hover,
+    :host(:not([variant]):not([disabled])) button:not([disabled]):hover {
+      background-color: var(--el-color-primary-hover, #1d4ed8);
+    }
+
+    :host([variant="secondary"]) button {
+      background-color: var(--el-surface-muted, #f3f4f6);
+      color: var(--el-text-primary, #0f172a);
+      border-color: var(--el-surface-border, #e5e7eb);
+    }
+    :host([variant="secondary"]:not([disabled])) button:not([disabled]):hover {
+      background-color: var(--el-step-4, var(--el-surface-border, #e2e8f0));
+      color: var(--el-text-primary, #0f172a);
+      border-color: var(--el-step-7, var(--el-surface-border, #cbd5e1));
+    }
+
+    :host([variant="outline"]) button {
+      background-color: transparent;
+      color: var(--el-text-primary, #0f172a);
+      border-color: var(--el-surface-border, #cbd5e1);
+    }
+    :host([variant="outline"]:not([disabled])) button:not([disabled]):hover {
+      background-color: var(--el-step-4, var(--el-surface-border, #e2e8f0));
+      color: var(--el-text-primary, #0f172a);
+      border-color: var(--el-step-7, var(--el-surface-border, #94a3b8));
+    }
+
+    :host([variant="danger"]) button {
+      background-color: var(--el-color-danger, #dc2626);
+      color: #ffffff;
+    }
+    :host([variant="danger"]:not([disabled])) button:not([disabled]):hover {
+      background-color: #b91c1c;
+    }
+
+    :host([variant="ghost"]) button {
+      background-color: transparent;
+      color: var(--el-color-primary, #2563eb);
+    }
+    :host([variant="ghost"]:not([disabled])) button:not([disabled]):hover {
+      background-color: var(--el-step-3, var(--el-surface-muted, #f1f5f9));
+      color: var(--el-color-primary-hover, #1d4ed8);
+    }
+  </style>
+      <button
+        part="button"
+        
+        aria-disabled=false
+        
+      >
+        <slot name="prefix"></slot>
+        <slot></slot>
+        <slot name="suffix"></slot>
+      </button>
+    </template>Destructive Action</el-button>
+      </div>
+    </div></el-card>
+      <el-card><template shadowrootmode="open"><style>
+    :host {
+      display: flex;
+      flex-direction: column;
+      background: var(--el-surface-base, #ffffff);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      border-radius: var(--el-radius-lg, 12px);
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+      color: var(--el-text-primary, #0f172a);
+      font-family: var(--el-font-sans, system-ui, sans-serif);
+      box-sizing: border-box;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    :root[data-theme="dark"] :host {
+      background: #1e293b;
+      border-color: #334155;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+
+    :host([bordered="false"]) {
+      border-color: transparent !important;
+      box-shadow: none;
+    }
+
+    :host([glass]) {
+      background: rgba(255, 255, 255, 0.68);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-color: rgba(148, 163, 184, 0.35);
+      box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
+    }
+
+    :root[data-theme="dark"] :host([glass]) {
+      background: rgba(30, 41, 59, 0.68);
+      border-color: rgba(148, 163, 184, 0.25);
+    }
+
+    :host([hoverable]) {
+      cursor: pointer;
+    }
+
+    :host([hoverable]:hover) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+      border-color: var(--el-color-primary, #2563eb);
+    }
+
+    .card-auto-header {
+      padding: 18px 24px 0 24px;
+      font-size: 1.125rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--el-text-primary, #0f172a);
+    }
+
+    :root[data-theme="dark"] .card-auto-header {
+      color: #f8fafc;
+    }
+
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      box-sizing: border-box;
+    }
+
+    :host(:not([data-compound])) .card-body {
+      padding: 16px 24px 20px 24px;
+    }
+  </style>
+      
+      <div class="card-body" part="body">
+        <slot></slot>
+      </div>
+    </template><div class="card-pad">
+      <h3>2. Telemetry &amp; Status Primitives</h3>
+      <div class="profile-row">
+        <el-avatar name="Node Edge" size="lg" status="online"><template shadowrootmode="open"><style>
+    :host {
+      display: inline-flex;
+      flex-shrink: 0;
+      position: relative;
+      vertical-align: middle;
+      box-sizing: border-box;
+      user-select: none;
+      border-radius: var(--el-radius-full, 9999px);
+    }
+
+    :host([shape="square"]) {
+      border-radius: var(--el-radius-md, 8px);
+    }
+
+    .avatar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      background: var(--el-surface-muted, #f1f5f9);
+      color: var(--el-text-primary, #0f172a);
+      font-weight: 600;
+      font-family: var(--el-font-sans, system-ui, sans-serif);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+    }
+
+    .shape-circle {
+      border-radius: var(--el-radius-full, 9999px);
+    }
+
+    .shape-square {
+      border-radius: var(--el-radius-md, 8px);
+    }
+
+    /* Sizes */
+    .size-sm {
+      width: 28px;
+      height: 28px;
+      font-size: 11px;
+    }
+
+    .size-md {
+      width: 38px;
+      height: 38px;
+      font-size: 14px;
+    }
+
+    .size-lg {
+      width: 48px;
+      height: 48px;
+      font-size: 18px;
+    }
+
+    .size-xl {
+      width: 56px;
+      height: 56px;
+      font-size: 20px;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Status dot */
+    .status-dot {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 10px;
+      height: 10px;
+      border-radius: var(--el-radius-full, 9999px);
+      border: 2px solid var(--el-surface-card, #ffffff);
+    }
+
+    .size-lg .status-dot,
+    .size-xl .status-dot {
+      width: 12px;
+      height: 12px;
+    }
+
+    .status-online {
+      background: var(--el-color-success, #10b981);
+    }
+
+    .status-busy {
+      background: var(--el-color-danger, #ef4444);
+    }
+
+    .status-away {
+      background: #f59e0b;
+    }
+
+    .status-offline {
+      background: var(--el-text-muted, #94a3b8);
+    }
+  </style>
+      <div
+        class=avatar size-lg shape-circle
+        part="avatar"
+        role="img"
+        aria-label=Node Edge
+      >
+        <span part="initials">NE</span>
+
+        <span class=status-dot status-online part="status"></span>
+      </div>
+    </template></el-avatar>
+        <div>
+          <strong>Pure Node.js Edge Worker</strong>
+          <div class="muted">Zero happy-dom · Zero bundler · Native ESM</div>
+        </div>
+      </div>
+      <div class="metric">
+        <div class="metric-head"><span>Test Coverage</span><strong>96%</strong></div>
+        <el-progress value="96" variant="success"><template shadowrootmode="open"><style>
+    :host {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .track {
+      position: relative;
+      width: 100%;
+      background: var(--el-surface-muted, #f1f5f9);
+      border-radius: var(--el-radius-full, 9999px);
+      overflow: hidden;
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+    }
+
+    :host([size='sm']) .track {
+      height: 6px;
+    }
+
+    :host([size='md']) .track,
+    .track {
+      height: 10px;
+    }
+
+    :host([size='lg']) .track {
+      height: 16px;
+    }
+
+    .bar {
+      height: 100%;
+      border-radius: var(--el-radius-full, 9999px);
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .bar[data-variant='primary'] {
+      background: var(--el-color-primary, #2563eb);
+    }
+
+    .bar[data-variant='secondary'] {
+      background: var(--el-text-secondary, #475569);
+    }
+
+    .bar[data-variant='success'] {
+      background: var(--el-color-success, #10b981);
+    }
+
+    .bar[data-variant='warning'] {
+      background: var(--el-color-warning, #f59e0b);
+    }
+
+    .bar[data-variant='info'] {
+      background: var(--el-color-info, #0284c7);
+    }
+
+    .bar[data-variant='danger'] {
+      background: var(--el-color-danger, #ef4444);
+    }
+
+    /* Indeterminate animation */
+    :host([indeterminate]) .bar {
+      width: 40% !important;
+      position: absolute;
+      animation: el-progress-indeterminate 1.5s infinite ease-in-out;
+    }
+
+    @keyframes el-progress-indeterminate {
+      0% {
+        left: -40%;
+      }
+      50% {
+        left: 40%;
+        width: 60%;
+      }
+      100% {
+        left: 100%;
+        width: 40%;
+      }
+    }
+
+    /* Striped styling */
+    :host([striped]) .bar {
+      background-image: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.2) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.2) 75%,
+        transparent 75%,
+        transparent
+      );
+      background-size: 1rem 1rem;
+      animation: el-progress-stripes 1s linear infinite;
+    }
+
+    @keyframes el-progress-stripes {
+      from {
+        background-position: 1rem 0;
+      }
+      to {
+        background-position: 0 0;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bar,
+      :host([indeterminate]) .bar,
+      :host([striped]) .bar {
+        animation: none;
+        transition: none;
+      }
+    }
+  </style>
+      <div
+        class="track"
+        part="track"
+        role="progressbar"
+        aria-valuenow=96
+        aria-valuemin="0"
+        aria-valuemax=100
+        aria-label=
+      >
+        <div
+          class="bar"
+          part="bar"
+          data-variant=success
+          style=width: 96%;
+        ></div>
+      </div>
+    </template></el-progress>
+      </div>
+      <div class="metric">
+        <div class="metric-head"><span>Edge Memory Headroom</span><strong>72%</strong></div>
+        <el-meter value="72" min="0" max="100" low="50" high="85" optimum="40"><template shadowrootmode="open"><style>
+    :host {
+      display: block;
+      width: 100%;
+      font-family: var(--el-font-sans, system-ui, sans-serif);
+      font-variant-numeric: tabular-nums;
+      box-sizing: border-box;
+    }
+
+    .meter-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .track {
+      width: 100%;
+      background: var(--el-surface-muted, #e2e8f0);
+      border-radius: 9999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    :host([size="sm"]) .track {
+      height: 4px;
+    }
+
+    :host([size="md"]) .track,
+    :host(:not([size])) .track {
+      height: 8px;
+    }
+
+    :host([size="lg"]) .track {
+      height: 12px;
+    }
+
+    :root[data-theme="dark"] .track {
+      background: #334155;
+    }
+
+    .fill {
+      height: 100%;
+      border-radius: inherit;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease;
+      background: var(--el-color-primary, #2563eb);
+    }
+
+    :host([data-status="safe"]) .fill {
+      background: var(--el-color-success, #16a34a);
+    }
+
+    :host([data-status="warning"]) .fill {
+      background: var(--el-color-warning, #eab308);
+    }
+
+    :host([data-status="critical"]) .fill {
+      background: var(--el-color-danger, #dc2626);
+    }
+  </style>
+      <div
+        class="meter-container"
+        role="meter"
+        aria-valuenow=72
+        aria-valuemin=0
+        aria-valuemax=100
+        aria-valuetext=72%
+      >
+        <div class="track" part="track">
+          <div
+            class="fill"
+            part="fill"
+            style=width: 72%;
+          ></div>
+        </div>
+      </div>
+    </template></el-meter>
+      </div>
+    </div></el-card>
+    </section>
+
+    <section>
+      <h2 style="font-size: 1.15rem; margin: 0 0 10px;">Emitted Declarative Shadow DOM Output</h2>
+      <el-code-block language="html" copyable code="&lt;el-button variant=&quot;primary&quot; size=&quot;md&quot;&gt;&lt;template shadowrootmode=&quot;open&quot;&gt;&lt;style&gt;
+    :host {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    :host([disabled]),
+    :host([aria-disabled=&quot;true&quot;]) {
+      cursor: not-allowed;
+    }
+
+    button
+  /* ...encapsulated shadow styles... */
+ &lt;slot name=&quot;prefix&quot;&gt;&lt;/slot&gt;
+        &lt;slot&gt;&lt;/slot&gt;
+        &lt;slot name=&quot;suffix&quot;&gt;&lt;/slot&gt;
+      &lt;/button&gt;
+    &lt;/template&gt;Deploy Now&lt;/el-button&gt;"><template shadowrootmode="open"><style>
+    :host {
+      display: block;
+      font-family: var(--el-font-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
+      box-sizing: border-box;
+      max-width: 100%;
+    }
+
+    :host([compact]) {
+      display: inline-block;
+    }
+
+    .code-wrapper {
+      position: relative;
+      background: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #1e293b;
+      border-radius: var(--el-radius-md, 10px);
+      overflow: hidden;
+      box-sizing: border-box;
+      transition: border-color 0.15s ease;
+    }
+
+    .code-wrapper:hover {
+      border-color: #334155;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 14px;
+      background: rgba(15, 23, 42, 0.85);
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .lang-tag {
+      font-family: var(--el-font-sans, system-ui, sans-serif);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #94a3b8;
+    }
+
+    .code-body {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      overflow-x: auto;
+    }
+
+    :host([compact]) .code-body {
+      padding: 10px 14px;
+    }
+
+    pre {
+      margin: 0;
+      padding: 0;
+      font-family: inherit;
+      font-size: 0.84rem;
+      line-height: 1.6;
+      color: #e2e8f0;
+      white-space: pre;
+      overflow-x: auto;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .inline-actions {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #1e293b;
+      color: #e2e8f0;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-family: var(--el-font-sans, system-ui, sans-serif);
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      background: var(--el-color-primary, #2563eb);
+      border-color: var(--el-color-primary, #2563eb);
+      color: #ffffff;
+    }
+
+    .copy-btn[data-copied="true"] {
+      background: var(--el-color-success, #16a34a);
+      border-color: var(--el-color-success, #16a34a);
+      color: #ffffff;
+    }
+
+    .copy-btn:focus-visible {
+      outline: 2px solid var(--el-color-primary, #2563eb);
+      outline-offset: 2px;
+    }
+  </style>
+      <div class="code-wrapper" part="container" role="region" aria-label="Code snippet">
+        
+            <div class="code-header" part="header">
+              <span class="lang-tag" part="language">HTML</span>
+              
+      <button
+        class="copy-btn"
+        part="copy-button"
+        type="button"
+        data-copied=false
+        aria-label=Copy code snippet
+        
+      >
+        Copy
+      </button>
+    
+            </div>
+          
+        <div class="code-body" part="body">
+          <pre part="pre"><code part="code"><el-button variant="primary" size="md"><template shadowrootmode="open"><style>
+    :host {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    :host([disabled]),
+    :host([aria-disabled="true"]) {
+      cursor: not-allowed;
+    }
+
+    button
+  /* ...encapsulated shadow styles... */
+ <slot name="prefix"></slot>
+        <slot></slot>
+        <slot name="suffix"></slot>
+      </button>
+    </template>Deploy Now</el-button><slot style=display:none;></slot></code></pre>
+          
+        </div>
+      </div>
+    </template></el-code-block>
+    </section>
+
+    <el-alert variant="info"><template shadowrootmode="open"><style>
+    :host {
+      display: block;
+      font-family: var(--el-font-sans, system-ui, sans-serif);
+      box-sizing: border-box;
+      margin-bottom: 12px;
+    }
+
+    :host([hidden]) {
+      display: none !important;
+    }
+
+    .alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: var(--el-radius-md, 8px);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      background: var(--el-surface-base, #ffffff);
+      color: var(--el-text-primary, #0f172a);
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    .icon-area {
+      flex-shrink: 0;
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .content-area {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.3;
+      margin: 0 0 4px 0;
+    }
+
+    .description {
+      font-size: 0.875rem;
+      line-height: 1.45;
+      color: var(--el-text-secondary, #475569);
+    }
+
+    :root[data-theme="dark"] .description {
+      color: #94a3b8;
+    }
+
+    .dismiss-btn {
+      flex-shrink: 0;
+      background: transparent;
+      border: none;
+      color: var(--el-text-muted, #94a3b8);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: var(--el-radius-sm, 4px);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .dismiss-btn:hover {
+      color: var(--el-text-primary, #0f172a);
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    :root[data-theme="dark"] .dismiss-btn:hover {
+      color: #f8fafc;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Variants */
+    :host([variant="info"]) .alert {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: #1e40af;
+    }
+    :host([variant="info"]) .title { color: #1e3a8a; }
+    :host([variant="info"]) .description { color: #1e40af; }
+
+    :root[data-theme="dark"] :host([variant="info"]) .alert {
+      background: rgba(30, 58, 138, 0.25);
+      border-color: #1e3a8a;
+      color: #bfdbfe;
+    }
+    :root[data-theme="dark"] :host([variant="info"]) .title { color: #93c5fd; }
+    :root[data-theme="dark"] :host([variant="info"]) .description { color: #bfdbfe; }
+
+    :host([variant="success"]) .alert {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      color: #166534;
+    }
+    :host([variant="success"]) .title { color: #14532d; }
+    :host([variant="success"]) .description { color: #166534; }
+
+    :root[data-theme="dark"] :host([variant="success"]) .alert {
+      background: rgba(20, 83, 45, 0.25);
+      border-color: #166534;
+      color: #bbf7d0;
+    }
+    :root[data-theme="dark"] :host([variant="success"]) .title { color: #86efac; }
+    :root[data-theme="dark"] :host([variant="success"]) .description { color: #bbf7d0; }
+
+    :host([variant="warning"]) .alert {
+      background: #fffbeb;
+      border-color: #fde68a;
+      color: #92400e;
+    }
+    :host([variant="warning"]) .title { color: #78350f; }
+    :host([variant="warning"]) .description { color: #92400e; }
+
+    :root[data-theme="dark"] :host([variant="warning"]) .alert {
+      background: rgba(120, 53, 15, 0.25);
+      border-color: #92400e;
+      color: #fde68a;
+    }
+    :root[data-theme="dark"] :host([variant="warning"]) .title { color: #fcd34d; }
+    :root[data-theme="dark"] :host([variant="warning"]) .description { color: #fde68a; }
+
+    :host([variant="destructive"]) .alert,
+    :host([variant="danger"]) .alert,
+    :host([variant="error"]) .alert {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+    :host([variant="destructive"]) .title,
+    :host([variant="danger"]) .title,
+    :host([variant="error"]) .title { color: #7f1d1d; }
+    :host([variant="destructive"]) .description,
+    :host([variant="danger"]) .description,
+    :host([variant="error"]) .description { color: #991b1b; }
+
+    :root[data-theme="dark"] :host([variant="destructive"]) .alert,
+    :root[data-theme="dark"] :host([variant="danger"]) .alert,
+    :root[data-theme="dark"] :host([variant="error"]) .alert {
+      background: rgba(127, 29, 29, 0.25);
+      border-color: #991b1b;
+      color: #fecaca;
+    }
+    :root[data-theme="dark"] :host([variant="destructive"]) .title,
+    :root[data-theme="dark"] :host([variant="danger"]) .title,
+    :root[data-theme="dark"] :host([variant="error"]) .title { color: #fca5a5; }
+    :root[data-theme="dark"] :host([variant="destructive"]) .description,
+    :root[data-theme="dark"] :host([variant="danger"]) .description,
+    :root[data-theme="dark"] :host([variant="error"]) .description { color: #fecaca; }
+  </style>
+      <div class="alert" part="alert" role=status>
+        <div class="icon-area" part="icon">
+          <slot name="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></slot>
+        </div>
+        <div class="content-area" part="content">
+          
+          <div class="description" part="description">
+            <slot></slot>
+          </div>
+        </div>
+        
+      </div>
+    </template>Request path: <code>/</code> · Mode: <strong>DSD + Progressive Hydration</strong></el-alert>
+  </main>
+
+  <script type="module">
+    import '../src/index.js';
+    const btn = document.getElementById('ssr-counter-btn');
+    let clicks = 0;
+    btn?.addEventListener('click', () => {
+      clicks += 1;
+      btn.textContent = 'Interactive Hydrated Clicks: ' + clicks;
+    });
+  </script>
+</body>
+</html>

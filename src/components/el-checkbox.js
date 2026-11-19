@@ -49,7 +49,7 @@ export class ElCheckbox extends Elementum {
       background: var(--el-surface-base, #ffffff);
       border: 1px solid var(--el-surface-border, #cbd5e1);
       border-radius: var(--el-radius-sm, 4px);
-      transition: all 120ms ease;
+      transition: background-color 120ms ease, border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
       box-sizing: border-box;
       flex-shrink: 0;
     }

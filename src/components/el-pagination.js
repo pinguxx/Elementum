@@ -102,6 +102,7 @@ export class ElPagination extends Elementum {
       display: inline-flex;
       vertical-align: middle;
       font-family: var(--el-font-sans, system-ui, sans-serif);
+      font-variant-numeric: tabular-nums;
       box-sizing: border-box;
       user-select: none;
     }

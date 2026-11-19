@@ -30,12 +30,16 @@ function parseArgs(argv) {
     token: process.env.PENPOT_MCP_TOKEN || '',
     dryRun: false,
     onlyCategory: '',
+    skipTokens: false,
+    fromIndex: 1,
   };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === '--url' && argv[i + 1]) opts.url = argv[++i];
     else if (arg === '--token' && argv[i + 1]) opts.token = argv[++i];
     else if (arg === '--category' && argv[i + 1]) opts.onlyCategory = argv[++i];
+    else if (arg === '--from' && argv[i + 1]) opts.fromIndex = Math.max(1, Number(argv[++i]) || 1);
+    else if (arg === '--skip-tokens') opts.skipTokens = true;
     else if (arg === '--dry-run') opts.dryRun = true;
   }
   if (!opts.url && opts.token) {
@@ -888,11 +892,15 @@ async function main() {
   }
 
   const client = await createMcpClient(opts.url);
-  console.log('Connected to Penpot MCP. Syncing tokens, colors, and Foundations page...');
-  const tokenRes = await client.executeCode(buildTokensScript());
-  console.log('Tokens & Foundations result:', tokenRes);
+  if (!opts.skipTokens) {
+    console.log('Connected to Penpot MCP. Syncing tokens, colors, and Foundations page...');
+    const tokenRes = await client.executeCode(buildTokensScript());
+    console.log('Tokens & Foundations result:', tokenRes);
+  } else {
+    console.log('Connected to Penpot MCP. Skipping tokens/Foundations (--skip-tokens).');
+  }
 
-  for (let idx = 0; idx < categories.length; idx++) {
+  for (let idx = opts.fromIndex - 1; idx < categories.length; idx++) {
     const cat = categories[idx];
     if (opts.onlyCategory && cat.id !== opts.onlyCategory && cat.title !== opts.onlyCategory) {
       continue;

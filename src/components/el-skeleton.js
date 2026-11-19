@@ -101,6 +101,13 @@ export class ElSkeleton extends Elementum {
         opacity: 0.35;
       }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
   `;
 
   connected() {

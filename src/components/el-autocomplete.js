@@ -253,6 +253,12 @@ export class ElAutocomplete extends Elementum {
       white-space: nowrap;
       border: 0;
     }
+
+    @media (pointer: coarse) {
+      input {
+        font-size: max(16px, 1em);
+      }
+    }
   `;
 
   connected() {
@@ -764,6 +770,6 @@ export class ElAutocomplete extends Elementum {
   }
 }
 
-if (!customElements.get('el-autocomplete')) {
+if (typeof customElements !== 'undefined' && !customElements.get('el-autocomplete')) {
   customElements.define('el-autocomplete', ElAutocomplete);
 }

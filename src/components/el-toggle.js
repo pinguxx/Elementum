@@ -37,10 +37,25 @@ export class ElToggle extends Elementum {
       background: var(--el-surface-base, #ffffff);
       color: var(--el-text-secondary, #475569);
       border-radius: var(--el-radius-md, 6px);
-      transition: all 120ms ease;
+      transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease, transform 120ms var(--el-ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
       user-select: none;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
       outline: none;
       line-height: 1;
+    }
+
+    button:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      button {
+        transition: none;
+      }
+      button:active:not(:disabled) {
+        transform: none;
+      }
     }
 
     :host([size="sm"]) button {

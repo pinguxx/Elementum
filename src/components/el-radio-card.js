@@ -39,7 +39,7 @@ export class ElRadioCard extends Elementum {
       border-radius: var(--el-radius-lg, 12px);
       border: 2px solid var(--el-surface-border, #e2e8f0);
       background-color: var(--el-surface-card, #ffffff);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
     }
 
@@ -85,7 +85,7 @@ export class ElRadioCard extends Elementum {
       justify-content: center;
       flex-shrink: 0;
       margin-top: 2px;
-      transition: all 0.2s ease;
+      transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
 
     :host([checked]) .radio-circle {
@@ -109,7 +109,7 @@ export class ElRadioCard extends Elementum {
       background-color: #ffffff;
       opacity: 0;
       transform: scale(0.4);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     :host([checked]) .dot {

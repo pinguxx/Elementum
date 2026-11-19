@@ -137,6 +137,7 @@ export class ElTable extends Elementum {
       border-collapse: collapse;
       text-align: left;
       font-size: 0.875rem;
+      font-variant-numeric: tabular-nums;
       color: var(--el-text-base, #111827);
     }
 

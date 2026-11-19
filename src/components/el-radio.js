@@ -44,7 +44,7 @@ export class ElRadio extends Elementum {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      transition: all 120ms ease;
+      transition: background-color 120ms ease, border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
       box-sizing: border-box;
       flex-shrink: 0;
     }

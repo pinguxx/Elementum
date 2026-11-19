@@ -87,6 +87,13 @@ export class ElCommandItem extends Elementum {
       padding: 2px 6px;
       border-radius: 4px;
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
   `;
 
   render() {
