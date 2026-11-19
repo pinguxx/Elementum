@@ -201,4 +201,7 @@ test('examples/ag-ui.html live demo wires createAgUiStore, bindComponents, conne
   assert.ok(html.includes('<el-diff-viewer'), 'should include <el-diff-viewer>');
   assert.ok(html.includes('<el-sources'), 'should include <el-sources>');
   assert.ok(html.includes('<el-task-list'), 'should include <el-task-list>');
+  assert.ok(!html.includes('setTasks('), 'should mutate tasks.value signal instead of non-existent setTasks()');
+  assert.ok(!html.includes('setSources('), 'should mutate sources.value signal instead of non-existent setSources()');
+  assert.ok(!html.includes('setDiff('), 'should mutate before/after signals instead of non-existent setDiff()');
 });

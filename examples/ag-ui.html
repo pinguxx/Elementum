@@ -338,7 +338,7 @@
             class="hidden"
             filename="src/cache/policy.js"
             mode="unified"
-            interactive
+            approval
           ></el-diff-viewer>
 
           <el-sources id="agui-sources" class="hidden" label="Grounded Sources"></el-sources>
@@ -504,14 +504,14 @@ await store.connectSSE(res);"
 
     store.pathSignal('/tasks', []).subscribe((tasks) => {
       if (Array.isArray(tasks)) {
-        tasksEl.setTasks(tasks);
+        tasksEl.tasks.value = tasks;
       }
     });
 
     store.pathSignal('/sources', []).subscribe((sources) => {
       if (Array.isArray(sources) && sources.length > 0) {
         sourcesEl.classList.remove('hidden');
-        sourcesEl.setSources(sources);
+        sourcesEl.sources.value = sources;
       } else {
         sourcesEl.classList.add('hidden');
       }
@@ -520,8 +520,9 @@ await store.connectSSE(res);"
     store.pathSignal('/diff', null).subscribe((diff) => {
       if (diff && diff.before && diff.after) {
         diffEl.classList.remove('hidden');
-        diffEl.setAttribute('filename', diff.filename || 'file.js');
-        diffEl.setDiff(diff.before, diff.after);
+        diffEl.filename.value = diff.filename || 'file.js';
+        diffEl.before.value = diff.before;
+        diffEl.after.value = diff.after;
       } else {
         diffEl.classList.add('hidden');
       }
@@ -645,7 +646,7 @@ await store.connectSSE(res);"
           confidence: 72,
           latencyMs: 42,
           tasks: [
-            { id: 't1', label: 'Check test coverage & bundle budget', status: 'in-progress' },
+            { id: 't1', label: 'Check test coverage & bundle budget', status: 'running' },
             { id: 't2', label: 'Request HITL approval for prod deploy', status: 'pending' },
             { id: 't3', label: 'Verify Vercel edge healthcheck', status: 'pending' },
           ],
@@ -659,8 +660,8 @@ await store.connectSSE(res);"
           { op: 'replace', path: '/progress', value: 50 },
           { op: 'replace', path: '/confidence', value: 94 },
           { op: 'replace', path: '/latencyMs', value: 118 },
-          { op: 'replace', path: '/tasks/0/status', value: 'done' },
-          { op: 'replace', path: '/tasks/1/status', value: 'in-progress' },
+          { op: 'replace', path: '/tasks/0/status', value: 'completed' },
+          { op: 'replace', path: '/tasks/1/status', value: 'running' },
         ] } },
         { wait: 150, event: { type: 'STEP_FINISHED' } },
         { wait: 120, event: { type: 'TOOL_CALL_START', toolCallId: 'tc_deploy_1', toolCallName: 'deploy_production_release', requiresApproval: true } },
@@ -682,8 +683,8 @@ await store.connectSSE(res);"
           { op: 'replace', path: '/progress', value: 100 },
           { op: 'replace', path: '/confidence', value: 99 },
           { op: 'replace', path: '/latencyMs', value: 164 },
-          { op: 'replace', path: '/tasks/1/status', value: 'done' },
-          { op: 'replace', path: '/tasks/2/status', value: 'done' },
+          { op: 'replace', path: '/tasks/1/status', value: 'completed' },
+          { op: 'replace', path: '/tasks/2/status', value: 'completed' },
         ] } },
         { wait: 100, event: { type: 'TEXT_MESSAGE_START', messageId: 'm1', role: 'assistant' } },
         { wait: 80, event: { type: 'TEXT_MESSAGE_CONTENT', messageId: 'm1', delta: 'Production deployment for @wcomp/elementum@0.1.0 succeeded! ' } },
@@ -716,8 +717,8 @@ await store.connectSSE(res);"
           confidence: 84,
           latencyMs: 55,
           tasks: [
-            { id: 'r1', label: 'Inspect sticky header overflow bug', status: 'done' },
-            { id: 'r2', label: 'Generate minimal CSS patch', status: 'in-progress' },
+            { id: 'r1', label: 'Inspect sticky header overflow bug', status: 'completed' },
+            { id: 'r2', label: 'Generate minimal CSS patch', status: 'running' },
             { id: 'r3', label: 'Attach W3C spec citations', status: 'pending' },
           ],
           sources: [],
@@ -730,8 +731,8 @@ await store.connectSSE(res);"
           { op: 'replace', path: '/progress', value: 75 },
           { op: 'replace', path: '/confidence', value: 98 },
           { op: 'replace', path: '/latencyMs', value: 142 },
-          { op: 'replace', path: '/tasks/1/status', value: 'done' },
-          { op: 'replace', path: '/tasks/2/status', value: 'in-progress' },
+          { op: 'replace', path: '/tasks/1/status', value: 'completed' },
+          { op: 'replace', path: '/tasks/2/status', value: 'running' },
           { op: 'replace', path: '/diff', value: {
             filename: 'docs.html',
             before: 'html, body {\n  margin: 0;\n  width: 100%;\n  overflow-x: hidden;\n}',
@@ -740,7 +741,7 @@ await store.connectSSE(res);"
         ] } },
         { wait: 160, event: { type: 'STATE_DELTA', delta: [
           { op: 'replace', path: '/progress', value: 100 },
-          { op: 'replace', path: '/tasks/2/status', value: 'done' },
+          { op: 'replace', path: '/tasks/2/status', value: 'completed' },
           { op: 'replace', path: '/sources', value: [
             { id: '1', title: 'CSS Overflow Module Level 3 — clip', url: 'https://developer.mozilla.org/en-US/docs/Web/CSS/overflow', snippet: 'Unlike hidden, clip does not create a scroll container, allowing position: sticky descendants to stick to the viewport.' },
             { id: '2', title: 'AG-UI Protocol Specification', url: 'https://docs.ag-ui.com/', snippet: 'Standardized SSE event schema for RUN, STEP, TOOL_CALL, STATE_SNAPSHOT, and RFC 6902 STATE_DELTA.' },
@@ -761,7 +762,7 @@ await store.connectSSE(res);"
       const runId = `run_patch_${Date.now().toString(36)}`;
       const frames = [
         { wait: 30, event: { type: 'RUN_STARTED', runId } },
-        { wait: 60, event: { type: 'STATE_SNAPSHOT', snapshot: { progress: 10, confidence: 55, latencyMs: 18, tasks: [{ id: 'p1', label: 'Apply 5 sequential RFC 6902 patches', status: 'in-progress' }], sources: [], diff: null } } },
+        { wait: 60, event: { type: 'STATE_SNAPSHOT', snapshot: { progress: 10, confidence: 55, latencyMs: 18, tasks: [{ id: 'p1', label: 'Apply 5 sequential RFC 6902 patches', status: 'running' }], sources: [], diff: null } } },
       ];
       for (let i = 1; i <= 5; i++) {
         frames.push({
@@ -777,7 +778,7 @@ await store.connectSSE(res);"
         });
       }
       frames.push(
-        { wait: 100, event: { type: 'STATE_DELTA', delta: [{ op: 'replace', path: '/tasks/0/status', value: 'done' }] } },
+        { wait: 100, event: { type: 'STATE_DELTA', delta: [{ op: 'replace', path: '/tasks/0/status', value: 'completed' }] } },
         { wait: 80, event: { type: 'TEXT_MESSAGE_START', messageId: 'm3', role: 'assistant' } },
         { wait: 60, event: { type: 'TEXT_MESSAGE_CONTENT', messageId: 'm3', delta: 'Dispatched 5 RFC 6902 STATE_DELTA patches — each bound signal updated surgically with zero full-tree rerenders.' } },
         { wait: 60, event: { type: 'TEXT_MESSAGE_END', messageId: 'm3' } },
@@ -823,7 +824,7 @@ await store.connectSSE(res);"
         delta: [{
           op: 'add',
           path: '/tasks/-',
-          value: { id: `manual-${manualTaskIdx}`, label: `Custom JSON Patch task #${manualTaskIdx++}`, status: 'done' },
+          value: { id: `manual-${manualTaskIdx}`, label: `Custom JSON Patch task #${manualTaskIdx++}`, status: 'completed' },
         }],
       });
     });
