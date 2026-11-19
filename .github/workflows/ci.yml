@@ -57,6 +57,9 @@ jobs:
       - name: Strict TypeScript check (src/index.d.ts)
         run: npm run typecheck
 
+      - name: Check per-component gzipped size budgets
+        run: npm run check:size
+
       - name: External consumer tarball install & import test
         run: npm run verify:consumer
 

@@ -17,6 +17,10 @@ import {
   highlightMatch,
   prefersReducedMotion,
   createPresenceBehavior,
+  createFocusRecovery,
+  createShortcuts,
+  createDisclosureBehavior,
+  createPopupPositioner,
 } from '../src/behaviors/index.js';
 import '../src/components/el-command.js';
 import '../src/components/el-button.js';
@@ -634,4 +638,127 @@ test('Behaviors 16: createPresenceBehavior manages enter/exit lifecycle, getAnim
 
   ac.abort();
   el.remove();
+});
+
+test('Behaviors 17: createFocusRecovery restores focus when focused element is removed or disabled', () => {
+  const wrap = document.createElement('div');
+  const fallbackBtn = document.createElement('button');
+  fallbackBtn.textContent = 'Fallback';
+  const tempBtn = document.createElement('button');
+  tempBtn.textContent = 'Clear';
+  wrap.append(fallbackBtn, tempBtn);
+  document.body.appendChild(wrap);
+
+  const ac = new AbortController();
+  const recovery = createFocusRecovery(wrap, { fallback: () => fallbackBtn, signal: ac.signal });
+
+  tempBtn.focus();
+  tempBtn.dispatchEvent(new Event('focusin', { bubbles: true }));
+  tempBtn.remove();
+
+  const restored = recovery.recover();
+  assert.equal(restored, true);
+  assert.equal(document.activeElement, fallbackBtn);
+
+  ac.abort();
+  wrap.remove();
+});
+
+test('Behaviors 18: createShortcuts handles Mod+K cross-platform and ignores editable inputs', () => {
+  const input = document.createElement('input');
+  document.body.appendChild(input);
+
+  let hits = 0;
+  const ac = new AbortController();
+  createShortcuts(
+    document,
+    {
+      'Mod+K': () => { hits++; },
+      'Shift+Escape': () => { hits += 10; },
+    },
+    { isMac: false, signal: ac.signal }
+  );
+
+  // Ignored when dispatched from editable <input>
+  input.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true }));
+  assert.equal(hits, 0);
+
+  // Fires on document when Ctrl+K pressed on non-Mac
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true }));
+  assert.equal(hits, 1);
+
+  // Fires Shift+Escape
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', shiftKey: true, bubbles: true }));
+  assert.equal(hits, 11);
+
+  // Meta+K works when isMac: true
+  const acMac = new AbortController();
+  let macHits = 0;
+  createShortcuts(document, { 'Mod+K': () => { macHits++; } }, { isMac: true, signal: acMac.signal });
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }));
+  assert.equal(macHits, 1);
+
+  ac.abort();
+  acMac.abort();
+  input.remove();
+});
+
+test('Behaviors 19: createDisclosureBehavior wires aria-expanded, aria-controls, and hidden state', () => {
+  const btn = document.createElement('button');
+  const panel = document.createElement('div');
+  document.body.append(btn, panel);
+
+  const states = [];
+  const ac = new AbortController();
+  const disc = createDisclosureBehavior(btn, panel, {
+    initialOpen: false,
+    onOpenChange: (open) => states.push(open),
+    signal: ac.signal,
+  });
+
+  assert.equal(btn.getAttribute('aria-expanded'), 'false');
+  assert.equal(btn.getAttribute('aria-controls'), panel.id);
+  assert.equal(panel.hidden, true);
+
+  btn.click();
+  assert.equal(disc.isOpen.value, true);
+  assert.equal(btn.getAttribute('aria-expanded'), 'true');
+  assert.equal(panel.hidden, false);
+  assert.equal(panel.getAttribute('data-state'), 'open');
+
+  disc.close();
+  assert.equal(disc.isOpen.value, false);
+  assert.equal(panel.hidden, true);
+  assert.deepEqual(states, [true, false]);
+
+  ac.abort();
+  btn.remove();
+  panel.remove();
+});
+
+test('Behaviors 20: createPopupPositioner computes coordinates and flips on viewport collision', () => {
+  const anchor = document.createElement('button');
+  const floating = document.createElement('div');
+  document.body.append(anchor, floating);
+
+  // Simulate anchor near bottom of viewport -> should flip from bottom to top
+  anchor.getBoundingClientRect = () => ({ top: 700, bottom: 732, left: 100, right: 220, width: 120, height: 32 });
+  floating.getBoundingClientRect = () => ({ width: 200, height: 180, top: 0, left: 0, right: 200, bottom: 180 });
+
+  const ac = new AbortController();
+  const pos = createPopupPositioner(anchor, floating, { placement: 'bottom', offset: 8, flip: true, signal: ac.signal });
+  const metrics = pos.update();
+
+  assert.equal(metrics.side, 'top');
+  assert.equal(floating.getAttribute('data-side'), 'top');
+  assert.equal(floating.style.getPropertyValue('--anchor-width'), '120px');
+
+  // Simulate anchor near top -> stays bottom
+  anchor.getBoundingClientRect = () => ({ top: 40, bottom: 72, left: 100, right: 220, width: 120, height: 32 });
+  const metrics2 = pos.update();
+  assert.equal(metrics2.side, 'bottom');
+
+  ac.abort();
+  anchor.remove();
+  floating.remove();
 });

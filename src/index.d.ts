@@ -884,6 +884,97 @@ export function createPresenceBehavior(
   setOpen: (open: boolean) => void;
   destroy: () => void;
 };
+export function createFocusRecovery(
+  container: Element | ShadowRoot,
+  options: {
+    fallback: () => HTMLElement | null;
+    signal?: AbortSignal;
+  }
+): {
+  recover: () => boolean;
+  destroy: () => void;
+};
+export function createShortcuts(
+  target: EventTarget,
+  shortcuts: Record<string, (e: KeyboardEvent) => void>,
+  options?: {
+    ignoreInputs?: boolean;
+    preventDefault?: boolean;
+    isMac?: boolean;
+    signal?: AbortSignal;
+  }
+): () => void;
+export function createDisclosureBehavior(
+  trigger: HTMLElement,
+  panel: HTMLElement,
+  options?: {
+    initialOpen?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    signal?: AbortSignal;
+  }
+): {
+  isOpen: Signal<boolean>;
+  open: () => void;
+  close: () => void;
+  toggle: () => void;
+  setOpen: (open: boolean) => void;
+  destroy: () => void;
+};
+export function createPopupPositioner(
+  anchor: HTMLElement,
+  floating: HTMLElement,
+  options?: {
+    placement?: 'bottom' | 'top' | 'left' | 'right';
+    offset?: number;
+    flip?: boolean;
+    signal?: AbortSignal;
+  }
+): {
+  update: () => { side: string; top: number; left: number; availableHeight?: number };
+  destroy: () => void;
+};
+
+// Agent Runtime Bridge (@wcomp/elementum/agent)
+export interface AgentSnapshotNode {
+  ref: string;
+  tag: string;
+  role: string;
+  name: string;
+  value?: string | number;
+  state: Record<string, boolean | string>;
+  actions: string[];
+}
+export function snapshot(
+  root?: Element | Document | ShadowRoot | null,
+  options?: { includeShadow?: boolean; maxNodes?: number }
+): { nodes: AgentSnapshotNode[]; count: number };
+export function act(
+  root: Element | Document | ShadowRoot,
+  command: {
+    ref?: string;
+    selector?: string;
+    role?: string;
+    name?: string;
+    action: 'click' | 'toggle' | 'type' | 'fill' | 'open' | 'close' | 'focus' | 'press' | string;
+    value?: unknown;
+    key?: string;
+  }
+): { ok: boolean; action?: string; tag?: string; value?: unknown; state?: Record<string, boolean | string>; error?: string };
+
+// WAI-ARIA, RTL & SSR Contract Checkers (@wcomp/elementum/testing)
+export type AriaPattern = 'button' | 'checkbox' | 'switch' | 'dialog' | 'tabs' | 'accordion' | 'combobox' | 'slider' | 'progressbar';
+export function checkAriaPattern(
+  el: HTMLElement,
+  pattern: AriaPattern
+): { ok: boolean; pattern: string; violations: string[]; passed: string[] };
+export function checkDirection(
+  el: HTMLElement
+): { ok: boolean; ltrDetected: boolean; rtlDetected: boolean };
+export function checkServerRender(
+  tagName: string,
+  ComponentClass: typeof Elementum,
+  attrs?: Record<string, unknown>
+): { ok: boolean; html: string; violations: string[] };
 
 // ==========================================
 // DOM & JSX Global Typings

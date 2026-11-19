@@ -454,4 +454,50 @@ test.describe('Real-Browser Interactive Component Suite (Playwright + axe-core)'
     expect(res.statusAfterExit).toBe('unmounted');
     expect(res.exitDone).toBe(true);
   });
+
+  test('@wcomp/elementum/agent snapshot() & act() operate live Shadow DOM components in Chromium', async ({ page }) => {
+    await page.goto('/examples/index.html');
+    await page.waitForLoadState('networkidle');
+
+    const res = await page.evaluate(async () => {
+      const { snapshot, act } = await import('/src/agent/index.js');
+      await Promise.all([
+        import('/src/components/el-input.js'),
+        import('/src/components/el-switch.js'),
+        import('/src/components/el-button.js'),
+      ]);
+
+      const host = document.createElement('div');
+      host.innerHTML = `
+        <el-input id="e2e-agent-input" label="Agent Name"></el-input>
+        <el-switch id="e2e-agent-switch" label="Auto Approve"></el-switch>
+        <el-button id="e2e-agent-btn">Run Task</el-button>
+      `;
+      document.body.appendChild(host);
+
+      let clicks = 0;
+      host.querySelector('#e2e-agent-btn').addEventListener('click', () => { clicks++; });
+
+      const tree = snapshot(host);
+      const r1 = act(host, { role: 'textbox', name: 'Agent Name', action: 'type', value: 'Atlas' });
+      const r2 = act(host, { role: 'switch', name: 'Auto Approve', action: 'toggle' });
+      const r3 = act(host, { role: 'button', name: 'Run Task', action: 'click' });
+
+      const out = {
+        count: tree.count,
+        typed: host.querySelector('#e2e-agent-input').value.value,
+        checked: host.querySelector('#e2e-agent-switch').checked.value,
+        clicks,
+        allOk: r1.ok && r2.ok && r3.ok,
+      };
+      host.remove();
+      return out;
+    });
+
+    expect(res.count).toBe(3);
+    expect(res.typed).toBe('Atlas');
+    expect(res.checked).toBe(true);
+    expect(res.clicks).toBe(1);
+    expect(res.allOk).toBe(true);
+  });
 });

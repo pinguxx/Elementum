@@ -1,0 +1,25 @@
+{
+  "$schema": "https://skills.sh/schema.json",
+  "skills": [
+    {
+      "name": "elementum",
+      "path": "skills/elementum",
+      "description": "Build zero-dependency Web Components, headless behaviors, DSD SSR, and AI-operable interfaces with @wcomp/elementum."
+    },
+    {
+      "name": "elementum-ui",
+      "path": "skills/elementum-ui",
+      "description": "Compose production UI screens using Elementum's 109-component catalog and design tokens."
+    },
+    {
+      "name": "elementum-motion",
+      "path": "skills/elementum-motion",
+      "description": "Apply Elementum motion standards, CSS transitions, and reduced-motion safeguards."
+    },
+    {
+      "name": "elementum-mobile",
+      "path": "skills/elementum-mobile",
+      "description": "Design mobile-first responsive layouts and touch-friendly drawers/sheets with Elementum."
+    }
+  ]
+}

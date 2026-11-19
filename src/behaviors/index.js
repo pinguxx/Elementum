@@ -1023,3 +1023,282 @@ export function createPresenceBehavior(target, options = {}) {
 
   return { status, mounted, setOpen, destroy };
 }
+
+// ==========================================
+// 9. Focus Recovery, Shortcuts, Disclosure & Popup Positioning
+// ==========================================
+
+/**
+ * Prevents focus from dropping to `document.body` when a focused element
+ * inside `container` is removed, hidden, or disabled.
+ *
+ * @param {Element} container - Observed container (or ShadowRoot)
+ * @param {object} options
+ * @param {() => HTMLElement | null} options.fallback - Returns fallback focus target
+ * @param {AbortSignal} [options.signal]
+ */
+export function createFocusRecovery(container, options = {}) {
+  const { fallback, signal: abortSignal } = options;
+  if (!container || typeof fallback !== 'function') {
+    return { recover: () => false, destroy: () => {} };
+  }
+
+  let lastFocused = null;
+  const controller = new AbortController();
+  const sig = abortSignal ? AbortSignal.any([controller.signal, abortSignal]) : controller.signal;
+
+  const recover = () => {
+    const active = (container.getRootNode?.()?.activeElement) || document.activeElement;
+    const isLost =
+      !active ||
+      active === document.body ||
+      active === document.documentElement ||
+      (lastFocused && (!lastFocused.isConnected || lastFocused.hasAttribute('disabled') || lastFocused.hidden));
+    if (!isLost) return false;
+    const target = fallback();
+    if (target && typeof target.focus === 'function' && target.isConnected && !target.hasAttribute('disabled')) {
+      target.focus();
+      lastFocused = target;
+      return true;
+    }
+    return false;
+  };
+
+  container.addEventListener(
+    'focusin',
+    (e) => {
+      const path = typeof e.composedPath === 'function' ? e.composedPath() : [e.target];
+      lastFocused = path[0] || e.target;
+    },
+    { signal: sig }
+  );
+
+  let observer = null;
+  if (typeof MutationObserver === 'function') {
+    observer = new MutationObserver(() => {
+      if (lastFocused && (!lastFocused.isConnected || lastFocused.hasAttribute('disabled') || lastFocused.hidden)) {
+        recover();
+      }
+    });
+    observer.observe(container, { childList: true, subtree: true, attributes: true, attributeFilter: ['disabled', 'hidden'] });
+  }
+
+  const destroy = () => {
+    controller.abort();
+    observer?.disconnect();
+    observer = null;
+  };
+
+  if (abortSignal) {
+    if (abortSignal.aborted) destroy();
+    else abortSignal.addEventListener('abort', destroy, { once: true });
+  }
+
+  return { recover, destroy };
+}
+
+function isEditableElement(target) {
+  if (!target || target.nodeType !== 1) return false;
+  const tag = (target.tagName || '').toUpperCase();
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+  if (target.isContentEditable) return true;
+  return false;
+}
+
+function parseShortcut(combo) {
+  const parts = String(combo).toLowerCase().split('+').map((p) => p.trim()).filter(Boolean);
+  const key = parts.pop() || '';
+  return {
+    key,
+    mod: parts.includes('mod'),
+    ctrl: parts.includes('ctrl') || parts.includes('control'),
+    meta: parts.includes('meta') || parts.includes('cmd'),
+    shift: parts.includes('shift'),
+    alt: parts.includes('alt') || parts.includes('option'),
+  };
+}
+
+/**
+ * Cross-platform keyboard shortcut controller (`Mod+K`, `Shift+?`, `Escape`, etc.).
+ * Automatically maps `Mod` to `Meta` on macOS and `Ctrl` on Windows/Linux.
+ *
+ * @param {EventTarget} target - Usually `window`, `document`, or a host element
+ * @param {Record<string, (e: KeyboardEvent) => void>} shortcuts - Map of combo strings to handlers
+ * @param {{ ignoreInputs?: boolean, preventDefault?: boolean, isMac?: boolean, signal?: AbortSignal }} [options]
+ */
+export function createShortcuts(target, shortcuts = {}, options = {}) {
+  if (!target || typeof target.addEventListener !== 'function') return () => {};
+  const {
+    ignoreInputs = true,
+    preventDefault = true,
+    isMac = typeof navigator !== 'undefined' && /mac|iphone|ipad/i.test(navigator.platform || navigator.userAgent || ''),
+    signal: abortSignal,
+  } = options;
+
+  const parsed = Object.entries(shortcuts).map(([combo, handler]) => ({
+    ...parseShortcut(combo),
+    handler,
+  }));
+
+  const controller = new AbortController();
+  const sig = abortSignal ? AbortSignal.any([controller.signal, abortSignal]) : controller.signal;
+
+  target.addEventListener(
+    'keydown',
+    (e) => {
+      if (ignoreInputs) {
+        const path = typeof e.composedPath === 'function' ? e.composedPath() : [e.target];
+        if (path.some((n) => isEditableElement(n))) return;
+      }
+      const eventKey = (e.key || '').toLowerCase();
+      for (const spec of parsed) {
+        if (eventKey !== spec.key) continue;
+        const needCtrl = spec.ctrl || (spec.mod && !isMac);
+        const needMeta = spec.meta || (spec.mod && isMac);
+        if (Boolean(e.ctrlKey) !== needCtrl) continue;
+        if (Boolean(e.metaKey) !== needMeta) continue;
+        if (Boolean(e.shiftKey) !== spec.shift) continue;
+        if (Boolean(e.altKey) !== spec.alt) continue;
+        if (preventDefault && typeof e.preventDefault === 'function') e.preventDefault();
+        spec.handler(e);
+        return;
+      }
+    },
+    { signal: sig }
+  );
+
+  return () => controller.abort();
+}
+
+let disclosureCounter = 0;
+
+/**
+ * Standardized WAI-ARIA disclosure wiring for trigger + panel pairs.
+ * Manages `aria-expanded`, `aria-controls`, `data-state="open"|"closed"`, and click toggling.
+ *
+ * @param {HTMLElement} trigger
+ * @param {HTMLElement} panel
+ * @param {{ initialOpen?: boolean, onOpenChange?: (open: boolean) => void, signal?: AbortSignal }} [options]
+ */
+export function createDisclosureBehavior(trigger, panel, options = {}) {
+  const { initialOpen = false, onOpenChange, signal: abortSignal } = options;
+  const isOpen = createSignal(Boolean(initialOpen));
+
+  if (panel && !panel.id) {
+    panel.id = `el-disclosure-${++disclosureCounter}`;
+  }
+
+  const syncDom = (open) => {
+    const state = open ? 'open' : 'closed';
+    if (trigger) {
+      trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (panel?.id) trigger.setAttribute('aria-controls', panel.id);
+      trigger.setAttribute('data-state', state);
+    }
+    if (panel) {
+      panel.setAttribute('data-state', state);
+      panel.hidden = !open;
+    }
+  };
+
+  syncDom(isOpen.value);
+
+  const setOpen = (next) => {
+    const val = Boolean(next);
+    if (isOpen.value === val) return;
+    isOpen.value = val;
+    syncDom(val);
+    onOpenChange?.(val);
+  };
+
+  const toggle = () => setOpen(!isOpen.value);
+
+  const controller = new AbortController();
+  const sig = abortSignal ? AbortSignal.any([controller.signal, abortSignal]) : controller.signal;
+
+  if (trigger && typeof trigger.addEventListener === 'function') {
+    trigger.addEventListener('click', toggle, { signal: sig });
+  }
+
+  return {
+    isOpen,
+    open: () => setOpen(true),
+    close: () => setOpen(false),
+    toggle,
+    setOpen,
+    destroy: () => controller.abort(),
+  };
+}
+
+/**
+ * Viewport-aware anchor positioning with automatic collision flipping (`bottom`<->`top`, `right`<->`left`).
+ * Sets `--anchor-width`, `--available-height`, `data-side`, and computed `top`/`left` on `floating`.
+ *
+ * @param {HTMLElement} anchor
+ * @param {HTMLElement} floating
+ * @param {{ placement?: 'bottom'|'top'|'left'|'right', offset?: number, flip?: boolean, signal?: AbortSignal }} [options]
+ */
+export function createPopupPositioner(anchor, floating, options = {}) {
+  const { placement = 'bottom', offset = 8, flip = true, signal: abortSignal } = options;
+  if (!anchor || !floating) {
+    return { update: () => ({ side: placement, top: 0, left: 0 }), destroy: () => {} };
+  }
+
+  const update = () => {
+    const vw = typeof window !== 'undefined' ? window.innerWidth : 1024;
+    const vh = typeof window !== 'undefined' ? window.innerHeight : 768;
+    const aRect = typeof anchor.getBoundingClientRect === 'function'
+      ? anchor.getBoundingClientRect()
+      : { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 };
+    const fRect = typeof floating.getBoundingClientRect === 'function'
+      ? floating.getBoundingClientRect()
+      : { width: 200, height: 120 };
+
+    let side = placement;
+    const spaceBelow = vh - aRect.bottom - offset;
+    const spaceAbove = aRect.top - offset;
+    const spaceRight = vw - aRect.right - offset;
+    const spaceLeft = aRect.left - offset;
+
+    if (flip) {
+      if (side === 'bottom' && fRect.height > spaceBelow && spaceAbove > spaceBelow) side = 'top';
+      else if (side === 'top' && fRect.height > spaceAbove && spaceBelow > spaceAbove) side = 'bottom';
+      else if (side === 'right' && fRect.width > spaceRight && spaceLeft > spaceRight) side = 'left';
+      else if (side === 'left' && fRect.width > spaceLeft && spaceRight > spaceLeft) side = 'right';
+    }
+
+    let top = 0;
+    let left = 0;
+    if (side === 'bottom') {
+      top = aRect.bottom + offset;
+      left = Math.max(8, Math.min(vw - fRect.width - 8, aRect.left));
+    } else if (side === 'top') {
+      top = Math.max(8, aRect.top - fRect.height - offset);
+      left = Math.max(8, Math.min(vw - fRect.width - 8, aRect.left));
+    } else if (side === 'right') {
+      top = Math.max(8, Math.min(vh - fRect.height - 8, aRect.top));
+      left = aRect.right + offset;
+    } else {
+      top = Math.max(8, Math.min(vh - fRect.height - 8, aRect.top));
+      left = Math.max(8, aRect.left - fRect.width - offset);
+    }
+
+    const availableHeight = Math.max(120, Math.round(side === 'top' ? spaceAbove : spaceBelow));
+    floating.setAttribute('data-side', side);
+    floating.style.setProperty('--anchor-width', `${Math.round(aRect.width)}px`);
+    floating.style.setProperty('--available-height', `${availableHeight}px`);
+    floating.style.top = `${Math.round(top)}px`;
+    floating.style.left = `${Math.round(left)}px`;
+
+    return { side, top: Math.round(top), left: Math.round(left), availableHeight };
+  };
+
+  const controller = new AbortController();
+  const sig = abortSignal ? AbortSignal.any([controller.signal, abortSignal]) : controller.signal;
+  if (typeof window !== 'undefined') {
+    window.addEventListener('resize', update, { signal: sig });
+    window.addEventListener('scroll', update, { capture: true, passive: true, signal: sig });
+  }
+
+  return { update, destroy: () => controller.abort() };
+}

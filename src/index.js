@@ -113,4 +113,9 @@ export {
   highlightMatch,
   prefersReducedMotion,
   createPresenceBehavior,
+  createFocusRecovery,
+  createShortcuts,
+  createDisclosureBehavior,
+  createPopupPositioner,
 } from './behaviors/index.js';
+export { snapshot, act } from './agent/index.js';
