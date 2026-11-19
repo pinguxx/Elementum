@@ -2617,11 +2617,18 @@ ${optionsHtml}
         const val = p.value !== undefined && p.value !== '' ? p.value : '48290';
         const prefix = p.prefix !== undefined ? p.prefix : '$';
         const suffix = p.suffix || '';
-        const duration = p.duration !== undefined ? p.duration : 400;
+        const duration = p.duration !== undefined && p.duration !== '' ? p.duration : 500;
         const animated = p.animated === false ? ' animated="false"' : '';
         const locale = p.locale ? ` locale="${escapeHtml(p.locale)}"` : '';
-        return `<div style="display: flex; align-items: center; justify-content: center; padding: 24px 0; font-size: 2.75rem; font-weight: 700; color: var(--el-text-primary, #0f172a);">
-  <el-number-flow value="${escapeHtml(String(val))}" prefix="${escapeHtml(prefix)}" suffix="${escapeHtml(suffix)}" duration="${duration}"${animated}${locale}></el-number-flow>
+        return `<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 20px 0;">
+  <div style="font-size: 2.75rem; font-weight: 700; color: var(--el-text-primary, #0f172a);">
+    <el-number-flow id="preview-number-flow" value="${escapeHtml(String(val))}" prefix="${escapeHtml(prefix)}" suffix="${escapeHtml(suffix)}" duration="${duration}"${animated}${locale}></el-number-flow>
+  </div>
+  <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
+    <el-button size="sm" variant="secondary" onclick="(function(){const n=document.getElementById('preview-number-flow');if(!n)return;const cur=Number(n.getAttribute('value')||0);n.setAttribute('value',String(Math.max(0,cur-1250)));})()">-1,250</el-button>
+    <el-button size="sm" variant="primary" onclick="(function(){const n=document.getElementById('preview-number-flow');if(!n)return;const cur=Number(n.getAttribute('value')||0);n.setAttribute('value',String(cur+1250));})()">+1,250</el-button>
+    <el-button size="sm" variant="secondary" onclick="(function(){const n=document.getElementById('preview-number-flow');if(!n)return;n.setAttribute('value',String(Math.floor(10000+Math.random()*89999)));})()">Randomize 🎲</el-button>
+  </div>
 </div>`;
       }
 

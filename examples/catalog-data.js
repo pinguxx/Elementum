@@ -3120,14 +3120,14 @@ export const components = {
       {
         "name": "duration",
         "type": "number",
-        "default": 0,
-        "description": "Configures duration attribute."
+        "default": 500,
+        "description": "Animation duration in milliseconds for rolling digit reels."
       },
       {
         "name": "animated",
         "type": "boolean",
-        "default": false,
-        "description": "Configures animated attribute."
+        "default": true,
+        "description": "Enables smooth odometer reel transitions when value updates."
       },
       {
         "name": "locale",
