@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AG-UI Protocol Live Example — @wcomp/elementum</title>
+  <link rel="stylesheet" href="../src/tokens.css" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: clip;
+    }
+
+    body {
+      font-family: var(--el-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+      background: var(--el-surface-muted, #f8fafc);
+      color: var(--el-text-primary, #0f172a);
+      min-height: 100vh;
+      min-block-size: 100dvh;
+      padding-bottom: 56px;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .page-shell {
+      max-width: 1200px;
+      margin: 28px auto 0 auto;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .hero-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--el-surface-border, #e2e8f0);
+    }
+
+    .hero-title {
+      margin: 0 0 6px 0;
+      font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.1rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hero-subtitle {
+      margin: 0;
+      font-size: 0.9375rem;
+      color: var(--el-text-secondary, #475569);
+      max-width: 680px;
+      line-height: 1.55;
+    }
+
+    .scenario-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      background: var(--el-surface-card, #ffffff);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      border-radius: var(--el-radius-lg, 12px);
+    }
+
+    .scenario-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--el-text-muted, #64748b);
+      margin-right: 4px;
+    }
+
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .column {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      min-inline-size: 0;
+    }
+
+    .panel {
+      background: var(--el-surface-card, #ffffff);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      border-radius: var(--el-radius-lg, 14px);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-inline-size: 0;
+      box-shadow: 0 4px 14px -4px rgba(15, 23, 42, 0.06);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 0.9375rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric-box {
+      padding: 12px 14px;
+      border-radius: var(--el-radius-md, 10px);
+      background: var(--el-surface-muted, #f8fafc);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-inline-size: 0;
+    }
+
+    .metric-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--el-text-muted, #64748b);
+    }
+
+    .metric-val {
+      font-size: 1.35rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      color: var(--el-text-primary, #0f172a);
+    }
+
+    .response-box {
+      padding: 14px 16px;
+      border-radius: var(--el-radius-md, 10px);
+      background: var(--el-surface-muted, #f8fafc);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      min-height: 76px;
+      line-height: 1.6;
+      font-size: 0.9375rem;
+    }
+
+    .event-log {
+      background: #0b1120;
+      color: #e2e8f0;
+      border: 1px solid #1e293b;
+      border-radius: var(--el-radius-md, 10px);
+      padding: 12px;
+      font-family: var(--el-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+      font-size: 0.75rem;
+      line-height: 1.55;
+      max-height: 290px;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .event-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      overflow-wrap: anywhere;
+    }
+
+    .event-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .event-type {
+      flex-shrink: 0;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 0.6875rem;
+      background: rgba(56, 189, 248, 0.16);
+      color: #38bdf8;
+    }
+
+    .event-type.state { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+    .event-type.tool { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+    .event-type.done { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+
+    .state-pre {
+      margin: 0;
+      padding: 12px;
+      border-radius: var(--el-radius-md, 10px);
+      background: #0b1120;
+      color: #93c5fd;
+      border: 1px solid #1e293b;
+      font-family: var(--el-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+      font-size: 0.75rem;
+      line-height: 1.5;
+      max-height: 210px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .patch-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 900px) {
+      .workspace-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .page-shell {
+        padding: 0 14px;
+        margin-top: 18px;
+      }
+
+      .panel {
+        padding: 14px 14px;
+      }
+
+      .metrics-row {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <el-navbar sticky brand="⚡ Elementum" badge="AG-UI" badge-variant="success" href="../index.html">
+    <a href="../index.html">Home</a>
+    <a href="../docs.html">Docs</a>
+    <a href="./index.html">Catalog</a>
+    <a href="./registry.html">Registry</a>
+    <a href="./agent-studio.html">AI Studio</a>
+    <a href="./ledgerflow.html">LedgerFlow</a>
+    <a href="./app.html">Showcase</a>
+    <el-theme-switch slot="actions"></el-theme-switch>
+  </el-navbar>
+
+  <main class="page-shell">
+    <header class="hero-header">
+      <div>
+        <h1 class="hero-title">
+          <span>AG-UI Protocol Live Demo</span>
+          <el-badge id="run-status-badge" variant="default" count="idle"></el-badge>
+        </h1>
+        <p class="hero-subtitle">
+          End-to-end <strong>Agent-User Interaction (AG-UI)</strong> streaming adapter powered by
+          <code>@wcomp/elementum/ag-ui</code>. Streams real SSE frames (<code>RUN_*</code>, <code>THINKING_*</code>,
+          <code>TOOL_CALL_*</code>, <code>STATE_SNAPSHOT</code>, RFC 6902 <code>STATE_DELTA</code>, <code>TEXT_MESSAGE_*</code>)
+          directly into micro-signals and native Web Components with zero runtime dependencies.
+        </p>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <el-button id="btn-reset" variant="secondary" size="sm">Reset Store</el-button>
+        <el-button variant="secondary" size="sm" onclick="window.location.href='../docs.html#mcp-server'">AG-UI Docs</el-button>
+      </div>
+    </header>
+
+    <!-- Scenario Launcher -->
+    <section class="scenario-bar" aria-label="AG-UI Scenarios">
+      <span class="scenario-label">Run AG-UI Stream:</span>
+      <el-button id="btn-scenario-deploy" variant="primary" size="sm">1. Deploy Audit (HITL Approval)</el-button>
+      <el-button id="btn-scenario-refactor" variant="secondary" size="sm">2. Refactor + Diff &amp; Citations</el-button>
+      <el-button id="btn-scenario-patch" variant="secondary" size="sm">3. Live JSON Patch Burst</el-button>
+    </section>
+
+    <div class="workspace-grid">
+      <!-- Left Column: Live Bound Elementum AI Components -->
+      <div class="column">
+        <section class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">🤖 Agent Execution Canvas</h2>
+            <span id="run-id-label" style="font-size:0.75rem; color:var(--el-text-muted, #64748b); font-family:var(--el-font-mono, monospace);">runId: —</span>
+          </div>
+
+          <el-reasoning-card
+            id="agui-reasoning"
+            summary="Waiting for AG-UI run..."
+          >Select a scenario above or submit a prompt below to stream live AG-UI events.</el-reasoning-card>
+
+          <el-task-list id="agui-tasks" heading="Agent Plan (bound to /tasks)"></el-task-list>
+
+          <el-tool-call
+            id="agui-tool-call"
+            class="hidden"
+            name="tool_call"
+            status="running"
+          ></el-tool-call>
+
+          <div class="response-box">
+            <el-streaming-text
+              id="agui-stream"
+              text="Ready. Click any scenario above to stream AG-UI SSE events into bound Web Components."
+            ></el-streaming-text>
+          </div>
+
+          <el-diff-viewer
+            id="agui-diff"
+            class="hidden"
+            filename="src/cache/policy.js"
+            mode="unified"
+            interactive
+          ></el-diff-viewer>
+
+          <el-sources id="agui-sources" class="hidden" label="Grounded Sources"></el-sources>
+
+          <el-prompt-input
+            id="agui-prompt"
+            placeholder="Ask the AG-UI agent (e.g. 'Audit production deploy' or 'Refactor cache TTL')..."
+          ></el-prompt-input>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">📦 Zero-Dependency Integration Code</h2>
+          </div>
+          <el-code-block
+            copyable
+            language="js"
+            code="import { createAgUiStore } from '@wcomp/elementum/ag-ui';
+
+const store = createAgUiStore({ progress: 0, confidence: 0, tasks: [] });
+
+// Bind Elementum components directly to AG-UI lifecycle & JSON Pointers
+store.bindComponents({
+  promptInput: document.querySelector('#agui-prompt'),
+  reasoningCard: document.querySelector('#agui-reasoning'),
+  toolCallCard: document.querySelector('#agui-tool-call'),
+  streamingText: document.querySelector('#agui-stream'),
+  stateBindings: {
+    '/progress': [document.querySelector('#agui-progress'), 'value'],
+    '/confidence': [document.querySelector('#agui-confidence'), 'value'],
+  },
+});
+
+// Connect any AG-UI SSE endpoint (LangGraph, CrewAI, Mastra, PydanticAI, ADK)
+const res = await fetch('/api/agent', { method: 'POST', body: JSON.stringify({ prompt }) });
+await store.connectSSE(res);"
+          ></el-code-block>
+        </section>
+      </div>
+
+      <!-- Right Column: Bound State Signals, RFC 6902 Patch Lab & Wire Log -->
+      <div class="column">
+        <section class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">📊 Signal-Bound State (RFC 6901 Pointers)</h2>
+          </div>
+
+          <div class="metrics-row">
+            <div class="metric-box">
+              <span class="metric-label">/progress</span>
+              <span class="metric-val"><el-number-flow id="agui-progress-num" value="0" suffix="%"></el-number-flow></span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-label">/confidence</span>
+              <span class="metric-val"><el-number-flow id="agui-confidence" value="0" suffix="%"></el-number-flow></span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-label">/latencyMs</span>
+              <span class="metric-val"><el-number-flow id="agui-latency" value="0" suffix="ms"></el-number-flow></span>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--el-text-muted, #64748b); margin-bottom:6px;">
+              <span>Run Completion (<code>/progress</code>)</span>
+              <span id="progress-caption">0%</span>
+            </div>
+            <el-progress id="agui-progress" value="0" max="100" variant="primary" size="md"></el-progress>
+          </div>
+
+          <div>
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--el-text-muted, #64748b); margin-bottom:8px;">
+              Manual RFC 6902 STATE_DELTA
+            </div>
+            <div class="patch-actions">
+              <el-button id="btn-patch-progress" variant="secondary" size="sm">+20% Progress</el-button>
+              <el-button id="btn-patch-confidence" variant="secondary" size="sm">Boost Confidence</el-button>
+              <el-button id="btn-patch-task" variant="secondary" size="sm">Append Task</el-button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">📡 Live AG-UI SSE Wire Stream</h2>
+            <el-badge id="event-count-badge" variant="primary" count="0 events"></el-badge>
+          </div>
+          <div id="agui-event-log" class="event-log" role="log" aria-live="polite">
+            <div style="color:#64748b;">Waiting for SSE frames...</div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">🗂️ Live Store State JSON</h2>
+          </div>
+          <pre id="agui-state-json" class="state-pre">{}</pre>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <el-toaster></el-toaster>
+
+  <script type="module">
+    import '../src/index.js';
+    import { toast } from '../src/index.js';
+    import { createAgUiStore } from '../src/ag-ui.js';
+
+    const statusBadge = document.getElementById('run-status-badge');
+    const runIdLabel = document.getElementById('run-id-label');
+    const reasoningEl = document.getElementById('agui-reasoning');
+    const tasksEl = document.getElementById('agui-tasks');
+    const toolCallEl = document.getElementById('agui-tool-call');
+    const streamEl = document.getElementById('agui-stream');
+    const diffEl = document.getElementById('agui-diff');
+    const sourcesEl = document.getElementById('agui-sources');
+    const promptEl = document.getElementById('agui-prompt');
+
+    const progressEl = document.getElementById('agui-progress');
+    const progressNumEl = document.getElementById('agui-progress-num');
+    const progressCaption = document.getElementById('progress-caption');
+    const confidenceEl = document.getElementById('agui-confidence');
+    const latencyEl = document.getElementById('agui-latency');
+    const eventLogEl = document.getElementById('agui-event-log');
+    const eventCountBadge = document.getElementById('event-count-badge');
+    const stateJsonEl = document.getElementById('agui-state-json');
+
+    const INITIAL_STATE = {
+      progress: 0,
+      confidence: 0,
+      latencyMs: 0,
+      tasks: [
+        { id: 't1', label: 'Connect to AG-UI SSE stream', status: 'pending' },
+        { id: 't2', label: 'Inspect tool call & state delta', status: 'pending' },
+        { id: 't3', label: 'Render final grounded answer', status: 'pending' },
+      ],
+      sources: [],
+      diff: null,
+    };
+
+    const store = createAgUiStore(INITIAL_STATE);
+
+    // 1. Declarative AG-UI component binding
+    store.bindComponents({
+      promptInput: promptEl,
+      reasoningCard: reasoningEl,
+      toolCallCard: toolCallEl,
+      streamingText: streamEl,
+      stateBindings: {
+        '/progress': [progressEl, 'value'],
+        '/confidence': [confidenceEl, 'value'],
+        '/latencyMs': [latencyEl, 'value'],
+      },
+    });
+
+    // 2. Fine-grained pathSignal subscriptions for rich AI primitives
+    store.pathSignal('/progress', 0).subscribe((v) => {
+      const pct = Math.max(0, Math.min(100, Number(v) || 0));
+      progressNumEl.setAttribute('value', String(pct));
+      progressCaption.textContent = `${pct}%`;
+    });
+
+    store.pathSignal('/tasks', []).subscribe((tasks) => {
+      if (Array.isArray(tasks)) {
+        tasksEl.setTasks(tasks);
+      }
+    });
+
+    store.pathSignal('/sources', []).subscribe((sources) => {
+      if (Array.isArray(sources) && sources.length > 0) {
+        sourcesEl.classList.remove('hidden');
+        sourcesEl.setSources(sources);
+      } else {
+        sourcesEl.classList.add('hidden');
+      }
+    });
+
+    store.pathSignal('/diff', null).subscribe((diff) => {
+      if (diff && diff.before && diff.after) {
+        diffEl.classList.remove('hidden');
+        diffEl.setAttribute('filename', diff.filename || 'file.js');
+        diffEl.setDiff(diff.before, diff.after);
+      } else {
+        diffEl.classList.add('hidden');
+      }
+    });
+
+    store.thinkingText.subscribe((txt) => {
+      if (txt) reasoningEl.textContent = txt;
+    });
+
+    store.status.subscribe((st) => {
+      statusBadge.setAttribute('count', st);
+      const variant = st === 'running' ? 'primary' : st === 'finished' ? 'success' : st === 'error' ? 'danger' : 'default';
+      statusBadge.setAttribute('variant', variant);
+    });
+
+    store.runId.subscribe((id) => {
+      runIdLabel.textContent = `runId: ${id || '—'}`;
+    });
+
+    store.state.subscribe((st) => {
+      stateJsonEl.textContent = JSON.stringify(st, null, 2);
+    });
+
+    store.toolCalls.subscribe((list) => {
+      if (list.length > 0) {
+        toolCallEl.classList.remove('hidden');
+      } else {
+        toolCallEl.classList.add('hidden');
+      }
+    });
+
+    // Wire-format event inspector
+    let eventCounter = 0;
+    store.onEvent((evt) => {
+      if (eventCounter === 0) eventLogEl.innerHTML = '';
+      eventCounter++;
+      eventCountBadge.setAttribute('count', `${eventCounter} events`);
+
+      const row = document.createElement('div');
+      row.className = 'event-row';
+      const badge = document.createElement('span');
+      badge.className = 'event-type';
+      if (evt.type.startsWith('STATE_')) badge.classList.add('state');
+      else if (evt.type.startsWith('TOOL_')) badge.classList.add('tool');
+      else if (evt.type === 'RUN_FINISHED') badge.classList.add('done');
+      badge.textContent = evt.type;
+
+      const payload = document.createElement('span');
+      const { type, ...rest } = evt;
+      const summary = JSON.stringify(rest);
+      payload.textContent = summary.length > 130 ? summary.slice(0, 130) + '…' : summary;
+      payload.style.color = '#cbd5e1';
+
+      row.appendChild(badge);
+      row.appendChild(payload);
+      eventLogEl.appendChild(row);
+      eventLogEl.scrollTop = eventLogEl.scrollHeight;
+    });
+
+    // Helper: create a real ReadableStream of SSE `data: {...}\n\n` bytes
+    const delay = (ms) => new Promise((r) => setTimeout(r, ms));
+    function createSseStream(frames) {
+      const encoder = new TextEncoder();
+      return new ReadableStream({
+        async start(controller) {
+          for (const frame of frames) {
+            if (frame.wait) await delay(frame.wait);
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify(frame.event)}\n\n`));
+          }
+          controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+          controller.close();
+        },
+      });
+    }
+
+    // HITL approval gate promise
+    let pendingApprovalResolver = null;
+    toolCallEl.addEventListener('approve', (e) => {
+      toast.success(`Approved tool call: ${e.detail?.name || 'deploy_release'}`);
+      if (pendingApprovalResolver) {
+        pendingApprovalResolver(true);
+        pendingApprovalResolver = null;
+      }
+    });
+    toolCallEl.addEventListener('reject', (e) => {
+      toast.warning(`Rejected tool call: ${e.detail?.name || 'deploy_release'}`);
+      if (pendingApprovalResolver) {
+        pendingApprovalResolver(false);
+        pendingApprovalResolver = null;
+      }
+    });
+
+    diffEl.addEventListener('approve', () => toast.success('Diff approved and staged!'));
+    diffEl.addEventListener('reject', () => toast.info('Diff rejected.'));
+
+    function resetDemo() {
+      pendingApprovalResolver = null;
+      eventCounter = 0;
+      eventLogEl.innerHTML = '<div style="color:#64748b;">Waiting for SSE frames...</div>';
+      eventCountBadge.setAttribute('count', '0 events');
+      store.thinkingText.value = '';
+      store.currentText.value = '';
+      store.toolCalls.value = [];
+      store.status.value = 'idle';
+      store.runId.value = '';
+      store.state.value = structuredClone(INITIAL_STATE);
+      reasoningEl.setAttribute('summary', 'Waiting for AG-UI run...');
+      reasoningEl.textContent = 'Select a scenario above or submit a prompt below to stream live AG-UI events.';
+      streamEl.text.value = 'Ready. Click any scenario above to stream AG-UI SSE events into bound Web Components.';
+      streamEl.displayedText.value = streamEl.text.value;
+    }
+
+    // Scenario 1: Deploy Audit with real Human-in-the-Loop Tool Approval
+    async function runDeployAuditScenario(customPrompt) {
+      resetDemo();
+      const runId = `run_deploy_${Date.now().toString(36)}`;
+      const part1 = createSseStream([
+        { wait: 40, event: { type: 'RUN_STARTED', runId } },
+        { wait: 120, event: { type: 'STATE_SNAPSHOT', snapshot: {
+          progress: 15,
+          confidence: 72,
+          latencyMs: 42,
+          tasks: [
+            { id: 't1', label: 'Check test coverage & bundle budget', status: 'in-progress' },
+            { id: 't2', label: 'Request HITL approval for prod deploy', status: 'pending' },
+            { id: 't3', label: 'Verify Vercel edge healthcheck', status: 'pending' },
+          ],
+          sources: [],
+          diff: null,
+        } } },
+        { wait: 150, event: { type: 'STEP_STARTED', stepName: 'Auditing release readiness…' } },
+        { wait: 160, event: { type: 'THINKING_TEXT_MESSAGE_CONTENT', delta: 'Checking 181 unit tests (95.9% coverage), zero runtime dependencies, and 162.7 kB npm pack size… ' } },
+        { wait: 220, event: { type: 'THINKING_TEXT_MESSAGE_CONTENT', delta: 'All release gates passed. Preparing production deploy tool call requiring human approval.' } },
+        { wait: 180, event: { type: 'STATE_DELTA', delta: [
+          { op: 'replace', path: '/progress', value: 50 },
+          { op: 'replace', path: '/confidence', value: 94 },
+          { op: 'replace', path: '/latencyMs', value: 118 },
+          { op: 'replace', path: '/tasks/0/status', value: 'done' },
+          { op: 'replace', path: '/tasks/1/status', value: 'in-progress' },
+        ] } },
+        { wait: 150, event: { type: 'STEP_FINISHED' } },
+        { wait: 120, event: { type: 'TOOL_CALL_START', toolCallId: 'tc_deploy_1', toolCallName: 'deploy_production_release', requiresApproval: true } },
+        { wait: 120, event: { type: 'TOOL_CALL_ARGS', toolCallId: 'tc_deploy_1', delta: '{"package":"@wcomp/elementum",' } },
+        { wait: 140, event: { type: 'TOOL_CALL_ARGS', toolCallId: 'tc_deploy_1', delta: '"version":"0.1.0","target":"vercel-prod","prompt":' + JSON.stringify(customPrompt || 'Audit & deploy v0.1.0') + '}' } },
+        { wait: 100, event: { type: 'TOOL_CALL_END', toolCallId: 'tc_deploy_1' } },
+      ]);
+
+      await store.connectSSE(part1);
+      toast.info('AG-UI paused: click Approve or Reject on the tool call card.');
+
+      const approved = await new Promise((resolve) => {
+        pendingApprovalResolver = resolve;
+      });
+
+      const part2 = createSseStream(approved ? [
+        { wait: 80, event: { type: 'TOOL_CALL_RESULT', toolCallId: 'tc_deploy_1', status: 'completed', result: { deployed: true, url: 'https://elementum-sage.vercel.app', region: 'iad1', coldStartMs: 28 } } },
+        { wait: 140, event: { type: 'STATE_DELTA', delta: [
+          { op: 'replace', path: '/progress', value: 100 },
+          { op: 'replace', path: '/confidence', value: 99 },
+          { op: 'replace', path: '/latencyMs', value: 164 },
+          { op: 'replace', path: '/tasks/1/status', value: 'done' },
+          { op: 'replace', path: '/tasks/2/status', value: 'done' },
+        ] } },
+        { wait: 100, event: { type: 'TEXT_MESSAGE_START', messageId: 'm1', role: 'assistant' } },
+        { wait: 80, event: { type: 'TEXT_MESSAGE_CONTENT', messageId: 'm1', delta: 'Production deployment for @wcomp/elementum@0.1.0 succeeded! ' } },
+        { wait: 100, event: { type: 'TEXT_MESSAGE_CONTENT', messageId: 'm1', delta: 'All 109 Web Components, DSD SSR (/ssr), and static assets are live with 28ms edge latency.' } },
+        { wait: 80, event: { type: 'TEXT_MESSAGE_END', messageId: 'm1' } },
+        { wait: 60, event: { type: 'RUN_FINISHED', runId } },
+      ] : [
+        { wait: 80, event: { type: 'TOOL_CALL_RESULT', toolCallId: 'tc_deploy_1', status: 'rejected', result: { deployed: false, reason: 'Operator rejected production deploy' } } },
+        { wait: 100, event: { type: 'STATE_DELTA', delta: [
+          { op: 'replace', path: '/progress', value: 100 },
+          { op: 'replace', path: '/tasks/1/status', value: 'error' },
+        ] } },
+        { wait: 100, event: { type: 'TEXT_MESSAGE_START', messageId: 'm1', role: 'assistant' } },
+        { wait: 80, event: { type: 'TEXT_MESSAGE_CONTENT', messageId: 'm1', delta: 'Deployment aborted per human-in-the-loop rejection. No changes were pushed to production.' } },
+        { wait: 80, event: { type: 'TEXT_MESSAGE_END', messageId: 'm1' } },
+        { wait: 60, event: { type: 'RUN_FINISHED', runId } },
+      ]);
+
+      await store.connectSSE(part2);
+    }
+
+    // Scenario 2: Code Refactor with Diff Viewer + Grounded Citations
+    async function runRefactorScenario() {
+      resetDemo();
+      const runId = `run_refactor_${Date.now().toString(36)}`;
+      const stream = createSseStream([
+        { wait: 40, event: { type: 'RUN_STARTED', runId } },
+        { wait: 100, event: { type: 'STATE_SNAPSHOT', snapshot: {
+          progress: 25,
+          confidence: 84,
+          latencyMs: 55,
+          tasks: [
+            { id: 'r1', label: 'Inspect sticky header overflow bug', status: 'done' },
+            { id: 'r2', label: 'Generate minimal CSS patch', status: 'in-progress' },
+            { id: 'r3', label: 'Attach W3C spec citations', status: 'pending' },
+          ],
+          sources: [],
+          diff: null,
+        } } },
+        { wait: 120, event: { type: 'STEP_STARTED', stepName: 'Analyzing CSS scroll containment…' } },
+        { wait: 160, event: { type: 'THINKING_TEXT_MESSAGE_CONTENT', delta: 'overflow-x: hidden on html/body coerces overflow-y to auto, breaking position: sticky. Switching to overflow-x: clip preserves sticky positioning without horizontal scrollbars.' } },
+        { wait: 180, event: { type: 'STEP_FINISHED' } },
+        { wait: 120, event: { type: 'STATE_DELTA', delta: [
+          { op: 'replace', path: '/progress', value: 75 },
+          { op: 'replace', path: '/confidence', value: 98 },
+          { op: 'replace', path: '/latencyMs', value: 142 },
+          { op: 'replace', path: '/tasks/1/status', value: 'done' },
+          { op: 'replace', path: '/tasks/2/status', value: 'in-progress' },
+          { op: 'replace', path: '/diff', value: {
+            filename: 'docs.html',
+            before: 'html, body {\n  margin: 0;\n  width: 100%;\n  overflow-x: hidden;\n}',
+            after: 'html, body {\n  margin: 0;\n  width: 100%;\n  overflow-x: clip;\n}',
+          } },
+        ] } },
+        { wait: 160, event: { type: 'STATE_DELTA', delta: [
+          { op: 'replace', path: '/progress', value: 100 },
+          { op: 'replace', path: '/tasks/2/status', value: 'done' },
+          { op: 'replace', path: '/sources', value: [
+            { id: '1', title: 'CSS Overflow Module Level 3 — clip', url: 'https://developer.mozilla.org/en-US/docs/Web/CSS/overflow', snippet: 'Unlike hidden, clip does not create a scroll container, allowing position: sticky descendants to stick to the viewport.' },
+            { id: '2', title: 'AG-UI Protocol Specification', url: 'https://docs.ag-ui.com/', snippet: 'Standardized SSE event schema for RUN, STEP, TOOL_CALL, STATE_SNAPSHOT, and RFC 6902 STATE_DELTA.' },
+          ] },
+        ] } },
+        { wait: 100, event: { type: 'TEXT_MESSAGE_START', messageId: 'm2', role: 'assistant' } },
+        { wait: 90, event: { type: 'TEXT_MESSAGE_CONTENT', messageId: 'm2', delta: 'Proposed a 1-line CSS fix in docs.html (overflow-x: hidden → clip). ' } },
+        { wait: 90, event: { type: 'TEXT_MESSAGE_CONTENT', messageId: 'm2', delta: 'Review the interactive diff below and inspect the grounded citations.' } },
+        { wait: 80, event: { type: 'TEXT_MESSAGE_END', messageId: 'm2' } },
+        { wait: 60, event: { type: 'RUN_FINISHED', runId } },
+      ]);
+      await store.connectSSE(stream);
+    }
+
+    // Scenario 3: Rapid RFC 6902 JSON Patch Burst
+    async function runPatchBurstScenario() {
+      resetDemo();
+      const runId = `run_patch_${Date.now().toString(36)}`;
+      const frames = [
+        { wait: 30, event: { type: 'RUN_STARTED', runId } },
+        { wait: 60, event: { type: 'STATE_SNAPSHOT', snapshot: { progress: 10, confidence: 55, latencyMs: 18, tasks: [{ id: 'p1', label: 'Apply 5 sequential RFC 6902 patches', status: 'in-progress' }], sources: [], diff: null } } },
+      ];
+      for (let i = 1; i <= 5; i++) {
+        frames.push({
+          wait: 160,
+          event: {
+            type: 'STATE_DELTA',
+            delta: [
+              { op: 'replace', path: '/progress', value: i * 20 },
+              { op: 'replace', path: '/confidence', value: 55 + i * 8 },
+              { op: 'replace', path: '/latencyMs', value: 18 + i * 11 },
+            ],
+          },
+        });
+      }
+      frames.push(
+        { wait: 100, event: { type: 'STATE_DELTA', delta: [{ op: 'replace', path: '/tasks/0/status', value: 'done' }] } },
+        { wait: 80, event: { type: 'TEXT_MESSAGE_START', messageId: 'm3', role: 'assistant' } },
+        { wait: 60, event: { type: 'TEXT_MESSAGE_CONTENT', messageId: 'm3', delta: 'Dispatched 5 RFC 6902 STATE_DELTA patches — each bound signal updated surgically with zero full-tree rerenders.' } },
+        { wait: 60, event: { type: 'TEXT_MESSAGE_END', messageId: 'm3' } },
+        { wait: 40, event: { type: 'RUN_FINISHED', runId } }
+      );
+      await store.connectSSE(createSseStream(frames));
+    }
+
+    // Wire buttons & prompt input
+    document.getElementById('btn-scenario-deploy').addEventListener('click', () => runDeployAuditScenario());
+    document.getElementById('btn-scenario-refactor').addEventListener('click', () => runRefactorScenario());
+    document.getElementById('btn-scenario-patch').addEventListener('click', () => runPatchBurstScenario());
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      resetDemo();
+      toast.info('AG-UI store reset.');
+    });
+
+    promptEl.addEventListener('submit', (e) => {
+      const text = (e.detail?.prompt || '').trim();
+      if (!text) return;
+      if (/refactor|diff|css|patch/i.test(text)) {
+        runRefactorScenario();
+      } else {
+        runDeployAuditScenario(text);
+      }
+    });
+
+    // Manual RFC 6902 patch buttons
+    document.getElementById('btn-patch-progress').addEventListener('click', () => {
+      const next = Math.min(100, (Number(store.state.peek().progress) || 0) + 20);
+      store.dispatch({ type: 'STATE_DELTA', delta: [{ op: 'replace', path: '/progress', value: next }] });
+    });
+
+    document.getElementById('btn-patch-confidence').addEventListener('click', () => {
+      const next = Math.min(100, (Number(store.state.peek().confidence) || 60) + 12);
+      store.dispatch({ type: 'STATE_DELTA', delta: [{ op: 'replace', path: '/confidence', value: next }] });
+    });
+
+    let manualTaskIdx = 1;
+    document.getElementById('btn-patch-task').addEventListener('click', () => {
+      store.dispatch({
+        type: 'STATE_DELTA',
+        delta: [{
+          op: 'add',
+          path: '/tasks/-',
+          value: { id: `manual-${manualTaskIdx}`, label: `Custom JSON Patch task #${manualTaskIdx++}`, status: 'done' },
+        }],
+      });
+    });
+
+    // Render initial state
+    resetDemo();
+  </script>
+</body>
+</html>

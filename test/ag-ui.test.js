@@ -187,3 +187,18 @@ test('createAgUiStore handles full AG-UI event stream, pathSignal, bindComponent
   toolCallCard.remove();
   tokenFlow.remove();
 });
+
+test('examples/ag-ui.html live demo wires createAgUiStore, bindComponents, connectSSE, and sticky navbar', async () => {
+  const fs = await import('node:fs');
+  const html = fs.readFileSync(new URL('../examples/ag-ui.html', import.meta.url), 'utf8');
+  assert.ok(html.includes('<el-navbar sticky'), 'should include sticky navbar');
+  assert.ok(html.includes('overflow-x: clip'), 'should use overflow-x: clip so sticky navbar works');
+  assert.ok(html.includes('createAgUiStore'), 'should import and instantiate createAgUiStore');
+  assert.ok(html.includes('store.bindComponents'), 'should bind Elementum components via bindComponents');
+  assert.ok(html.includes('store.connectSSE'), 'should stream events via connectSSE');
+  assert.ok(html.includes('STATE_DELTA'), 'should demonstrate RFC 6902 STATE_DELTA patches');
+  assert.ok(html.includes('<el-tool-call'), 'should include HITL <el-tool-call>');
+  assert.ok(html.includes('<el-diff-viewer'), 'should include <el-diff-viewer>');
+  assert.ok(html.includes('<el-sources'), 'should include <el-sources>');
+  assert.ok(html.includes('<el-task-list'), 'should include <el-task-list>');
+});
