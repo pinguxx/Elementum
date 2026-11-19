@@ -177,4 +177,21 @@ test.describe('Real Browser Verification (Chromium / Firefox / WebKit)', () => {
       expect(severe, `axe-core severe violations on ${url}: ${JSON.stringify(severe, null, 2)}`).toEqual([]);
     }
   });
+
+  test('Docs sidebar highlights active section on click and tracks scrollspy while scrolling', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/docs.html');
+    await page.waitForSelector('.docs-sidebar');
+
+    // Click "Micro-Signals Kernel" in sidebar -> immediately becomes active
+    await page.locator('.docs-sidebar a[href="#signals"]').click();
+    await expect(page.locator('.docs-sidebar .sidebar-item.active a')).toHaveAttribute('href', '#signals');
+
+    // Scroll to #mcp-server -> scrollspy updates active highlight automatically
+    await page.evaluate(() => {
+      document.getElementById('mcp-server').scrollIntoView({ behavior: 'instant' });
+    });
+    await page.waitForTimeout(100);
+    await expect(page.locator('.docs-sidebar .sidebar-item.active a')).toHaveAttribute('href', '#mcp-server');
+  });
 });

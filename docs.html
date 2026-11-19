@@ -15,12 +15,20 @@
       --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       max-width: 100%;
       overflow-x: clip;
+    }
+
+    .docs-content [id] {
+      scroll-margin-top: 84px;
     }
 
     body {
@@ -97,6 +105,7 @@
     .docs-sidebar {
       position: sticky;
       top: 65px;
+      align-self: start;
       height: calc(100vh - 65px);
       overflow-y: auto;
       padding: 32px 20px;
@@ -1002,5 +1011,89 @@ node tools/create-component.js el-color-picker --form</el-code-block>
 
     </main>
   </div>
+
+  <script>
+    (() => {
+      const links = Array.from(document.querySelectorAll('.docs-sidebar .sidebar-item a[href^="#"]'));
+      const mobileSelect = document.querySelector('.mobile-section-nav select');
+      if (links.length === 0) return;
+
+      const entries = links
+        .map((link) => {
+          const id = link.getAttribute('href').slice(1);
+          const target = document.getElementById(id);
+          return target ? { id, link, item: link.closest('.sidebar-item'), target } : null;
+        })
+        .filter(Boolean);
+
+      let activeId = '';
+
+      function setActive(id, scrollSidebar = false) {
+        if (!id || id === activeId) return;
+        activeId = id;
+        for (const entry of entries) {
+          const isCurrent = entry.id === id;
+          entry.item.classList.toggle('active', isCurrent);
+          if (isCurrent) {
+            entry.link.setAttribute('aria-current', 'location');
+            if (scrollSidebar && typeof entry.item.scrollIntoView === 'function') {
+              entry.item.scrollIntoView({ block: 'nearest' });
+            }
+          } else {
+            entry.link.removeAttribute('aria-current');
+          }
+        }
+        if (mobileSelect && mobileSelect.value !== '#' + id) {
+          const hasOpt = Array.from(mobileSelect.options).some((o) => o.value === '#' + id);
+          if (hasOpt) mobileSelect.value = '#' + id;
+        }
+      }
+
+      // Immediate highlight on sidebar click
+      for (const entry of entries) {
+        entry.link.addEventListener('click', () => {
+          setActive(entry.id, false);
+        });
+      }
+
+      // Scrollspy: track the last heading/section that crossed above the offset line
+      let ticking = false;
+      function updateFromScroll() {
+        ticking = false;
+        const nearBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 40;
+        if (nearBottom && entries.length > 0) {
+          setActive(entries[entries.length - 1].id, true);
+          return;
+        }
+        const offset = 120;
+        let current = entries[0].id;
+        for (const entry of entries) {
+          if (entry.target.getBoundingClientRect().top <= offset) {
+            current = entry.id;
+          }
+        }
+        setActive(current, true);
+      }
+
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(updateFromScroll);
+        }
+      }, { passive: true });
+
+      window.addEventListener('hashchange', () => {
+        const hashId = window.location.hash.slice(1);
+        if (hashId) setActive(hashId, true);
+      });
+
+      const initialHash = window.location.hash.slice(1);
+      if (initialHash && entries.some((e) => e.id === initialHash)) {
+        setActive(initialHash, true);
+      } else {
+        updateFromScroll();
+      }
+    })();
+  </script>
 </body>
 </html>
