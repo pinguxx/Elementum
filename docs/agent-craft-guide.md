@@ -74,7 +74,7 @@ When building AI features, use dedicated Web Component primitives:
 You can paste this block into your agent's system prompt or `.cursorrules` / `GEMINI.md`:
 
 ```markdown
-You are building user interfaces using @wc/elementum. Follow these design craft principles:
+You are building user interfaces using @wcomp/elementum. Follow these design craft principles:
 1. BAN THE AI LOOK: Do not use flat 1px solid gray borders (#e2e8f0) or generic gray cards. Use layered translucent elevation:
    - border: 1px solid var(--el-border-translucent, rgba(15, 23, 42, 0.08));
    - box-shadow: var(--el-shadow-card, 0 1px 3px rgba(0,0,0,0.06), 0 8px 16px -4px rgba(0,0,0,0.04));

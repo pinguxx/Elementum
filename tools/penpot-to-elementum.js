@@ -344,7 +344,7 @@ export function generateAppHtml(spec) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>${escapeHtml(spec.brand)} — Generated from Penpot MCP | @wc/elementum</title>
+  <title>${escapeHtml(spec.brand)} — Generated from Penpot MCP | @wcomp/elementum</title>
   <link rel="stylesheet" href="../src/tokens.css" />
   <script type="module" src="../src/index.js"></script>
   <style>

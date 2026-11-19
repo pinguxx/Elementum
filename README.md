@@ -1,4 +1,4 @@
-# @wc/elementum
+# @wcomp/elementum
 
 [![CI](https://github.com/pinguxx/Elementum/actions/workflows/ci.yml/badge.svg)](https://github.com/pinguxx/Elementum/actions/workflows/ci.yml)
 ![Coverage](https://img.shields.io/badge/coverage-95%25-brightgreen)
@@ -20,10 +20,10 @@ Elementum runs directly in any modern browser without Webpack, Vite, or Babel.
 <html lang="en">
 <head>
   <!-- 1. Include Design Tokens -->
-  <link rel="stylesheet" href="https://unpkg.com/@wc/elementum/tokens.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />
 
   <!-- 2. Import Component Library -->
-  <script type="module" src="https://unpkg.com/@wc/elementum"></script>
+  <script type="module" src="https://unpkg.com/@wcomp/elementum"></script>
 </head>
 <body>
   <!-- Native Form with Form-Associated Custom Elements -->
@@ -133,7 +133,7 @@ Included skills under [`skills/`](skills/):
 
 ## Framework Integration
 
-`@wc/elementum` works natively in vanilla HTML, React 19, Vue 3, Svelte 5, and Next.js. See **[docs/framework-integration.md](file:///c:/dev/Elementum/docs/framework-integration.md)** for complete setup instructions and TypeScript configuration.
+`@wcomp/elementum` works natively in vanilla HTML, React 19, Vue 3, Svelte 5, and Next.js. See **[docs/framework-integration.md](file:///c:/dev/Elementum/docs/framework-integration.md)** for complete setup instructions and TypeScript configuration.
 
 ---
 
@@ -211,8 +211,8 @@ Elementum/
 Elementum includes built-in server-side rendering support emitting standard `<template shadowrootmode="open">` for zero-CLS first paint in Next.js, Nuxt, Astro, and Node.js:
 
 ```javascript
-import { renderComponentToDSD } from '@wc/elementum/ssr';
-import { ElButton } from '@wc/elementum';
+import { renderComponentToDSD } from '@wcomp/elementum/ssr';
+import { ElButton } from '@wcomp/elementum';
 
 // Outputs HTML with Declarative Shadow DOM and encapsulated styles
 const html = renderComponentToDSD('el-button', ElButton, { variant: 'primary' }, 'Submit');

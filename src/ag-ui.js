@@ -1,5 +1,5 @@
 /**
- * AG-UI (Agent-User Interaction Protocol) Adapter for @wc/elementum
+ * AG-UI (Agent-User Interaction Protocol) Adapter for @wcomp/elementum
  * Bridges streaming AG-UI events (RUN_*, STEP_*, TEXT_MESSAGE_*, TOOL_CALL_*, STATE_*)
  * into fine-grained Elementum micro-signals and Web Component properties.
  */

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Real Declarative Shadow DOM (DSD) Server-Side Rendering Example for @wc/elementum
+ * Real Declarative Shadow DOM (DSD) Server-Side Rendering Example for @wcomp/elementum
  *
  * Runs in pure Node.js with ZERO runtime dependencies and ZERO DOM emulation (no happy-dom).
  * Emits standard <template shadowrootmode="open"> HTML for instant zero-CLS first paint,
@@ -216,7 +216,7 @@ export function renderSsrPage({
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Declarative Shadow DOM (DSD) SSR Example — @wc/elementum</title>
+  <title>Declarative Shadow DOM (DSD) SSR Example — @wcomp/elementum</title>
   <style>
 ${tokensCss}
     *, *::before, *::after { box-sizing: border-box; }

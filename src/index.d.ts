@@ -1,5 +1,5 @@
 /**
- * @wc/elementum TypeScript Declarations
+ * @wcomp/elementum TypeScript Declarations
  * Fine-grained reactive Web Component framework & design system.
  */
 
@@ -739,6 +739,31 @@ export class ElFieldset extends Elementum {
   disabled: Signal<boolean>;
 }
 
+export class ElCallout extends Elementum {}
+export class ElCheckboxCard extends Elementum {}
+export class ElCodeBlock extends Elementum {}
+export class ElDataList extends Elementum {}
+export class ElDataListItem extends Elementum {}
+export class ElDiffViewer extends Elementum {}
+export class ElInset extends Elementum {}
+export class ElInsightCard extends Elementum {}
+export class ElNavbar extends Elementum {}
+export class ElNavigationMenu extends Elementum {}
+export class ElNavigationMenuItem extends Elementum {}
+export class ElNavigationMenuTrigger extends Elementum {}
+export class ElNavigationMenuContent extends Elementum {}
+export class ElRadioCard extends Elementum {}
+export class ElRadioCardGroup extends Elementum {}
+export class ElResizableHandle extends Elementum {}
+export class ElResizablePanel extends Elementum {}
+export class ElRoute extends Elementum {}
+export class ElRouteLink extends Elementum {}
+export class ElRouter extends Elementum {}
+export class ElSources extends Elementum {}
+export class ElTaskList extends Elementum {}
+export class ElToolCall extends Elementum {}
+export class ElVisuallyHidden extends Elementum {}
+
 // ==========================================
 // SSR (Declarative Shadow DOM)
 // ==========================================
@@ -841,6 +866,30 @@ declare global {
     'el-sidebar-trigger': ElSidebarTrigger;
     'el-form': ElForm;
     'el-fieldset': ElFieldset;
+    'el-callout': ElCallout;
+    'el-checkbox-card': ElCheckboxCard;
+    'el-code-block': ElCodeBlock;
+    'el-data-list': ElDataList;
+    'el-data-list-item': ElDataListItem;
+    'el-diff-viewer': ElDiffViewer;
+    'el-inset': ElInset;
+    'el-insight-card': ElInsightCard;
+    'el-navbar': ElNavbar;
+    'el-navigation-menu': ElNavigationMenu;
+    'el-navigation-menu-item': ElNavigationMenuItem;
+    'el-navigation-menu-trigger': ElNavigationMenuTrigger;
+    'el-navigation-menu-content': ElNavigationMenuContent;
+    'el-radio-card': ElRadioCard;
+    'el-radio-card-group': ElRadioCardGroup;
+    'el-resizable-handle': ElResizableHandle;
+    'el-resizable-panel': ElResizablePanel;
+    'el-route': ElRoute;
+    'el-route-link': ElRouteLink;
+    'el-router': ElRouter;
+    'el-sources': ElSources;
+    'el-task-list': ElTaskList;
+    'el-tool-call': ElToolCall;
+    'el-visually-hidden': ElVisuallyHidden;
   }
 
   namespace JSX {
@@ -929,7 +978,30 @@ declare global {
       'el-sidebar-trigger': any;
       'el-form': any;
       'el-fieldset': any;
-    }
+      'el-callout': any;
+      'el-checkbox-card': any;
+      'el-code-block': any;
+      'el-data-list': any;
+      'el-data-list-item': any;
+      'el-diff-viewer': any;
+      'el-inset': any;
+      'el-insight-card': any;
+      'el-navbar': any;
+      'el-navigation-menu': any;
+      'el-navigation-menu-item': any;
+      'el-navigation-menu-trigger': any;
+      'el-navigation-menu-content': any;
+      'el-radio-card': any;
+      'el-radio-card-group': any;
+      'el-resizable-handle': any;
+      'el-resizable-panel': any;
+      'el-route': any;
+      'el-route-link': any;
+      'el-router': any;
+      'el-sources': any;
+      'el-task-list': any;
+      'el-tool-call': any;
+      'el-visually-hidden': any;
     }
   }
 }

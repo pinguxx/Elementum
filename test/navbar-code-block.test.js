@@ -127,9 +127,9 @@ test('<el-code-block> renders code, language header, compact mode, slotted fallb
     // Slotted fallback when code attribute is empty
     const slotted = document.createElement('el-code-block');
     slotted.setAttribute('copyable', '');
-    slotted.textContent = 'npm install @wc/elementum';
+    slotted.textContent = 'npm install @wcomp/elementum';
     document.body.appendChild(slotted);
-    assert.equal(slotted.getCodeText(), 'npm install @wc/elementum');
+    assert.equal(slotted.getCodeText(), 'npm install @wcomp/elementum');
 
     block.remove();
     slotted.remove();

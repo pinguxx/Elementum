@@ -1,6 +1,6 @@
 # Framework Integration Guide
 
-`@wc/elementum` components are standard native Custom Elements with Form-Associated Custom Elements (FACE) support. They can be used directly without a build step or inside modern frontend frameworks.
+`@wcomp/elementum` components are standard native Custom Elements with Form-Associated Custom Elements (FACE) support. They can be used directly without a build step or inside modern frontend frameworks.
 
 ---
 
@@ -11,12 +11,12 @@ React 19 natively supports Custom Elements properties, boolean attributes, and f
 ### Setup
 Install or import the package:
 ```bash
-npm install @wc/elementum
+npm install @wcomp/elementum
 ```
 
 Import design tokens in your root layout (`app/layout.tsx` or `_app.tsx`):
 ```tsx
-import '@wc/elementum/tokens.css';
+import '@wcomp/elementum/tokens.css';
 ```
 
 ### Client Component Usage
@@ -26,8 +26,8 @@ Because Custom Elements register on `customElements` in the browser, import the 
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import '@wc/elementum';
-import type { ElTable, TableColumn } from '@wc/elementum';
+import '@wcomp/elementum';
+import type { ElTable, TableColumn } from '@wcomp/elementum';
 
 export default function UserManagement() {
   const [activeTab, setActiveTab] = useState('users');
@@ -89,8 +89,8 @@ export default defineConfig({
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue';
-import '@wc/elementum';
-import '@wc/elementum/tokens.css';
+import '@wcomp/elementum';
+import '@wcomp/elementum/tokens.css';
 
 const autoSave = ref(true);
 function onChange(e: CustomEvent) {
@@ -113,8 +113,8 @@ Svelte treats custom elements natively without special wrappers:
 
 ```svelte
 <script lang="ts">
-  import '@wc/elementum';
-  import '@wc/elementum/tokens.css';
+  import '@wcomp/elementum';
+  import '@wcomp/elementum/tokens.css';
 
   let departure = $state('San Francisco');
 </script>
@@ -128,7 +128,7 @@ Svelte treats custom elements natively without special wrappers:
 
 ## 4. TypeScript Autocomplete (`tsconfig.json`)
 
-`@wc/elementum` includes ambient typings for `HTMLElementTagNameMap` and `JSX.IntrinsicElements`. Ensure your `tsconfig.json` includes:
+`@wcomp/elementum` includes ambient typings for `HTMLElementTagNameMap` and `JSX.IntrinsicElements`. Ensure your `tsconfig.json` includes:
 
 ```json
 {

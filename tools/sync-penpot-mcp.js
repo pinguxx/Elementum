@@ -690,7 +690,7 @@ function drawPreview(board, item) {
   }
   if (tag === 'el-code-block') {
     addRect(board, 'CodeBg', px, py, pw, 48, '#0F172A', 8);
-    addText(board, 'CodeTxt', 'import { signal } from "@wc/elementum";', px + 12, py + 16, pw - 56, 10, '400', '#93C5FD');
+    addText(board, 'CodeTxt', 'import { signal } from "@wcomp/elementum";', px + 12, py + 16, pw - 56, 10, '400', '#93C5FD');
     addRect(board, 'CopyBtn', px + pw - 42, py + 12, 34, 22, '#1E293B', 5, '#334155');
     addText(board, 'CopyTxt', 'Copy', px + pw - 37, py + 16, 28, 9, '600', '#E2E8F0');
     return;

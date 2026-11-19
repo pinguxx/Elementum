@@ -15,7 +15,7 @@ To apply the design system's default tokens and automatic dark-mode support, imp
 
 ```javascript
 // In modern bundlers (Vite, Webpack, etc.)
-import '@wc/elementum/tokens.css';
+import '@wcomp/elementum/tokens.css';
 ```
 
 ---

@@ -1,14 +1,14 @@
 ---
 name: elementum-ui
-description: Compose accessible, zero-dependency user interfaces using @wc/elementum's 105 Web Components, micro-signals, and Form-Associated Custom Elements (FACE). Use when building or refactoring UI with Elementum.
+description: Compose accessible, zero-dependency user interfaces using @wcomp/elementum's 105 Web Components, micro-signals, and Form-Associated Custom Elements (FACE). Use when building or refactoring UI with Elementum.
 ---
 
 # Elementum UI Engineering Skill
 
-Use `@wc/elementum` primitives directly—do **not** reach for React, Tailwind utility walls, or hand-rolled `<div>` modals/inputs when an Elementum Custom Element exists.
+Use `@wcomp/elementum` primitives directly—do **not** reach for React, Tailwind utility walls, or hand-rolled `<div>` modals/inputs when an Elementum Custom Element exists.
 
 ## Core Rules
-1. **Zero Runtime Dependencies**: Import `@wc/elementum` and `@wc/elementum/tokens.css` via native ES modules (`<script type="module">`).
+1. **Zero Runtime Dependencies**: Import `@wcomp/elementum` and `@wcomp/elementum/tokens.css` via native ES modules (`<script type="module">`).
 2. **Verify Schema Before Writing Markup**: Read [CATALOG.md](./CATALOG.md) or query the Elementum MCP server (`list_components`, `get_component_doc`) so you never invent nonexistent attributes or slots.
 3. **Reactive Signal Bindings**:
    - Inside `html` tagged templates, pass either the signal object (`${this.count}`) or a closure (`${() => this.count.value}`).

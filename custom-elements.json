@@ -571,6 +571,36 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/el-callout.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElCallout",
+          "tagName": "el-callout",
+          "description": "ElCallout Web Component (<el-callout>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "variant",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/el-card.js",
       "declarations": [
         {
@@ -762,6 +792,42 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/el-checkbox-card.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElCheckboxCard",
+          "tagName": "el-checkbox-card",
+          "description": "ElCheckboxCard Web Component (<el-checkbox-card>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "checked",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/el-checkbox.js",
       "declarations": [
         {
@@ -847,6 +913,48 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/el-code-block.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElCodeBlock",
+          "tagName": "el-code-block",
+          "description": "ElCodeBlock Web Component (<el-code-block>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "code",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "language",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "copyable",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "compact",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/el-collapsible.js",
       "declarations": [
         {
@@ -896,6 +1004,54 @@
               "description": "Fired when an item is selected: detail: { value, item }"
             }
           ]
+        },
+        {
+          "kind": "class",
+          "name": "ElCommandItem",
+          "tagName": "el-command-item",
+          "description": "ElCommandItem Web Component (<el-command-item>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "shortcut",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "ElCommandGroup",
+          "tagName": "el-command-group",
+          "description": "ElCommandGroup Web Component (<el-command-group>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "heading",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
         }
       ]
     },
@@ -912,6 +1068,66 @@
             "name": "Elementum",
             "module": "src/index.js"
           }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-data-list.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElDataList",
+          "tagName": "el-data-list",
+          "description": "ElDataList Web Component (<el-data-list>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "orientation",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "size",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "ElDataListItem",
+          "tagName": "el-data-list-item",
+          "description": "ElDataListItem Web Component (<el-data-list-item>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "copyable",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
         }
       ]
     },
@@ -1016,6 +1232,54 @@
             {
               "name": "close",
               "description": "Fired when modal closes: detail.returnValue"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-diff-viewer.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElDiffViewer",
+          "tagName": "el-diff-viewer",
+          "description": "ElDiffViewer Web Component (<el-diff-viewer>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "filename",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "before",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "after",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "mode",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "approval",
+              "type": {
+                "text": "string"
+              }
             }
           ]
         }
@@ -1328,6 +1592,96 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/el-inset.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElInset",
+          "tagName": "el-inset",
+          "description": "ElInset Web Component (<el-inset>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "side",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "clip",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-insight-card.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElInsightCard",
+          "tagName": "el-insight-card",
+          "description": "ElInsightCard Web Component (<el-insight-card>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "title",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "category",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "metric",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "delta",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "variant",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "summary",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "action-label",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/el-kbd.js",
       "declarations": [
         {
@@ -1382,6 +1736,114 @@
           "name": "ElMeter",
           "tagName": "el-meter",
           "description": "Scalar gauge primitive for displaying storage, CPU, and threshold metrics.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-navbar.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElNavbar",
+          "tagName": "el-navbar",
+          "description": "ElNavbar Web Component (<el-navbar>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "brand",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "href",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "badge",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "badge-variant",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "sticky",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "open",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-navigation-menu.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElNavigationMenu",
+          "tagName": "el-navigation-menu",
+          "description": "ElNavigationMenu Web Component (<el-navigation-menu>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "orientation",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "ElNavigationMenuItem",
+          "tagName": "el-navigation-menu-item",
+          "description": "ElNavigationMenuItem Web Component (<el-navigation-menu-item>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        },
+        {
+          "kind": "class",
+          "name": "ElNavigationMenuTrigger",
+          "tagName": "el-navigation-menu-trigger",
+          "description": "ElNavigationMenuTrigger Web Component (<el-navigation-menu-trigger>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
+        },
+        {
+          "kind": "class",
+          "name": "ElNavigationMenuContent",
+          "tagName": "el-navigation-menu-content",
+          "description": "ElNavigationMenuContent Web Component (<el-navigation-menu-content>).",
           "superclass": {
             "name": "Elementum",
             "module": "src/index.js"
@@ -1748,6 +2210,72 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/el-radio-card.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElRadioCard",
+          "tagName": "el-radio-card",
+          "description": "ElRadioCard Web Component (<el-radio-card>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "checked",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "ElRadioCardGroup",
+          "tagName": "el-radio-card-group",
+          "description": "ElRadioCardGroup Web Component (<el-radio-card-group>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "name",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "columns",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/el-radio.js",
       "declarations": [
         {
@@ -1759,6 +2287,48 @@
             "name": "Elementum",
             "module": "src/index.js"
           }
+        },
+        {
+          "kind": "class",
+          "name": "ElRadioGroup",
+          "tagName": "el-radio-group",
+          "description": "ElRadioGroup Web Component (<el-radio-group>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "name",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "required",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "orientation",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
         }
       ]
     },
@@ -1913,6 +2483,126 @@
             {
               "name": "resize",
               "description": "Emitted during pane resizing with percentage size."
+            }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "ElResizableHandle",
+          "tagName": "el-resizable-handle",
+          "description": "ElResizableHandle Web Component (<el-resizable-handle>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "disabled",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "ElResizablePanel",
+          "tagName": "el-resizable-panel",
+          "description": "ElResizablePanel Web Component (<el-resizable-panel>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "default-size",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "min-size",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "max-size",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-router.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElRoute",
+          "tagName": "el-route",
+          "description": "ElRoute Web Component (<el-route>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "path",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "exact",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "ElRouteLink",
+          "tagName": "el-route-link",
+          "description": "ElRouteLink Web Component (<el-route-link>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "to",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "exact",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "class",
+          "name": "ElRouter",
+          "tagName": "el-router",
+          "description": "ElRouter Web Component (<el-router>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "default",
+              "type": {
+                "text": "string"
+              }
             }
           ]
         }
@@ -2190,6 +2880,42 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/el-sources.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElSources",
+          "tagName": "el-sources",
+          "description": "ElSources Web Component (<el-sources>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "sources",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "expanded",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/el-spinner.js",
       "declarations": [
         {
@@ -2431,6 +3157,42 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/el-task-list.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElTaskList",
+          "tagName": "el-task-list",
+          "description": "ElTaskList Web Component (<el-task-list>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "heading",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "tasks",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "compact",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/el-textarea.js",
       "declarations": [
         {
@@ -2615,6 +3377,96 @@
             "name": "Elementum",
             "module": "src/index.js"
           }
+        },
+        {
+          "kind": "class",
+          "name": "ElToggleGroup",
+          "tagName": "el-toggle-group",
+          "description": "ElToggleGroup Web Component (<el-toggle-group>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "type",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-tool-call.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElToolCall",
+          "tagName": "el-tool-call",
+          "description": "ElToolCall Web Component (<el-tool-call>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            {
+              "name": "name",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "status",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "args",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "result",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "call-id",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "approval",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "open",
+              "type": {
+                "text": "string"
+              }
+            }
+          ]
         }
       ]
     },
@@ -2738,6 +3590,22 @@
               "description": "Emitted when item is selected."
             }
           ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-visually-hidden.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElVisuallyHidden",
+          "tagName": "el-visually-hidden",
+          "description": "ElVisuallyHidden Web Component (<el-visually-hidden>).",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          }
         }
       ]
     }

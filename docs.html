@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Documentation - @wc/elementum</title>
+  <title>Documentation - @wcomp/elementum</title>
   <link rel="stylesheet" href="./src/tokens.css" />
   <script type="module" src="./src/index.js"></script>
   <style>
@@ -374,7 +374,7 @@
       <section id="user-guide" class="docs-section">
         <h1>User Guide & Overview</h1>
         <p>
-          <strong>@wc/elementum</strong> is an ultra-lightweight, zero-dependency design system of <strong>84 accessible Web Components</strong>.
+          <strong>@wcomp/elementum</strong> is an ultra-lightweight, zero-dependency design system of <strong>84 accessible Web Components</strong>.
           It combines fine-grained signal reactivity with standard W3C Web Component APIs, 1:1 Penpot/Figma design tokens, and built-in MCP &amp; AG-UI protocol support.
         </p>
 
@@ -405,12 +405,12 @@
         <h2 id="installation">Installation & Setup</h2>
         <p>Install via npm or use drop-in ES modules via CDN:</p>
 
-        <el-code-block copyable language="bash" code="npm install @wc/elementum"></el-code-block>
+        <el-code-block copyable language="bash" code="npm install @wcomp/elementum"></el-code-block>
 
         <h3>1. Direct Script Tag (Zero Build)</h3>
         <el-code-block copyable language="html">&lt;!-- Load Tokens & Elementum Web Components --&gt;
-&lt;link rel="stylesheet" href="./node_modules/@wc/elementum/src/tokens.css" /&gt;
-&lt;script type="module" src="./node_modules/@wc/elementum/src/index.js"&gt;&lt;/script&gt;
+&lt;link rel="stylesheet" href="./node_modules/@wcomp/elementum/src/tokens.css" /&gt;
+&lt;script type="module" src="./node_modules/@wcomp/elementum/src/index.js"&gt;&lt;/script&gt;
 
 &lt;!-- Use Anywhere in HTML --&gt;
 &lt;el-button variant="primary"&gt;Get Started&lt;/el-button&gt;
@@ -422,8 +422,8 @@
           Because Elementum elements are standard custom elements with Form-Associated Custom Elements (FACE) support, they work out of the box with standard props and event listeners.
         </p>
         <el-code-block copyable language="js">// React / Next.js
-import '@wc/elementum';
-import '@wc/elementum/tokens.css';
+import '@wcomp/elementum';
+import '@wcomp/elementum/tokens.css';
 
 export default function Page() {
   return (
@@ -468,7 +468,7 @@ export default function Page() {
         </p>
 
         <h3>1. Core Reactive Primitives</h3>
-        <el-code-block copyable language="js">import { signal, computed, effect, isSignal } from '@wc/elementum';
+        <el-code-block copyable language="js">import { signal, computed, effect, isSignal } from '@wcomp/elementum';
 
 const count = signal(0);
 const multiplier = signal(2);
@@ -551,7 +551,7 @@ stop();     // Or ac.abort() to dispose effects automatically</el-code-block>
         <p>
           The <code>Elementum</code> base class wires together HTML attributes, JavaScript property assignment, and internal signals so external scripts and frameworks can interact using whichever style they prefer:
         </p>
-        <el-code-block copyable language="js">import { isSignal } from '@wc/elementum';
+        <el-code-block copyable language="js">import { isSignal } from '@wcomp/elementum';
 
 const btn = document.querySelector('el-button');
 const beam = document.querySelector('el-border-beam');
@@ -581,7 +581,7 @@ btn.removeAttribute('disabled');    // updates btn.disabled.value = false</el-co
         <p>
           Inside custom <code>Elementum</code> subclasses, declare <code>observedAttributes</code> alongside <code>signal()</code> fields and wire reactive bindings in <code>render()</code>:
         </p>
-        <el-code-block copyable language="js">import { Elementum, html, css, signal, computed, effect } from '@wc/elementum';
+        <el-code-block copyable language="js">import { Elementum, html, css, signal, computed, effect } from '@wcomp/elementum';
 
 export class CounterCard extends Elementum {
   static observedAttributes = ['count', 'max-width', 'disabled'];
@@ -645,7 +645,7 @@ customElements.define('counter-card', CounterCard);</el-code-block>
           Elementum provides native, zero-dependency SPA routing powered by <code>&lt;el-router&gt;</code>, <code>&lt;el-route&gt;</code>, <code>&lt;el-route-link&gt;</code>, and micro-signals.
           You can build complete client-side applications with view transitions and browser history support without React Router, Vue Router, or bundlers:
         </p>
-        <el-code-block copyable language="js">import { ElRouter, ElRoute, ElRouteLink, navigate, currentRoute, signal } from '@wc/elementum';
+        <el-code-block copyable language="js">import { ElRouter, ElRoute, ElRouteLink, navigate, currentRoute, signal } from '@wcomp/elementum';
 
 // 1. Declarative Routing in HTML
 &lt;el-router default="/dashboard"&gt;
@@ -675,8 +675,8 @@ console.log(currentRoute.value); // '/settings'</el-code-block>
         <p>
           Elementum components support native Declarative Shadow DOM (DSD), allowing server rendering without client hydration flash (FOUC):
         </p>
-        <el-code-block copyable language="js">import { renderComponentToDSD } from '@wc/elementum/ssr';
-import { ElButton } from '@wc/elementum';
+        <el-code-block copyable language="js">import { renderComponentToDSD } from '@wcomp/elementum/ssr';
+import { ElButton } from '@wcomp/elementum';
 
 const html = renderComponentToDSD('el-button', ElButton, { variant: 'primary' }, 'Submit Form');
 // Output: &lt;el-button variant="primary"&gt;&lt;template shadowrootmode="open"&gt;...&lt;/template&gt;Submit Form&lt;/el-button&gt;</el-code-block>
@@ -798,7 +798,7 @@ then construct an audio workstation volume and peak-level panel using Elementum 
         </div>
 
         <h2>2. Connecting an AG-UI SSE Stream &amp; State Bindings</h2>
-        <el-code-block copyable language="js">import { createAgUiStore } from '@wc/elementum';
+        <el-code-block copyable language="js">import { createAgUiStore } from '@wcomp/elementum';
 
 const store = createAgUiStore({ metrics: { tokens: 0 } });
 
@@ -835,7 +835,7 @@ console.log('Total tokens:', tokensSig.value);</el-code-block>
 &gt;&lt;/el-tool-call&gt;
 
 &lt;script type="module"&gt;
-  import { createAgUiStore } from '@wc/elementum';
+  import { createAgUiStore } from '@wcomp/elementum';
 
   const toolEl = document.getElementById('deploy-tool');
   const store = createAgUiStore();

@@ -47,7 +47,7 @@ test('DSD SSR: examples/ssr-server.js renders full page in hydrated and zero-JS 
   assert.ok(zeroJs.includes('Zero-JS Mode'));
 });
 
-test('DSD SSR: pure Node.js subprocess (zero happy-dom) imports @wc/elementum and renders DSD cleanly', () => {
+test('DSD SSR: pure Node.js subprocess (zero happy-dom) imports @wcomp/elementum and renders DSD cleanly', () => {
   const stdout = execFileSync(
     process.execPath,
     [

@@ -1,6 +1,6 @@
 ---
 name: elementum-mobile
-description: Mobile-native CSS and interaction standards for @wc/elementum Web Components — preventing sticky hover states, tap highlight flashes, iOS input auto-zoom, 100vh clipping, and background scroll bleed.
+description: Mobile-native CSS and interaction standards for @wcomp/elementum Web Components — preventing sticky hover states, tap highlight flashes, iOS input auto-zoom, 100vh clipping, and background scroll bleed.
 ---
 
 # Elementum Mobile-Native Craft Skill

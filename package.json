@@ -1,5 +1,5 @@
 {
-  "name": "@wc/elementum",
+  "name": "@wcomp/elementum",
   "version": "0.1.0",
   "description": "Ultra-lightweight, signal-driven, frameworkless Web Components for modern design systems",
   "type": "module",
@@ -8,11 +8,17 @@
   "bin": {
     "elementum-mcp": "./mcp/server.js"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "src",
     "custom-elements.json",
     "tokens",
-    "mcp"
+    "mcp",
+    "skills",
+    "LICENSE",
+    "README.md"
   ],
   "exports": {
     ".": {
@@ -20,8 +26,18 @@
       "default": "./src/index.js"
     },
     "./ssr": "./src/ssr.js",
+    "./ag-ui": "./src/ag-ui.js",
     "./tokens.css": "./src/tokens.css",
-    "./custom-elements.json": "./custom-elements.json"
+    "./custom-elements.json": "./custom-elements.json",
+    "./components/*": "./src/components/*.js"
+  },
+  "homepage": "https://elementum-sage.vercel.app/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pinguxx/Elementum.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pinguxx/Elementum/issues"
   },
   "scripts": {
     "test": "node --test --experimental-test-coverage",
@@ -42,11 +58,15 @@
     "custom-elements",
     "signals",
     "shadow-dom",
-    "figma",
+    "declarative-shadow-dom",
+    "ssr",
     "design-system",
-    "mcp"
+    "figma",
+    "penpot",
+    "mcp",
+    "ai-ui"
   ],
-  "author": "",
+  "author": "wcomp",
   "license": "MIT",
   "devDependencies": {
     "happy-dom": "^21.0.4"

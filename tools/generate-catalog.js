@@ -487,7 +487,7 @@ const catalog = {
     slots: [{ name: 'default', description: '<el-accordion-item> children.' }],
     events: [{ name: 'change', description: 'Fired on panel toggle: detail: { value, open }' }],
     render: (p) => `<el-accordion ${p.multiple ? 'multiple' : ''} style="width:100%; max-width:540px;">
-  <el-accordion-item title="What is @wc/elementum?" open>
+  <el-accordion-item title="What is @wcomp/elementum?" open>
     An ultra-lightweight, signal-driven Web Components design system with zero runtime dependencies.
   </el-accordion-item>
   <el-accordion-item title="Is it compatible with React or Vue?">
