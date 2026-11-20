@@ -422,30 +422,31 @@ test.describe('Real-Browser Interactive Component Suite (Playwright + axe-core)'
       const hadStartingAttr = box.hasAttribute('data-starting-style');
       const statusWhileEntering = presence.status.value;
 
-      await new Promise((resolve) => {
-        const handler = () => {
-          box.removeEventListener('transitionend', handler);
-          clearTimeout(timeoutId);
-          resolve();
-        };
-        box.addEventListener('transitionend', handler);
-        const timeoutId = setTimeout(resolve, 500); // Fallback 500ms for CI
-      });
+      const waitForStatus = (target, timeoutMs = 1000) =>
+        new Promise((resolve) => {
+          if (presence.status.value === target) return resolve();
+          const start = performance.now();
+          const tick = () => {
+            if (presence.status.value === target || performance.now() - start >= timeoutMs) {
+              return resolve();
+            }
+            requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        });
+
+      presence.setOpen(true);
+      const hadStartingAttr = box.hasAttribute('data-starting-style');
+      const statusWhileEntering = presence.status.value;
+
+      await waitForStatus('entered');
       const statusAfterEnter = presence.status.value;
 
       presence.setOpen(false);
       const hadEndingAttr = box.hasAttribute('data-ending-style');
       const statusWhileExiting = presence.status.value;
 
-      await new Promise((resolve) => {
-        const handler = () => {
-          box.removeEventListener('transitionend', handler);
-          clearTimeout(timeoutId);
-          resolve();
-        };
-        box.addEventListener('transitionend', handler);
-        const timeoutId = setTimeout(resolve, 500); // Fallback 500ms for CI
-      });
+      await waitForStatus('unmounted');
       const statusAfterExit = presence.status.value;
 
       presence.destroy();
