@@ -24,7 +24,7 @@ jobs:
         node-version: [20.x, 22.x, 24.x]
         exclude:
           - os: macos-latest
-          node-version: 20.x
+            node-version: 20.x
 
     steps:
       - name: Checkout repository
