@@ -286,7 +286,13 @@ test.describe('Real-Browser Interactive Component Suite (Playwright + axe-core)'
       document.body.appendChild(host);
 
       // Allow initial layout & paint to settle
-      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+      await new Promise((r) => 
+        requestAnimationFrame(() => 
+          requestAnimationFrame(() => 
+            setTimeout(r, 50)
+          )
+        )
+      );
 
       const nf = host.querySelector('#nf');
       const prevCols = Array.from(nf.shadowRoot.querySelectorAll('.digit-column'));
@@ -416,14 +422,30 @@ test.describe('Real-Browser Interactive Component Suite (Playwright + axe-core)'
       const hadStartingAttr = box.hasAttribute('data-starting-style');
       const statusWhileEntering = presence.status.value;
 
-      await new Promise((r) => setTimeout(r, 150));
+      await new Promise((resolve) => {
+        const handler = () => {
+          box.removeEventListener('transitionend', handler);
+          clearTimeout(timeoutId);
+          resolve();
+        };
+        box.addEventListener('transitionend', handler);
+        const timeoutId = setTimeout(resolve, 500); // Fallback 500ms for CI
+      });
       const statusAfterEnter = presence.status.value;
 
       presence.setOpen(false);
       const hadEndingAttr = box.hasAttribute('data-ending-style');
       const statusWhileExiting = presence.status.value;
 
-      await new Promise((r) => setTimeout(r, 150));
+      await new Promise((resolve) => {
+        const handler = () => {
+          box.removeEventListener('transitionend', handler);
+          clearTimeout(timeoutId);
+          resolve();
+        };
+        box.addEventListener('transitionend', handler);
+        const timeoutId = setTimeout(resolve, 500); // Fallback 500ms for CI
+      });
       const statusAfterExit = presence.status.value;
 
       presence.destroy();
