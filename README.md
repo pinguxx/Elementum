@@ -7,9 +7,14 @@
 [![M8ven Score](https://m8ven.ai/badge/mcp/pinguxx-elementum-yeg3a6?v=f862621d58ec4975d1943f2ea62028c7)](https://m8ven.ai/mcp/pinguxx-elementum-yeg3a6?s=readme)
 
 > **Elementum** (*Latin*: /e.leˈmen.tum/) — **An AI-native, framework-independent UI engineering platform** built on standard Custom Elements, fine-grained micro-signals, W3C DTCG tokens, Declarative Shadow DOM SSR, and MCP/AG-UI tooling.
->
-> **Live Showcase:** https://elementum-sage.vercel.app/ · **Catalog (109 elements):** https://elementum-sage.vercel.app/examples/index.html · **AG-UI Demo:** https://elementum-sage.vercel.app/examples/ag-ui.html · **Live DSD SSR:** https://elementum-sage.vercel.app/ssr
 
+
+| Component Count | Dependencies | Avg Gzip | Accessibility | License |
+| :- | :- | :- | :- | :- |
+| **109 Custom Elements** | **0 Runtime Deps** | **2.19 KB** | **WCAG 2.2 AA** (@axe-core/playwright) | **MIT** |
+
+
+[**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (109 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr)
 
 
 ---
