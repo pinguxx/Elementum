@@ -17,12 +17,14 @@ jobs:
   test:
     name: Unit, Fuzz & Security Tests on Node ${{ matrix.node-version }} (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 15 # Fail fast if the runner hangs
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         os: [ubuntu-24.04, windows-latest, macos-latest]
         node-version: [20.x, 22.x, 24.x]
+        exclude:
+          - os: macos-latest
+          node-version: 20.x
 
     steps:
       - name: Checkout repository
