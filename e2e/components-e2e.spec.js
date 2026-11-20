@@ -418,10 +418,6 @@ test.describe('Real-Browser Interactive Component Suite (Playwright + axe-core)'
         onExitComplete: () => { exitDone = true; },
       });
 
-      presence.setOpen(true);
-      const hadStartingAttr = box.hasAttribute('data-starting-style');
-      const statusWhileEntering = presence.status.value;
-
       const waitForStatus = (target, timeoutMs = 1000) =>
         new Promise((resolve) => {
           if (presence.status.value === target) return resolve();
