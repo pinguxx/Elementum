@@ -1,24 +1,14 @@
 # @wcomp/elementum
 
 [npm version](https://www.google.com/search?q=https://www.npmjs.com/package/%40wcomp/elementum)
-[](https://github.com/pinguxx/Elementum/actions/workflows/ci.yml)
-
-
-
-[](https://m8ven.ai/mcp/pinguxx-elementum-yeg3a6?s=readme)
 
 > **Elementum** (*Latin*: /e.leˈmen.tum/) — **An AI-native, framework-independent UI engineering platform** built on standard Custom Elements, fine-grained micro-signals, W3C DTCG tokens, Declarative Shadow DOM SSR, and MCP/AG-UI tooling.
 
+| Component Count | Dependencies | Avg Gzip | Accessibility | License | 
+| ----- | ----- | ----- | ----- | ----- | 
+| **109 Custom Elements** | **0 Runtime Deps** | **2.19 KB** | **WCAG 2.2 AA** (@axe-core/playwright) | **MIT** | 
 
-| Component Count | Dependencies | Avg Gzip | Accessibility | License |
-| :- | :- | :- | :- | :- |
-| **109 Custom Elements** | **0 Runtime Deps** | **2.19 KB** | **WCAG 2.2 AA** (@axe-core/playwright) | **MIT** |
-
-
-[**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (109 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr) · [**Hosted MCP**](https://www.google.com/search?q=https%3A%2F%2Fwww.google.com%2Furl%3Fsa%3DE%26source%3Dgmail%26q%3Dhttps%3A%2F%2Felementum-sage.vercel.app%2Fmcp)
-
-
----
+[**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (109 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr)
 
 ## 🧪 Verification & Browser Matrix (Beta — `v0.5.1`)
 
@@ -26,19 +16,17 @@ One command verifies everything end-to-end: `npm run verify:all` (see [QUALITY.m
 
 Every architectural claim in Elementum is backed by automated verification in CI:
 
-| Verification Layer | Tooling | Scope |
-| :--- | :--- | :--- |
-| **Core Signals & Fuzzing** | `node:test` (`test/signal-torture.test.js`) | Cycle detection, stale-dep cleanup, AbortSignal disposal, **1,000-graph multi-seed DAG fuzzer** + **500-step dynamic topology fuzzer** |
-| **Unit, Behavior & Contract Suite** | `node:test` + `happy-dom` (Node 20/22/24, Ubuntu, Windows & macOS) | **226+ tests**, **≥ 95% line coverage** enforced in CI, WAI-ARIA/RTL/SSR contract checks (`@wcomp/elementum/testing`), Source-vs-Catalog Diff (`npm run catalog:diff`) |
-| **Gzipped Size Budgets** | `npm run check:size` (`size-budget.json`) | **86 entrypoints** gated in CI (`core + behaviors + agent + ssr`: **29.1 KB**, avg component: **2.19 KB gzip**) |
-| **External Consumer Tarball** | `npm run verify:consumer` (`tools/verify-consumer.js`) | Packs real `.tgz`, installs into isolated temp app, verifies all ESM subpaths & strict `tsc --noEmit --strict` |
-| **Real Browser E2E** | Playwright (`npm run test:e2e`) — Chromium, Firefox, WebKit | **17 E2E tests**: `<dialog>` focus restoration, `ElementInternals` `<form>` submit/reset, live CSS transitions (`getAnimations()`), Shadow-DOM agent `snapshot`/`act`, AG-UI SSE |
-| **Declarative Shadow DOM SSR** | Playwright (`/?hydrate=0` Zero-JS & `/?hydrate=1` Hydrated) | Native `<template shadowrootmode="open">` attachment with JS disabled + clean client hydration |
-| **Accessibility** | `@axe-core/playwright` (WCAG 2.2 AA ruleset) + `@wcomp/elementum/testing` | Automated real-browser `axe-core` audits + WAI-ARIA APG pattern validators + static MCP `lint_accessibility` |
-| **Security & MCP Hardening** | `test/security.test.js` + GitHub CodeQL | XSS escaping in `template.js` & `ssr.js`, URL scheme allowlist, prototype-pollution guards, ReDoS-safe parsers, 128 KB MCP payload cap |
-| **Performance Benchmarks** | `npm run bench` ([BENCHMARKS.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/BENCHMARKS.md)) | Reproducible median & p95 suite with CPU/OS/Node metadata (`node tools/benchmark.js --write`) |
-
----
+| Verification Layer | Tooling | Scope | 
+| ----- | ----- | ----- | 
+| **Core Signals & Fuzzing** | `node:test` (`test/signal-torture.test.js`) | Cycle detection, stale-dep cleanup, AbortSignal disposal, **1,000-graph multi-seed DAG fuzzer** + **500-step dynamic topology fuzzer** | 
+| **Unit, Behavior & Contract Suite** | `node:test` + `happy-dom` (Node 20/22/24, Ubuntu, Windows & macOS) | **226+ tests**, **≥ 95% line coverage** enforced in CI, WAI-ARIA/RTL/SSR contract checks (`@wcomp/elementum/testing`), Source-vs-Catalog Diff (`npm run catalog:diff`) | 
+| **Gzipped Size Budgets** | `npm run check:size` (`size-budget.json`) | **86 entrypoints** gated in CI (`core + behaviors + agent + ssr`: **29.1 KB**, avg component: **2.19 KB gzip**) | 
+| **External Consumer Tarball** | `npm run verify:consumer` (`tools/verify-consumer.js`) | Packs real `.tgz`, installs into isolated temp app, verifies all ESM subpaths & strict `tsc --noEmit --strict` | 
+| **Real Browser E2E** | Playwright (`npm run test:e2e`) — Chromium, Firefox, WebKit | **17 E2E tests**: `<dialog>` focus restoration, `ElementInternals` `<form>` submit/reset, live CSS transitions (`getAnimations()`), Shadow-DOM agent `snapshot`/`act`, AG-UI SSE | 
+| **Declarative Shadow DOM SSR** | Playwright (`/?hydrate=0` Zero-JS & `/?hydrate=1` Hydrated) | Native `<template shadowrootmode="open">` attachment with JS disabled + clean client hydration | 
+| **Accessibility** | `@axe-core/playwright` (WCAG 2.2 AA ruleset) + `@wcomp/elementum/testing` | Automated real-browser `axe-core` audits + WAI-ARIA APG pattern validators + static MCP `lint_accessibility` | 
+| **Security & MCP Hardening** | `test/security.test.js` + GitHub CodeQL | XSS escaping in `template.js` & `ssr.js`, URL scheme allowlist, prototype-pollution guards, ReDoS-safe parsers, 128 KB MCP payload cap | 
+| **Performance Benchmarks** | `npm run bench` ([BENCHMARKS.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/BENCHMARKS.md)) | Reproducible median & p95 suite with CPU/OS/Node metadata (`node tools/benchmark.js --write`) | 
 
 ## ⚡ Quick Start
 
@@ -46,7 +34,7 @@ Every architectural claim in Elementum is backed by automated verification in CI
 
 Elementum runs directly in any modern browser without Webpack, Vite, or Babel.
 
-```html
+```
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,130 +60,147 @@ Elementum runs directly in any modern browser without Webpack, Vite, or Babel.
   </form>
 </body>
 </html>
+
 ```
 
 ### Option B: npm Install (Bundlers & Frameworks)
 
-```bash
+```
 npm install @wcomp/elementum
+
 ```
 
 Import the design tokens CSS and register the Custom Elements in your app entry point:
 
-```javascript
+```
 import '@wcomp/elementum/tokens.css';
 import '@wcomp/elementum';
-```
 
----
+```
 
 ## 💡 Core Principles
 
 `Elementum` is inspired by minimalist libraries like `uce`, modernizing the developer experience with standard browser primitives:
-- **Shadow DOM by default** with automatic Constructable Stylesheet adoption (`new CSSStyleSheet()`).
-- **Fine-grained & Async-First Signals** (`signal`, `computed`, `effect`, `batch`, `asyncSignal`, `isPending`, `NotReadyError`): state updates mutate **only the exact bound DOM text or attribute node**, while `asyncSignal` adds `AbortSignal` race-condition cancellation, stale-while-revalidate `.value`, and structured `.error` details.
-- **Form-Associated Custom Elements (FACE)**: `static formAssociated = true` enables native `<form>` submission, reset, and validation via `ElementInternals`.
-- **Zero build requirement**: Plain ES modules (`<script type="module">`), no Babel, decorators, or compile step needed. Runs in SSR / Node.js cleanly.
-- **Light & Dark Mode**: Built-in CSS custom property theme tokens with automatic `prefers-color-scheme` and `<el-theme-switch>`.
-- **Leak-free lifecycle**: Automatically tracks and tears down event listeners and signal subscriptions via `this.signal` (`AbortSignal`).
-- **WCAG 2.2 AA Compliant**: Built-in 24x24px minimum target sizes, high-contrast `:focus-visible` rings, dialog focus preservation, and HTML5 Constraint Validation API (`ElementInternals.setValidity`).
-- **Figma 1:1 Parity**: Direct mapping to Figma Component Variants and Figma Variables.
-- **AI Agent & MCP Ready**: Generates standard W3C `custom-elements.json` and includes a built-in MCP server (local stdio and hosted Streamable HTTP) for coding agents.
-- **CI/CD & Automation**: GitHub Actions multi-OS / multi-Node matrix test runner, OIDC npm Trusted Publishing with provenance, and Dependabot automated dependency updates.
 
----
+* **Shadow DOM by default** with automatic Constructable Stylesheet adoption (`new CSSStyleSheet()`).
+
+* **Fine-grained & Async-First Signals** (`signal`, `computed`, `effect`, `batch`, `asyncSignal`, `isPending`, `NotReadyError`): state updates mutate **only the exact bound DOM text or attribute node**, while `asyncSignal` adds `AbortSignal` race-condition cancellation, stale-while-revalidate `.value`, and structured `.error` details.
+
+* **Form-Associated Custom Elements (FACE)**: `static formAssociated = true` enables native `<form>` submission, reset, and validation via `ElementInternals`.
+
+* **Zero build requirement**: Plain ES modules (`<script type="module">`), no Babel, decorators, or compile step needed. Runs in SSR / Node.js cleanly.
+
+* **Light & Dark Mode**: Built-in CSS custom property theme tokens with automatic `prefers-color-scheme` and `<el-theme-switch>`.
+
+* **Leak-free lifecycle**: Automatically tracks and tears down event listeners and signal subscriptions via `this.signal` (`AbortSignal`).
+
+* **WCAG 2.2 AA Compliant**: Built-in 24x24px minimum target sizes, high-contrast `:focus-visible` rings, dialog focus preservation, and HTML5 Constraint Validation API (`ElementInternals.setValidity`).
+
+* **Figma 1:1 Parity**: Direct mapping to Figma Component Variants and Figma Variables.
+
+* **AI Agent & MCP Ready**: Generates standard W3C `custom-elements.json` and includes a built-in MCP server (local stdio and hosted Streamable HTTP) for coding agents.
+
+* **CI/CD & Automation**: GitHub Actions multi-OS / multi-Node matrix test runner, OIDC npm Trusted Publishing with provenance, and Dependabot automated dependency updates.
 
 ## Component Catalog
 
 Selected highlights below — browse all **109 elements** interactively in the [**Component Catalog**](https://elementum-sage.vercel.app/examples/index.html).
 
-| Component | Tag Name | Description |
-| :--- | :--- | :--- |
-| **Button** | `<el-button>` | 1:1 Figma variant parity (`primary`, `secondary`, `danger`, `ghost`, sizes `sm`/`md`/`lg`). |
-| **Badge** | `<el-badge>` | Status indicator pill (`default`, `success`, `danger`). |
-| **Input** | `<el-input>` | Form-associated input with `prefix` and `suffix` icon slots. |
-| **Dropdown** | `<el-dropdown>` | Popover container with light-dismiss (closes on outside click or &lt;kbd&gt;Esc&lt;/kbd&gt;). |
-| **Calendar** | `<el-calendar>` | Standalone 42-day accessible month grid with traversal. |
-| **Datepicker** | `<el-datepicker>` | Form-associated composite datepicker combining input, dropdown, calendar, and quick actions. |
-| **Dialog / Modal** | `<el-dialog>` | Native `<dialog>` modal with backdrop blur, overscroll containment, and light-dismiss. |
-| **Tabs** | `<el-tabs>`, `<el-tab>` | W3C accessible tablist with keyboard arrow navigation. |
-| **Select** | `<el-select>` | Form-associated custom dropdown selection. |
-| **Switch** | `<el-switch>` | Form-associated toggle switch with keyboard navigation (&lt;kbd&gt;Space&lt;/kbd&gt;/&lt;kbd&gt;Enter&lt;/kbd&gt;). |
-| **Tooltip** | `<el-tooltip>` | Lightweight tooltip bubble with top/bottom/left/right placement. |
-| **Accordion** | `<el-accordion>`, `<el-accordion-item>` | W3C accessible disclosure accordion supporting single or multi-expand. |
-| **Table** | `<el-table>` | Signal-driven data grid with column sorting and multi-row selection. |
-| **Theme Switch** | `<el-theme-switch>` | Toggles between Light ☀️ and Dark 🌙 mode with `localStorage` persistence. |
-| **Toast** | `<el-toaster>` | Viewport overlay for programmatic notifications (`toast.success()`, `toast.error()`). |
-| **Progress** | `<el-progress>` | Determinate & indeterminate animated progress bar (`role="progressbar"`). |
-| **Spinner** | `<el-spinner>` | Accessible SVG loading spinner (`role="status"`). |
-| **Avatar** | `<el-avatar>`, `<el-avatar-group>` | User avatar with image fallback, automatic initials, and status dot. |
-| **Drawer** | `<el-drawer>` | Slide-over drawer overlay (`left`, `right`, `top`, `bottom`) with focus trap. |
-| **Segmented** | `<el-segmented-control>` | Form-associated pill switcher with keyboard arrow navigation. |
-| **Pagination** | `<el-pagination>` | Accessible numeric page navigation with ellipsis windowing and `pagechange` events. |
-| **Chip / Pill** | `<el-chip>` | Interactive tag with `selectable` and `removable` dismiss modes (`role="button"`). |
-| **Autocomplete** | `<el-autocomplete>` | Form-associated combobox supporting single or multiselect (`multiple`) with inline chips, remote URL debouncing, and ARIA 1.2 / WCAG 2.2 accessibility. |
-| **Number Flow** | `<el-number-flow>` | Smooth vertical rolling odometer number reels (*NumberFlow* style) with physical easing and reduced-motion fallback. |
-| **OTP Input** | `<el-otp-input>` | Form-associated segmented PIN / verification code input with auto-advance, backspace retreat, and paste splitting. |
-| **Command Palette** | `<el-command>` | Accessible keyboard-first command menu (*cmdk* style) with &lt;kbd&gt;⌘K&lt;/kbd&gt; / &lt;kbd&gt;Ctrl+K&lt;/kbd&gt; shortcut, fuzzy search, and group headers. |
-| **Prompt Input** | `<el-prompt-input>` | Beautiful UI-style auto-expanding AI prompt composer with action bar slots, model chips, and Enter-to-submit handling. |
-| **Reasoning Card** | `<el-reasoning-card>` | Collapsible AI thought disclosure with active breathing pulse dot, elapsed duration timer, and smooth accordion expansion. |
-| **Border Beam** | `<el-border-beam>` | Hardware-accelerated luminous gradient ray traveling around container perimeters (Magic UI style). |
-| **Streaming Text** | `<el-streaming-text>` | Organic token-by-token streaming typewriter text with customizable cadence, blinking cursor, and completion events. |
-
----
+| Component | Tag Name | Description | 
+| ----- | ----- | ----- | 
+| **Button** | `<el-button>` | 1:1 Figma variant parity (`primary`, `secondary`, `danger`, `ghost`, sizes `sm`/`md`/`lg`). | 
+| **Badge** | `<el-badge>` | Status indicator pill (`default`, `success`, `danger`). | 
+| **Input** | `<el-input>` | Form-associated input with `prefix` and `suffix` icon slots. | 
+| **Dropdown** | `<el-dropdown>` | Popover container with light-dismiss (closes on outside click or &lt;kbd&gt;Esc&lt;/kbd&gt;). | 
+| **Calendar** | `<el-calendar>` | Standalone 42-day accessible month grid with traversal. | 
+| **Datepicker** | `<el-datepicker>` | Form-associated composite datepicker combining input, dropdown, calendar, and quick actions. | 
+| **Dialog / Modal** | `<el-dialog>` | Native `<dialog>` modal with backdrop blur, overscroll containment, and light-dismiss. | 
+| **Tabs** | `<el-tabs>`, `<el-tab>` | W3C accessible tablist with keyboard arrow navigation. | 
+| **Select** | `<el-select>` | Form-associated custom dropdown selection. | 
+| **Switch** | `<el-switch>` | Form-associated toggle switch with keyboard navigation (&lt;kbd&gt;Space&lt;/kbd&gt;/&lt;kbd&gt;Enter&lt;/kbd&gt;). | 
+| **Tooltip** | `<el-tooltip>` | Lightweight tooltip bubble with top/bottom/left/right placement. | 
+| **Accordion** | `<el-accordion>`, `<el-accordion-item>` | W3C accessible disclosure accordion supporting single or multi-expand. | 
+| **Table** | `<el-table>` | Signal-driven data grid with column sorting and multi-row selection. | 
+| **Theme Switch** | `<el-theme-switch>` | Toggles between Light ☀️ and Dark 🌙 mode with `localStorage` persistence. | 
+| **Toast** | `<el-toaster>` | Viewport overlay for programmatic notifications (`toast.success()`, `toast.error()`). | 
+| **Progress** | `<el-progress>` | Determinate & indeterminate animated progress bar (`role="progressbar"`). | 
+| **Spinner** | `<el-spinner>` | Accessible SVG loading spinner (`role="status"`). | 
+| **Avatar** | `<el-avatar>`, `<el-avatar-group>` | User avatar with image fallback, automatic initials, and status dot. | 
+| **Drawer** | `<el-drawer>` | Slide-over drawer overlay (`left`, `right`, `top`, `bottom`) with focus trap. | 
+| **Segmented** | `<el-segmented-control>` | Form-associated pill switcher with keyboard arrow navigation. | 
+| **Pagination** | `<el-pagination>` | Accessible numeric page navigation with ellipsis windowing and `pagechange` events. | 
+| **Chip / Pill** | `<el-chip>` | Interactive tag with `selectable` and `removable` dismiss modes (`role="button"`). | 
+| **Autocomplete** | `<el-autocomplete>` | Form-associated combobox supporting single or multiselect (`multiple`) with inline chips, remote URL debouncing, and ARIA 1.2 / WCAG 2.2 accessibility. | 
+| **Number Flow** | `<el-number-flow>` | Smooth vertical rolling odometer number reels (*NumberFlow* style) with physical easing and reduced-motion fallback. | 
+| **OTP Input** | `<el-otp-input>` | Form-associated segmented PIN / verification code input with auto-advance, backspace retreat, and paste splitting. | 
+| **Command Palette** | `<el-command>` | Accessible keyboard-first command menu (*cmdk* style) with &lt;kbd&gt;⌘K&lt;/kbd&gt; / &lt;kbd&gt;Ctrl+K&lt;/kbd&gt; shortcut, fuzzy search, and group headers. | 
+| **Prompt Input** | `<el-prompt-input>` | Beautiful UI-style auto-expanding AI prompt composer with action bar slots, model chips, and Enter-to-submit handling. | 
+| **Reasoning Card** | `<el-reasoning-card>` | Collapsible AI thought disclosure with active breathing pulse dot, elapsed duration timer, and smooth accordion expansion. | 
+| **Border Beam** | `<el-border-beam>` | Hardware-accelerated luminous gradient ray traveling around container perimeters (Magic UI style). | 
+| **Streaming Text** | `<el-streaming-text>` | Organic token-by-token streaming typewriter text with customizable cadence, blinking cursor, and completion events. | 
 
 ## Interactive Examples & Showcase
 
-- **[examples/ledgerflow.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/examples/ledgerflow.html)**: **LedgerFlow (Penpot → MCP Generated App)**: End-to-end fintech dashboard designed in **[Penpot](https://design.penpot.app/?screen=viewer&file-id=42288968-6e5e-808d-8008-f77162b618ca&page-id=d8ded059-05ee-80c0-8008-f774c97dd053&section=interactions&index=0&share-id=8218fc5e-f68d-4bab-8fd7-283dd92586e8)** and compiled via `npm run penpot:generate` into 15 validated Elementum Web Components (`<el-number-flow>`, `<el-chart>`, `<el-meter>`, `<el-drawer>`, `<el-dialog>`, `<el-toaster>`).
-- **[examples/references.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/examples/references.html)**: **Reference Hub (Anti-AI Slop)**: Real-world patterns reconstructed from curated galleries (SaaS Pricing with rolling odometers & border beams, Linear-style command menu, and segmented PIN auth).
-- **[examples/agent-studio.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/examples/agent-studio.html)**: **AI Agent Studio & Command Center** demonstrating `<el-command>` (⌘K), `<el-prompt-input>`, `<el-reasoning-card>`, `<el-number-flow>` live token odometer, `<el-otp-input>` security key authorization, and `<el-border-beam>`.
-- **[index.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/index.html)**: Interactive landing portal directing to the applications. Run `npm run serve` to launch locally.
-- **[examples/app.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/examples/app.html)**: Complete **Pulse Cloud** showcase dashboard demonstrating native form validation, confirmation modal dialogs, toast notifications, tabs, and theme toggling.
-- **[examples/index.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/examples/index.html)**: Interactive component catalog with live prop editors and signal-reactive previews.
+* [examples/ledgerflow.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/examples/ledgerflow.html): **LedgerFlow (Penpot → MCP Generated App)**: End-to-end fintech dashboard designed in [**Penpot**](https://design.penpot.app/?screen=viewer&file-id=42288968-6e5e-808d-8008-f77162b618ca&page-id=d8ded059-05ee-80c0-8008-f774c97dd053&section=interactions&index=0&share-id=8218fc5e-f68d-4bab-8fd7-283dd92586e8) and compiled via `npm run penpot:generate` into 15 validated Elementum Web Components (`<el-number-flow>`, `<el-chart>`, `<el-meter>`, `<el-drawer>`, `<el-dialog>`, `<el-toaster>`).
 
----
+* [examples/references.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/examples/references.html): **Reference Hub (Anti-AI Slop)**: Real-world patterns reconstructed from curated galleries (SaaS Pricing with rolling odometers & border beams, Linear-style command menu, and segmented PIN auth).
+
+* [examples/agent-studio.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/examples/agent-studio.html): **AI Agent Studio & Command Center** demonstrating `<el-command>` (⌘K), `<el-prompt-input>`, `<el-reasoning-card>`, `<el-number-flow>` live token odometer, `<el-otp-input>` security key authorization, and `<el-border-beam>`.
+
+* [index.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/index.html): Interactive landing portal directing to the applications. Run `npm run serve` to launch locally.
+
+* [examples/app.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/examples/app.html): Complete **Pulse Cloud** showcase dashboard demonstrating native form validation, confirmation modal dialogs, toast notifications, tabs, and theme toggling.
+
+* [examples/index.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/examples/index.html): Interactive component catalog with live prop editors and signal-reactive previews.
 
 ## Headless Behaviors, Agent Runtime & Testing Contracts
 
 Beyond 109 ready-to-use styled Web Components (all supporting opt-in `unstyled` headless mode), Elementum exports three focused zero-dependency subpaths:
 
-- **`@wcomp/elementum/behaviors`** — 15 composable interaction, focus, motion, and overlay primitives (`createPressBehavior`, `createRovingFocus`, `createDismissableLayer`, `createFocusRecovery`, `createShortcuts`, `createDisclosureBehavior`, `createPopupPositioner`, `createPresenceBehavior`, `prefersReducedMotion`, `createSelectionBehavior`, `createReorderBehavior`, `highlightMatch`, `announce`, `setHostState`, `isRTL`).
-- **`@wcomp/elementum/agent`** — Shadow-DOM-piercing `snapshot(root)` and `act(root, command)` so AI agents can inspect live UI state and execute semantic actions (`click`, `type`, `toggle`, `open`, `close`) without brittle DOM scraping.
-- **`@wcomp/elementum/testing`** — Reusable WAI-ARIA APG (`checkAriaPattern`), provider-free RTL (`checkDirection`), and DSD SSR (`checkServerRender`) contract validators.
+* **`@wcomp/elementum/behaviors`** — 15 composable interaction, focus, motion, and overlay primitives (`createPressBehavior`, `createRovingFocus`, `createDismissableLayer`, `createFocusRecovery`, `createShortcuts`, `createDisclosureBehavior`, `createPopupPositioner`, `createPresenceBehavior`, `prefersReducedMotion`, `createSelectionBehavior`, `createReorderBehavior`, `highlightMatch`, `announce`, `setHostState`, `isRTL`).
 
-See **[docs/behaviors-and-agent.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/behaviors-and-agent.md)** for full API examples.
+* **`@wcomp/elementum/agent`** — Shadow-DOM-piercing `snapshot(root)` and `act(root, command)` so AI agents can inspect live UI state and execute semantic actions (`click`, `type`, `toggle`, `open`, `close`) without brittle DOM scraping.
 
----
+* **`@wcomp/elementum/testing`** — Reusable WAI-ARIA APG (`checkAriaPattern`), provider-free RTL (`checkDirection`), and DSD SSR (`checkServerRender`) contract validators.
+
+See [docs/behaviors-and-agent.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/behaviors-and-agent.md) for full API examples.
 
 ## Design Engineering & Agent Guides
 
 ### Installable Agent Skills (`npx skills add`)
+
 Install Elementum's modular AI coding skills directly into Antigravity, Claude Code, Cursor, or Gemini CLI (configured via [skills.sh.json](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/skills.sh.json)):
 
-```bash
+```
 npx skills@latest add pinguxx/Elementum --skill elementum
+
 ```
 
 Included skills under [skills/](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/tree/main/skills):
-- **`elementum`**: Canonical platform skill covering components, `unstyled` mode, `@wcomp/elementum/behaviors`, `@wcomp/elementum/agent`, `@wcomp/elementum/testing`, and DSD SSR.
-- **`elementum-ui`**: Composing Elementum's 109 Web Components, signals, FACE forms, and AG-UI streams.
-- **`elementum-motion`**: Shadow DOM motion physics, sub-300ms `ease-out`, origin-aware overlays, and reduced-motion standards.
-- **`elementum-break-ui`**: Adversarial stress-testing checklist (320px mobile, dark mode hover contrast, keyboard-only, extreme content).
-- **`elementum-mobile`**: Mobile-native CSS standards (`touch-action`, `100dvh`, safe areas, `overscroll-behavior`, iOS 16px input zoom prevention).
-- **`elementum-penpot`**: Two-way Penpot MCP design system sync and Penpot-to-Elementum app codegen.
 
-- **[docs/behaviors-and-agent.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/behaviors-and-agent.md)**: API reference for `@wcomp/elementum/behaviors`, `@wcomp/elementum/agent`, and `@wcomp/elementum/testing`.
-- **[docs/penpot-workflow.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/penpot-workflow.md)**: Free & open-source design token workflow with Penpot (W3C DTCG JSON) and automated compilation.
-- **[docs/agent-craft-guide.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/agent-craft-guide.md)**: Guide and system prompt rules for AI coding agents to banish generic AI look and adhere to high-craft standards.
-- **[docs/theming.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/theming.md)**: Complete design tokens, CSS custom properties, and `::part()` customization guide.
+* **`elementum`**: Canonical platform skill covering components, `unstyled` mode, `@wcomp/elementum/behaviors`, `@wcomp/elementum/agent`, `@wcomp/elementum/testing`, and DSD SSR.
 
----
+* **`elementum-ui`**: Composing Elementum's 109 Web Components, signals, FACE forms, and AG-UI streams.
+
+* **`elementum-motion`**: Shadow DOM motion physics, sub-300ms `ease-out`, origin-aware overlays, and reduced-motion standards.
+
+* **`elementum-break-ui`**: Adversarial stress-testing checklist (320px mobile, dark mode hover contrast, keyboard-only, extreme content).
+
+* **`elementum-mobile`**: Mobile-native CSS standards (`touch-action`, `100dvh`, safe areas, `overscroll-behavior`, iOS 16px input zoom prevention).
+
+* **`elementum-penpot`**: Two-way Penpot MCP design system sync and Penpot-to-Elementum app codegen.
+
+* [docs/behaviors-and-agent.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/behaviors-and-agent.md): API reference for `@wcomp/elementum/behaviors`, `@wcomp/elementum/agent`, and `@wcomp/elementum/testing`.
+
+* [docs/penpot-workflow.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/penpot-workflow.md): Free & open-source design token workflow with Penpot (W3C DTCG JSON) and automated compilation.
+
+* [docs/agent-craft-guide.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/agent-craft-guide.md): Guide and system prompt rules for AI coding agents to banish generic AI look and adhere to high-craft standards.
+
+* [docs/theming.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/theming.md): Complete design tokens, CSS custom properties, and `::part()` customization guide.
 
 ## Framework Integration
 
-`@wcomp/elementum` works natively in vanilla HTML, React 19, Vue 3, Svelte 5, and Next.js. See **[docs/framework-integration.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/framework-integration.md)** for complete setup instructions and TypeScript configuration.
-
----
+`@wcomp/elementum` works natively in vanilla HTML, React 19, Vue 3, Svelte 5, and Next.js. See [docs/framework-integration.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/framework-integration.md) for complete setup instructions and TypeScript configuration.
 
 ## Project Structure
 
@@ -228,94 +233,106 @@ Elementum/
 ├── QUALITY.md                 # Auto-generated evidence-based per-component maturity matrix
 ├── e2e/                       # Playwright + @axe-core/playwright real-browser tests
 └── test/                      # 226+ Node.js unit, fuzz, behavior, contract & security tests
-```
 
----
+```
 
 ## 🎨 Theming & Accessibility (WCAG 2.2)
 
-- **Theming Guide**: See [docs/theming.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/theming.md) for the full catalog of design tokens and exposed CSS `::part()` selectors.
-- **Agent Guide**: See [AGENT\_GUIDE.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/AGENT_GUIDE.md) for guidelines on building, testing, and reviewing Elementum components.
-- **Framework Integration**: See [docs/framework-integration.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/framework-integration.md) for React, Vue, Svelte, and Angular setup.
+* **Theming Guide**: See [docs/theming.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/theming.md) for the full catalog of design tokens and exposed CSS `::part()` selectors.
 
----
+* **Agent Guide**: See [AGENT\_GUIDE.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/AGENT_GUIDE.md) for guidelines on building, testing, and reviewing Elementum components.
+
+* **Framework Integration**: See [docs/framework-integration.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/framework-integration.md) for React, Vue, Svelte, and Angular setup.
 
 ## 🚀 Declarative Shadow DOM (DSD) SSR
 
 Elementum includes built-in server-side rendering support emitting standard `<template shadowrootmode="open">` for zero-CLS first paint in Next.js, Nuxt, Astro, and Node.js:
 
-```javascript
+```
 import { renderComponentToDSD } from '@wcomp/elementum/ssr';
 import { ElButton } from '@wcomp/elementum';
 
 // Outputs HTML with Declarative Shadow DOM and encapsulated styles
 const html = renderComponentToDSD('el-button', ElButton, { variant: 'primary' }, 'Submit');
+
 ```
 
 Run the live zero-dependency Node.js SSR server (`?hydrate=0` for pure Zero-JS DSD, `?hydrate=1` for progressive hydration) or view the pre-rendered snapshot [examples/ssr-demo.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/examples/ssr-demo.html):
 
-```bash
-npm run ssr
 ```
+npm run ssr
 
----
+```
 
 ## Penpot & Figma Design System Sync
 
 ### Code → Penpot (MCP Server Sync)
-Generate all **54 W3C DTCG tokens** (Core, Light, Dark sets), **28 library colors**, and **105 Master Components** (across 8 categories) directly inside an open **[Penpot](https://design.penpot.app)** file connected via the Penpot MCP Plugin:
 
-```bash
+Generate all **54 W3C DTCG tokens** (Core, Light, Dark sets), **28 library colors**, and **105 Master Components** (across 8 categories) directly inside an open [**Penpot**](https://design.penpot.app) file connected via the Penpot MCP Plugin:
+
+```
 npm run penpot:mcp -- --url "https://design.penpot.app/mcp/stream?userToken=<YOUR_TOKEN>"
 # Or via environment variable:
 PENPOT_MCP_URL="https://design.penpot.app/mcp/stream?userToken=<YOUR_TOKEN>" npm run penpot:mcp
+
 ```
 
 ### Penpot / Figma → Code (Token Compiler)
+
 Synchronize exported W3C DTCG tokens from `tokens/penpot-tokens.json` (or `tokens/figma-tokens.json`) into `src/tokens.css`:
 
-```bash
+```
 npm run tokens:sync tokens/penpot-tokens.json
+
 ```
 
-See **[docs/penpot-workflow.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/penpot-workflow.md)** for full setup instructions, CLI flags (`--url`, `--token`, `--dry-run`), and Penpot MCP security notes.
-
----
+See [docs/penpot-workflow.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/penpot-workflow.md) for full setup instructions, CLI flags (`--url`, `--token`, `--dry-run`), and Penpot MCP security notes.
 
 ## Agent MCP Server
 
 ### Remote (Streamable HTTP — no install required)
+
 Connect any HTTP-capable MCP client (Cursor, Claude, VS Code) to:
 
 `https://elementum-sage.vercel.app/mcp`
 
 Or proxy from a stdio-only client:
 
-```bash
+```
 npx mcp-remote https://elementum-sage.vercel.app/mcp
+
 ```
 
 ### Local (stdio)
+
 Run the built-in MCP server locally for AI coding agents:
 
-```bash
+```
 node mcp/server.js
 # Or via package bin
 npx elementum-mcp
+
 ```
 
 Exposed tools:
-- `list_components`: Lists all 109 components in Elementum
-- `get_component_doc`: Retrieves attributes, slots, events, and CSS parts from `custom-elements.json`
-- `get_component_maturity`: Reports evidence-based maturity tier (`production-verified`, `stable`, `experimental`)
-- `suggest_component`: Recommends components for a given UI goal
-- `validate_component_usage`: Checks HTML markup against declared attributes and slots
-- `list_tokens`: Queries design tokens by category (color, spacing, radius)
-- `generate_snippet`: Generates valid HTML markup matching variants
-- `scaffold_component`: Scaffolds standard boilerplate code for new components
-- `lint_accessibility`: Static HTML accessibility linter (`static-html-lint`; pair with Playwright `axe-core` for full WCAG verification)
 
----
+* `list_components`: Lists all 109 components in Elementum
+
+* `get_component_doc`: Retrieves attributes, slots, events, and CSS parts from `custom-elements.json`
+
+* `get_component_maturity`: Reports evidence-based maturity tier (`production-verified`, `stable`, `experimental`)
+
+* `suggest_component`: Recommends components for a given UI goal
+
+* `validate_component_usage`: Checks HTML markup against declared attributes and slots
+
+* `list_tokens`: Queries design tokens by category (color, spacing, radius)
+
+* `generate_snippet`: Generates valid HTML markup matching variants
+
+* `scaffold_component`: Scaffolds standard boilerplate code for new components
+
+* `lint_accessibility`: Static HTML accessibility linter (`static-html-lint`; pair with Playwright `axe-core` for full WCAG verification)
 
 ## Contributing & License
 
