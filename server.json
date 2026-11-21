@@ -1,0 +1,28 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "io.github.pinguxx/elementum",
+  "title": "Elementum Design System MCP",
+  "description": "Component schemas, design tokens, snippet generation, and WCAG lint for @wcomp/elementum.",
+  "version": "0.5.2",
+  "websiteUrl": "https://elementum-sage.vercel.app/",
+  "repository": {
+    "url": "https://github.com/pinguxx/Elementum",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@wcomp/elementum",
+      "version": "0.5.2",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://elementum-sage.vercel.app/api/mcp"
+    }
+  ]
+}
