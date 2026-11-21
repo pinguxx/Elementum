@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elementum AI Chat Interface</title>
+  
+  <link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css">
+  <script type="module" src="https://unpkg.com/@wcomp/elementum"></script>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 32px 16px;
+      background-color: var(--el-color-bg-subtle, #f6f8fa);
+      color: var(--el-color-text-primary, #0f172a);
+      margin: 0;
+    }
+    .chat-layout {
+      max-width: 720px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="chat-layout">
+    <div class="header-bar">
+      <h1>AI Agent Chat</h1>
+      <el-theme-switch></el-theme-switch>
+    </div>
+
+    <!-- AI Thinking/Reasoning Component -->
+    <el-reasoning-card id="reasoning" summary="Reasoning Process" style="display: none;">
+      Analyzing user request and retrieving codebase context...
+    </el-reasoning-card>
+
+    <!-- AI Tool Execution Visualizer -->
+    <el-tool-call id="tool-call" name="search_docs" status="running" style="display: none;">
+    </el-tool-call>
+
+    <!-- AI Streaming Text Output -->
+    <el-card bordered id="response-card" style="display: none;">
+      <el-streaming-text id="stream-output" speed="18"></el-streaming-text>
+    </el-card>
+
+    <!-- AI Grounding Sources -->
+    <el-sources id="sources" label="Verified Sources" style="display: none;"></el-sources>
+
+    <!-- User Prompt Input -->
+    <el-prompt-input 
+      id="prompt-input" 
+      placeholder="Ask the AI agent anything... (Enter to send, Shift+Enter for newline)"
+    ></el-prompt-input>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

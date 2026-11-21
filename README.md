@@ -203,9 +203,62 @@ Included skills under [skills/](https://github.com/pinguxx/Elementum/tree/main/s
 
 * [docs/theming.md](https://github.com/pinguxx/Elementum/blob/main/docs/theming.md): Complete design tokens, CSS custom properties, and `::part()` customization guide.
 
-## Framework Integration
+## Framework Integration & Starters
 
 `@wcomp/elementum` works natively in vanilla HTML, React 18/19 (including official auto-generated React wrappers via `@wcomp/elementum/react`), Vue 3, Svelte 5, and Next.js. See [docs/framework-integration.md](https://github.com/pinguxx/Elementum/blob/main/docs/framework-integration.md), [docs/migration-guide.md](https://github.com/pinguxx/Elementum/blob/main/docs/migration-guide.md), and the [Live App Showcase](https://github.com/pinguxx/Elementum/blob/main/showcase.html).
+
+### Copy-Paste Starter Projects
+
+Clone or copy complete, runnable templates from [**`starters/`**](https://github.com/pinguxx/Elementum/tree/main/starters):
+
+| Starter | Stack | Description |
+| ------- | ----- | ----------- |
+| [**vanilla-html**](https://github.com/pinguxx/Elementum/tree/main/starters/vanilla-html) | HTML5 + unpkg CDN | Zero-build Custom Elements with fine-grained micro-signals counter & dialog. |
+| [**next-app-router**](https://github.com/pinguxx/Elementum/tree/main/starters/next-app-router) | Next.js 14+ / React 18/19 | Pure Node.js Declarative Shadow DOM SSR (`renderComponentToDSD`) with zero CLS. |
+| [**react-19**](https://github.com/pinguxx/Elementum/tree/main/starters/react-19) | React 19 + TypeScript + Vite | Native Custom Elements properties, boolean attributes, and event handling. |
+| [**ai-chat**](https://github.com/pinguxx/Elementum/tree/main/starters/ai-chat) | HTML5 + AI Specialist Elements | Agent UI with `<el-prompt-input>`, `<el-reasoning-card>`, `<el-tool-call>`, and `<el-streaming-text>`. |
+
+### Quick Framework Snippets
+
+#### React 19
+React 19 supports Custom Elements natively—attributes, properties, and standard events pass directly:
+
+```tsx
+import '@wcomp/elementum/tokens.css';
+import '@wcomp/elementum';
+
+export function QuickForm() {
+  return (
+    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+      <el-input placeholder="Enter query..." />
+      <el-button variant="primary" onClick={() => alert('Submitted!')}>
+        Submit
+      </el-button>
+    </div>
+  );
+}
+```
+
+#### Vue 3
+Configure Vue's compiler to treat `el-*` tags as custom elements in `vite.config.js`:
+
+```javascript
+// vite.config.js
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+
+export default defineConfig({
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag.startsWith('el-')
+        }
+      }
+    })
+  ]
+});
+```
 
 * **Stability & `1.0.0` Roadmap**: See [docs/stability-and-1.0.md](https://github.com/pinguxx/Elementum/blob/main/docs/stability-and-1.0.md) for SemVer guarantees and per-subpath maturity tiers.
 

@@ -31,6 +31,24 @@ test('DSD SSR: renderComponentToDSD emits <template shadowrootmode="open"> with 
   assert.ok(navHtml.includes('<template shadowrootmode="open">'));
 });
 
+test('DSD SSR: renderComponentToDSD supports 2-argument options overload', () => {
+  const btnHtml = renderComponentToDSD('el-button', {
+    variant: 'primary',
+    children: 'Server Rendered Button'
+  });
+  assert.ok(btnHtml.includes('<el-button variant="primary">'));
+  assert.ok(btnHtml.includes('<template shadowrootmode="open">'));
+  assert.ok(btnHtml.includes('Server Rendered Button</el-button>'));
+
+  const cardHtml = renderComponentToDSD('el-card', {
+    component: ElButton, // or any component class
+    children: '<h2 slot="header">Title</h2>'
+  });
+  assert.ok(cardHtml.includes('<el-card>'));
+  assert.ok(cardHtml.includes('<template shadowrootmode="open"><style>'));
+  assert.ok(cardHtml.includes('<h2 slot="header">Title</h2></el-card>'));
+});
+
 test('DSD SSR: examples/ssr-server.js renders full page in hydrated and zero-JS modes', () => {
   const hydrated = renderSsrPage({ hydrate: true, serverTime: '2026-11-18T12:00:00Z', requestPath: '/?hydrate=1' });
   assert.ok(hydrated.includes('<!DOCTYPE html>'));

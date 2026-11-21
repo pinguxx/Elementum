@@ -136,16 +136,38 @@ export function renderTemplateToString(templateResult) {
 }
 
 /**
- * Wraps component shadow styles and template in Declarative Shadow DOM
+ * Wraps component shadow styles and template in Declarative Shadow DOM.
+ * Supports both signatures:
+ *   renderComponentToDSD(tagName, ComponentClass, attributes = {}, lightDOMChildren = '')
+ *   renderComponentToDSD(tagName, options = {})
+ *
  * @param {string} tagName - Custom element tag name (e.g. 'el-button')
- * @param {Function} ComponentClass - Elementum component class
+ * @param {Function|Object} [ComponentClassOrOptions] - Elementum component class or options object
  * @param {Object} [attributes={}] - Attribute key-values
  * @param {string} [lightDOMChildren=''] - Slotted children
  * @returns {string} Declarative Shadow DOM HTML string
  */
-export function renderComponentToDSD(tagName, ComponentClass, attributes = {}, lightDOMChildren = '') {
+export function renderComponentToDSD(tagName, ComponentClassOrOptions, attributes = {}, lightDOMChildren = '') {
+  let ComponentClass = null;
+  let attrs = attributes;
+  let children = lightDOMChildren;
+
+  if (typeof ComponentClassOrOptions === 'function') {
+    ComponentClass = ComponentClassOrOptions;
+  } else if (ComponentClassOrOptions && typeof ComponentClassOrOptions === 'object') {
+    const { component, children: optChildren, slot, ...restAttrs } = ComponentClassOrOptions;
+    ComponentClass = component || null;
+    attrs = { ...restAttrs, ...(slot ? { slot } : {}), ...attributes };
+    children = optChildren !== undefined ? optChildren : lightDOMChildren;
+  }
+
+  // Attempt to resolve from customElements registry if available
+  if (!ComponentClass && typeof customElements !== 'undefined' && typeof customElements.get === 'function') {
+    ComponentClass = customElements.get(tagName) || null;
+  }
+
   let styleHtml = '';
-  if (ComponentClass.styles) {
+  if (ComponentClass?.styles) {
     const styles = Array.isArray(ComponentClass.styles)
       ? ComponentClass.styles
       : [ComponentClass.styles];
@@ -157,35 +179,39 @@ export function renderComponentToDSD(tagName, ComponentClass, attributes = {}, l
 
   // Instantiate component instance in memory to get its render template
   let shadowBody = '';
-  try {
-    const instance = new ComponentClass();
-    if (typeof instance.setAttribute !== 'function') {
-      const attrs = new Map();
-      instance.getAttribute = (k) => (attrs.has(k) ? attrs.get(k) : null);
-      instance.setAttribute = (k, v) => attrs.set(k, String(v));
-      instance.hasAttribute = (k) => attrs.has(k);
-      instance.removeAttribute = (k) => attrs.delete(k);
-    }
-    for (const [k, v] of Object.entries(attributes)) {
-      const camel = k.replace(/-([a-z])/g, (_, ch) => ch.toUpperCase());
-      const targetKey = (camel in instance && isSignal(instance[camel])) ? camel : k;
-      if (instance[targetKey] && isSignal(instance[targetKey])) {
-        instance[targetKey].value = v;
+  if (typeof ComponentClass === 'function') {
+    try {
+      const instance = new ComponentClass();
+      if (typeof instance.setAttribute !== 'function') {
+        const attrMap = new Map();
+        instance.getAttribute = (k) => (attrMap.has(k) ? attrMap.get(k) : null);
+        instance.setAttribute = (k, v) => attrMap.set(k, String(v));
+        instance.hasAttribute = (k) => attrMap.has(k);
+        instance.removeAttribute = (k) => attrMap.delete(k);
       }
-      if (v !== false && v !== null && v !== undefined) {
-        instance.setAttribute(k, v === true ? '' : String(v));
+      for (const [k, v] of Object.entries(attrs)) {
+        const camel = k.replace(/-([a-z])/g, (_, ch) => ch.toUpperCase());
+        const targetKey = (camel in instance && isSignal(instance[camel])) ? camel : k;
+        if (instance[targetKey] && isSignal(instance[targetKey])) {
+          instance[targetKey].value = v;
+        }
+        if (v !== false && v !== null && v !== undefined) {
+          instance.setAttribute(k, v === true ? '' : String(v));
+        }
       }
+      const template = instance.render?.();
+      if (template) {
+        shadowBody = renderTemplateToString(template);
+      }
+    } catch {
+      // If DOM environment is unavailable or constructor throws, render minimal fallback
+      shadowBody = '<slot></slot>';
     }
-    const template = instance.render?.();
-    if (template) {
-      shadowBody = renderTemplateToString(template);
-    }
-  } catch {
-    // If DOM environment is unavailable, render minimal fallback
+  } else {
     shadowBody = '<slot></slot>';
   }
 
-  const attrStr = Object.entries(attributes)
+  const attrStr = Object.entries(attrs)
     .filter(([_, v]) => v !== false && v !== null && v !== undefined)
     .map(([k, v]) => (v === true ? k : `${k}="${escapeHtml(String(v))}"`))
     .join(' ');
@@ -193,5 +219,5 @@ export function renderComponentToDSD(tagName, ComponentClass, attributes = {}, l
   const openTag = attrStr ? `<${tagName} ${attrStr}>` : `<${tagName}>`;
   const dsdTemplate = `<template shadowrootmode="open">${styleHtml}${shadowBody}</template>`;
 
-  return `${openTag}${dsdTemplate}${lightDOMChildren}</${tagName}>`;
+  return `${openTag}${dsdTemplate}${children}</${tagName}>`;
 }

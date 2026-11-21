@@ -139,3 +139,33 @@ Svelte treats custom elements natively without special wrappers:
 }
 ```
 Now, `document.querySelector('el-button')` will automatically be typed as `ElButton`, and `<el-button>` in JSX/TSX will have full type safety.
+
+---
+
+## 5. Declarative Shadow DOM (DSD) SSR (Node.js / Next.js)
+
+Prevent layout shift (CLS) by pre-rendering shadow boundaries on the server using pure Node.js Declarative Shadow DOM helpers:
+
+```js
+import { renderComponentToDSD } from '@wcomp/elementum/ssr';
+
+// Emits standard HTML string with inline <template shadowrootmode="open">
+const html = renderComponentToDSD('el-button', {
+  variant: 'primary',
+  children: 'Server Rendered Button'
+});
+
+console.log(html);
+// Output: <el-button variant="primary"><template shadowrootmode="open">...</template>Server Rendered Button</el-button>
+```
+
+---
+
+## 6. Starter Projects
+
+Tested, minimal copy-paste starter templates are available in the repository under [`starters/`](../starters):
+- [**Vanilla HTML (Zero-Build CDN)**](../starters/vanilla-html)
+- [**Next.js App Router + DSD SSR**](../starters/next-app-router)
+- [**React 19 + TypeScript + Vite**](../starters/react-19)
+- [**AI Chat UI**](../starters/ai-chat)
+

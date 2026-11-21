@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elementum - Vanilla HTML Starter</title>
+  
+  <!-- Load Elementum Design Tokens & Custom Elements from unpkg CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css">
+  <script type="module" src="https://unpkg.com/@wcomp/elementum"></script>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 32px;
+      background-color: var(--el-color-bg-subtle, #f6f8fa);
+      color: var(--el-color-text-primary, #0f172a);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 80vh;
+      margin: 0;
+    }
+    .container {
+      width: 100%;
+      max-width: 500px;
+    }
+    .counter-display {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 16px 0;
+    }
+    .button-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <el-card bordered>
+      <h2 slot="header" style="margin: 0; font-size: 1.25rem;">Interactive Signal Counter</h2>
+      
+      <p style="margin-top: 0; color: var(--el-color-text-secondary, #64748b);">
+        This starter demonstrates fine-grained reactive state without bundlers or frameworks.
+      </p>
+      
+      <div class="counter-display">
+        Count: <span id="count-val">0</span>
+      </div>
+
+      <div class="button-group">
+        <el-button id="btn-dec" variant="secondary">Decrement</el-button>
+        <el-button id="btn-inc" variant="primary">Increment</el-button>
+        <el-button id="btn-dialog" variant="outline">Open Dialog</el-button>
+      </div>
+    </el-card>
+  </div>
+
+  <el-dialog id="demo-dialog">
+    <h3 slot="header" style="margin: 0;">Elementum Dialog</h3>
+    <p>This is a native &lt;dialog&gt; overlay powered by zero-dependency Web Components.</p>
+    <div slot="footer" style="display: flex; justify-content: flex-end;">
+      <el-button id="btn-close" variant="secondary">Close</el-button>
+    </div>
+  </el-dialog>
+
+  <script type="module">
+    import { signal, effect } from 'https://unpkg.com/@wcomp/elementum/src/signal.js';
+
+    // Initialize state using Elementum micro-signals
+    const count = signal(0);
+
+    const countValSpan = document.getElementById('count-val');
+    const btnInc = document.getElementById('btn-inc');
+    const btnDec = document.getElementById('btn-dec');
+    const btnDialog = document.getElementById('btn-dialog');
+    const btnClose = document.getElementById('btn-close');
+    const dialog = document.getElementById('demo-dialog');
+
+    // Automatically update DOM when count signal changes
+    effect(() => {
+      countValSpan.textContent = count.value;
+    });
+
+    btnInc.addEventListener('click', () => { count.value++; });
+    btnDec.addEventListener('click', () => { count.value--; });
+    
+    btnDialog.addEventListener('click', () => { dialog.open = true; });
+    btnClose.addEventListener('click', () => { dialog.open = false; });
+  </script>
+</body>
+</html>
