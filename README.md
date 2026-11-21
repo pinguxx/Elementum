@@ -1,6 +1,6 @@
 # @wcomp/elementum
 
-[npm version](https://www.google.com/search?q=https://www.npmjs.com/package/%40wcomp/elementum)
+[npm version](https://www.npmjs.com/package/@wcomp/elementum)
 
 > **Elementum** (*Latin*: /e.leˈmen.tum/) — **An AI-native, framework-independent UI engineering platform** built on standard Custom Elements, fine-grained micro-signals, W3C DTCG tokens, Declarative Shadow DOM SSR, and MCP/AG-UI tooling.
 
@@ -12,7 +12,7 @@
 
 ## 🧪 Verification & Browser Matrix (Beta — `v0.5.1`)
 
-One command verifies everything end-to-end: `npm run verify:all` (see [QUALITY.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/QUALITY.md) for the auto-generated per-component matrix).
+One command verifies everything end-to-end: `npm run verify:all` (see [QUALITY.md](https://github.com/pinguxx/Elementum/blob/main/QUALITY.md) for the auto-generated per-component matrix).
 
 Every architectural claim in Elementum is backed by automated verification in CI:
 
@@ -26,7 +26,7 @@ Every architectural claim in Elementum is backed by automated verification in CI
 | **Declarative Shadow DOM SSR** | Playwright (`/?hydrate=0` Zero-JS & `/?hydrate=1` Hydrated) | Native `<template shadowrootmode="open">` attachment with JS disabled + clean client hydration | 
 | **Accessibility** | `@axe-core/playwright` (WCAG 2.2 AA ruleset) + `@wcomp/elementum/testing` | Automated real-browser `axe-core` audits + WAI-ARIA APG pattern validators + static MCP `lint_accessibility` | 
 | **Security & MCP Hardening** | `test/security.test.js` + GitHub CodeQL | XSS escaping in `template.js` & `ssr.js`, URL scheme allowlist, prototype-pollution guards, ReDoS-safe parsers, 128 KB MCP payload cap | 
-| **Performance Benchmarks** | `npm run bench` ([BENCHMARKS.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/BENCHMARKS.md)) | Reproducible median & p95 suite with CPU/OS/Node metadata (`node tools/benchmark.js --write`) | 
+| **Performance Benchmarks** | `npm run bench` ([BENCHMARKS.md](https://github.com/pinguxx/Elementum/blob/main/BENCHMARKS.md)) | Reproducible median & p95 suite with CPU/OS/Node metadata (`node tools/benchmark.js --write`) | 
 
 ## ⚡ Quick Start
 
@@ -141,17 +141,17 @@ Selected highlights below — browse all **109 elements** interactively in the [
 
 ## Interactive Examples & Showcase
 
-* [examples/ledgerflow.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/examples/ledgerflow.html): **LedgerFlow (Penpot → MCP Generated App)**: End-to-end fintech dashboard designed in [**Penpot**](https://design.penpot.app/?screen=viewer&file-id=42288968-6e5e-808d-8008-f77162b618ca&page-id=d8ded059-05ee-80c0-8008-f774c97dd053&section=interactions&index=0&share-id=8218fc5e-f68d-4bab-8fd7-283dd92586e8) and compiled via `npm run penpot:generate` into 15 validated Elementum Web Components (`<el-number-flow>`, `<el-chart>`, `<el-meter>`, `<el-drawer>`, `<el-dialog>`, `<el-toaster>`).
+* [examples/ledgerflow.html](https://github.com/pinguxx/Elementum/blob/main/examples/ledgerflow.html): **LedgerFlow (Penpot → MCP Generated App)**: End-to-end fintech dashboard designed in [**Penpot**](https://design.penpot.app/?screen=viewer&file-id=42288968-6e5e-808d-8008-f77162b618ca&page-id=d8ded059-05ee-80c0-8008-f774c97dd053&section=interactions&index=0&share-id=8218fc5e-f68d-4bab-8fd7-283dd92586e8) and compiled via `npm run penpot:generate` into 15 validated Elementum Web Components (`<el-number-flow>`, `<el-chart>`, `<el-meter>`, `<el-drawer>`, `<el-dialog>`, `<el-toaster>`).
 
-* [examples/references.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/examples/references.html): **Reference Hub (Anti-AI Slop)**: Real-world patterns reconstructed from curated galleries (SaaS Pricing with rolling odometers & border beams, Linear-style command menu, and segmented PIN auth).
+* [examples/references.html](https://github.com/pinguxx/Elementum/blob/main/examples/references.html): **Reference Hub (Anti-AI Slop)**: Real-world patterns reconstructed from curated galleries (SaaS Pricing with rolling odometers & border beams, Linear-style command menu, and segmented PIN auth).
 
-* [examples/agent-studio.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/examples/agent-studio.html): **AI Agent Studio & Command Center** demonstrating `<el-command>` (⌘K), `<el-prompt-input>`, `<el-reasoning-card>`, `<el-number-flow>` live token odometer, `<el-otp-input>` security key authorization, and `<el-border-beam>`.
+* [examples/agent-studio.html](https://github.com/pinguxx/Elementum/blob/main/examples/agent-studio.html): **AI Agent Studio & Command Center** demonstrating `<el-command>` (⌘K), `<el-prompt-input>`, `<el-reasoning-card>`, `<el-number-flow>` live token odometer, `<el-otp-input>` security key authorization, and `<el-border-beam>`.
 
-* [index.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/index.html): Interactive landing portal directing to the applications. Run `npm run serve` to launch locally.
+* [index.html](https://github.com/pinguxx/Elementum/blob/main/index.html): Interactive landing portal directing to the applications. Run `npm run serve` to launch locally.
 
-* [examples/app.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/examples/app.html): Complete **Pulse Cloud** showcase dashboard demonstrating native form validation, confirmation modal dialogs, toast notifications, tabs, and theme toggling.
+* [examples/app.html](https://github.com/pinguxx/Elementum/blob/main/examples/app.html): Complete **Pulse Cloud** showcase dashboard demonstrating native form validation, confirmation modal dialogs, toast notifications, tabs, and theme toggling.
 
-* [examples/index.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/examples/index.html): Interactive component catalog with live prop editors and signal-reactive previews.
+* [examples/index.html](https://github.com/pinguxx/Elementum/blob/main/examples/index.html): Interactive component catalog with live prop editors and signal-reactive previews.
 
 ## Headless Behaviors, Agent Runtime & Testing Contracts
 
@@ -163,20 +163,20 @@ Beyond 109 ready-to-use styled Web Components (all supporting opt-in `unstyled` 
 
 * **`@wcomp/elementum/testing`** — Reusable WAI-ARIA APG (`checkAriaPattern`), provider-free RTL (`checkDirection`), and DSD SSR (`checkServerRender`) contract validators.
 
-See [docs/behaviors-and-agent.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/behaviors-and-agent.md) for full API examples.
+See [docs/behaviors-and-agent.md](https://github.com/pinguxx/Elementum/blob/main/docs/behaviors-and-agent.md) for full API examples.
 
 ## Design Engineering & Agent Guides
 
 ### Installable Agent Skills (`npx skills add`)
 
-Install Elementum's modular AI coding skills directly into Antigravity, Claude Code, Cursor, or Gemini CLI (configured via [skills.sh.json](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/skills.sh.json)):
+Install Elementum's modular AI coding skills directly into Antigravity, Claude Code, Cursor, or Gemini CLI (configured via [skills.sh.json](https://github.com/pinguxx/Elementum/blob/main/skills.sh.json)):
 
 ```
 npx skills@latest add pinguxx/Elementum --skill elementum
 
 ```
 
-Included skills under [skills/](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/tree/main/skills):
+Included skills under [skills/](https://github.com/pinguxx/Elementum/tree/main/skills):
 
 * **`elementum`**: Canonical platform skill covering components, `unstyled` mode, `@wcomp/elementum/behaviors`, `@wcomp/elementum/agent`, `@wcomp/elementum/testing`, and DSD SSR.
 
@@ -190,17 +190,17 @@ Included skills under [skills/](https://www.google.com/search?q=https://github.c
 
 * **`elementum-penpot`**: Two-way Penpot MCP design system sync and Penpot-to-Elementum app codegen.
 
-* [docs/behaviors-and-agent.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/behaviors-and-agent.md): API reference for `@wcomp/elementum/behaviors`, `@wcomp/elementum/agent`, and `@wcomp/elementum/testing`.
+* [docs/behaviors-and-agent.md](https://github.com/pinguxx/Elementum/blob/main/docs/behaviors-and-agent.md): API reference for `@wcomp/elementum/behaviors`, `@wcomp/elementum/agent`, and `@wcomp/elementum/testing`.
 
-* [docs/penpot-workflow.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/penpot-workflow.md): Free & open-source design token workflow with Penpot (W3C DTCG JSON) and automated compilation.
+* [docs/penpot-workflow.md](https://github.com/pinguxx/Elementum/blob/main/docs/penpot-workflow.md): Free & open-source design token workflow with Penpot (W3C DTCG JSON) and automated compilation.
 
-* [docs/agent-craft-guide.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/agent-craft-guide.md): Guide and system prompt rules for AI coding agents to banish generic AI look and adhere to high-craft standards.
+* [docs/agent-craft-guide.md](https://github.com/pinguxx/Elementum/blob/main/docs/agent-craft-guide.md): Guide and system prompt rules for AI coding agents to banish generic AI look and adhere to high-craft standards.
 
-* [docs/theming.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/theming.md): Complete design tokens, CSS custom properties, and `::part()` customization guide.
+* [docs/theming.md](https://github.com/pinguxx/Elementum/blob/main/docs/theming.md): Complete design tokens, CSS custom properties, and `::part()` customization guide.
 
 ## Framework Integration
 
-`@wcomp/elementum` works natively in vanilla HTML, React 19, Vue 3, Svelte 5, and Next.js. See [docs/framework-integration.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/framework-integration.md) for complete setup instructions and TypeScript configuration.
+`@wcomp/elementum` works natively in vanilla HTML, React 19, Vue 3, Svelte 5, and Next.js. See [docs/framework-integration.md](https://github.com/pinguxx/Elementum/blob/main/docs/framework-integration.md) for complete setup instructions and TypeScript configuration.
 
 ## Project Structure
 
@@ -238,11 +238,11 @@ Elementum/
 
 ## 🎨 Theming & Accessibility (WCAG 2.2)
 
-* **Theming Guide**: See [docs/theming.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/theming.md) for the full catalog of design tokens and exposed CSS `::part()` selectors.
+* **Theming Guide**: See [docs/theming.md](https://github.com/pinguxx/Elementum/blob/main/docs/theming.md) for the full catalog of design tokens and exposed CSS `::part()` selectors.
 
-* **Agent Guide**: See [AGENT\_GUIDE.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/AGENT_GUIDE.md) for guidelines on building, testing, and reviewing Elementum components.
+* **Agent Guide**: See [AGENT\_GUIDE.md](https://github.com/pinguxx/Elementum/blob/main/AGENT_GUIDE.md) for guidelines on building, testing, and reviewing Elementum components.
 
-* **Framework Integration**: See [docs/framework-integration.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/framework-integration.md) for React, Vue, Svelte, and Angular setup.
+* **Framework Integration**: See [docs/framework-integration.md](https://github.com/pinguxx/Elementum/blob/main/docs/framework-integration.md) for React, Vue, Svelte, and Angular setup.
 
 ## 🚀 Declarative Shadow DOM (DSD) SSR
 
@@ -257,7 +257,7 @@ const html = renderComponentToDSD('el-button', ElButton, { variant: 'primary' },
 
 ```
 
-Run the live zero-dependency Node.js SSR server (`?hydrate=0` for pure Zero-JS DSD, `?hydrate=1` for progressive hydration) or view the pre-rendered snapshot [examples/ssr-demo.html](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/examples/ssr-demo.html):
+Run the live zero-dependency Node.js SSR server (`?hydrate=0` for pure Zero-JS DSD, `?hydrate=1` for progressive hydration) or view the pre-rendered snapshot [examples/ssr-demo.html](https://github.com/pinguxx/Elementum/blob/main/examples/ssr-demo.html):
 
 ```
 npm run ssr
@@ -286,7 +286,7 @@ npm run tokens:sync tokens/penpot-tokens.json
 
 ```
 
-See [docs/penpot-workflow.md](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/docs/penpot-workflow.md) for full setup instructions, CLI flags (`--url`, `--token`, `--dry-run`), and Penpot MCP security notes.
+See [docs/penpot-workflow.md](https://github.com/pinguxx/Elementum/blob/main/docs/penpot-workflow.md) for full setup instructions, CLI flags (`--url`, `--token`, `--dry-run`), and Penpot MCP security notes.
 
 ## Agent MCP Server
 
@@ -336,6 +336,6 @@ Exposed tools:
 
 ## Contributing & License
 
-Issues and pull requests are welcome on [GitHub](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/issues).
+Issues and pull requests are welcome on [GitHub](https://github.com/pinguxx/Elementum/issues).
 
-Licensed under the [MIT License](https://www.google.com/search?q=https://github.com/pinguxx/Elementum/blob/main/LICENSE).
+Licensed under the [MIT License](https://github.com/pinguxx/Elementum/blob/main/LICENSE).
