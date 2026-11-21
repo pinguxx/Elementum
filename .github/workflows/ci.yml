@@ -58,11 +58,16 @@ jobs:
       - name: Install dependencies (strict lockfile)
         run: npm ci
 
+      - name: Check release version & doc sync
+        run: npm run check:release
+
       - name: Enforce >= 95% line coverage threshold
         run: node --test --experimental-test-coverage --test-coverage-lines=95
 
-      - name: Strict TypeScript check (src/index.d.ts)
-        run: npm run typecheck
+      - name: Strict TypeScript check (src/index.d.ts & src/react/index.d.ts)
+        run: |
+          npm run typecheck
+          npx tsc --noEmit --strict --lib es2022,dom --target es2022 src/react/index.d.ts
 
       - name: Check per-component gzipped size budgets
         run: npm run check:size
@@ -76,6 +81,28 @@ jobs:
         with:
           name: quality-matrix
           path: QUALITY.md
+
+  verify-react:
+    name: Real React (${{ matrix.react-version }}.x) StrictMode & TSX Consumer Test
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        react-version: ['18', '19']
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js 22.x
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22.x
+
+      - name: Install dependencies (strict lockfile)
+        run: npm ci
+
+      - name: Verify @wcomp/elementum/react against real React ${{ matrix.react-version }}
+        run: node tools/verify-react.js --react=${{ matrix.react-version }}
 
   browser-e2e:
     name: Real Browser & axe-core E2E (Chromium, Firefox, WebKit)

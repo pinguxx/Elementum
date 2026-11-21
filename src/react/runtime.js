@@ -120,20 +120,22 @@ export function createElementumReactComponent(React, tagName, eventMap = {}) {
       }
     });
 
-    // Attach CustomEvent / non-synthetic DOM listeners (React 18 & 19 parity)
-    const listenerDeps = customListeners.flatMap(([name, fn]) => [name, fn]);
+    // Attach CustomEvent / non-synthetic DOM listeners (React 18 & 19 parity).
+    // Intentionally omit a variable-length deps array so toggling handler props never trips
+    // React's hook dependency-size invariant, and capture `el` before unmount nulls the ref.
     React.useEffect(() => {
       const el = innerRef.current;
       if (!el || customListeners.length === 0) return undefined;
-      for (const [eventName, handler] of customListeners) {
+      const attached = customListeners.slice();
+      for (const [eventName, handler] of attached) {
         el.addEventListener(eventName, handler);
       }
       return () => {
-        for (const [eventName, handler] of customListeners) {
+        for (const [eventName, handler] of attached) {
           el.removeEventListener(eventName, handler);
         }
       };
-    }, listenerDeps);
+    });
 
     return React.createElement(tagName, elementProps, children);
   });
