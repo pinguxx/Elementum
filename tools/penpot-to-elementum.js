@@ -20,11 +20,17 @@ import { components as catalogComponents } from '../examples/catalog-data.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
 
-const KNOWN_ELEMENTUM_TAGS = new Set(
-  Array.isArray(catalogComponents)
-    ? catalogComponents.map((c) => c.tag)
-    : Object.keys(catalogComponents)
-);
+const CATALOG_LIST = Array.isArray(catalogComponents)
+  ? catalogComponents
+  : Object.values(catalogComponents);
+const CATALOG_BY_TAG = new Map(CATALOG_LIST.map((c) => [c.tag, c]));
+const KNOWN_ELEMENTUM_TAGS = new Set(CATALOG_BY_TAG.keys());
+
+const STANDARD_HTML_ATTRS = new Set([
+  'id', 'class', 'slot', 'style', 'title', 'href', 'target',
+  'type', 'name', 'value', 'placeholder', 'role', 'tabindex',
+]);
+const INTERNAL_CODEGEN_PROPS = new Set(['section', 'kpi', 'action']);
 
 function parseArgs(argv) {
   const opts = {
@@ -33,6 +39,7 @@ function parseArgs(argv) {
     page: 'LedgerFlow App',
     out: 'examples/ledgerflow.html',
     exportPng: 'docs/assets/ledgerflow-penpot.png',
+    mode: 'auto',
     dryRun: false,
   };
   for (let i = 0; i < argv.length; i++) {
@@ -42,6 +49,7 @@ function parseArgs(argv) {
     else if (arg === '--page' && argv[i + 1]) opts.page = argv[++i];
     else if (arg === '--out' && argv[i + 1]) opts.out = argv[++i];
     else if (arg === '--export-png' && argv[i + 1]) opts.exportPng = argv[++i];
+    else if (arg === '--mode' && argv[i + 1]) opts.mode = argv[++i];
     else if (arg === '--dry-run') opts.dryRun = true;
   }
   if (!opts.url && opts.token) {
@@ -107,7 +115,7 @@ async function createMcpClient(url) {
   await rpc('initialize', {
     protocolVersion: '2025-03-26',
     capabilities: {},
-    clientInfo: { name: 'elementum-penpot-codegen', version: '0.1.0' },
+    clientInfo: { name: 'elementum-penpot-codegen', version: '0.5.2' },
   });
   await rpc('notifications/initialized', {}, true);
 
@@ -133,21 +141,65 @@ async function createMcpClient(url) {
 }
 
 /**
- * Parses a Penpot layer name like `el-button | variant="primary" label="+ Add Expense"`
+ * Parses a Penpot layer name like `el-button | variant="primary" label="+ Add Expense"`,
+ * `el-code-block | language="js" copyable`, or Penpot library path `Actions & Buttons / el-button / danger`
  * into `{ tag, props, isValidElementum }`.
  */
 export function parsePenpotLayerName(name = '') {
   const trimmed = String(name || '').trim();
-  const match = trimmed.match(/^(el-[a-z0-9-]+)(?:\s*\|\s*(.*))?$/i);
-  if (!match) return null;
-  const tag = match[1].toLowerCase();
-  const propsStr = match[2] || '';
+  let tag = '';
+  let variantKey = '';
+  let propsStr = '';
+
+  const libMatch = trimmed.match(/^[^/|\n]+\/\s*(el-[a-z0-9-]+)(?:\s*\/\s*([^|\n]+?))?(?:\s*\|\s*(.*))?$/i);
+  if (libMatch) {
+    tag = libMatch[1].toLowerCase();
+    variantKey = (libMatch[2] || '').trim();
+    propsStr = libMatch[3] || '';
+  } else {
+    const directMatch = trimmed.match(/^(el-[a-z0-9-]+)(?:\s*\|\s*(.*))?$/i);
+    if (!directMatch) return null;
+    tag = directMatch[1].toLowerCase();
+    propsStr = directMatch[2] || '';
+  }
+
+  const meta = CATALOG_BY_TAG.get(tag);
   const props = {};
+
+  if (variantKey && variantKey !== 'default') {
+    if (variantKey === 'checked') {
+      props.checked = true;
+    } else if (variantKey === 'disabled') {
+      props.disabled = true;
+    } else if (variantKey !== 'unchecked') {
+      const hasSize = meta?.props?.some((p) => p.name === 'size');
+      const hasStatus = meta?.props?.some((p) => p.name === 'status');
+      const hasVariant = meta?.props?.some((p) => p.name === 'variant');
+      if (hasSize && ['sm', 'md', 'lg'].includes(variantKey)) {
+        props.size = variantKey;
+      } else if (hasStatus && !hasVariant) {
+        props.status = variantKey;
+      } else {
+        props.variant = variantKey;
+      }
+    }
+  }
+
   const attrRegex = /([a-zA-Z0-9_-]+)\s*=\s*"([^"]*)"/g;
   let m;
   while ((m = attrRegex.exec(propsStr)) !== null) {
     props[m[1]] = m[2];
   }
+
+  const remaining = propsStr.replace(/([a-zA-Z0-9_-]+)\s*=\s*"([^"]*)"/g, ' ').trim();
+  if (remaining) {
+    for (const token of remaining.split(/\s+/)) {
+      if (/^[a-z][a-z0-9-]*$/i.test(token) && !(token in props)) {
+        props[token] = true;
+      }
+    }
+  }
+
   return {
     tag,
     props,
@@ -173,12 +225,18 @@ export function extractElementumSpec(penpotTree) {
   let dialogHeading = 'Add New Expense';
   let primaryCta = '+ Add Expense';
 
+  const discoveredNodes = [];
+
   function walk(node) {
     if (!node) return;
     const parsed = parsePenpotLayerName(node.name);
     if (parsed) {
-      if (parsed.isValidElementum) discoveredTags.add(parsed.tag);
-      else unknownTags.add(parsed.tag);
+      if (parsed.isValidElementum) {
+        discoveredTags.add(parsed.tag);
+        discoveredNodes.push({ tag: parsed.tag, props: parsed.props });
+      } else {
+        unknownTags.add(parsed.tag);
+      }
 
       if (parsed.tag === 'el-navbar') {
         if (parsed.props.brand) brand = parsed.props.brand;
@@ -259,6 +317,7 @@ export function extractElementumSpec(penpotTree) {
     dialogHeading,
     discoveredTags: [...discoveredTags].sort(),
     unknownTags: [...unknownTags].sort(),
+    nodes: discoveredNodes,
     kpis:
       kpis.length > 0
         ? kpis
@@ -295,7 +354,138 @@ function escapeHtml(str) {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
+ * Recursively compiles any Penpot layer node into clean, escaped Elementum HTML
+ * supporting all 109 catalog components, boolean attributes, slots, and structural helpers.
+ */
+export function renderElementumNode(node, indent = 2) {
+  if (!node) return '';
+  const pad = ' '.repeat(indent);
+  const childPad = ' '.repeat(indent + 2);
+  const parsed = parsePenpotLayerName(node.name);
+
+  if (!parsed) {
+    const childHtml = (node.children || [])
+      .map((c) => renderElementumNode(c, indent + 2))
+      .filter(Boolean);
+    if (childHtml.length === 0) return '';
+    return `${pad}<section class="pp-group" data-layer="${escapeHtml(node.name || 'group')}">\n${childHtml.join('\n')}\n${pad}</section>`;
+  }
+
+  if (!parsed.isValidElementum) return '';
+
+  const tag = parsed.tag;
+  const meta = CATALOG_BY_TAG.get(tag);
+  const declaredProps = new Set((meta?.props || []).map((p) => p.name));
+  const boolProps = new Set((meta?.props || []).filter((p) => p.type === 'boolean').map((p) => p.name));
+
+  const attrs = [];
+  const blockChildren = [];
+  const slotTexts = [];
+
+  for (const [k, v] of Object.entries(parsed.props)) {
+    if ((tag === 'el-card' || tag === 'el-callout') && k === 'title') {
+      blockChildren.push(
+        tag === 'el-card'
+          ? `${childPad}<el-card-header><el-card-title>${escapeHtml(v)}</el-card-title></el-card-header>`
+          : `${childPad}<span slot="title">${escapeHtml(v)}</span>`
+      );
+      continue;
+    }
+    if ((k === 'label' || k === 'text' || k === 'content') && !declaredProps.has(k)) {
+      if (v) slotTexts.push(escapeHtml(v));
+      continue;
+    }
+    if (INTERNAL_CODEGEN_PROPS.has(k)) continue;
+    if (!declaredProps.has(k) && !STANDARD_HTML_ATTRS.has(k) && !k.startsWith('aria-') && !k.startsWith('data-')) {
+      continue;
+    }
+
+    if (boolProps.has(k) || typeof v === 'boolean') {
+      if (v === true || v === '' || v === 'true') attrs.push(k);
+    } else if (v !== null && v !== undefined) {
+      attrs.push(`${k}="${escapeHtml(v)}"`);
+    }
+  }
+
+  const textChildren = [];
+  for (const child of node.children || []) {
+    const rendered = renderElementumNode(child, indent + 2);
+    if (rendered) {
+      blockChildren.push(rendered);
+    } else if (child.type === 'text' && typeof child.text === 'string' && !parsePenpotLayerName(child.name)) {
+      textChildren.push(escapeHtml(child.text));
+    }
+  }
+  if (slotTexts.length === 0 && textChildren.length > 0) {
+    slotTexts.push(...textChildren);
+  }
+
+  const attrStr = attrs.length > 0 ? ` ${attrs.join(' ')}` : '';
+  if (blockChildren.length === 0) {
+    return `${pad}<${tag}${attrStr}>${slotTexts.join(' ')}</${tag}>`;
+  }
+  const innerLines = [...blockChildren];
+  if (slotTexts.length > 0) innerLines.push(`${childPad}${slotTexts.join(' ')}`);
+  return `${pad}<${tag}${attrStr}>\n${innerLines.join('\n')}\n${pad}</${tag}>`;
+}
+
+/**
+ * Generates a standalone Elementum HTML document for any arbitrary Penpot page tree
+ * across all 109 components.
+ */
+export function generatePageHtml(penpotTree) {
+  const title = penpotTree?.pageName || 'Penpot Design';
+  const renderedBlocks = (penpotTree?.children || [])
+    .map((child) => renderElementumNode(child, 4))
+    .filter(Boolean);
+  const bodyContent = renderedBlocks.length > 0
+    ? renderedBlocks.join('\n')
+    : '    <!-- No Elementum (el-*) layers discovered on this Penpot page -->';
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${escapeHtml(title)} — Generated from Penpot MCP | @wcomp/elementum</title>
+  <link rel="stylesheet" href="../src/tokens.css" />
+  <script type="module" src="../src/index.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--el-font-sans, system-ui, sans-serif);
+      background: var(--el-surface-base, #ffffff);
+      color: var(--el-text-primary, #0f172a);
+    }
+    .pp-canvas {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--el-spacing-lg, 24px);
+      display: flex;
+      flex-direction: column;
+      gap: var(--el-spacing-md, 16px);
+    }
+    .pp-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--el-spacing-sm, 8px);
+    }
+  </style>
+</head>
+<body>
+  <main class="pp-canvas">
+${bodyContent}
+  </main>
+  <el-toaster id="app-toaster" position="bottom-right"></el-toaster>
+</body>
+</html>
+`;
 }
 
 /**
@@ -800,11 +990,15 @@ async function main() {
         { name: 'el-dialog | heading="Add New Expense"', children: [] },
       ],
     });
-    const htmlOut = generateAppHtml(sampleSpec);
+    const htmlOut = opts.mode === 'generic'
+      ? generatePageHtml({ pageName: opts.page, children: [{ name: 'el-code-block | language="js" copyable text="const x = 1;"' }] })
+      : generateAppHtml(sampleSpec);
     console.log(
       JSON.stringify(
         {
           dryRun: true,
+          mode: opts.mode,
+          supportedCatalogTags: KNOWN_ELEMENTUM_TAGS.size,
           page: opts.page,
           out: opts.out,
           discoveredTags: sampleSpec.discoveredTags,
@@ -833,7 +1027,10 @@ async function main() {
   }
 
   const spec = extractElementumSpec(tree);
-  const htmlOut = generateAppHtml(spec);
+  const useLedgerFlow =
+    opts.mode === 'ledgerflow' ||
+    (opts.mode === 'auto' && (/ledgerflow/i.test(opts.page) || spec.kpis.length > 0 || spec.transactions.length > 0));
+  const htmlOut = useLedgerFlow ? generateAppHtml(spec) : generatePageHtml(tree);
   const outPath = path.resolve(rootDir, opts.out);
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, htmlOut, 'utf8');

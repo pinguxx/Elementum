@@ -2,7 +2,8 @@ import '../test-helpers/setup.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import '../src/components/el-navbar.js';
-import '../src/components/el-code-block.js';
+import { ElCodeBlock } from '../src/components/el-code-block.js';
+import { renderComponentToDSD } from '../src/ssr.js';
 
 test('<el-navbar> renders brand, badge, navigation slots, and reactive attributes', () => {
   const nav = document.createElement('el-navbar');
@@ -139,4 +140,100 @@ test('<el-code-block> renders code, language header, compact mode, slotted fallb
       value: prevClipboard,
     });
   }
+});
+
+test('<el-code-block> highlights js, html, css, json, and bash without changing code textContent', () => {
+  const cases = [
+    {
+      language: 'js',
+      code: '// line\n/* block */\nconst n = 42;\nconst s = "hi\\"";\nfoo(n);',
+      expectedTokens: ['.tok-comment', '.tok-keyword', '.tok-number', '.tok-string', '.tok-fn'],
+    },
+    {
+      language: 'html',
+      code: '<!-- note -->\n<el-button variant="primary" disabled>Go</el-button>',
+      expectedTokens: ['.tok-comment', '.tok-tag', '.tok-attr', '.tok-string'],
+    },
+    {
+      language: 'css',
+      code: '/* theme */\n:root { --el-code-bg: #0f172a; color: var(--fg); padding: 12px; }',
+      expectedTokens: ['.tok-comment', '.tok-keyword', '.tok-attr', '.tok-number', '.tok-fn'],
+    },
+    {
+      language: 'json',
+      code: '{"ok": true, "count": -5, "msg": "ready"}',
+      expectedTokens: ['.tok-attr', '.tok-keyword', '.tok-number', '.tok-string'],
+    },
+    {
+      language: 'bash',
+      code: '# install\nnpm install --save-dev $PKG 2',
+      expectedTokens: ['.tok-comment', '.tok-keyword', '.tok-attr', '.tok-number'],
+    },
+  ];
+
+  for (const c of cases) {
+    const el = document.createElement('el-code-block');
+    el.setAttribute('language', c.language);
+    el.setAttribute('code', c.code);
+    document.body.appendChild(el);
+
+    const codeEl = el.root.querySelector('code');
+    assert.equal(codeEl?.textContent, c.code, `Exact text preserved for ${c.language}`);
+    for (const sel of c.expectedTokens) {
+      assert.ok(codeEl?.querySelector(sel), `Expected ${sel} in ${c.language} highlight`);
+    }
+    el.remove();
+  }
+});
+
+test('<el-code-block> auto-dedents slotted text, reacts to slotchange, and supports <template> children cleanly', () => {
+  const slotted = document.createElement('el-code-block');
+  slotted.setAttribute('language', 'js');
+  slotted.textContent = '\n    const a = 1;\n    const b = 2;\n  ';
+  document.body.appendChild(slotted);
+
+  assert.equal(slotted.getCodeText(), 'const a = 1;\nconst b = 2;');
+  assert.equal(slotted.root.querySelector('code')?.textContent, 'const a = 1;\nconst b = 2;');
+  assert.ok(slotted.root.querySelector('.tok-keyword'));
+
+  // slotchange updates highlighted output
+  slotted.textContent = '\n      let updated = 99;\n    ';
+  slotted.root.querySelector('slot')?.dispatchEvent(new Event('slotchange'));
+  assert.equal(slotted.getCodeText(), 'let updated = 99;');
+  assert.equal(slotted.root.querySelector('code')?.textContent, 'let updated = 99;');
+  slotted.remove();
+
+  // <template> child exposes raw HTML markup without manually escaping &lt;
+  const host = document.createElement('div');
+  host.innerHTML = `<el-code-block language="html">
+    <template>
+      <el-button variant="primary">Click</el-button>
+    </template>
+  </el-code-block>`;
+  document.body.appendChild(host);
+  const tplBlock = host.firstElementChild;
+  assert.equal(tplBlock.getCodeText(), '<el-button variant="primary">Click</el-button>');
+  assert.ok(tplBlock.root.querySelector('.tok-tag'));
+  assert.ok(tplBlock.root.querySelector('.tok-attr'));
+  assert.ok(tplBlock.root.querySelector('.tok-string'));
+  host.remove();
+});
+
+test('<el-code-block> prevents XSS injection and emits highlighted DSD SSR markup', () => {
+  const xss = document.createElement('el-code-block');
+  xss.setAttribute('language', 'html');
+  xss.setAttribute('code', '<script>alert(1)</script>');
+  document.body.appendChild(xss);
+
+  const codeEl = xss.root.querySelector('code');
+  assert.equal(xss.root.querySelector('script'), null);
+  assert.equal(codeEl?.textContent, '<script>alert(1)</script>');
+  xss.remove();
+
+  const dsd = renderComponentToDSD('el-code-block', ElCodeBlock, {
+    language: 'js',
+    code: 'const x = 1;',
+  });
+  assert.ok(dsd.includes('--el-code-bg'));
+  assert.ok(dsd.includes('<span class="tok-keyword">const</span>'));
 });

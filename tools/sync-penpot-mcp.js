@@ -3,10 +3,10 @@
  * Elementum -> Penpot Design System MCP Synchronizer (v2: Multi-Page + Full Variants)
  *
  * Connects to Penpot's hosted or local MCP stream (`execute_code`) to generate:
- *  - W3C DTCG token sets (`Elementum Core`, `Elementum Light`, `Elementum Dark`) & 28 library colors
+ *  - W3C DTCG token sets (`Elementum Core`, `Elementum Light`, `Elementum Dark`) & library colors
  *  - `00 · Foundations` visual palette & spacing/radius showcase page
  *  - 8 dedicated category pages (`01 · Actions & Buttons` .. `08 · AI & Specialist`)
- *  - Recognizable, anatomy-accurate Master Components for all 105 elements + full variant matrices
+ *  - Recognizable, anatomy-accurate Master Components for all 109 elements + full variant matrices
  *    (color/semantic variants, sizes, and interactive states) with generous spacing so Penpot's
  *    component labels never collide.
  *
@@ -107,7 +107,7 @@ async function createMcpClient(url) {
   await rpc('initialize', {
     protocolVersion: '2025-03-26',
     capabilities: {},
-    clientInfo: { name: 'elementum-penpot-sync', version: '0.2.0' },
+    clientInfo: { name: 'elementum-penpot-sync', version: '0.5.2' },
   });
   await rpc('notifications/initialized', {}, true);
 
@@ -139,6 +139,9 @@ function loadTokensPalette() {
 
   const lightColors = flattenColors(raw.color);
   const darkColors = {
+    'brand.warning': '#F59E0B',
+    'brand.info': '#38BDF8',
+    'brand.accent': '#A78BFA',
     'surface.base': '#0F172A',
     'surface.muted': '#1E293B',
     'surface.border': '#334155',
@@ -679,7 +682,7 @@ function drawPreview(board, item) {
     addRect(board, 'TblR1', px, py + 18, pw, 14, '#FFFFFF', 2, '#E2E8F0');
     addText(board, 'TblT1', 'Elementum UI    Active        96.9%', px + 10, py + 19, pw - 20, 9, '400', '#0F172A');
     addRect(board, 'TblR2', px, py + 34, pw, 14, '#F8FAFC', 2, '#E2E8F0');
-    addText(board, 'TblT2', 'Penpot Sync     Synced        105', px + 10, py + 35, pw - 20, 9, '400', '#0F172A');
+    addText(board, 'TblT2', 'Penpot Sync     Synced        109', px + 10, py + 35, pw - 20, 9, '400', '#0F172A');
     return;
   }
   if (tag === 'el-number-flow') {
@@ -689,10 +692,14 @@ function drawPreview(board, item) {
     return;
   }
   if (tag === 'el-code-block') {
-    addRect(board, 'CodeBg', px, py, pw, 48, '#0F172A', 8);
-    addText(board, 'CodeTxt', 'import { signal } from "@wcomp/elementum";', px + 12, py + 16, pw - 56, 10, '400', '#93C5FD');
-    addRect(board, 'CopyBtn', px + pw - 42, py + 12, 34, 22, '#1E293B', 5, '#334155');
-    addText(board, 'CopyTxt', 'Copy', px + pw - 37, py + 16, 28, 9, '600', '#E2E8F0');
+    addRect(board, 'CodeBg', px, py, pw, 48, '#0F172A', 8, '#1E293B');
+    addRect(board, 'CodeHdr', px, py, pw, 18, '#1E293B', 4);
+    addText(board, 'CodeLang', 'JS', px + 10, py + 2, 32, 8, '700', '#94A3B8');
+    addRect(board, 'CopyBtn', px + pw - 40, py + 2, 34, 14, '#334155', 4);
+    addText(board, 'CopyTxt', 'Copy', px + pw - 35, py + 3, 26, 8, '600', '#E2E8F0');
+    addText(board, 'CodeKw', 'import', px + 10, py + 25, 40, 10, '600', '#C084FC');
+    addText(board, 'CodeFn', '{ signal }', px + 50, py + 25, 56, 10, '400', '#60A5FA');
+    addText(board, 'CodeStr', '"@wcomp/elementum"', px + 108, py + 25, 136, 10, '400', '#86EFAC');
     return;
   }
   if (tag === 'el-kbd') {
@@ -770,6 +777,52 @@ function drawPreview(board, item) {
   if (tag === 'el-border-beam') {
     addRect(board, 'BeamCard', px, py + 2, pw, 42, '#FFFFFF', 10, '#2563EB');
     addText(board, 'BeamTxt', '✦ Animated perimeter beam', px + 14, py + 15, 220, 11, '600', '#1D4ED8');
+    return;
+  }
+  if (tag === 'el-diff-viewer') {
+    addRect(board, 'DiffBox', px, py, pw, 48, '#FFFFFF', 8, '#CBD5E1');
+    addRect(board, 'DiffDel', px + 6, py + 4, pw - 12, 13, '#FEE2E2', 3);
+    addText(board, 'DiffDelT', '- const timeout = 5000;', px + 12, py + 4, pw - 24, 9, '400', '#B91C1C');
+    addRect(board, 'DiffAdd', px + 6, py + 19, pw - 12, 13, '#D1FAE5', 3);
+    addText(board, 'DiffAddT', '+ const timeout = 12000;', px + 12, py + 19, pw - 24, 9, '400', '#047857');
+    addRect(board, 'DiffApp', px + pw - 110, py + 34, 50, 12, '#10B981', 4);
+    addText(board, 'DiffAppT', 'Approve', px + pw - 104, py + 34, 42, 8, '700', '#FFFFFF');
+    addRect(board, 'DiffRej', px + pw - 54, py + 34, 48, 12, '#FEE2E2', 4);
+    addText(board, 'DiffRejT', 'Reject', px + pw - 46, py + 34, 38, 8, '700', '#B91C1C');
+    return;
+  }
+  if (tag === 'el-sources') {
+    addRect(board, 'SrcP1', px, py + 2, 74, 18, '#DBEAFE', 9, '#93C5FD');
+    addText(board, 'SrcP1T', '[1] Docs', px + 10, py + 4, 58, 9, '600', '#1D4ED8');
+    addRect(board, 'SrcP2', px + 80, py + 2, 76, 18, '#F1F5F9', 9, '#CBD5E1');
+    addText(board, 'SrcP2T', '[2] Spec', px + 90, py + 4, 60, 9, '600', '#334155');
+    addRect(board, 'SrcP3', px + 162, py + 2, 74, 18, '#F1F5F9', 9, '#CBD5E1');
+    addText(board, 'SrcP3T', '[3] API', px + 172, py + 4, 58, 9, '600', '#334155');
+    addRect(board, 'SrcCard', px, py + 24, pw, 22, '#F8FAFC', 6, '#CBD5E1');
+    addText(board, 'SrcCardT', 'elementum.dev — Declarative Shadow DOM', px + 10, py + 28, pw - 20, 9, '400', '#475569');
+    return;
+  }
+  if (tag === 'el-task-list') {
+    addRect(board, 'TaskBox', px, py, pw, 48, '#FFFFFF', 8, '#CBD5E1');
+    addText(board, 'TaskHdr', 'Agent Plan  2/3 completed', px + 10, py + 4, 180, 9, '700', '#0F172A');
+    addRect(board, 'TaskBar', px + 200, py + 7, pw - 210, 5, '#E2E8F0', 3);
+    addRect(board, 'TaskFill', px + 200, py + 7, Math.round((pw - 210) * 0.67), 5, '#10B981', 3);
+    addRect(board, 'TaskD1', px + 10, py + 20, 8, 8, '#10B981', 4);
+    addText(board, 'TaskT1', 'Audit design tokens & variants', px + 24, py + 18, 220, 9, '400', '#475569');
+    addRect(board, 'TaskD2', px + 10, py + 34, 8, 8, '#2563EB', 4);
+    addText(board, 'TaskT2', 'Sync components to Penpot MCP', px + 24, py + 32, 220, 9, '600', '#0F172A');
+    return;
+  }
+  if (tag === 'el-insight-card') {
+    addRect(board, 'InsBox', px, py, pw, 48, '#FFFFFF', 8, p.border);
+    addText(board, 'InsVal', '+24.8%', px + 10, py + 4, 72, 15, '700', '#0F172A');
+    addRect(board, 'InsPill', px + 88, py + 7, 54, 15, '#D1FAE5', 7);
+    addText(board, 'InsDelta', '▲ +4.2%', px + 94, py + 8, 44, 8, '700', '#047857');
+    addRect(board, 'InsUp', px + pw - 44, py + 6, 18, 16, '#F1F5F9', 4, '#CBD5E1');
+    addText(board, 'InsUpT', '👍', px + pw - 40, py + 7, 12, 9, '400', '#334155');
+    addRect(board, 'InsDn', px + pw - 22, py + 6, 18, 16, '#F1F5F9', 4, '#CBD5E1');
+    addText(board, 'InsDnT', '👎', px + pw - 18, py + 7, 12, 9, '400', '#334155');
+    addText(board, 'InsSum', 'Adoption velocity across SSR & AG-UI apps', px + 10, py + 29, pw - 20, 9, '400', '#64748B');
     return;
   }
 

@@ -1,6 +1,7 @@
 /**
  * <el-code-block>
- * Accessible code snippet container with optional language header and one-click copy button.
+ * Accessible code snippet container with optional language header,
+ * zero-dependency syntax highlighting, slot dedent / <template> support, and copy button.
  */
 
 import { Elementum } from '../elementum.js';
@@ -19,6 +20,256 @@ const LANGUAGE_LABELS = {
   json: 'JSON',
 };
 
+const LANG_MODE = {
+  js: 'js',
+  javascript: 'js',
+  ts: 'js',
+  json: 'json',
+  html: 'html',
+  css: 'css',
+  bash: 'bash',
+  sh: 'bash',
+};
+
+const JS_KW = new Set('const,let,var,function,return,if,else,for,while,do,switch,case,break,continue,default,import,from,export,as,class,extends,super,new,this,typeof,instanceof,in,of,async,await,try,catch,finally,throw,true,false,null,undefined,void,type,interface'.split(','));
+const BASH_KW = new Set('export,sudo,npm,npx,node,git,cd,if,then,else,fi,for,do,done'.split(','));
+const JSON_KW = new Set(['true', 'false', 'null']);
+
+const RE_NUM = /-?\d+(?:\.\d+)?(?:e[+-]?\d+)?/iy;
+const RE_JS_NUM = /(?:0[xbo][0-9a-f_]+|\d+(?:\.\d+)?(?:e[+-]?\d+)?n?)/iy;
+const RE_IDENT = /[a-z_$][a-z0-9_$]*/iy;
+const RE_CSS_IDENT = /--?[a-z][a-z0-9_-]*|[a-z][a-z0-9-]*/iy;
+const RE_HEX = /#[0-9a-f]{3,8}\b/iy;
+const RE_CSS_NUM = /\d+(?:\.\d+)?(?:%|px|rem|em|vh|vw|ms|s|deg)?/iy;
+const RE_HTML_NAME = /[a-z][a-z0-9-]*/iy;
+const RE_HTML_ATTR = /[a-z?@.][a-z0-9_.:-]*/iy;
+const RE_BASH_VAR = /\$(?:[a-z_][a-z0-9_]*|\{[^}]+\})/iy;
+const RE_BASH_FLAG = /--?[a-z0-9-]+/iy;
+
+function dedent(raw) {
+  if (!raw) return '';
+  const lines = String(raw).replace(/\r\n?/g, '\n').split('\n');
+  while (lines.length && !lines[0].trim()) lines.shift();
+  while (lines.length && !lines[lines.length - 1].trim()) lines.pop();
+  let min = Infinity;
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    const indent = line.length - line.trimStart().length;
+    if (indent < min) min = indent;
+  }
+  const out = Number.isFinite(min) && min > 0 ? lines.map((l) => l.slice(min)) : lines;
+  return out.join('\n').trimEnd();
+}
+
+function scanQuoted(src, start) {
+  const q = src[start];
+  let j = start + 1;
+  while (j < src.length) {
+    const ch = src[j++];
+    if (ch === '\\') { j++; continue; }
+    if (ch === q) break;
+  }
+  return j;
+}
+
+function matchAt(src, i, re) {
+  re.lastIndex = i;
+  const m = re.exec(src);
+  return m ? m[0] : '';
+}
+
+function skipHws(src, i) {
+  while (i < src.length && (src[i] === ' ' || src[i] === '\t')) i++;
+  return i;
+}
+
+/**
+ * Linear-time zero-dependency tokenizer returning [tokenType | null, text] pairs.
+ */
+function tokenizeCode(src, lang) {
+  const mode = LANG_MODE[String(lang || '').trim().toLowerCase()] || '';
+  if (!mode || !src) return [[null, src || '']];
+
+  const out = [];
+  const push = (t, v) => {
+    if (!v) return;
+    const prev = out[out.length - 1];
+    if (!t && prev && prev[0] === null) prev[1] += v;
+    else out.push([t, v]);
+  };
+
+  let i = 0;
+  let inTag = false;
+  let inBlock = 0;
+  const n = src.length;
+
+  while (i < n) {
+    const ch = src[i];
+
+    // Comments
+    if (mode === 'html' && src.startsWith('<!--', i)) {
+      const end = src.indexOf('-->', i + 4);
+      const to = end === -1 ? n : end + 3;
+      push('comment', src.slice(i, to));
+      i = to;
+      continue;
+    }
+    if (mode === 'js' && ch === '/' && src[i + 1] === '/') {
+      const nl = src.indexOf('\n', i + 2);
+      const to = nl === -1 ? n : nl;
+      push('comment', src.slice(i, to));
+      i = to;
+      continue;
+    }
+    if ((mode === 'js' || mode === 'css') && ch === '/' && src[i + 1] === '*') {
+      const close = src.indexOf('*/', i + 2);
+      const to = close === -1 ? n : close + 2;
+      push('comment', src.slice(i, to));
+      i = to;
+      continue;
+    }
+    if (mode === 'bash' && ch === '#' && (i === 0 || /\s/.test(src[i - 1]))) {
+      const nl = src.indexOf('\n', i + 1);
+      const to = nl === -1 ? n : nl;
+      push('comment', src.slice(i, to));
+      i = to;
+      continue;
+    }
+
+    // Quoted strings (and JSON property keys before `:`)
+    if (ch === '"' || (mode !== 'json' && ch === "'") || ((mode === 'js' || mode === 'bash') && ch === '`')) {
+      const to = scanQuoted(src, i);
+      const type = mode === 'json' && ch === '"' && src[skipHws(src, to)] === ':' ? 'attr' : 'string';
+      push(type, src.slice(i, to));
+      i = to;
+      continue;
+    }
+
+    if (mode === 'html') {
+      if (!inTag && ch === '<') {
+        const off = src[i + 1] === '/' ? 2 : 1;
+        const tag = matchAt(src, i + off, RE_HTML_NAME);
+        if (tag) {
+          push(null, src.slice(i, i + off));
+          push('tag', tag);
+          inTag = true;
+          i += off + tag.length;
+          continue;
+        }
+      }
+      if (inTag) {
+        if (ch === '>') {
+          push(null, '>');
+          inTag = false;
+          i++;
+          continue;
+        }
+        const attr = matchAt(src, i, RE_HTML_ATTR);
+        if (attr) {
+          push('attr', attr);
+          i += attr.length;
+          continue;
+        }
+      }
+      push(null, ch);
+      i++;
+      continue;
+    }
+
+    if (mode === 'css') {
+      if (ch === '{' || ch === '}') {
+        inBlock += ch === '{' ? 1 : -1;
+        if (inBlock < 0) inBlock = 0;
+        push(null, ch);
+        i++;
+        continue;
+      }
+      if (ch === '#') {
+        const hex = matchAt(src, i, RE_HEX);
+        if (hex) { push('number', hex); i += hex.length; continue; }
+      }
+      if (ch === '@' || (!inBlock && ch === ':')) {
+        const off = ch === ':' && src[i + 1] === ':' ? 2 : 1;
+        const name = matchAt(src, i + off, RE_HTML_NAME);
+        if (name) { push('keyword', src.slice(i, i + off) + name); i += off + name.length; continue; }
+      }
+      if (/\d/.test(ch)) {
+        const num = matchAt(src, i, RE_CSS_NUM);
+        if (num) { push('number', num); i += num.length; continue; }
+      }
+      const id = matchAt(src, i, RE_CSS_IDENT);
+      if (id) {
+        const nextCh = src[skipHws(src, i + id.length)];
+        const type = nextCh === '(' ? 'fn' : (inBlock && nextCh === ':' ? 'attr' : null);
+        push(type, id);
+        i += id.length;
+        continue;
+      }
+      push(null, ch);
+      i++;
+      continue;
+    }
+
+    if (mode === 'bash') {
+      if (ch === '$') {
+        const v = matchAt(src, i, RE_BASH_VAR);
+        if (v) { push('keyword', v); i += v.length; continue; }
+      }
+      if (ch === '-' && (i === 0 || /\s/.test(src[i - 1]))) {
+        const fl = matchAt(src, i, RE_BASH_FLAG);
+        if (fl) { push('attr', fl); i += fl.length; continue; }
+      }
+      if (/\d/.test(ch) && (i === 0 || /[\s=]/.test(src[i - 1]))) {
+        const num = matchAt(src, i, RE_CSS_NUM);
+        if (num) { push('number', num); i += num.length; continue; }
+      }
+      const id = matchAt(src, i, RE_IDENT);
+      if (id) {
+        push(BASH_KW.has(id) && (i === 0 || /[\s;|&]/.test(src[i - 1])) ? 'keyword' : null, id);
+        i += id.length;
+        continue;
+      }
+      push(null, ch);
+      i++;
+      continue;
+    }
+
+    if (mode === 'json') {
+      if ((ch === '-' && /\d/.test(src[i + 1])) || /\d/.test(ch)) {
+        const num = matchAt(src, i, RE_NUM);
+        if (num) { push('number', num); i += num.length; continue; }
+      }
+      const id = matchAt(src, i, RE_IDENT);
+      if (id) {
+        push(JSON_KW.has(id) ? 'keyword' : null, id);
+        i += id.length;
+        continue;
+      }
+      push(null, ch);
+      i++;
+      continue;
+    }
+
+    // JS / TS mode
+    if (/\d/.test(ch) && (i === 0 || !/[a-zA-Z0-9_$]/.test(src[i - 1]))) {
+      const num = matchAt(src, i, RE_JS_NUM);
+      if (num) { push('number', num); i += num.length; continue; }
+    }
+    const id = matchAt(src, i, RE_IDENT);
+    if (id) {
+      const nextCh = src[skipHws(src, i + id.length)];
+      const type = JS_KW.has(id) ? 'keyword' : (nextCh === '(' ? 'fn' : null);
+      push(type, id);
+      i += id.length;
+      continue;
+    }
+    push(null, ch);
+    i++;
+  }
+
+  return out;
+}
+
 export class ElCodeBlock extends Elementum {
   static observedAttributes = ['code', 'language', 'copyable', 'compact'];
 
@@ -29,6 +280,7 @@ export class ElCodeBlock extends Elementum {
   compact = signal(false);
   copied = signal(false);
 
+  #slotCode = signal('');
   #copyTimer = null;
 
   static styles = css`
@@ -45,9 +297,9 @@ export class ElCodeBlock extends Elementum {
 
     .code-wrapper {
       position: relative;
-      background: #0f172a;
-      color: #f8fafc;
-      border: 1px solid #1e293b;
+      background: var(--el-code-bg, #0f172a);
+      color: var(--el-code-fg, #e2e8f0);
+      border: 1px solid var(--el-code-border, #1e293b);
       border-radius: var(--el-radius-md, 10px);
       overflow: hidden;
       box-sizing: border-box;
@@ -64,8 +316,8 @@ export class ElCodeBlock extends Elementum {
       justify-content: space-between;
       gap: 12px;
       padding: 8px 14px;
-      background: rgba(15, 23, 42, 0.85);
-      border-bottom: 1px solid #1e293b;
+      background: var(--el-code-header-bg, rgba(15, 23, 42, 0.85));
+      border-bottom: 1px solid var(--el-code-border, #1e293b);
     }
 
     .lang-tag {
@@ -74,7 +326,7 @@ export class ElCodeBlock extends Elementum {
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: #94a3b8;
+      color: var(--el-code-comment, #94a3b8);
     }
 
     .code-body {
@@ -96,12 +348,20 @@ export class ElCodeBlock extends Elementum {
       font-family: inherit;
       font-size: 0.84rem;
       line-height: 1.6;
-      color: #e2e8f0;
+      color: var(--el-code-fg, #e2e8f0);
       white-space: pre;
       overflow-x: auto;
       flex: 1 1 auto;
       min-width: 0;
     }
+
+    .tok-comment { color: var(--el-code-comment, #94a3b8); font-style: italic; }
+    .tok-string { color: var(--el-code-string, #86efac); }
+    .tok-keyword { color: var(--el-code-keyword, #c084fc); }
+    .tok-number { color: var(--el-code-number, #fbbf24); }
+    .tok-tag { color: var(--el-code-tag, #f472b6); }
+    .tok-attr { color: var(--el-code-attr, #7dd3fc); }
+    .tok-fn { color: var(--el-code-fn, #60a5fa); }
 
     .inline-actions {
       position: relative;
@@ -142,6 +402,10 @@ export class ElCodeBlock extends Elementum {
     }
   `;
 
+  connected() {
+    this.#syncSlotCode();
+  }
+
   disconnected() {
     if (this.#copyTimer) {
       clearTimeout(this.#copyTimer);
@@ -149,9 +413,17 @@ export class ElCodeBlock extends Elementum {
     }
   }
 
+  #readLightDom() {
+    const tpl = this.children ? Array.from(this.children).find((c) => c.tagName === 'TEMPLATE') : null;
+    return dedent(tpl ? tpl.innerHTML : (this.textContent || ''));
+  }
+
+  #syncSlotCode() {
+    this.#slotCode.value = this.#readLightDom();
+  }
+
   getCodeText() {
-    if (this.code.value) return this.code.value;
-    return (this.textContent || '').trim();
+    return this.code.value || this.#slotCode.value || this.#readLightDom();
   }
 
   async copyCode(e) {
@@ -211,7 +483,13 @@ export class ElCodeBlock extends Elementum {
           `;
         }}
         <div class="code-body" part="body">
-          <pre part="pre" tabindex="0"><code part="code">${() => this.code.value}<slot style=${() => (this.code.value ? 'display:none;' : '')}></slot></code></pre>
+          <pre part="pre" tabindex="0"><code part="code">${() => {
+            const source = this.code.value || this.#slotCode.value;
+            if (!source) return '';
+            return tokenizeCode(source, this.language.value).map(([type, text]) =>
+              type ? html`<span class=${`tok-${type}`}>${text}</span>` : text
+            );
+          }}<slot style=${() => (this.code.value || this.#slotCode.value ? 'display:none;' : '')} @slotchange=${() => this.#syncSlotCode()}></slot></code></pre>
           ${() => {
             const langLabel = this.#getLanguageLabel();
             const hasHeader = Boolean(langLabel) && !this.compact.value;

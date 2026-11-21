@@ -51,6 +51,13 @@ const allDeclarations = manifest.modules.flatMap((m) =>
 );
 const declByTag = new Map(allDeclarations.map((d) => [d.tagName, d]));
 
+const READ_ONLY_ANNOTATIONS = {
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: true,
+  openWorldHint: false,
+};
+
 const TOOLS = [
   {
     name: 'list_components',
@@ -175,7 +182,7 @@ const TOOLS = [
       properties: {},
     },
   },
-];
+].map((tool) => ({ ...tool, annotations: READ_ONLY_ANNOTATIONS }));
 
 export function handleToolCall(name, rawArgs) {
   const args = rawArgs && typeof rawArgs === 'object' && !Array.isArray(rawArgs) ? rawArgs : {};
@@ -541,6 +548,14 @@ export function handleJsonRpcLine(line) {
             },
           ],
         },
+      };
+    }
+
+    if (request.method === 'ping') {
+      return {
+        jsonrpc: '2.0',
+        id: request.id ?? null,
+        result: {},
       };
     }
 

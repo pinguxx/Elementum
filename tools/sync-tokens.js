@@ -36,6 +36,9 @@ function val(node, fallback = '') {
 const colorBrand = tokens.color?.brand || {};
 const colorSurface = tokens.color?.surface || {};
 const colorText = tokens.color?.text || {};
+const colorStep = tokens.color?.step || {};
+const colorChart = tokens.color?.chart || {};
+const colorCode = tokens.color?.code || {};
 const spacing = tokens.spacing || {};
 const radius = tokens.radius || {};
 
@@ -52,6 +55,9 @@ let cssContent = `/**
   --el-color-secondary: ${val(colorBrand.secondary, '#4b5563')};
   --el-color-danger: ${val(colorBrand.danger, '#dc2626')};
   --el-color-success: ${val(colorBrand.success, '#16a34a')};
+  --el-color-warning: ${val(colorBrand.warning, '#d97706')};
+  --el-color-info: ${val(colorBrand.info, '#0284c7')};
+  --el-color-accent: ${val(colorBrand.accent, '#7c3aed')};
 
   /* Surfaces & Elevation */
   --el-surface-base: ${val(colorSurface.base, '#ffffff')};
@@ -62,6 +68,7 @@ let cssContent = `/**
   --el-border-translucent: rgba(15, 23, 42, 0.08);
 
   /* Subtle Ambient Shadows (Ban the AI look) */
+  --el-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --el-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --el-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 8px 16px -4px rgba(0, 0, 0, 0.04);
   --el-shadow-popover: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
@@ -75,8 +82,8 @@ let cssContent = `/**
 
   /* Typography Colors */
   --el-text-base: ${val(colorText.base, '#111827')};
-  --el-text-primary: #0f172a;
-  --el-text-secondary: #475569;
+  --el-text-primary: ${val(colorText.primary, '#0f172a')};
+  --el-text-secondary: ${val(colorText.secondary, '#475569')};
   --el-text-muted: ${val(colorText.muted, '#64748b')};
   --el-text-inverse: ${val(colorText.inverse, '#ffffff')};
 
@@ -95,14 +102,28 @@ let cssContent = `/**
   --el-radius-sm: ${val(radius.sm, '4px')};
   --el-radius-md: ${val(radius.md, '8px')};
   --el-radius-lg: ${val(radius.lg, '12px')};
+  --el-radius-xl: ${val(radius.xl, '24px')};
   --el-radius-full: ${val(radius.full, '9999px')};
 
   /* Chart Data Series Tokens */
-  --el-chart-1: #2563eb;
-  --el-chart-2: #10b981;
-  --el-chart-3: #f59e0b;
-  --el-chart-4: #8b5cf6;
-  --el-chart-5: #ec4899;
+  --el-chart-1: ${val(colorChart['1'], '#2563eb')};
+  --el-chart-2: ${val(colorChart['2'], '#10b981')};
+  --el-chart-3: ${val(colorChart['3'], '#f59e0b')};
+  --el-chart-4: ${val(colorChart['4'], '#8b5cf6')};
+  --el-chart-5: ${val(colorChart['5'], '#ec4899')};
+
+  /* Code Syntax & Surface Tokens */
+  --el-code-bg: ${val(colorCode.bg, '#0f172a')};
+  --el-code-fg: ${val(colorCode.fg, '#e2e8f0')};
+  --el-code-border: ${val(colorCode.border, '#1e293b')};
+  --el-code-header-bg: rgba(15, 23, 42, 0.85);
+  --el-code-comment: ${val(colorCode.comment, '#94a3b8')};
+  --el-code-string: ${val(colorCode.string, '#86efac')};
+  --el-code-keyword: ${val(colorCode.keyword, '#c084fc')};
+  --el-code-number: ${val(colorCode.number, '#fbbf24')};
+  --el-code-tag: ${val(colorCode.tag, '#f472b6')};
+  --el-code-attr: ${val(colorCode.attr, '#7dd3fc')};
+  --el-code-fn: ${val(colorCode.fn, '#60a5fa')};
 
   /* Typographic Rhythm Tokens */
   --el-typeset-size: 1rem;
@@ -111,19 +132,26 @@ let cssContent = `/**
   --el-typeset-font-body: var(--el-font-sans);
 
   /* Radix Colors 12-Step Accessible Scale (Light Theme) */
-  --el-step-1: #fbfcfd;
-  --el-step-2: #f8fafc;
-  --el-step-3: #f1f5f9;
-  --el-step-4: #e2e8f0;
-  --el-step-5: #cbd5e1;
-  --el-step-6: #e2e8f0;
-  --el-step-7: #cbd5e1;
-  --el-step-8: #94a3b8;
-  --el-step-9: #2563eb;
-  --el-step-10: #1d4ed8;
-  --el-step-11: #475569;
-  --el-step-12: #0f172a;
+  --el-step-1: ${val(colorStep['1'], '#fbfcfd')};  /* App canvas background */
+  --el-step-2: ${val(colorStep['2'], '#f8fafc')};  /* Subtle component background */
+  --el-step-3: ${val(colorStep['3'], '#f1f5f9')};  /* Normal component surface */
+  --el-step-4: ${val(colorStep['4'], '#e2e8f0')};  /* Hovered component surface */
+  --el-step-5: ${val(colorStep['5'], '#cbd5e1')};  /* Active/selected surface */
+  --el-step-6: ${val(colorStep['6'], '#e2e8f0')};  /* Subtle borders / dividers */
+  --el-step-7: ${val(colorStep['7'], '#cbd5e1')};  /* Interactive borders */
+  --el-step-8: ${val(colorStep['8'], '#94a3b8')};  /* Focus rings & hover borders */
+  --el-step-9: ${val(colorStep['9'], '#2563eb')};  /* Solid primary accent */
+  --el-step-10: ${val(colorStep['10'], '#1d4ed8')}; /* Hovered solid primary */
+  --el-step-11: ${val(colorStep['11'], '#475569')}; /* Secondary/muted text */
+  --el-step-12: ${val(colorStep['12'], '#0f172a')}; /* High-contrast primary text */
   --el-typeset-font-heading: var(--el-font-sans);
+
+  /* Component specific tokens (Light) */
+  --el-tooltip-bg: #0f172a;
+  --el-tooltip-text: #ffffff;
+  --el-tooltip-border: rgba(255, 255, 255, 0.12);
+  --el-skeleton-bg: #e2e8f0;
+  --el-skeleton-shimmer: rgba(255, 255, 255, 0.6);
 
   color-scheme: light;
 }
@@ -135,6 +163,9 @@ let cssContent = `/**
   --el-color-secondary: #9ca3af;
   --el-color-danger: #ef4444;
   --el-color-success: #22c55e;
+  --el-color-warning: #f59e0b;
+  --el-color-info: #38bdf8;
+  --el-color-accent: #a78bfa;
 
   /* Surfaces (Dark Mode) */
   --el-surface-base: #0b0f19;
@@ -144,6 +175,7 @@ let cssContent = `/**
   --el-surface-border: #334155;
   --el-border-translucent: rgba(255, 255, 255, 0.08);
 
+  --el-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --el-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --el-shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
   --el-shadow-popover: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
@@ -164,18 +196,25 @@ let cssContent = `/**
   --el-chart-5: #f472b6;
 
   /* Radix Colors 12-Step Accessible Scale (Dark Theme) */
-  --el-step-1: #090d16;
-  --el-step-2: #0f172a;
-  --el-step-3: #1e293b;
-  --el-step-4: #334155;
-  --el-step-5: #475569;
-  --el-step-6: #1e293b;
-  --el-step-7: #334155;
-  --el-step-8: #64748b;
-  --el-step-9: #3b82f6;
-  --el-step-10: #2563eb;
-  --el-step-11: #94a3b8;
-  --el-step-12: #f8fafc;
+  --el-step-1: #090d16;  /* App canvas background */
+  --el-step-2: #0f172a;  /* Subtle component background */
+  --el-step-3: #1e293b;  /* Normal component surface */
+  --el-step-4: #334155;  /* Hovered component surface */
+  --el-step-5: #475569;  /* Active/selected surface */
+  --el-step-6: #1e293b;  /* Subtle borders / dividers */
+  --el-step-7: #334155;  /* Interactive borders */
+  --el-step-8: #64748b;  /* Focus rings & hover borders */
+  --el-step-9: #3b82f6;  /* Solid primary accent */
+  --el-step-10: #2563eb; /* Hovered solid primary */
+  --el-step-11: #94a3b8; /* Secondary/muted text */
+  --el-step-12: #f8fafc; /* High-contrast primary text */
+
+  /* Component specific tokens (Dark) */
+  --el-tooltip-bg: #1e293b;
+  --el-tooltip-text: #f8fafc;
+  --el-tooltip-border: #475569;
+  --el-skeleton-bg: #334155;
+  --el-skeleton-shimmer: rgba(255, 255, 255, 0.15);
 
   color-scheme: dark;
 }
@@ -187,6 +226,9 @@ let cssContent = `/**
     --el-color-secondary: #9ca3af;
     --el-color-danger: #ef4444;
     --el-color-success: #22c55e;
+    --el-color-warning: #f59e0b;
+    --el-color-info: #38bdf8;
+    --el-color-accent: #a78bfa;
 
     --el-surface-base: #0b0f19;
     --el-surface-card: #111827;
@@ -195,6 +237,7 @@ let cssContent = `/**
     --el-surface-border: #334155;
     --el-border-translucent: rgba(255, 255, 255, 0.08);
 
+    --el-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
     --el-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
     --el-shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
     --el-shadow-popover: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
@@ -225,6 +268,13 @@ let cssContent = `/**
     --el-step-10: #2563eb;
     --el-step-11: #94a3b8;
     --el-step-12: #f8fafc;
+
+    /* Component specific tokens (Dark Media) */
+    --el-tooltip-bg: #1e293b;
+    --el-tooltip-text: #f8fafc;
+    --el-tooltip-border: #475569;
+    --el-skeleton-bg: #334155;
+    --el-skeleton-shimmer: rgba(255, 255, 255, 0.15);
 
     color-scheme: dark;
   }
@@ -376,6 +426,61 @@ el-dropdown:not(:defined) {
 @keyframes el-defined-in {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+/* ========================================================
+   Sidebar Layout & State Helpers
+   ======================================================== */
+el-sidebar[collapsed] .collapsible-text,
+[collapsed] .collapsible-text {
+  display: none !important;
+}
+
+el-sidebar[collapsed] el-sidebar-header > div,
+el-sidebar[collapsed] el-sidebar-header {
+  justify-content: center !important;
+}
+
+el-sidebar[collapsed] el-sidebar-content el-button,
+el-sidebar[collapsed] el-sidebar-content button {
+  width: 36px !important;
+  min-width: 36px !important;
+  max-width: 36px !important;
+  padding: 6px 0 !important;
+  justify-content: center !important;
+  text-align: center !important;
+  margin: 0 auto !important;
+}
+
+el-sidebar[collapsed] el-sidebar-content div {
+  align-items: center !important;
+}
+
+/* ========================================================
+   High-Contrast Button & Theme Switch Shadow Part Overrides
+   ======================================================== */
+:root[data-theme="dark"] el-button[variant="secondary"]::part(button) {
+  background-color: #1e293b;
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+:root[data-theme="dark"] el-button[variant="secondary"]::part(button):hover {
+  background-color: #334155;
+  color: #f8fafc;
+  border-color: #475569;
+}
+
+:root[data-theme="dark"] el-theme-switch::part(button) {
+  background-color: #1e293b;
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+:root[data-theme="dark"] el-theme-switch::part(button):hover {
+  background-color: #334155;
+  color: #f8fafc;
+  border-color: var(--el-color-primary, #3b82f6);
 }
 `;
 

@@ -22,6 +22,18 @@
       "success": {
         "$value": "#16a34a",
         "$type": "color"
+      },
+      "warning": {
+        "$value": "#d97706",
+        "$type": "color"
+      },
+      "info": {
+        "$value": "#0284c7",
+        "$type": "color"
+      },
+      "accent": {
+        "$value": "#7c3aed",
+        "$type": "color"
       }
     },
     "surface": {
@@ -43,6 +55,14 @@
         "$value": "#111827",
         "$type": "color"
       },
+      "primary": {
+        "$value": "#0f172a",
+        "$type": "color"
+      },
+      "secondary": {
+        "$value": "#475569",
+        "$type": "color"
+      },
       "muted": {
         "$value": "#6b7280",
         "$type": "color"
@@ -51,6 +71,39 @@
         "$value": "#ffffff",
         "$type": "color"
       }
+    },
+    "step": {
+      "1": { "$value": "#fbfcfd", "$type": "color" },
+      "2": { "$value": "#f8fafc", "$type": "color" },
+      "3": { "$value": "#f1f5f9", "$type": "color" },
+      "4": { "$value": "#e2e8f0", "$type": "color" },
+      "5": { "$value": "#cbd5e1", "$type": "color" },
+      "6": { "$value": "#e2e8f0", "$type": "color" },
+      "7": { "$value": "#cbd5e1", "$type": "color" },
+      "8": { "$value": "#94a3b8", "$type": "color" },
+      "9": { "$value": "#2563eb", "$type": "color" },
+      "10": { "$value": "#1d4ed8", "$type": "color" },
+      "11": { "$value": "#475569", "$type": "color" },
+      "12": { "$value": "#0f172a", "$type": "color" }
+    },
+    "chart": {
+      "1": { "$value": "#2563eb", "$type": "color" },
+      "2": { "$value": "#10b981", "$type": "color" },
+      "3": { "$value": "#f59e0b", "$type": "color" },
+      "4": { "$value": "#8b5cf6", "$type": "color" },
+      "5": { "$value": "#ec4899", "$type": "color" }
+    },
+    "code": {
+      "bg": { "$value": "#0f172a", "$type": "color" },
+      "fg": { "$value": "#e2e8f0", "$type": "color" },
+      "border": { "$value": "#1e293b", "$type": "color" },
+      "comment": { "$value": "#94a3b8", "$type": "color" },
+      "string": { "$value": "#86efac", "$type": "color" },
+      "keyword": { "$value": "#c084fc", "$type": "color" },
+      "number": { "$value": "#fbbf24", "$type": "color" },
+      "tag": { "$value": "#f472b6", "$type": "color" },
+      "attr": { "$value": "#7dd3fc", "$type": "color" },
+      "fn": { "$value": "#60a5fa", "$type": "color" }
     }
   },
   "spacing": {
@@ -64,6 +117,7 @@
     "sm": { "$value": "4px", "$type": "dimension" },
     "md": { "$value": "8px", "$type": "dimension" },
     "lg": { "$value": "16px", "$type": "dimension" },
+    "xl": { "$value": "24px", "$type": "dimension" },
     "full": { "$value": "9999px", "$type": "dimension" }
   }
 }

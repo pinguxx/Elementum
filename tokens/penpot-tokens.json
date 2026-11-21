@@ -22,6 +22,18 @@
       "success": {
         "$value": "#16a34a",
         "$type": "color"
+      },
+      "warning": {
+        "$value": "#d97706",
+        "$type": "color"
+      },
+      "info": {
+        "$value": "#0284c7",
+        "$type": "color"
+      },
+      "accent": {
+        "$value": "#7c3aed",
+        "$type": "color"
       }
     },
     "surface": {
@@ -80,6 +92,18 @@
       "3": { "$value": "#f59e0b", "$type": "color" },
       "4": { "$value": "#8b5cf6", "$type": "color" },
       "5": { "$value": "#ec4899", "$type": "color" }
+    },
+    "code": {
+      "bg": { "$value": "#0f172a", "$type": "color" },
+      "fg": { "$value": "#e2e8f0", "$type": "color" },
+      "border": { "$value": "#1e293b", "$type": "color" },
+      "comment": { "$value": "#94a3b8", "$type": "color" },
+      "string": { "$value": "#86efac", "$type": "color" },
+      "keyword": { "$value": "#c084fc", "$type": "color" },
+      "number": { "$value": "#fbbf24", "$type": "color" },
+      "tag": { "$value": "#f472b6", "$type": "color" },
+      "attr": { "$value": "#7dd3fc", "$type": "color" },
+      "fn": { "$value": "#60a5fa", "$type": "color" }
     }
   },
   "spacing": {
@@ -93,6 +117,7 @@
     "sm": { "$value": "4px", "$type": "dimension" },
     "md": { "$value": "8px", "$type": "dimension" },
     "lg": { "$value": "16px", "$type": "dimension" },
+    "xl": { "$value": "24px", "$type": "dimension" },
     "full": { "$value": "9999px", "$type": "dimension" }
   }
 }

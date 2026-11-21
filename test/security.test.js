@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import '../test-helpers/setup.js';
 import { html, render } from '../src/template.js';
 import { renderTemplateToString, renderComponentToDSD } from '../src/ssr.js';
@@ -113,4 +114,37 @@ test('Security 5: MCP server rejects oversized, malformed, and hostile inputs cl
   assert.equal(maturity.package, '@wcomp/elementum');
   assert.equal(maturity.zeroRuntimeDependencies, true);
   assert.ok(maturity.componentCount >= 100);
+});
+
+test('Security 6: MCP server supports ping, readOnly annotations on all 10 tools, and 192x192 server.json icon metadata', () => {
+  const pingRes = handleJsonRpcLine(JSON.stringify({ jsonrpc: '2.0', id: 42, method: 'ping' }));
+  assert.deepEqual(pingRes, { jsonrpc: '2.0', id: 42, result: {} });
+
+  const listRes = handleJsonRpcLine(JSON.stringify({ jsonrpc: '2.0', id: 43, method: 'tools/list' }));
+  const tools = listRes?.result?.tools || [];
+  assert.equal(tools.length, 10);
+  for (const tool of tools) {
+    assert.deepEqual(tool.annotations, {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    }, `Missing read-only annotations on tool ${tool.name}`);
+  }
+
+  const pkg = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+  const srv = JSON.parse(fs.readFileSync(new URL('../server.json', import.meta.url), 'utf8'));
+  assert.equal(pkg.version, '0.5.3');
+  assert.equal(srv.version, pkg.version);
+  assert.equal(srv.packages?.[0]?.version, pkg.version);
+  assert.deepEqual(srv.icons?.[0], {
+    src: 'https://elementum-sage.vercel.app/icon.png',
+    mimeType: 'image/png',
+    sizes: ['192x192'],
+  });
+
+  const iconBuf = fs.readFileSync(new URL('../icon.png', import.meta.url));
+  assert.equal(iconBuf.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
+  assert.equal(iconBuf.readUInt32BE(16), 192);
+  assert.equal(iconBuf.readUInt32BE(20), 192);
 });

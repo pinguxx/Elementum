@@ -4,8 +4,11 @@ import {
   parsePenpotLayerName,
   extractElementumSpec,
   generateAppHtml,
+  renderElementumNode,
+  generatePageHtml,
 } from '../tools/penpot-to-elementum.js';
 import { buildLedgerFlowPenpotScript } from '../tools/design-ledgerflow-penpot.js';
+import { components as catalogComponents } from '../examples/catalog-data.js';
 
 test('Penpot Codegen: parsePenpotLayerName extracts Elementum tags, props, and validity', () => {
   const valid = parsePenpotLayerName('el-button | variant="primary" label="+ Add Expense"');
@@ -93,4 +96,109 @@ test('Penpot Designer: buildLedgerFlowPenpotScript targets requested page name',
   assert.ok(script.includes('el-navbar'));
   assert.ok(script.includes('el-drawer'));
   assert.ok(script.includes('el-dialog'));
+});
+
+test('Penpot Codegen: parsePenpotLayerName parses boolean flags and Penpot library variant paths', () => {
+  const withFlags = parsePenpotLayerName('el-code-block | language="js" copyable compact');
+  assert.deepEqual(withFlags, {
+    tag: 'el-code-block',
+    props: { language: 'js', copyable: true, compact: true },
+    isValidElementum: true,
+  });
+
+  const libDanger = parsePenpotLayerName('Actions & Buttons / el-button / danger');
+  assert.deepEqual(libDanger, {
+    tag: 'el-button',
+    props: { variant: 'danger' },
+    isValidElementum: true,
+  });
+
+  const libChecked = parsePenpotLayerName('Forms & Inputs / el-switch / checked');
+  assert.deepEqual(libChecked, {
+    tag: 'el-switch',
+    props: { checked: true },
+    isValidElementum: true,
+  });
+
+  const libSize = parsePenpotLayerName('Actions & Buttons / el-button / sm | disabled');
+  assert.deepEqual(libSize, {
+    tag: 'el-button',
+    props: { size: 'sm', disabled: true },
+    isValidElementum: true,
+  });
+
+  const libStatus = parsePenpotLayerName('Data Display / el-avatar / online');
+  assert.deepEqual(libStatus, {
+    tag: 'el-avatar',
+    props: { status: 'online' },
+    isValidElementum: true,
+  });
+
+  const libAi = parsePenpotLayerName('AI & Specialist / el-diff-viewer');
+  assert.deepEqual(libAi, {
+    tag: 'el-diff-viewer',
+    props: {},
+    isValidElementum: true,
+  });
+});
+
+test('Penpot Codegen: renderElementumNode & generatePageHtml compile all 109 components, structural helpers, and escape XSS', () => {
+  const catalogList = Array.isArray(catalogComponents)
+    ? catalogComponents
+    : Object.values(catalogComponents);
+  assert.equal(catalogList.length, 109);
+
+  for (const comp of catalogList) {
+    const parsed = parsePenpotLayerName(comp.tag);
+    assert.equal(parsed?.isValidElementum, true, `${comp.tag} should validate`);
+    const html = renderElementumNode({ name: comp.tag, children: [] });
+    assert.ok(html.includes(`<${comp.tag}>`), `${comp.tag} opening tag missing`);
+    assert.ok(html.includes(`</${comp.tag}>`), `${comp.tag} closing tag missing`);
+  }
+
+  const pageTree = {
+    pageName: 'AI Workspace <XSS>',
+    children: [
+      { name: 'DecorativeRect', type: 'rect' },
+      { name: 'el-unknown-widget', children: [] },
+      {
+        name: 'Main Section',
+        children: [
+          { name: 'el-card | title="Overview" bordered', children: [{ name: 'el-callout | variant="warning" title="Notice" text="Check <script>alert(1)</script>"' }] },
+          { name: 'el-code-block | language="js" copyable text="const x = 1;"' },
+          { name: 'el-diff-viewer | filename="app.js" approval' },
+          { name: 'el-sources | label="Refs" expanded' },
+          { name: 'el-task-list | heading="Plan" compact' },
+          { name: 'el-insight-card | metric="+24%" delta="+4%" variant="success" title="Velocity"' },
+          { name: 'el-button | variant="primary"', children: [{ name: 'Txt', type: 'text', text: 'Deploy' }] },
+          { name: 'el-input | placeholder="Email" required' },
+          { name: 'el-switch | checked disabled' },
+          { name: 'el-tabs | value="one"', children: [{ name: 'el-tab | value="one" label="Tab 1"' }] },
+        ],
+      },
+    ],
+  };
+
+  const doc = generatePageHtml(pageTree);
+  assert.ok(doc.includes('AI Workspace &lt;XSS&gt;'));
+  assert.ok(!doc.includes('<script>alert(1)</script>'));
+  assert.ok(doc.includes('&lt;script&gt;alert(1)&lt;/script&gt;'));
+  assert.ok(!doc.includes('DecorativeRect'));
+  assert.ok(!doc.includes('<el-unknown-widget>'));
+  assert.ok(doc.includes('<section class="pp-group" data-layer="Main Section">'));
+  assert.ok(doc.includes('<el-card bordered>'));
+  assert.ok(doc.includes('<el-card-header><el-card-title>Overview</el-card-title></el-card-header>'));
+  assert.ok(doc.includes('<span slot="title">Notice</span>'));
+  assert.ok(doc.includes('<el-code-block language="js" copyable>const x = 1;</el-code-block>'));
+  assert.ok(doc.includes('<el-diff-viewer filename="app.js" approval></el-diff-viewer>'));
+  assert.ok(doc.includes('<el-sources label="Refs" expanded></el-sources>'));
+  assert.ok(doc.includes('<el-task-list heading="Plan" compact></el-task-list>'));
+  assert.ok(doc.includes('<el-insight-card metric="+24%" delta="+4%" variant="success" title="Velocity"></el-insight-card>'));
+  assert.ok(doc.includes('<el-button variant="primary">Deploy</el-button>'));
+  assert.ok(doc.includes('<el-input placeholder="Email" required></el-input>'));
+  assert.ok(doc.includes('<el-switch checked disabled></el-switch>'));
+  assert.ok(doc.includes('<el-tabs value="one">'));
+
+  const emptyDoc = generatePageHtml({ pageName: 'Empty', children: [] });
+  assert.ok(emptyDoc.includes('No Elementum (el-*) layers discovered'));
 });

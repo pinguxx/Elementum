@@ -270,7 +270,7 @@ npm run ssr
 
 ### Code → Penpot (MCP Server Sync)
 
-Generate all **54 W3C DTCG tokens** (Core, Light, Dark sets), **28 library colors**, and **105 Master Components** (across 8 categories) directly inside an open [**Penpot**](https://design.penpot.app) file connected via the Penpot MCP Plugin:
+Generate all **73 W3C DTCG tokens** (Core, Light, Dark sets), **43 library colors**, and **109 Master Components** (across 8 categories) directly inside an open [**Penpot**](https://design.penpot.app) file connected via the Penpot MCP Plugin:
 
 ```
 npm run penpot:mcp -- --url "https://design.penpot.app/mcp/stream?userToken=<YOUR_TOKEN>"

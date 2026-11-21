@@ -3,8 +3,15 @@
   "name": "io.github.pinguxx/elementum",
   "title": "Elementum Design System MCP",
   "description": "Component schemas, design tokens, snippet generation, and WCAG lint for @wcomp/elementum.",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "websiteUrl": "https://elementum-sage.vercel.app/",
+  "icons": [
+    {
+      "src": "https://elementum-sage.vercel.app/icon.png",
+      "mimeType": "image/png",
+      "sizes": ["192x192"]
+    }
+  ],
   "repository": {
     "url": "https://github.com/pinguxx/Elementum",
     "source": "github"
@@ -13,7 +20,7 @@
     {
       "registryType": "npm",
       "identifier": "@wcomp/elementum",
-      "version": "0.5.2",
+      "version": "0.5.3",
       "transport": {
         "type": "stdio"
       }

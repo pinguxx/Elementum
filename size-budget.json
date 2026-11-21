@@ -25,7 +25,7 @@
   "@wcomp/elementum/components/el-checkbox-card": 2368,
   "@wcomp/elementum/components/el-checkbox": 2368,
   "@wcomp/elementum/components/el-chip": 2816,
-  "@wcomp/elementum/components/el-code-block": 2688,
+  "@wcomp/elementum/components/el-code-block": 5568,
   "@wcomp/elementum/components/el-collapsible": 1600,
   "@wcomp/elementum/components/el-command": 5248,
   "@wcomp/elementum/components/el-context-menu": 3392,

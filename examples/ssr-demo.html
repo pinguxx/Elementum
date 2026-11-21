@@ -18,6 +18,9 @@
   --el-color-secondary: #4b5563;
   --el-color-danger: #dc2626;
   --el-color-success: #16a34a;
+  --el-color-warning: #d97706;
+  --el-color-info: #0284c7;
+  --el-color-accent: #7c3aed;
 
   /* Surfaces & Elevation */
   --el-surface-base: #ffffff;
@@ -28,6 +31,7 @@
   --el-border-translucent: rgba(15, 23, 42, 0.08);
 
   /* Subtle Ambient Shadows (Ban the AI look) */
+  --el-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --el-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --el-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 8px 16px -4px rgba(0, 0, 0, 0.04);
   --el-shadow-popover: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
@@ -61,6 +65,7 @@
   --el-radius-sm: 4px;
   --el-radius-md: 8px;
   --el-radius-lg: 16px;
+  --el-radius-xl: 24px;
   --el-radius-full: 9999px;
 
   /* Chart Data Series Tokens */
@@ -69,6 +74,19 @@
   --el-chart-3: #f59e0b;
   --el-chart-4: #8b5cf6;
   --el-chart-5: #ec4899;
+
+  /* Code Syntax & Surface Tokens */
+  --el-code-bg: #0f172a;
+  --el-code-fg: #e2e8f0;
+  --el-code-border: #1e293b;
+  --el-code-header-bg: rgba(15, 23, 42, 0.85);
+  --el-code-comment: #94a3b8;
+  --el-code-string: #86efac;
+  --el-code-keyword: #c084fc;
+  --el-code-number: #fbbf24;
+  --el-code-tag: #f472b6;
+  --el-code-attr: #7dd3fc;
+  --el-code-fn: #60a5fa;
 
   /* Typographic Rhythm Tokens */
   --el-typeset-size: 1rem;
@@ -108,6 +126,9 @@
   --el-color-secondary: #9ca3af;
   --el-color-danger: #ef4444;
   --el-color-success: #22c55e;
+  --el-color-warning: #f59e0b;
+  --el-color-info: #38bdf8;
+  --el-color-accent: #a78bfa;
 
   /* Surfaces (Dark Mode) */
   --el-surface-base: #0b0f19;
@@ -117,6 +138,7 @@
   --el-surface-border: #334155;
   --el-border-translucent: rgba(255, 255, 255, 0.08);
 
+  --el-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --el-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --el-shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
   --el-shadow-popover: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
@@ -167,6 +189,9 @@
     --el-color-secondary: #9ca3af;
     --el-color-danger: #ef4444;
     --el-color-success: #22c55e;
+    --el-color-warning: #f59e0b;
+    --el-color-info: #38bdf8;
+    --el-color-accent: #a78bfa;
 
     --el-surface-base: #0b0f19;
     --el-surface-card: #111827;
@@ -175,6 +200,7 @@
     --el-surface-border: #334155;
     --el-border-translucent: rgba(255, 255, 255, 0.08);
 
+    --el-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
     --el-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
     --el-shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
     --el-shadow-popover: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
@@ -419,8 +445,6 @@ el-sidebar[collapsed] el-sidebar-content div {
   color: #f8fafc;
   border-color: var(--el-color-primary, #3b82f6);
 }
-
-
 
     *, *::before, *::after { box-sizing: border-box; }
     body {
@@ -1119,7 +1143,7 @@ el-sidebar[collapsed] el-sidebar-content div {
         <slot name="title"></slot>
         <slot></slot>
       </div>
-    </template><span slot="title">Rendered on the Server at 2026-11-21T14:09:15.120Z</span>
+    </template><span slot="title">Rendered on the Server at 2026-11-21T14:29:31.956Z</span>
      Every component below was serialized in pure Node.js via <code>renderComponentToDSD()</code> into standard
      <code>&lt;template shadowrootmode="open"&gt;</code>. Even with JavaScript disabled (<code>?hydrate=0</code>),
      Shadow DOM styles and slots paint immediately with zero FOUC or layout shift.</el-callout>
@@ -2092,9 +2116,9 @@ el-sidebar[collapsed] el-sidebar-content div {
 
     .code-wrapper {
       position: relative;
-      background: #0f172a;
-      color: #f8fafc;
-      border: 1px solid #1e293b;
+      background: var(--el-code-bg, #0f172a);
+      color: var(--el-code-fg, #e2e8f0);
+      border: 1px solid var(--el-code-border, #1e293b);
       border-radius: var(--el-radius-md, 10px);
       overflow: hidden;
       box-sizing: border-box;
@@ -2111,8 +2135,8 @@ el-sidebar[collapsed] el-sidebar-content div {
       justify-content: space-between;
       gap: 12px;
       padding: 8px 14px;
-      background: rgba(15, 23, 42, 0.85);
-      border-bottom: 1px solid #1e293b;
+      background: var(--el-code-header-bg, rgba(15, 23, 42, 0.85));
+      border-bottom: 1px solid var(--el-code-border, #1e293b);
     }
 
     .lang-tag {
@@ -2121,7 +2145,7 @@ el-sidebar[collapsed] el-sidebar-content div {
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: #94a3b8;
+      color: var(--el-code-comment, #94a3b8);
     }
 
     .code-body {
@@ -2143,12 +2167,20 @@ el-sidebar[collapsed] el-sidebar-content div {
       font-family: inherit;
       font-size: 0.84rem;
       line-height: 1.6;
-      color: #e2e8f0;
+      color: var(--el-code-fg, #e2e8f0);
       white-space: pre;
       overflow-x: auto;
       flex: 1 1 auto;
       min-width: 0;
     }
+
+    .tok-comment { color: var(--el-code-comment, #94a3b8); font-style: italic; }
+    .tok-string { color: var(--el-code-string, #86efac); }
+    .tok-keyword { color: var(--el-code-keyword, #c084fc); }
+    .tok-number { color: var(--el-code-number, #fbbf24); }
+    .tok-tag { color: var(--el-code-tag, #f472b6); }
+    .tok-attr { color: var(--el-code-attr, #7dd3fc); }
+    .tok-fn { color: var(--el-code-fn, #60a5fa); }
 
     .inline-actions {
       position: relative;
@@ -2207,24 +2239,24 @@ el-sidebar[collapsed] el-sidebar-content div {
             </div>
           
         <div class="code-body" part="body">
-          <pre part="pre" tabindex="0"><code part="code">&lt;el-button variant=&quot;primary&quot; size=&quot;md&quot;&gt;&lt;template shadowrootmode=&quot;open&quot;&gt;&lt;style&gt;
+          <pre part="pre" tabindex="0"><code part="code">&lt;<span class="tok-tag">el-button</span> <span class="tok-attr">variant</span>=<span class="tok-string">&quot;primary&quot;</span> <span class="tok-attr">size</span>=<span class="tok-string">&quot;md&quot;</span>&gt;&lt;<span class="tok-tag">template</span> <span class="tok-attr">shadowrootmode</span>=<span class="tok-string">&quot;open&quot;</span>&gt;&lt;<span class="tok-tag">style</span>&gt;
     :host {
       display: inline-block;
       vertical-align: middle;
     }
 
     :host([disabled]),
-    :host([aria-disabled=&quot;true&quot;]) {
+    :host([aria-disabled=<span class="tok-string">&quot;true&quot;</span>]) {
       cursor: not-allowed;
     }
 
     button
   /* ...encapsulated shadow styles... */
- &lt;slot name=&quot;prefix&quot;&gt;&lt;/slot&gt;
-        &lt;slot&gt;&lt;/slot&gt;
-        &lt;slot name=&quot;suffix&quot;&gt;&lt;/slot&gt;
-      &lt;/button&gt;
-    &lt;/template&gt;Deploy Now&lt;/el-button&gt;<slot style="display:none;"></slot></code></pre>
+ &lt;<span class="tok-tag">slot</span> <span class="tok-attr">name</span>=<span class="tok-string">&quot;prefix&quot;</span>&gt;&lt;/<span class="tok-tag">slot</span>&gt;
+        &lt;<span class="tok-tag">slot</span>&gt;&lt;/<span class="tok-tag">slot</span>&gt;
+        &lt;<span class="tok-tag">slot</span> <span class="tok-attr">name</span>=<span class="tok-string">&quot;suffix&quot;</span>&gt;&lt;/<span class="tok-tag">slot</span>&gt;
+      &lt;/<span class="tok-tag">button</span>&gt;
+    &lt;/<span class="tok-tag">template</span>&gt;Deploy Now&lt;/<span class="tok-tag">el-button</span>&gt;<slot style="display:none;" ></slot></code></pre>
           
         </div>
       </div>
