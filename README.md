@@ -257,6 +257,8 @@ const html = renderComponentToDSD('el-button', ElButton, { variant: 'primary' },
 
 ```
 
+Include `data-dsd` on the document root (`<html lang="en" data-dsd>`) so `tokens.css` FOUC rules (`:root:not([data-dsd]) :not(:defined)`) do not hide pre-rendered Shadow DOM components in zero-JS or pre-hydration states.
+
 Run the live zero-dependency Node.js SSR server (`?hydrate=0` for pure Zero-JS DSD, `?hydrate=1` for progressive hydration) or view the pre-rendered snapshot [examples/ssr-demo.html](https://github.com/pinguxx/Elementum/blob/main/examples/ssr-demo.html):
 
 ```

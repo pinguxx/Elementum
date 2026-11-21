@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { renderComponentToDSD, renderTemplateToString } from '../src/ssr.js';
 import { html } from '../src/template.js';
@@ -114,4 +115,51 @@ test('DSD SSR: Vercel serverless handler api/ssr.js serves /ssr in hydrated and 
   const hydrated = callHandler('/ssr?hydrate=1');
   assert.equal(hydrated.statusCode, 200);
   assert.ok(hydrated.body.includes("import '/src/index.js'"));
+  assert.ok(hydrated.body.includes('<html lang="en" data-dsd>'));
+  assert.ok(hydrated.body.includes(':root:not([data-dsd])'));
+  assert.ok(zeroJs.body.includes('<html lang="en" data-dsd>'));
+  assert.ok(zeroJs.body.includes(':root:not([data-dsd])'));
+});
+
+test('DSD SSR: quotes unquoted HTML attributes inside tags without quoting text expressions', () => {
+  const attrTpl = html`<div style=${() => 'width: 96%;'}></div>`;
+  const attrOut = renderTemplateToString(attrTpl);
+  assert.ok(attrOut.includes('style="width: 96%;"'), `Expected quoted style attr, got: ${attrOut}`);
+
+  const textTpl = html`<p>let x=${() => 42}</p>`;
+  const textOut = renderTemplateToString(textTpl);
+  assert.equal(textOut, '<p>let x=42</p>');
+});
+
+test('DSD SSR: pure Node attribute shim enables getAttribute/hasAttribute inside custom class render()', () => {
+  class PureNodeAttrComponent {
+    static styles = '';
+    render() {
+      const label = this.getAttribute('aria-label') || 'default';
+      const active = this.hasAttribute('active') ? 'yes' : 'no';
+      return html`<span data-active=${active}>${label}</span>`;
+    }
+  }
+  const out = renderComponentToDSD('x-pure-node', PureNodeAttrComponent, { 'aria-label': 'Status', active: true });
+  assert.ok(out.includes('data-active="yes"'), `Expected data-active="yes", got: ${out}`);
+  assert.ok(out.includes('>Status</span>'), `Expected Status text, got: ${out}`);
+
+  const inactiveOut = renderComponentToDSD('x-pure-node', PureNodeAttrComponent, { active: false });
+  assert.ok(inactiveOut.includes('data-active="no"'), `Expected data-active="no", got: ${inactiveOut}`);
+});
+
+test('DSD SSR: data-dsd and :root:not([data-dsd]) are present across rendered pages and static snapshot', () => {
+  const hydrated = renderSsrPage({ hydrate: true });
+  const zeroJs = renderSsrPage({ hydrate: false });
+  const staticSnapshot = fs.readFileSync(new URL('../examples/ssr-demo.html', import.meta.url), 'utf8');
+
+  for (const [label, doc] of [
+    ['hydrated SSR', hydrated],
+    ['zero-JS SSR', zeroJs],
+    ['static examples/ssr-demo.html', staticSnapshot],
+  ]) {
+    assert.ok(doc.includes('<html lang="en" data-dsd>'), `${label} missing <html lang="en" data-dsd>`);
+    assert.ok(doc.includes(':root:not([data-dsd]) :not(:defined)'), `${label} missing :root:not([data-dsd]) :not(:defined)`);
+    assert.ok(doc.includes(':root:not([data-dsd]) :defined'), `${label} missing :root:not([data-dsd]) :defined`);
+  }
 });

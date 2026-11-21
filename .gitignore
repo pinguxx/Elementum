@@ -6,3 +6,5 @@ yarn-error.log*
 Thumbs.db
 test-results/
 playwright-report/
+graphify-out/
+.agents/

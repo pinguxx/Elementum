@@ -129,16 +129,27 @@ test.describe('Real Browser Verification (Chromium / Firefox / WebKit)', () => {
     const dsdState = await page.evaluate(() => {
       const nav = document.querySelector('el-navbar');
       const btn = document.querySelector('el-button');
+      const progress = document.querySelector('el-progress');
       return {
+        hasDataDsd: document.documentElement.hasAttribute('data-dsd'),
         navHasShadow: Boolean(nav?.shadowRoot),
         btnHasShadow: Boolean(btn?.shadowRoot),
         btnRenderedButton: Boolean(btn?.shadowRoot?.querySelector('button')),
+        btnOpacity: btn ? getComputedStyle(btn).opacity : null,
+        btnWidth: btn ? btn.getBoundingClientRect().width : 0,
+        progressOpacity: progress ? getComputedStyle(progress).opacity : null,
+        progressWidth: progress ? progress.getBoundingClientRect().width : 0,
       };
     });
 
+    expect(dsdState.hasDataDsd).toBe(true);
     expect(dsdState.navHasShadow).toBe(true);
     expect(dsdState.btnHasShadow).toBe(true);
     expect(dsdState.btnRenderedButton).toBe(true);
+    expect(dsdState.btnOpacity).toBe('1');
+    expect(dsdState.btnWidth).toBeGreaterThan(0);
+    expect(dsdState.progressOpacity).toBe('1');
+    expect(dsdState.progressWidth).toBeGreaterThan(0);
     await context.close();
   });
 

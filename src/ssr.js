@@ -101,12 +101,15 @@ export function renderTemplateToString(templateResult) {
 
   const { strings, values } = templateResult;
   let html = '';
+  let staticHtml = '';
 
   for (let i = 0; i < strings.length; i++) {
     html += strings[i];
+    staticHtml += strings[i];
     if (i < values.length) {
       const val = values[i];
-      const binding = matchTrailingBinding(strings[i]);
+      const isInsideTag = staticHtml.lastIndexOf('<') > staticHtml.lastIndexOf('>');
+      const binding = isInsideTag ? matchTrailingBinding(strings[i]) : null;
       // 1. Skip @event= and on<event>= listeners in SSR (never invoke event handlers!)
       if (binding && binding.kind === 'event' && typeof val === 'function') {
         html = html.slice(0, html.length - binding.length);
@@ -125,7 +128,7 @@ export function renderTemplateToString(templateResult) {
         continue;
       }
       const rendered = resolveValue(val);
-      html += isUnquotedAttrTrailing(strings[i]) ? `"${rendered}"` : rendered;
+      html += (isInsideTag && isUnquotedAttrTrailing(strings[i])) ? `"${rendered}"` : rendered;
     }
   }
 
@@ -156,14 +159,21 @@ export function renderComponentToDSD(tagName, ComponentClass, attributes = {}, l
   let shadowBody = '';
   try {
     const instance = new ComponentClass();
+    if (typeof instance.setAttribute !== 'function') {
+      const attrs = new Map();
+      instance.getAttribute = (k) => (attrs.has(k) ? attrs.get(k) : null);
+      instance.setAttribute = (k, v) => attrs.set(k, String(v));
+      instance.hasAttribute = (k) => attrs.has(k);
+      instance.removeAttribute = (k) => attrs.delete(k);
+    }
     for (const [k, v] of Object.entries(attributes)) {
       const camel = k.replace(/-([a-z])/g, (_, ch) => ch.toUpperCase());
       const targetKey = (camel in instance && isSignal(instance[camel])) ? camel : k;
       if (instance[targetKey] && isSignal(instance[targetKey])) {
         instance[targetKey].value = v;
       }
-      if (typeof instance.setAttribute === 'function') {
-        instance.setAttribute(k, String(v));
+      if (v !== false && v !== null && v !== undefined) {
+        instance.setAttribute(k, v === true ? '' : String(v));
       }
     }
     const template = instance.render?.();

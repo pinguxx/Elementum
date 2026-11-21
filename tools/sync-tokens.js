@@ -369,7 +369,7 @@ el-dropdown:not(:defined) {
   opacity: 0;
 }
 
-:defined {
+:root:not([data-dsd]) :defined {
   animation: el-defined-in 120ms var(--el-ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
 }
 
