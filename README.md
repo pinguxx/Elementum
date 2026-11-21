@@ -1,6 +1,11 @@
 # @wcomp/elementum
 
-[npm version](https://www.npmjs.com/package/@wcomp/elementum)
+[![npm version](https://img.shields.io/npm/v/@wcomp/elementum.svg)](https://www.npmjs.com/package/@wcomp/elementum)
+[![CI](https://github.com/pinguxx/Elementum/actions/workflows/ci.yml/badge.svg)](https://github.com/pinguxx/Elementum/actions/workflows/ci.yml)
+![Coverage](https://img.shields.io/badge/coverage-95%25-brightgreen)
+![Zero Dependencies](https://img.shields.io/badge/runtime%20deps-0-success)
+![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
+[![M8ven Score](https://m8ven.ai/badge/mcp/pinguxx-elementum-yeg3a6?v=f862621d58ec4975d1943f2ea62028c7)](https://m8ven.ai/mcp/pinguxx-elementum-yeg3a6?s=readme)
 
 > **Elementum** (*Latin*: /e.leˈmen.tum/) — **An AI-native, framework-independent UI engineering platform** built on standard Custom Elements, fine-grained micro-signals, W3C DTCG tokens, Declarative Shadow DOM SSR, and MCP/AG-UI tooling.
 
