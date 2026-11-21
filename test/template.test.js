@@ -108,3 +108,29 @@ test('render handles null or invalid template input gracefully', () => {
   render(null, container);
   assert.equal(container.innerHTML, '');
 });
+
+test('NodePart aborts nested TemplateResult effects on toggle and parent abort (zero subscription leak)', () => {
+  const container = document.createElement('div');
+  const show = signal(true);
+  const inner = signal('v0');
+  const ac = new AbortController();
+
+  render(
+    html`<div>${() => (show.value ? html`<span>${inner}</span>` : '')}</div>`,
+    container,
+    ac.signal
+  );
+
+  assert.equal(inner.subscribers.size, 1);
+
+  for (let i = 0; i < 10; i++) {
+    show.value = false;
+    assert.equal(inner.subscribers.size, 0, `Iteration ${i}: expected 0 subscribers when hidden`);
+    show.value = true;
+    assert.equal(inner.subscribers.size, 1, `Iteration ${i}: expected exactly 1 subscriber when shown`);
+  }
+
+  ac.abort();
+  assert.equal(inner.subscribers.size, 0);
+  assert.equal(show.subscribers.size, 0);
+});

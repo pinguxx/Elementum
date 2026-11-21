@@ -9,15 +9,15 @@
 - **🔵 Stable**: Catalog schema verified + instantiated in unit tests + explicit `test()` coverage.
 - **🟡 Experimental**: Covered by automated catalog schema & mount contract tests (`Catalog Contract 1–6`), pending dedicated behavior & browser E2E suites.
 
-## Summary (`@wcomp/elementum@0.5.0`)
+## Summary (`@wcomp/elementum@0.6.0`)
 
 - **Total Registered Custom Elements**: **109**
-- **🟢 Production Verified**: **35**
-- **🔵 Stable**: **58**
+- **🟢 Production Verified**: **42**
+- **🔵 Stable**: **51**
 - **🟡 Experimental**: **16**
 - **Instantiated in Unit Tests**: **108 / 109**
 - **Dedicated `test()` Blocks**: **91 / 109**
-- **Direct Real-Browser Playwright E2E**: **36 / 109** (Chromium, Firefox, WebKit)
+- **Direct Real-Browser Playwright E2E**: **43 / 109** (Chromium, Firefox, WebKit)
 - **`@axe-core/playwright` WCAG 2.2 AA Audited**: **62 / 109**
 - **One-Command Full Verification**: `npm run verify:all`
 
@@ -27,20 +27,20 @@
 | :--- | :--- | :---: | :---: | :---: | :---: |
 | `<el-accordion>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-accordion-item>` | 🟢 Production Verified | ✅ Yes | — | ✅ Playwright | ✅ axe-core |
-| `<el-alert>` | 🔵 Stable | ✅ Yes | ✅ Yes | — | ✅ axe-core |
+| `<el-alert>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-alert-dialog>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-aspect-ratio>` | 🔵 Stable | ✅ Yes | ✅ Yes | — | — |
 | `<el-autocomplete>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
-| `<el-avatar>` | 🔵 Stable | ✅ Yes | ✅ Yes | — | ✅ axe-core |
+| `<el-avatar>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-avatar-group>` | 🔵 Stable | ✅ Yes | ✅ Yes | — | — |
-| `<el-badge>` | 🔵 Stable | ✅ Yes | ✅ Yes | — | ✅ axe-core |
+| `<el-badge>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-border-beam>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-breadcrumb>` | 🔵 Stable | ✅ Yes | ✅ Yes | — | — |
 | `<el-breadcrumb-item>` | 🔵 Stable | ✅ Yes | ✅ Yes | — | — |
 | `<el-button>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-calendar>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
-| `<el-callout>` | 🔵 Stable | ✅ Yes | ✅ Yes | — | ✅ axe-core |
-| `<el-card>` | 🔵 Stable | ✅ Yes | ✅ Yes | — | ✅ axe-core |
+| `<el-callout>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
+| `<el-card>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-card-content>` | 🟡 Experimental | ✅ Yes | — | — | ✅ axe-core |
 | `<el-card-description>` | 🟡 Experimental | ✅ Yes | — | — | ✅ axe-core |
 | `<el-card-footer>` | 🟡 Experimental | ✅ Yes | — | — | — |
@@ -52,7 +52,7 @@
 | `<el-checkbox>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-checkbox-card>` | 🔵 Stable | ✅ Yes | ✅ Yes | — | — |
 | `<el-chip>` | 🔵 Stable | ✅ Yes | ✅ Yes | — | ✅ axe-core |
-| `<el-code-block>` | 🔵 Stable | ✅ Yes | ✅ Yes | — | ✅ axe-core |
+| `<el-code-block>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-collapsible>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-command>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-command-group>` | 🟢 Production Verified | ✅ Yes | — | ✅ Playwright | ✅ axe-core |
@@ -75,7 +75,7 @@
 | `<el-insight-card>` | 🔵 Stable | ✅ Yes | ✅ Yes | — | — |
 | `<el-kbd>` | 🔵 Stable | ✅ Yes | ✅ Yes | — | — |
 | `<el-menubar>` | 🔵 Stable | ✅ Yes | ✅ Yes | — | — |
-| `<el-meter>` | 🔵 Stable | ✅ Yes | ✅ Yes | — | ✅ axe-core |
+| `<el-meter>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-navbar>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-navigation-menu>` | 🔵 Stable | ✅ Yes | ✅ Yes | — | — |
 | `<el-navigation-menu-content>` | 🟡 Experimental | ✅ Yes | — | — | — |

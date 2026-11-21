@@ -276,12 +276,16 @@ export function handleToolCall(name, rawArgs) {
 `
       : '';
 
+    const safeDescription = typeof args.description === 'string' && args.description.trim()
+      ? args.description.replace(/\*\//g, '* /').replace(/[\r\n]+/g, ' ').trim()
+      : `${className} component`;
+
     const code = `import { Elementum } from '../elementum.js';
 import { html, css } from '../template.js';
 import { signal } from '../signal.js';
 
 /**
- * ${args.description || `${className} component`}
+ * ${safeDescription}
  */
 export class ${className} extends Elementum {
 ${formAssocCode}  static observedAttributes = [${observed}];

@@ -134,7 +134,7 @@ test('Security 6: MCP server supports ping, readOnly annotations on all 10 tools
 
   const pkg = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
   const srv = JSON.parse(fs.readFileSync(new URL('../server.json', import.meta.url), 'utf8'));
-  assert.equal(pkg.version, '0.5.3');
+  assert.equal(pkg.version, '0.6.0');
   assert.equal(srv.version, pkg.version);
   assert.equal(srv.packages?.[0]?.version, pkg.version);
   assert.deepEqual(srv.icons?.[0], {
@@ -147,4 +147,11 @@ test('Security 6: MCP server supports ping, readOnly annotations on all 10 tools
   assert.equal(iconBuf.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
   assert.equal(iconBuf.readUInt32BE(16), 192);
   assert.equal(iconBuf.readUInt32BE(20), 192);
+
+  const scaffold = handleToolCall('scaffold_component', {
+    tag: 'el-safe-card',
+    description: 'bad */\nprocess.exit(1);//',
+  });
+  assert.ok(scaffold.code.includes('bad * / process.exit(1);//'));
+  assert.ok(!scaffold.code.includes('*/\nprocess.exit(1)'));
 });

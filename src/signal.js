@@ -174,23 +174,25 @@ export class Computed extends Signal {
     try {
       this._value = this._getter();
       this._error = null;
-      this._dirty = false;
     } catch (err) {
       this._error = err;
       throw err;
     } finally {
+      this._dirty = false;
       activeEffect = effectStack.pop();
       this._computing = false;
     }
   }
 
   get value() {
-    if (this._dirty) {
-      this.#evaluate();
-    }
     if (activeEffect) {
       this.subscribers.add(activeEffect);
       activeEffect.dependencies.add(this);
+    }
+    if (this._dirty) {
+      this.#evaluate();
+    } else if (this._error !== null) {
+      throw this._error;
     }
     return this._value;
   }
@@ -198,6 +200,8 @@ export class Computed extends Signal {
   peek() {
     if (this._dirty) {
       this.#evaluate();
+    } else if (this._error !== null) {
+      throw this._error;
     }
     return this._value;
   }

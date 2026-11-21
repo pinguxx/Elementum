@@ -369,6 +369,9 @@ export class Elementum extends BaseElement {
   }
 
   connectedCallback() {
+    if (this.#abortController) {
+      this.#abortController.abort();
+    }
     this.#abortController = new AbortController();
 
     // 1. Shadow Root initialization
@@ -458,6 +461,7 @@ export class Elementum extends BaseElement {
   disconnectedCallback() {
     if (this.#abortController) {
       this.#abortController.abort();
+      this.#abortController = null;
     }
     this.#reflectedSignals.clear();
     this.#mounted = false;

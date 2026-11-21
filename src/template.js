@@ -207,15 +207,39 @@ class NodePart {
     startNode.parentNode.insertBefore(this.endNode, startNode.nextSibling);
     this.abortSignal = abortSignal;
     this.nodes = [];
+    this.childController = null;
+    this._parentAbortHandler = null;
   }
 
   clear() {
+    if (this.childController) {
+      this.childController.abort();
+      this.childController = null;
+    }
+    if (this._parentAbortHandler && this.abortSignal) {
+      this.abortSignal.removeEventListener('abort', this._parentAbortHandler);
+    }
+    this._parentAbortHandler = null;
     for (const node of this.nodes) {
       if (node.parentNode) {
         node.parentNode.removeChild(node);
       }
     }
     this.nodes = [];
+  }
+
+  #createChildSignal() {
+    const ctrl = new AbortController();
+    this.childController = ctrl;
+    if (this.abortSignal) {
+      if (this.abortSignal.aborted) {
+        ctrl.abort();
+      } else {
+        this._parentAbortHandler = () => ctrl.abort();
+        this.abortSignal.addEventListener('abort', this._parentAbortHandler, { once: true });
+      }
+    }
+    return ctrl.signal;
   }
 
   commit(raw) {
@@ -231,16 +255,17 @@ class NodePart {
 
     if (val instanceof TemplateResult) {
       const fragment = document.createDocumentFragment();
-      render(val, fragment, this.abortSignal);
+      render(val, fragment, this.#createChildSignal());
       this.nodes = Array.from(fragment.childNodes);
       parent.insertBefore(fragment, this.endNode);
     } else if (Array.isArray(val)) {
+      const childSignal = this.#createChildSignal();
       const fragment = document.createDocumentFragment();
       for (const item of val) {
         const resolvedItem = resolveValue(item);
         if (resolvedItem instanceof TemplateResult) {
           const subFrag = document.createDocumentFragment();
-          render(resolvedItem, subFrag, this.abortSignal);
+          render(resolvedItem, subFrag, childSignal);
           fragment.appendChild(subFrag);
         } else if (resolvedItem != null && resolvedItem !== false) {
           fragment.appendChild(document.createTextNode(String(resolvedItem)));

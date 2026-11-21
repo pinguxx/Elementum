@@ -115,7 +115,7 @@ async function createMcpClient(url) {
   await rpc('initialize', {
     protocolVersion: '2025-03-26',
     capabilities: {},
-    clientInfo: { name: 'elementum-penpot-codegen', version: '0.5.2' },
+    clientInfo: { name: 'elementum-penpot-codegen', version: '0.6.0' },
   });
   await rpc('notifications/initialized', {}, true);
 

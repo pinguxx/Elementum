@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Showcase — @wcomp/elementum Applications &amp; Framework Parity</title>
+  <link rel="stylesheet" href="./src/tokens.css" />
+  <script type="module" src="./src/index.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      max-width: 100%;
+      overflow-x: clip;
+      font-family: var(--el-font-sans, system-ui, sans-serif);
+      background: var(--el-surface-base, #ffffff);
+      color: var(--el-text-primary, #0f172a);
+    }
+    .shell {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 40px 24px 72px;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+    .hero {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(1.9rem, 4vw, 2.75rem);
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+    }
+    .lead {
+      margin: 0;
+      max-width: 68ch;
+      color: var(--el-text-secondary, #475569);
+      font-size: 1.05rem;
+      line-height: 1.65;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .card-desc {
+      margin: 0;
+      color: var(--el-text-secondary, #475569);
+      font-size: 0.94rem;
+      line-height: 1.6;
+    }
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      align-items: start;
+    }
+    .section-title {
+      margin: 0 0 8px;
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+    }
+    .muted-note {
+      margin: 0 0 14px;
+      color: var(--el-text-secondary, #475569);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <el-navbar sticky brand="⚡ Elementum" badge="v0.6.0" badge-variant="success" href="./index.html">
+    <a href="./index.html">Home</a>
+    <a href="./docs.html">Docs</a>
+    <a href="./examples/index.html">Catalog</a>
+    <a href="./showcase.html" active>Showcase</a>
+    <a href="./examples/agent-studio.html">AI Studio</a>
+    <a href="./examples/ledgerflow.html">LedgerFlow</a>
+    <el-theme-switch slot="actions"></el-theme-switch>
+  </el-navbar>
+
+  <main class="shell">
+    <header class="hero">
+      <div class="badges">
+        <el-badge variant="success" count="5 Reference Apps"></el-badge>
+        <el-badge variant="primary" count="Zero-Build ESM"></el-badge>
+        <el-badge variant="info" count="WCAG 2.2 AA Tested"></el-badge>
+        <el-badge variant="default" count="@wcomp/elementum/react Ready"></el-badge>
+      </div>
+      <h1>Built with Elementum: Production-Style Showcase</h1>
+      <p class="lead">
+        End-to-end applications demonstrating multi-component composition, fine-grained signals, Declarative Shadow DOM SSR, Penpot-to-code compilation, and streaming AI interfaces with zero runtime dependencies.
+      </p>
+    </header>
+
+    <section aria-labelledby="apps-heading">
+      <h2 id="apps-heading" class="section-title">Reference Applications</h2>
+      <p class="muted-note">Open any live app below to inspect network-free DOM rendering, keyboard navigation, dark mode tokens, and form participation in real time.</p>
+
+      <div class="grid">
+        <el-card hoverable bordered>
+          <el-card-header>
+            <el-card-title>Enterprise SaaS Admin Console</el-card-title>
+          </el-card-header>
+          <el-card-content>
+            <div class="card-body">
+              <p class="card-desc">Multi-view B2B console verifying zero-shortcut public API usage across data tables, invite dialogs, slide-over drawers, mobile breakpoints, and axe-core WCAG 2.2 AA gates.</p>
+              <div class="tag-row">
+                <el-badge variant="primary" count="el-table"></el-badge>
+                <el-badge variant="default" count="el-dialog"></el-badge>
+                <el-badge variant="default" count="el-drawer"></el-badge>
+              </div>
+              <div class="actions">
+                <el-button variant="primary" onclick="window.location.href='./examples/saas-admin.html'">Launch SaaS Admin</el-button>
+              </div>
+            </div>
+          </el-card-content>
+        </el-card>
+
+        <el-card hoverable bordered>
+          <el-card-header>
+            <el-card-title>Pulse Cloud Dashboard</el-card-title>
+          </el-card-header>
+          <el-card-content>
+            <div class="card-body">
+              <p class="card-desc">Signal-routed SPA combining client-side routing (<code>el-router</code>, <code>el-route-link</code>), live telemetry charts, sidebar collapse, and interactive deployment controls.</p>
+              <div class="tag-row">
+                <el-badge variant="primary" count="el-router"></el-badge>
+                <el-badge variant="default" count="el-chart"></el-badge>
+                <el-badge variant="default" count="el-sidebar"></el-badge>
+              </div>
+              <div class="actions">
+                <el-button variant="primary" onclick="window.location.href='./examples/app.html'">Launch Pulse Cloud</el-button>
+              </div>
+            </div>
+          </el-card-content>
+        </el-card>
+
+        <el-card hoverable bordered>
+          <el-card-header>
+            <el-card-title>LedgerFlow (Penpot → Code)</el-card-title>
+          </el-card-header>
+          <el-card-content>
+            <div class="card-body">
+              <p class="card-desc">Treasury dashboard compiled directly from Penpot layers via MCP codegen into animated counters, budget meters, charts, and a new-expense FACE modal.</p>
+              <div class="tag-row">
+                <el-badge variant="success" count="Penpot MCP"></el-badge>
+                <el-badge variant="default" count="el-number-flow"></el-badge>
+                <el-badge variant="default" count="el-meter"></el-badge>
+              </div>
+              <div class="actions">
+                <el-button variant="primary" onclick="window.location.href='./examples/ledgerflow.html'">Launch LedgerFlow</el-button>
+              </div>
+            </div>
+          </el-card-content>
+        </el-card>
+
+        <el-card hoverable bordered>
+          <el-card-header>
+            <el-card-title>AG-UI Streaming Workspace</el-card-title>
+          </el-card-header>
+          <el-card-content>
+            <div class="card-body">
+              <p class="card-desc">Live Server-Sent Events and RFC 6902 JSON Patch application driving reasoning cards, streaming tokens, tool-call approvals, and citation pills in real time.</p>
+              <div class="tag-row">
+                <el-badge variant="info" count="ag-ui SSE"></el-badge>
+                <el-badge variant="default" count="el-tool-call"></el-badge>
+                <el-badge variant="default" count="el-diff-viewer"></el-badge>
+              </div>
+              <div class="actions">
+                <el-button variant="primary" onclick="window.location.href='./examples/ag-ui.html'">Launch AG-UI Demo</el-button>
+              </div>
+            </div>
+          </el-card-content>
+        </el-card>
+
+        <el-card hoverable bordered>
+          <el-card-header>
+            <el-card-title>Zero-JS DSD SSR Snapshot</el-card-title>
+          </el-card-header>
+          <el-card-content>
+            <div class="card-body">
+              <p class="card-desc">Pre-rendered Declarative Shadow DOM document proving instant styled first paint with zero client scripts (<code>?hydrate=0</code>) and zero CLS on hydration (<code>?hydrate=1</code>).</p>
+              <div class="tag-row">
+                <el-badge variant="success" count="0-JS DSD"></el-badge>
+                <el-badge variant="default" count="data-dsd"></el-badge>
+                <el-badge variant="default" count="0 CLS"></el-badge>
+              </div>
+              <div class="actions">
+                <el-button variant="primary" onclick="window.location.href='./examples/ssr-demo.html'">Inspect SSR Snapshot</el-button>
+              </div>
+            </div>
+          </el-card-content>
+        </el-card>
+      </div>
+    </section>
+
+    <section class="two-col" aria-labelledby="adoption-heading">
+      <div>
+        <h2 id="adoption-heading" class="section-title">First-Class React Wrappers</h2>
+        <p class="muted-note">
+          Use <code>@wcomp/elementum/react</code> in React 18 or React 19 with full TypeScript types, ref forwarding, automatic complex prop binding, and CustomEvent handlers.
+        </p>
+        <el-code-block copyable language="js" code="import '@wcomp/elementum/tokens.css';
+import { ElButton, ElInput, ElTable } from '@wcomp/elementum/react';
+
+export function OrdersPanel({ rows, onFilter }) {
+  return (
+    <section>
+      <ElInput placeholder=&quot;Filter orders&quot; onInput={onFilter} />
+      <ElTable selectable data={rows} onSelectionChange={(e) => console.log(e.detail)} />
+      <ElButton variant=&quot;primary&quot;>Export CSV</ElButton>
+    </section>
+  );
+}"></el-code-block>
+      </div>
+
+      <el-card bordered>
+        <el-card-header>
+          <el-card-title>Evaluation &amp; Stability Resources</el-card-title>
+        </el-card-header>
+        <el-card-content>
+          <div class="card-body">
+            <p class="card-desc">Review architectural trade-offs, compatibility guarantees, and live automated coverage metrics before adopting in production.</p>
+            <div class="actions">
+              <el-button variant="secondary" onclick="window.location.href='./docs/migration-guide.md'">Migration Guide (Shoelace / Radix / Lit)</el-button>
+              <el-button variant="secondary" onclick="window.location.href='./docs/stability-and-1.0.md'">1.0.0 Stability Contract</el-button>
+              <el-button variant="secondary" onclick="window.location.href='./examples/registry.html'">Component Evidence Registry</el-button>
+            </div>
+          </div>
+        </el-card-content>
+      </el-card>
+    </section>
+  </main>
+</body>
+</html>

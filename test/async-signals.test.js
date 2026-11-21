@@ -165,3 +165,38 @@ test('Computed.error and effect({ onError }) isolate and report reactive excepti
   assert.equal(risky.error, null);
   dispose();
 });
+
+test('Computed throwing on initial evaluation still re-runs dependent effect and recovers when upstream changes', () => {
+  const denom = signal(0);
+  const ratio = computed(() => {
+    if (denom.value === 0) throw new Error('Zero denominator');
+    return 100 / denom.value;
+  });
+
+  const seen = [];
+  const errs = [];
+  const dispose = effect(
+    () => {
+      seen.push(ratio.value);
+    },
+    { onError: (e) => errs.push(e.message) }
+  );
+
+  assert.deepEqual(errs, ['Zero denominator']);
+  assert.deepEqual(seen, []);
+  // Cached error also re-throws cleanly on direct peek() while dirty is false
+  assert.throws(() => ratio.peek(), /Zero denominator/);
+
+  // Updating upstream dependency automatically invalidates & recovers the effect
+  denom.value = 2;
+  assert.deepEqual(seen, [50]);
+  assert.equal(ratio.error, null);
+  assert.equal(ratio.peek(), 50);
+
+  // Toggling back to error and recovering again also works automatically
+  denom.value = 0;
+  assert.equal(errs.length, 2);
+  denom.value = 5;
+  assert.deepEqual(seen, [50, 20]);
+  dispose();
+});

@@ -235,7 +235,6 @@ export class ElOtpInput extends Elementum {
           const isMasked = this.type.value === 'password';
           const arr = [];
           for (let i = 0; i < len; i++) {
-            const digitVal = this.digits.value[i] || '';
             arr.push(html`
               <input
                 type=${isMasked ? 'password' : 'text'}
@@ -244,7 +243,7 @@ export class ElOtpInput extends Elementum {
                 class="otp-cell"
                 part="cell"
                 aria-label=${`Digit ${i + 1} of ${len}`}
-                .value=${digitVal}
+                .value=${() => this.digits.value[i] || ''}
                 ?disabled=${this.disabled}
                 @input=${(e) => this.#onInput(e, i)}
                 @keydown=${(e) => this.#onKeyDown(e, i)}

@@ -1,6 +1,6 @@
 {
   "name": "@wcomp/elementum",
-  "version": "0.5.3",
+  "version": "0.6.0",
   "mcpName": "io.github.pinguxx/elementum",
   "description": "Ultra-lightweight, signal-driven, frameworkless Web Components for modern design systems",
   "type": "module",
@@ -28,6 +28,11 @@
     },
     "./ssr": "./src/ssr.js",
     "./ag-ui": "./src/ag-ui.js",
+    "./react": {
+      "types": "./src/react/index.d.ts",
+      "default": "./src/react/index.js"
+    },
+    "./react/runtime": "./src/react/runtime.js",
     "./behaviors": "./src/behaviors/index.js",
     "./agent": "./src/agent/index.js",
     "./testing": "./src/testing/index.js",
@@ -65,7 +70,16 @@
     "catalog:diff": "node tools/audit-catalog-diff.js",
     "penpot:mcp": "node tools/sync-penpot-mcp.js",
     "penpot:design-app": "node tools/design-ledgerflow-penpot.js",
-    "penpot:generate": "node tools/penpot-to-elementum.js"
+    "penpot:generate": "node tools/penpot-to-elementum.js",
+    "react:generate": "node tools/generate-react-wrappers.js"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
   },
   "keywords": [
     "web-components",

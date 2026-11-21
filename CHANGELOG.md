@@ -4,6 +4,24 @@ All notable changes to `@wcomp/elementum` are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] — 2026-11-21 ("React Wrappers, Core Hardening & Production Readiness")
+
+### Added
+- **Official React 18/19 Wrappers (`@wcomp/elementum/react` & `@wcomp/elementum/react/runtime`)**: Added zero-dependency `createElementumReactComponent` runtime and `tools/generate-react-wrappers.js`, exporting typed React components and strict TypeScript definitions (`src/react/index.d.ts`) for all 109 custom elements with optional `peerDependencies: { react: ">=18.0.0" }`.
+- **DSD Stress, Framework Interop & Showcase E2E (`e2e/framework-and-dsd-stress.spec.js`)**: Verified 54-component Declarative Shadow DOM hydration with `CLS === 0` and zero duplicate controls, React 18/19 wrapper & Vue-style event interop, keyboard-only `Tab`/`Space` Form-Associated Custom Element (FACE) `<form>` submission, and WCAG 2.2 AA `axe-core` audit on `showcase.html`.
+- **Production Documentation & Showcase (`showcase.html`, `docs/migration-guide.md`, `docs/stability-and-1.0.md`, `SECURITY.md`, `CONTRIBUTING.md`)**: Added multi-component showcase app, migration guides from Shoelace/Radix UI/React Aria/Lit, formal `1.0.0` stability contract and SemVer gates, security disclosure & MCP/Agent threat model policy, and contributor promotion criteria.
+- **`<el-code-block>` Syntax Highlighting & Slot Ergonomics**: Added zero-dependency, linear-time ReDoS-safe and XSS-safe tokenizer supporting `js`/`ts`, `html`, `css`, `json`, and `bash`, plus slot auto-dedent and `<template>` child support.
+- **MCP Registry & Telemetry Polish (`mcp/server.js`, `server.json`, `icon.png`)**: Added JSON-RPC `ping` handler, MCP `readOnlyHint: true` annotations on all 10 tools, and a `192x192` `icon.png` in `server.json`.
+- **Full 109-Component Penpot Sync & Codegen (`tools/sync-penpot-mcp.js`, `tools/penpot-to-elementum.js`)**: Expanded Penpot design-system synchronization and Elementum code generation across all 109 components and tokens.
+
+### Fixed
+- **`Computed` Error Recovery (`src/signal.js`)**: Subscribes `activeEffect` before evaluation, resets `_dirty` in `finally`, and re-throws cached `_error` cleanly on `.value` / `.peek()` reads.
+- **`NodePart` Child Effect & Listener Cleanup (`src/template.js`)**: Scoped reactive child bindings via per-commit `AbortController` to prevent memory leaks across dynamic list/branch updates.
+- **`<el-otp-input>` DOM Identity (`src/components/el-otp-input.js`)**: Bound cell `.value` reactively per index so input elements preserve DOM identity and focus across keystrokes.
+- **`Elementum` Lifecycle Controller (`src/elementum.js`)**: Aborts stale `#abortController` instances on reconnect and resets on disconnect.
+- **MCP Scaffold Comment Sanitization (`mcp/server.js`)**: Sanitized `description` inputs in `scaffold_component` (`*/` → `* /`, collapsed newlines) to prevent JSDoc comment injection.
+- **SSR Attribute Stripping & FOUC Prevention (`src/ssr.js`, `src/tokens.css`)**: Added tag-scoped SSR attribute stripping, pure-Node Map attribute shim, and `:root:not([data-dsd]) :defined` FOUC guard.
+
 ## [0.5.0] — 2026-11-19 ("Async Signals, Agent Runtime & Full-Catalog Proof")
 
 ### Added

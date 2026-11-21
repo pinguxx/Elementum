@@ -10,7 +10,7 @@
 
 [**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (109 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr)
 
-## 🧪 Verification & Browser Matrix (Beta — `v0.5.2`)
+## 🧪 Verification & Browser Matrix (Beta — `v0.6.0`)
 
 One command verifies everything end-to-end: `npm run verify:all` (see [QUALITY.md](https://github.com/pinguxx/Elementum/blob/main/QUALITY.md) for the auto-generated per-component matrix).
 
@@ -200,7 +200,9 @@ Included skills under [skills/](https://github.com/pinguxx/Elementum/tree/main/s
 
 ## Framework Integration
 
-`@wcomp/elementum` works natively in vanilla HTML, React 19, Vue 3, Svelte 5, and Next.js. See [docs/framework-integration.md](https://github.com/pinguxx/Elementum/blob/main/docs/framework-integration.md) for complete setup instructions and TypeScript configuration.
+`@wcomp/elementum` works natively in vanilla HTML, React 18/19 (including official auto-generated React wrappers via `@wcomp/elementum/react`), Vue 3, Svelte 5, and Next.js. See [docs/framework-integration.md](https://github.com/pinguxx/Elementum/blob/main/docs/framework-integration.md), [docs/migration-guide.md](https://github.com/pinguxx/Elementum/blob/main/docs/migration-guide.md), and the [Live App Showcase](https://github.com/pinguxx/Elementum/blob/main/showcase.html).
+
+* **Stability & `1.0.0` Roadmap**: See [docs/stability-and-1.0.md](https://github.com/pinguxx/Elementum/blob/main/docs/stability-and-1.0.md) for SemVer guarantees and per-subpath maturity tiers.
 
 ## Project Structure
 
