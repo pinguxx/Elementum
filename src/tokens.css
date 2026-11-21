@@ -315,7 +315,7 @@ el-dropdown:not(:defined) {
   display: none !important;
 }
 
-:not(:defined):is(
+:root:not([data-dsd]) :not(:defined):is(
   el-button,
   el-badge,
   el-input,
