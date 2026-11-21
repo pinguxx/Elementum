@@ -220,7 +220,7 @@ export function renderSsrPage({
     : '<!-- Zero-JS mode (?hydrate=0): No client scripts loaded; Shadow DOM rendered purely via DSD! -->';
 
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-dsd>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
