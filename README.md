@@ -15,7 +15,7 @@
 | **109 Custom Elements** | **0 Runtime Deps** | **2.19 KB** | **WCAG 2.2 AA** (@axe-core/playwright) | **MIT** |
 
 
-[**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (109 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr)
+[**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (109 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr) · [**Hosted MCP**](https://www.google.com/search?q=https%3A%2F%2Fwww.google.com%2Furl%3Fsa%3DE%26source%3Dgmail%26q%3Dhttps%3A%2F%2Felementum-sage.vercel.app%2Fmcp)
 
 
 ---
@@ -100,7 +100,7 @@ import '@wcomp/elementum';
 - **Leak-free lifecycle**: Automatically tracks and tears down event listeners and signal subscriptions via `this.signal` (`AbortSignal`).
 - **WCAG 2.2 AA Compliant**: Built-in 24x24px minimum target sizes, high-contrast `:focus-visible` rings, dialog focus preservation, and HTML5 Constraint Validation API (`ElementInternals.setValidity`).
 - **Figma 1:1 Parity**: Direct mapping to Figma Component Variants and Figma Variables.
-- **AI Agent & MCP Ready**: Generates standard W3C `custom-elements.json` and includes a built-in MCP server for coding agents.
+- **AI Agent & MCP Ready**: Generates standard W3C `custom-elements.json` and includes a built-in MCP server (local stdio and hosted Streamable HTTP) for coding agents.
 - **CI/CD & Automation**: GitHub Actions multi-OS / multi-Node matrix test runner, OIDC npm Trusted Publishing with provenance, and Dependabot automated dependency updates.
 
 ---
@@ -204,6 +204,9 @@ Elementum/
 ├── .github/workflows/
 │   ├── ci.yml                 # Multi-OS/Node CI: coverage >= 95%, strict TS, size budgets, tarball & 3-browser E2E
 │   └── publish.yml            # OIDC Trusted Publishing with provenance on GitHub release
+├── api/
+│   ├── mcp.js                 # Vercel Serverless Streamable HTTP MCP endpoint (/mcp)
+│   └── ssr.js                 # Vercel Serverless Declarative Shadow DOM SSR endpoint (/ssr)
 ├── src/
 │   ├── signal.js              # Fine-grained signals with cycle detection & re-entrancy guards
 │   ├── template.js            # Tagged template engine (html, svg, css, surgical DOM parts)
@@ -218,7 +221,7 @@ Elementum/
 │   └── components/            # 109 zero-dependency Custom Elements (avg 2.19 KB gzip)
 ├── docs/                      # behaviors-and-agent.md, theming.md, framework-integration.md, penpot-workflow.md
 ├── skills/ & skills.sh.json   # Installable AI agent skills (npx skills@latest add pinguxx/Elementum)
-├── mcp/server.js              # Hardened Model Context Protocol stdio server (elementum-mcp)
+├── mcp/server.js              # Hardened Model Context Protocol stdio & HTTP server (elementum-mcp)
 ├── tools/                     # check-size.js, verify-consumer.js, generate-quality-report.js, audit-catalog-diff.js, benchmark.js
 ├── size-budget.json           # Per-entrypoint gzipped byte budgets enforced in CI
 ├── custom-elements.json       # W3C Custom Elements Manifest (109 tags)
@@ -281,7 +284,19 @@ See **[docs/penpot-workflow.md](https://www.google.com/search?q=https://github.c
 
 ## Agent MCP Server
 
-Run the built-in MCP server for AI coding agents:
+### Remote (Streamable HTTP — no install required)
+Connect any HTTP-capable MCP client (Cursor, Claude, VS Code) to:
+
+`https://elementum-sage.vercel.app/mcp`
+
+Or proxy from a stdio-only client:
+
+```bash
+npx mcp-remote https://elementum-sage.vercel.app/mcp
+```
+
+### Local (stdio)
+Run the built-in MCP server locally for AI coding agents:
 
 ```bash
 node mcp/server.js
