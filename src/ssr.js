@@ -75,6 +75,23 @@ function matchTrailingBinding(str) {
 }
 
 /**
+ * Detects an unquoted HTML attribute before an expression (e.g. `style=${...}` or `class=${...}`).
+ */
+function isUnquotedAttrTrailing(str) {
+  let end = str.length;
+  while (end > 0 && (str[end - 1] === ' ' || str[end - 1] === '\t' || str[end - 1] === '\n' || str[end - 1] === '\r')) {
+    end--;
+  }
+  if (end === 0 || str[end - 1] !== '=') return false;
+  let start = end - 1;
+  while (start > 0 && /[a-zA-Z0-9_.:-]/.test(str[start - 1])) {
+    start--;
+  }
+  if (start === end - 1) return false;
+  return start > 0 && /\s/.test(str[start - 1]);
+}
+
+/**
  * Renders an Elementum TemplateResult to an HTML string
  */
 export function renderTemplateToString(templateResult) {
@@ -107,7 +124,8 @@ export function renderTemplateToString(templateResult) {
         html = html.slice(0, html.length - binding.length);
         continue;
       }
-      html += resolveValue(val);
+      const rendered = resolveValue(val);
+      html += isUnquotedAttrTrailing(strings[i]) ? `"${rendered}"` : rendered;
     }
   }
 
