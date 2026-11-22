@@ -92,8 +92,8 @@
       if (next !== undefined) query.value = next;
     });
     document.getElementById('role-filter').addEventListener('change', (e) => { roleFilter.value = e.detail?.value ?? 'All'; });
-    document.getElementById('open-btn').addEventListener('click', () => { dialog.open = true; });
-    document.getElementById('cancel-btn').addEventListener('click', () => { dialog.open = false; });
+    document.getElementById('open-btn').addEventListener('click', () => { dialog.showModal(); });
+    document.getElementById('cancel-btn').addEventListener('click', () => { dialog.close(); });
     document.getElementById('invite-btn').addEventListener('click', () => {
       const name = (newName.value.value || '').trim();
       if (!name) return;
@@ -101,7 +101,7 @@
       members.value = [...members.value, { name, role, status: 'Active' }];
       toast.success(`Added ${name} (${role})`);
       newName.value.value = '';
-      dialog.open = false;
+      dialog.close();
     });
   </script>
 </body>

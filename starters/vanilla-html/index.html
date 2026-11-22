@@ -88,8 +88,8 @@
     btnInc.addEventListener('click', () => { count.value++; });
     btnDec.addEventListener('click', () => { count.value--; });
     
-    btnDialog.addEventListener('click', () => { dialog.open = true; });
-    btnClose.addEventListener('click', () => { dialog.open = false; });
+    btnDialog.addEventListener('click', () => { dialog.showModal(); });
+    btnClose.addEventListener('click', () => { dialog.close(); });
   </script>
 </body>
 </html>
