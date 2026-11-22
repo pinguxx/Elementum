@@ -6,7 +6,7 @@
 const textEncoder = new TextEncoder();
 const SUPPORTED_PROTOCOL_VERSIONS = ['2025-06-18', '2025-03-26', '2024-11-05'];
 
-export function createMcpHandler({ manifest, tokens, pkg }) {
+export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
   const MAX_PAYLOAD_BYTES = 128 * 1024;
   const SAFE_TAG_RE = /^[a-z][a-z0-9]*-[a-z0-9-]+$/;
   const SAFE_CLASS_RE = /^[A-Z][A-Za-z0-9_]*$/;
@@ -36,6 +36,71 @@ export function createMcpHandler({ manifest, tokens, pkg }) {
     (m.declarations || []).map((d) => ({ ...d, modulePath: m.path }))
   );
   const declByTag = new Map(allDeclarations.map((d) => [d.tagName, d]));
+
+  function parseLiteralUnion(typeText) {
+    if (typeof typeText !== 'string' || !typeText.includes('|')) return [];
+    const parts = typeText.split('|').map((s) => s.trim());
+    const out = [];
+    for (const p of parts) {
+      const m = /^['"]([^'"]+)['"]$/.exec(p);
+      if (!m) return [];
+      out.push(m[1]);
+    }
+    return out;
+  }
+
+  function getResolvedMetadata(decl) {
+    if (metadata && metadata[decl.tagName]) {
+      return metadata[decl.tagName];
+    }
+    const variants = [];
+    const states = [];
+    const props = [];
+    const observedAttributes = [];
+    for (const attr of decl.attributes || []) {
+      observedAttributes.push(attr.name);
+      const union = parseLiteralUnion(attr.type?.text);
+      if (union.length > 0 && attr.name !== 'value') {
+        variants.push({
+          name: attr.name,
+          allowedValues: union,
+          default: union[0],
+          description: attr.description || '',
+        });
+      } else if (attr.type?.text === 'boolean') {
+        states.push({
+          name: attr.name,
+          type: 'boolean',
+          default: attr.default === 'true' || attr.default === true,
+          description: attr.description || '',
+        });
+      } else {
+        props.push({
+          name: attr.name,
+          type: attr.type?.text || 'string',
+          ...(attr.default !== undefined ? { default: attr.default } : {}),
+          htmlAttribute: attr.name,
+          jsProperty: attr.name.replace(/-([a-z])/g, (_, ch) => ch.toUpperCase()),
+          description: attr.description || '',
+        });
+      }
+    }
+    return {
+      variants,
+      states,
+      props,
+      constraints: {
+        formAssociated: false,
+        requiredParent: null,
+        expectedChildren: [],
+        observedAttributes,
+        jsOnlyProperties: [],
+        strictVariantValues: variants.length > 0,
+        a11yNotes: [],
+      },
+      examples: [],
+    };
+  }
   
   const READ_ONLY_ANNOTATIONS = {
     readOnlyHint: true,
@@ -55,13 +120,20 @@ export function createMcpHandler({ manifest, tokens, pkg }) {
     },
     {
       name: 'get_component_doc',
-      description: 'Retrieves attributes, slots, events, and CSS parts for an Elementum component.',
+      description:
+        'Retrieves structured component API metadata (separated closed variants, boolean states, props, composition/JS constraints, events, slots, CSS parts, and standalone usage examples) for an Elementum component.',
       inputSchema: {
         type: 'object',
         properties: {
           tag: {
             type: 'string',
             description: 'The custom element tag name, e.g. "el-button" or "el-badge"',
+          },
+          section: {
+            type: 'string',
+            enum: ['all', 'schema', 'examples'],
+            description:
+              "Optional filter: 'schema' returns variants, states, props, constraints, events, slots & parts without usage examples; 'examples' returns only usage examples; 'all' (default) returns both as separate sections.",
           },
         },
         required: ['tag'],
@@ -185,11 +257,45 @@ export function createMcpHandler({ manifest, tokens, pkg }) {
     if (name === 'get_component_doc') {
       const tag = typeof args.tag === 'string' ? args.tag.trim().toLowerCase() : '';
       const match = declByTag.get(tag);
-  
+
       if (!match) {
         return { error: `Component <${tag || 'unknown'}> not found in manifest.` };
       }
-      return match;
+
+      const rawSection = args.section === undefined || args.section === '' ? 'all' : String(args.section).trim().toLowerCase();
+      if (!['all', 'schema', 'examples'].includes(rawSection)) {
+        return { error: `Invalid section '${rawSection}'. Expected 'all', 'schema', or 'examples'.` };
+      }
+
+      const meta = getResolvedMetadata(match);
+
+      if (rawSection === 'examples') {
+        return {
+          tagName: match.tagName,
+          name: match.name,
+          description: match.description,
+          examples: meta.examples,
+        };
+      }
+
+      if (rawSection === 'schema') {
+        return {
+          ...match,
+          variants: meta.variants,
+          states: meta.states,
+          props: meta.props,
+          constraints: meta.constraints,
+        };
+      }
+
+      return {
+        ...match,
+        variants: meta.variants,
+        states: meta.states,
+        props: meta.props,
+        constraints: meta.constraints,
+        examples: meta.examples,
+      };
     }
   
     if (name === 'list_tokens') {
@@ -444,8 +550,11 @@ export function createMcpHandler({ manifest, tokens, pkg }) {
       const markup = typeof args.markup === 'string' ? args.markup : '';
       const issues = [];
       const checkedTags = [];
-  
-      for (const match of markup.matchAll(/<(el-[a-z0-9-]+)([^>]*)>/gi)) {
+      const tagMatches = [...markup.matchAll(/<(el-[a-z0-9-]+)([^>]*)>/gi)];
+      const presentTags = new Set(tagMatches.map((m) => m[1].toLowerCase()));
+      const seenMissingParent = new Set();
+
+      for (const match of tagMatches) {
         const tag = match[1].toLowerCase();
         const attrChunk = match[2] || '';
         checkedTags.push(tag);
@@ -454,11 +563,38 @@ export function createMcpHandler({ manifest, tokens, pkg }) {
           issues.push({ severity: 'error', tag, message: `Unknown Elementum tag <${tag}> (not in custom-elements.json).` });
           continue;
         }
-        const allowed = new Set((decl.attributes || []).map((a) => a.name));
-        for (const attrMatch of attrChunk.matchAll(/\s([a-zA-Z_:][a-zA-Z0-9_.:-]*)(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+))?/g)) {
+
+        const meta = getResolvedMetadata(decl);
+        const requiredParent = meta.constraints?.requiredParent;
+        if (requiredParent && !presentTags.has(requiredParent) && !seenMissingParent.has(tag)) {
+          seenMissingParent.add(tag);
+          issues.push({
+            severity: 'warning',
+            tag,
+            requiredParent,
+            message: `<${tag}> must be nested inside <${requiredParent}>.`,
+          });
+        }
+
+        const observedSet = new Set([
+          ...(meta.constraints?.observedAttributes || []),
+          ...(decl.attributes || []).map((a) => a.name),
+        ]);
+        const allowed = new Set([
+          ...observedSet,
+          ...(meta.variants || []).map((v) => v.name),
+          ...(meta.states || []).map((s) => s.name),
+          ...(meta.props || []).filter((p) => p.htmlAttribute).map((p) => p.htmlAttribute),
+        ]);
+        const variantByName = new Map((meta.variants || []).map((v) => [v.name, v]));
+        const jsOnlyMap = new Map((meta.constraints?.jsOnlyProperties || []).map((p) => [p.toLowerCase(), p]));
+
+        for (const attrMatch of attrChunk.matchAll(/\s([a-zA-Z_:][a-zA-Z0-9_.:-]*)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g)) {
           const attr = attrMatch[1].toLowerCase();
+          const hasValue = attrMatch[2] !== undefined || attrMatch[3] !== undefined || attrMatch[4] !== undefined;
+          const attrVal = attrMatch[2] ?? attrMatch[3] ?? attrMatch[4] ?? '';
+
           if (
-            allowed.has(attr) ||
             GLOBAL_HTML_ATTRS.has(attr) ||
             attr.startsWith('aria-') ||
             attr.startsWith('data-') ||
@@ -466,15 +602,64 @@ export function createMcpHandler({ manifest, tokens, pkg }) {
           ) {
             continue;
           }
-          issues.push({
-            severity: 'warning',
-            tag,
-            attribute: attr,
-            message: `Attribute "${attr}" is not declared on <${tag}>. Allowed: ${[...allowed].join(', ') || '(none)'}.`,
-          });
+
+          if (jsOnlyMap.has(attr)) {
+            const realProp = jsOnlyMap.get(attr);
+            if (!observedSet.has(realProp) && !observedSet.has(attr)) {
+              issues.push({
+                severity: 'warning',
+                tag,
+                attribute: attr,
+                jsProperty: realProp,
+                message: `Property "${realProp}" on <${tag}> is a JavaScript signal property (not an HTML attribute). Set el.${realProp}.value = ... or pass ${realProp}={...} via @wcomp/elementum/react.`,
+              });
+              continue;
+            }
+            if (hasValue) {
+              const trimmed = attrVal.trim();
+              let validJsonObjectOrArray = false;
+              if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+                try {
+                  const parsed = JSON.parse(trimmed);
+                  validJsonObjectOrArray = parsed !== null && typeof parsed === 'object';
+                } catch {}
+              }
+              if (trimmed && !validJsonObjectOrArray) {
+                issues.push({
+                  severity: 'warning',
+                  tag,
+                  attribute: attr,
+                  jsProperty: realProp,
+                  message: `Attribute "${attr}" on <${tag}> expects valid JSON array/object syntax in HTML, or set el.${realProp}.value / @wcomp/elementum/react props instead of "${attrVal}".`,
+                });
+              }
+            }
+          }
+
+          if (!allowed.has(attr)) {
+            issues.push({
+              severity: 'warning',
+              tag,
+              attribute: attr,
+              message: `Attribute "${attr}" is not declared on <${tag}>. Allowed: ${[...allowed].join(', ') || '(none)'}.`,
+            });
+            continue;
+          }
+
+          const variantSpec = variantByName.get(attr);
+          if (variantSpec && hasValue && !variantSpec.allowedValues.includes(attrVal)) {
+            issues.push({
+              severity: 'error',
+              tag,
+              attribute: attr,
+              value: attrVal,
+              allowedValues: variantSpec.allowedValues,
+              message: `Invalid value "${attrVal}" for variant attribute "${attr}" on <${tag}>. Allowed values: ${variantSpec.allowedValues.join(', ')}.`,
+            });
+          }
         }
       }
-  
+
       return {
         valid: issues.filter((i) => i.severity === 'error').length === 0,
         checkedCount: checkedTags.length,

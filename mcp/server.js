@@ -16,11 +16,13 @@ const rootDir = path.resolve(__dirname, '..');
 const manifest = JSON.parse(fs.readFileSync(path.join(rootDir, 'custom-elements.json'), 'utf8'));
 const tokens = JSON.parse(fs.readFileSync(path.join(rootDir, 'tokens', 'figma-tokens.json'), 'utf8'));
 const pkg = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
+const metadata = JSON.parse(fs.readFileSync(path.join(rootDir, 'mcp', 'component-metadata.json'), 'utf8'));
 
 export const { TOOLS, handleToolCall, handleJsonRpcLine } = createMcpHandler({
   manifest,
   tokens,
   pkg,
+  metadata,
 });
 
 // Start JSON-RPC stdio loop only when executed directly as CLI

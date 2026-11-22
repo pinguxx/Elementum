@@ -50,7 +50,8 @@ Elementum will move from `0.x` to `1.0.0` once every gate below is checked off:
 - [x] Cross-browser E2E + WCAG 2.2 AA `axe-core` checks (`npm run test:e2e`) including 50+ component zero-CLS DSD hydration and React/Vue/FACE framework interop (`e2e/framework-and-dsd-stress.spec.js`)
 - [x] Official React wrapper entrypoint (`@wcomp/elementum/react`) auto-generated from `custom-elements.json`
 - [x] Public migration guide (`docs/migration-guide.md`) and live showcase apps (`showcase.html`)
-- [ ] Full Playwright E2E + `axe-core` audit coverage across remaining `🟡 Experimental` components in [`QUALITY.md`](../QUALITY.md)
+- [x] Full Playwright E2E + `axe-core` audit coverage across all `109 / 109` components in [`QUALITY.md`](../QUALITY.md)
+- [ ] Complete manual screen-reader (NVDA / VoiceOver) sign-off in [`docs/accessibility-audit.md`](./accessibility-audit.md)
 - [ ] Published `1.0.0-rc.1` candidate reviewed for any breaking attribute, event, or `::part()` cleanup prior to freezing `1.0.0`
 
 ---

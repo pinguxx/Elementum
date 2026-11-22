@@ -68,7 +68,7 @@ Automated `@axe-core/playwright` scans catch roughly 30–50% of WCAG issues (mi
    - Check Windows High Contrast (`forced-colors: active` emulation in DevTools) to ensure borders, focus rings, and checked indicators stay distinguishable.
    - Verify `@media (prefers-reduced-motion: reduce)` disables non-essential keyframe/transition motion (`createPresenceBehavior`).
 
-Include a brief **Accessibility Verification** note in your PR listing which checks ran (`axe-core`, keyboard-only, AT/OS/browser tested).
+Include a brief **Accessibility Verification** note in your PR listing which checks ran (`axe-core`, keyboard-only, AT/OS/browser tested), and log manual screen-reader passes in [`docs/accessibility-audit.md`](./docs/accessibility-audit.md).
 
 ---
 

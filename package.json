@@ -52,10 +52,14 @@
   "scripts": {
     "test": "node --test --experimental-test-coverage",
     "test:e2e": "playwright test",
+    "test:visual": "playwright test --config=playwright.visual.config.js",
+    "test:visual:update": "playwright test --config=playwright.visual.config.js --update-snapshots",
     "test:catalog": "playwright test e2e/catalog-sweep.spec.js",
     "typecheck": "tsc --noEmit --strict --lib es2022,dom --target es2022 src/index.d.ts",
     "verify:consumer": "node tools/verify-consumer.js",
     "verify:react": "node tools/verify-react.js",
+    "verify:starters": "node tools/verify-starters.js",
+    "bench:frameworks": "node tools/bench-frameworks.js",
     "quality:report": "node tools/generate-quality-report.js",
     "check:release": "node tools/check-release-sync.js",
     "check:size": "node tools/check-size.js",
@@ -73,7 +77,8 @@
     "penpot:mcp": "node tools/sync-penpot-mcp.js",
     "penpot:design-app": "node tools/design-ledgerflow-penpot.js",
     "penpot:generate": "node tools/penpot-to-elementum.js",
-    "react:generate": "node tools/generate-react-wrappers.js"
+    "react:generate": "node tools/generate-react-wrappers.js",
+    "mcp:metadata": "node tools/generate-mcp-metadata.js"
   },
   "peerDependencies": {
     "react": ">=18.0.0"

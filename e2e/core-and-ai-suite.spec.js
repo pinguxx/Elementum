@@ -285,4 +285,165 @@ test.describe('Core Forms, Navigation, Data Display, AI Suite & LedgerFlow (Play
     expect(stats.total).toBeGreaterThan(10);
     expect(stats.hydrated).toBeGreaterThan(10);
   });
+
+  test('Layout, Navigation, Carousel, Resizable, Sidebar & Card Sub-Components render, interact, and pass WCAG 2.2 AA', async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', (err) => errors.push(err.message));
+
+    await page.goto('/index.html');
+    await page.waitForFunction(() =>
+      customElements.get('el-aspect-ratio') &&
+      customElements.get('el-inset') &&
+      customElements.get('el-scroll-area') &&
+      customElements.get('el-route-link') &&
+      customElements.get('el-card') &&
+      customElements.get('el-card-header') &&
+      customElements.get('el-card-title') &&
+      customElements.get('el-card-description') &&
+      customElements.get('el-card-content') &&
+      customElements.get('el-card-footer') &&
+      customElements.get('el-carousel') &&
+      customElements.get('el-carousel-slide') &&
+      customElements.get('el-navigation-menu') &&
+      customElements.get('el-navigation-menu-item') &&
+      customElements.get('el-navigation-menu-trigger') &&
+      customElements.get('el-navigation-menu-content') &&
+      customElements.get('el-resizable') &&
+      customElements.get('el-resizable-panel') &&
+      customElements.get('el-resizable-handle') &&
+      customElements.get('el-sidebar') &&
+      customElements.get('el-sidebar-header') &&
+      customElements.get('el-sidebar-content') &&
+      customElements.get('el-sidebar-footer') &&
+      customElements.get('el-sidebar-trigger')
+    );
+
+    await page.evaluate(() => {
+      const stage = document.createElement('section');
+      stage.id = 'e2e-layout-stage';
+      stage.setAttribute('aria-label', 'Layout and Composite Sub-Components Stage');
+      stage.style.padding = '24px';
+      stage.style.background = 'var(--el-surface-bg, #ffffff)';
+      stage.innerHTML = `
+        <el-card id="e2e-compound-card">
+          <el-card-header bordered>
+            <el-card-title size="md">Architecture Overview</el-card-title>
+            <el-card-description>Zero-dependency composable primitives</el-card-description>
+          </el-card-header>
+          <el-card-content>
+            <el-inset side="x">
+              <el-aspect-ratio ratio="16/9" style="max-width: 320px;">
+                <div style="background:#0f172a;color:#f8fafc;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">16:9 Media</div>
+              </el-aspect-ratio>
+            </el-inset>
+            <el-scroll-area max-height="96px" type="always" style="margin-top: 12px;">
+              <p style="margin:0;">Line 1 scrollable region content</p>
+              <p style="margin:0;">Line 2 scrollable region content</p>
+            </el-scroll-area>
+            <el-route-link id="e2e-route-link" to="/analytics">Analytics Route</el-route-link>
+          </el-card-content>
+          <el-card-footer>
+            <el-button variant="primary" size="sm">Inspect</el-button>
+          </el-card-footer>
+        </el-card>
+
+        <el-navigation-menu id="e2e-nav-menu" aria-label="Module Navigation" style="margin-top: 16px;">
+          <el-navigation-menu-item id="e2e-nav-item">
+            <el-navigation-menu-trigger>Products</el-navigation-menu-trigger>
+            <el-navigation-menu-content>
+              <a href="#runtime">Elementum Runtime</a>
+            </el-navigation-menu-content>
+          </el-navigation-menu-item>
+        </el-navigation-menu>
+
+        <el-carousel id="e2e-carousel" style="height: 180px; margin-top: 16px;">
+          <el-carousel-slide><div>Slide 1 Overview</div></el-carousel-slide>
+          <el-carousel-slide><div>Slide 2 Details</div></el-carousel-slide>
+        </el-carousel>
+
+        <el-resizable id="e2e-resizable" direction="horizontal" style="height: 140px; margin-top: 16px;">
+          <el-resizable-panel id="e2e-res-left" default-size="40" min-size="20" max-size="80">
+            <div style="padding:12px;">Left Pane</div>
+          </el-resizable-panel>
+          <el-resizable-handle id="e2e-res-handle" aria-label="Resize panes" aria-valuenow="40" aria-valuemin="20" aria-valuemax="80"></el-resizable-handle>
+          <el-resizable-panel id="e2e-res-right" default-size="60" min-size="20" max-size="80">
+            <div style="padding:12px;">Right Pane</div>
+          </el-resizable-panel>
+        </el-resizable>
+
+        <div style="display:flex;height:200px;margin-top:16px;">
+          <el-sidebar id="e2e-sidebar">
+            <el-sidebar-header>
+              <span class="collapsible-text">Workspace</span>
+              <el-sidebar-trigger for="e2e-sidebar"></el-sidebar-trigger>
+            </el-sidebar-header>
+            <el-sidebar-content>
+              <span class="collapsible-text">Components</span>
+            </el-sidebar-content>
+            <el-sidebar-footer>
+              <span class="collapsible-text">v0.7.0</span>
+            </el-sidebar-footer>
+          </el-sidebar>
+        </div>
+      `;
+      document.body.appendChild(stage);
+    });
+
+    await page.waitForTimeout(80);
+
+    const outcome = await page.evaluate(() => {
+      const card = document.getElementById('e2e-compound-card');
+      const isCompoundCard = card.hasAttribute('data-compound');
+
+      const navTriggerBtn = document.querySelector('#e2e-nav-item el-navigation-menu-trigger')?.shadowRoot?.querySelector('button');
+      navTriggerBtn?.click();
+      const navOpened = document.getElementById('e2e-nav-item').hasAttribute('open');
+
+      const carousel = document.getElementById('e2e-carousel');
+      carousel.next();
+      const carouselIndex = carousel.currentIndex.value;
+
+      const handle = document.getElementById('e2e-res-handle');
+      handle.focus();
+      handle.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+      const leftSizeAfterKey = document.getElementById('e2e-res-left').size.value;
+
+      const sidebarTriggerBtn = document.querySelector('el-sidebar-trigger')?.shadowRoot?.querySelector('button');
+      sidebarTriggerBtn?.click();
+      const sidebarCollapsed = document.getElementById('e2e-sidebar').collapsed.value;
+
+      const link = document.getElementById('e2e-route-link');
+      link.click();
+      const routeActive = link.hasAttribute('active');
+
+      const ar = document.querySelector('el-aspect-ratio');
+      const ratioApplied = Boolean(ar.style.aspectRatio);
+
+      return {
+        isCompoundCard,
+        navOpened,
+        carouselIndex,
+        leftSizeAfterKey,
+        sidebarCollapsed,
+        routeActive,
+        ratioApplied,
+      };
+    });
+
+    expect(errors).toEqual([]);
+    expect(outcome.isCompoundCard).toBe(true);
+    expect(outcome.navOpened).toBe(true);
+    expect(outcome.carouselIndex).toBe(1);
+    expect(outcome.leftSizeAfterKey).toBe(44);
+    expect(outcome.sidebarCollapsed).toBe(true);
+    expect(outcome.routeActive).toBe(true);
+    expect(outcome.ratioApplied).toBe(true);
+
+    const results = await new AxeBuilder({ page })
+      .include('#e2e-layout-stage')
+      .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
+      .analyze();
+    const serious = results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious');
+    expect(serious).toEqual([]);
+  });
 });

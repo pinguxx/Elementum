@@ -197,15 +197,30 @@ test('<el-navigation-menu> opens, closes, and toggles items', () => {
   document.body.appendChild(nav);
 
   const item = nav.querySelector('#item1');
+  const btn = nav.querySelector('el-navigation-menu-trigger')?.shadowRoot?.querySelector('button');
+  assert.ok(btn);
   assert.equal(item.open.value, false);
+  assert.equal(btn.getAttribute('aria-expanded'), 'false');
+
+  btn.click();
+  assert.equal(item.open.value, true);
+  assert.ok(item.hasAttribute('open'));
+  assert.equal(btn.getAttribute('aria-expanded'), 'true');
+
+  btn.click();
+  assert.equal(item.open.value, false);
+  assert.ok(!item.hasAttribute('open'));
+  assert.equal(btn.getAttribute('aria-expanded'), 'false');
 
   item.openMenu();
   assert.equal(item.open.value, true);
   assert.ok(item.hasAttribute('open'));
+  assert.equal(btn.getAttribute('aria-expanded'), 'true');
 
   item.closeMenu();
   assert.equal(item.open.value, false);
   assert.ok(!item.hasAttribute('open'));
+  assert.equal(btn.getAttribute('aria-expanded'), 'false');
 
   document.body.removeChild(nav);
 });

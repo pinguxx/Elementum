@@ -5,10 +5,11 @@
 import manifest from '../custom-elements.json';
 import tokens from '../tokens/figma-tokens.json';
 import pkg from '../package.json';
+import metadata from '../mcp/component-metadata.json';
 import { createEdgeMcpHandler } from '../mcp/edge.js';
 
 export const config = {
   runtime: 'edge',
 };
 
-export default createEdgeMcpHandler({ manifest, tokens, pkg });
+export default createEdgeMcpHandler({ manifest, tokens, pkg, metadata });

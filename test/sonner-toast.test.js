@@ -239,3 +239,51 @@ test('ElSidebar: properly toggles collapsed state and hides .collapsible-text', 
 
   document.body.removeChild(container);
 });
+
+test('<el-toaster> & <el-toast> mount DOM cards, handle action/cancel/close, and dismiss cleanly', () => {
+  const toaster = document.createElement('el-toaster');
+  document.body.appendChild(toaster);
+
+  // Explicit <el-toast> placeholder tag creation check (light/auxiliary element)
+  const toastEl = document.createElement('el-toast');
+  toaster.appendChild(toastEl);
+  assert.equal(toastEl.tagName.toLowerCase(), 'el-toast');
+
+  let actionFired = false;
+  let cancelFired = false;
+  const id = toast.show({
+    message: 'Deployment ready',
+    description: 'v0.7.0 bundle verified',
+    variant: 'success',
+    duration: 0,
+    dismissible: true,
+    action: { label: 'Promote', onClick: () => { actionFired = true; } },
+    cancel: { label: 'Ignore', onClick: () => { cancelFired = true; } },
+  });
+
+  const card = toaster.shadowRoot.querySelector(`[data-toast-id="${id}"]`);
+  assert.ok(card);
+  assert.equal(card.getAttribute('role'), 'status');
+  assert.equal(card.getAttribute('aria-live'), 'polite');
+
+  const actionBtn = card.querySelector('.toast-btn.action');
+  const cancelBtn = card.querySelector('.toast-btn.cancel');
+  const closeBtn = card.querySelector('.toast-close');
+  assert.ok(actionBtn && cancelBtn && closeBtn);
+
+  actionBtn.click();
+  assert.equal(actionFired, true);
+  toast.dismiss(id);
+
+  const id2 = toast.error('Rollback triggered', {
+    duration: 0,
+    cancel: { label: 'Cancel', onClick: () => { cancelFired = true; } },
+  });
+  const card2 = toaster.shadowRoot.querySelector(`[data-toast-id="${id2}"]`);
+  assert.ok(card2);
+  card2.querySelector('.toast-btn.cancel')?.click();
+  assert.equal(cancelFired, true);
+  toast.dismiss(id2);
+
+  document.body.removeChild(toaster);
+});

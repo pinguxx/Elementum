@@ -158,6 +158,10 @@ Selected highlights below — browse all **109 elements** interactively in the [
 
 * [examples/index.html](https://github.com/pinguxx/Elementum/blob/main/examples/index.html): Interactive component catalog with live prop editors and signal-reactive previews.
 
+* [starters/framework-comparison/README.md](https://github.com/pinguxx/Elementum/blob/main/starters/framework-comparison/README.md): **3-Way Framework Comparison (React vs. Vue 3 vs. Vanilla)** implementing the identical Team Directory app across all three stacks (`npm run bench:frameworks`).
+
+* [showcase.html](https://github.com/pinguxx/Elementum/blob/main/showcase.html): **Showcase & Starter Hub** linking all reference applications, starter templates (`npm run verify:starters`), and framework parity benchmarks.
+
 ## Headless Behaviors, Agent Runtime & Testing Contracts
 
 Beyond 109 ready-to-use styled Web Components (all supporting opt-in `unstyled` headless mode), Elementum exports three focused zero-dependency subpaths:

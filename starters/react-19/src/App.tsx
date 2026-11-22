@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-// Ambient JSX typings (React 19 passes props, attributes, and events natively)
-declare global {
+// React 19 JSX IntrinsicElements augmentation (passes props, attributes, and events natively)
+declare module 'react' {
   namespace JSX {
     interface IntrinsicElements {
       'el-card': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & { bordered?: boolean }, HTMLElement>;

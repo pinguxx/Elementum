@@ -131,27 +131,38 @@ export class ElCarousel extends Elementum {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 4px;
       position: absolute;
-      bottom: 12px;
+      bottom: 4px;
       left: 0;
       right: 0;
       z-index: 10;
     }
 
     .dot {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      min-height: 24px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .dot::after {
+      content: '';
       width: 8px;
       height: 8px;
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.45);
       border: 1px solid rgba(0, 0, 0, 0.15);
-      padding: 0;
-      cursor: pointer;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
       transition: width 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
     }
 
-    .dot.active {
+    .dot.active::after {
       width: 22px;
       background: var(--el-color-primary, #3b82f6);
       border-color: transparent;

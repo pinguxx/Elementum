@@ -132,3 +132,107 @@ test('MCP protocol compliance: initialize negotiation, notifications, isError, p
   const getRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/api/mcp', { method: 'GET' }));
   assert.equal(getRes.status, 405);
 });
+
+test('MCP separated component schema (variants, states, props, constraints vs examples) & strict validation', async () => {
+  const fs = await import('node:fs');
+  const { TOOLS, handleToolCall } = await import('../mcp/server.js');
+  const { createEdgeMcpHandler } = await import('../mcp/edge.js');
+
+  const manifest = JSON.parse(fs.readFileSync(new URL('../custom-elements.json', import.meta.url), 'utf8'));
+  const tokens = JSON.parse(fs.readFileSync(new URL('../tokens/figma-tokens.json', import.meta.url), 'utf8'));
+  const pkg = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+  const metadata = JSON.parse(fs.readFileSync(new URL('../mcp/component-metadata.json', import.meta.url), 'utf8'));
+
+  // Tool schema exposes section filter
+  const getDocTool = TOOLS.find((t) => t.name === 'get_component_doc');
+  assert.deepEqual(getDocTool.inputSchema.properties.section.enum, ['all', 'schema', 'examples']);
+
+  // 1. el-button: closed variant/size enums, disabled state, formAssociated constraint, separated examples
+  const btnDoc = handleToolCall('get_component_doc', { tag: 'el-button' });
+  assert.equal(btnDoc.tagName, 'el-button');
+  const variantSpec = btnDoc.variants.find((v) => v.name === 'variant');
+  assert.ok(variantSpec && variantSpec.allowedValues.includes('primary') && variantSpec.allowedValues.includes('danger'));
+  assert.ok(btnDoc.states.some((s) => s.name === 'disabled' && s.type === 'boolean'));
+  assert.ok(btnDoc.props.some((p) => p.name === 'label'));
+  assert.equal(btnDoc.constraints.formAssociated, true);
+  assert.equal(btnDoc.constraints.requiredParent, null);
+  assert.ok(Array.isArray(btnDoc.examples) && btnDoc.examples.length > 0);
+
+  // 2. el-table: complex signal/JS properties tracked explicitly
+  const tableDoc = handleToolCall('get_component_doc', { tag: 'el-table' });
+  assert.ok(tableDoc.constraints.jsOnlyProperties.includes('columns'));
+  assert.ok(tableDoc.constraints.jsOnlyProperties.includes('data'));
+  assert.ok(tableDoc.constraints.jsOnlyProperties.includes('selected'));
+
+  // 3. el-tab: composition constraint requiredParent === 'el-tabs'
+  const tabDoc = handleToolCall('get_component_doc', { tag: 'el-tab' });
+  assert.equal(tabDoc.constraints.requiredParent, 'el-tabs');
+
+  // 4. section filter cleanly isolates schema vs examples
+  const schemaOnly = handleToolCall('get_component_doc', { tag: 'el-button', section: 'schema' });
+  assert.ok(Array.isArray(schemaOnly.variants) && schemaOnly.constraints);
+  assert.equal('examples' in schemaOnly, false);
+
+  const examplesOnly = handleToolCall('get_component_doc', { tag: 'el-button', section: 'examples' });
+  assert.ok(Array.isArray(examplesOnly.examples) && examplesOnly.examples.length > 0);
+  assert.equal('variants' in examplesOnly, false);
+  assert.equal('states' in examplesOnly, false);
+
+  const badSection = handleToolCall('get_component_doc', { tag: 'el-button', section: 'unknown' });
+  assert.ok(typeof badSection.error === 'string');
+
+  // 5. validate_component_usage enforces closed variant enums, parent composition, and JS-only props
+  const badVariant = handleToolCall('validate_component_usage', {
+    markup: '<el-button variant="brand">Save</el-button>',
+  });
+  assert.equal(badVariant.valid, false);
+  assert.ok(badVariant.issues.some((i) => i.severity === 'error' && i.attribute === 'variant' && i.value === 'brand'));
+
+  const orphanTab = handleToolCall('validate_component_usage', {
+    markup: '<el-tab label="One" value="one">Body</el-tab>',
+  });
+  assert.ok(orphanTab.issues.some((i) => i.severity === 'warning' && i.requiredParent === 'el-tabs'));
+
+  const jsOnlyTable = handleToolCall('validate_component_usage', {
+    markup: '<el-table selected="[1]" data="[object Object]"></el-table>',
+  });
+  assert.ok(jsOnlyTable.issues.some((i) => i.jsProperty === 'selected'));
+  assert.ok(jsOnlyTable.issues.some((i) => i.jsProperty === 'data'));
+
+  const validUsage = handleToolCall('validate_component_usage', {
+    markup: '<el-tabs value="one"><el-tab label="One" value="one"><el-button variant="primary">OK</el-button></el-tab></el-tabs>',
+  });
+  assert.equal(validUsage.valid, true);
+  assert.deepEqual(validUsage.issues, []);
+
+  // 6. Edge handler forwards metadata identically
+  const edgeHandler = createEdgeMcpHandler({ manifest, tokens, pkg, metadata });
+  const edgeRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/api/mcp', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      id: 42,
+      method: 'tools/call',
+      params: { name: 'get_component_doc', arguments: { tag: 'el-button', section: 'schema' } },
+    }),
+  }));
+  assert.equal(edgeRes.status, 200);
+  const edgeJson = await edgeRes.json();
+  const edgeDoc = JSON.parse(edgeJson.result.content[0].text);
+  assert.ok(Array.isArray(edgeDoc.variants) && edgeDoc.constraints?.formAssociated === true);
+  assert.equal('examples' in edgeDoc, false);
+
+  // 7. All 109 tags in custom-elements.json have complete separated metadata
+  const allDecls = manifest.modules.flatMap((m) => m.declarations || []);
+  assert.equal(allDecls.length, 109);
+  for (const decl of allDecls) {
+    assert.ok(metadata[decl.tagName], `Missing metadata for ${decl.tagName}`);
+    const doc = handleToolCall('get_component_doc', { tag: decl.tagName });
+    assert.ok(Array.isArray(doc.variants), `${decl.tagName} missing variants`);
+    assert.ok(Array.isArray(doc.states), `${decl.tagName} missing states`);
+    assert.ok(Array.isArray(doc.props), `${decl.tagName} missing props`);
+    assert.ok(doc.constraints && typeof doc.constraints === 'object', `${decl.tagName} missing constraints`);
+    assert.ok(Array.isArray(doc.examples), `${decl.tagName} missing examples`);
+  }
+});

@@ -23,8 +23,8 @@ function jsonResponse(body, status = 200) {
   });
 }
 
-export function createEdgeMcpHandler({ manifest, tokens, pkg }) {
-  const { handleJsonRpcLine } = createMcpHandler({ manifest, tokens, pkg });
+export function createEdgeMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
+  const { handleJsonRpcLine } = createMcpHandler({ manifest, tokens, pkg, metadata });
 
   return async function handler(request) {
     if (request.method === 'OPTIONS' || request.method === 'DELETE') {

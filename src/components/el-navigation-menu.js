@@ -185,7 +185,9 @@ export class ElNavigationMenuItem extends Elementum {
   };
 
   #onDocClick = (e) => {
-    if (!this.contains(e.target)) {
+    const path = typeof e.composedPath === 'function' ? e.composedPath() : null;
+    const inside = path?.length ? path.includes(this) : this.contains(e.target);
+    if (!inside) {
       this.closeMenu();
     }
   };
@@ -200,16 +202,16 @@ export class ElNavigationMenuItem extends Elementum {
     clearTimeout(this.#closeTimer);
     this.open.value = true;
     this.setAttribute('open', '');
-    const trigger = this.querySelector('el-navigation-menu-trigger');
-    if (trigger) trigger.setAttribute('aria-expanded', 'true');
+    const btn = this.querySelector('el-navigation-menu-trigger')?.shadowRoot?.querySelector('button');
+    if (btn) btn.setAttribute('aria-expanded', 'true');
   }
 
   closeMenu() {
     clearTimeout(this.#closeTimer);
     this.open.value = false;
     this.removeAttribute('open');
-    const trigger = this.querySelector('el-navigation-menu-trigger');
-    if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    const btn = this.querySelector('el-navigation-menu-trigger')?.shadowRoot?.querySelector('button');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
   }
 
   toggleMenu() {
@@ -287,17 +289,13 @@ export class ElNavigationMenuTrigger extends Elementum {
     }
   `;
 
-  connected() {
-    const btn = this.shadowRoot.querySelector('button');
-    btn?.addEventListener('click', () => {
-      const parent = this.closest('el-navigation-menu-item');
-      if (parent) parent.toggleMenu();
-    });
-  }
+  #onClick = () => {
+    this.closest('el-navigation-menu-item')?.toggleMenu();
+  };
 
   render() {
     return html`
-      <button type="button" aria-haspopup="true" aria-expanded="false">
+      <button type="button" aria-haspopup="true" aria-expanded="false" @click=${this.#onClick}>
         <slot></slot>
         <span class="chevron" aria-hidden="true">▼</span>
       </button>

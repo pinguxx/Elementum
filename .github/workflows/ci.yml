@@ -104,6 +104,33 @@ jobs:
       - name: Verify @wcomp/elementum/react against real React ${{ matrix.react-version }}
         run: node tools/verify-react.js --react=${{ matrix.react-version }}
 
+  verify-starters:
+    name: Build Starter (${{ matrix.starter }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        starter:
+          - react-19
+          - vue-3
+          - svelte-5
+          - framework-comparison/react
+          - framework-comparison/vue
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js 22.x
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22.x
+
+      - name: Install dependencies (strict lockfile)
+        run: npm ci
+
+      - name: Verify starter "${{ matrix.starter }}" installs & builds cleanly
+        run: node tools/verify-starters.js --starter=${{ matrix.starter }}
+
   browser-e2e:
     name: Real Browser & axe-core E2E (Chromium, Firefox, WebKit)
     runs-on: ubuntu-24.04
