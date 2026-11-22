@@ -19,7 +19,7 @@ export default function App() {
   return (
     <div style={{ padding: '48px 16px', maxWidth: '500px', margin: '0 auto' }}>
       <el-card bordered>
-        <h2 slot="header" style="margin: 0; font-size: 1.25rem;">React 19 Custom Elements Integration</h2>
+        <h2 slot="header" style={{ margin: 0, fontSize: '1.25rem' }}>React 19 Custom Elements Integration</h2>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px' }}>
           <el-input 
