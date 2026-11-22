@@ -58,8 +58,18 @@ function inferCustomEventName(propName) {
 export function createElementumReactComponent(React, tagName, eventMap = {}) {
   const resolvedEventMap = { ...DEFAULT_CUSTOM_EVENTS, ...eventMap };
 
+  const useIsomorphicLayoutEffect =
+    typeof window !== 'undefined' && typeof React.useLayoutEffect === 'function'
+      ? React.useLayoutEffect
+      : React.useEffect;
+
   const Component = React.forwardRef(function ElementumWrapper(props, forwardedRef) {
     const innerRef = React.useRef(null);
+    const appliedObjectKeysRef = React.useRef(null);
+    const initialDefaultsRef = React.useRef(null);
+    if (!appliedObjectKeysRef.current) appliedObjectKeysRef.current = new Set();
+    if (!initialDefaultsRef.current) initialDefaultsRef.current = new Map();
+
     const { children, className, style, ...rest } = props || {};
 
     const elementProps = {};
@@ -107,17 +117,41 @@ export function createElementumReactComponent(React, tagName, eventMap = {}) {
       assignRef(forwardedRef, node);
     };
 
-    // Apply object/array/function properties directly onto the element instance
-    React.useEffect(() => {
+    // Apply object/array/function properties synchronously before paint (useLayoutEffect in browser,
+    // useEffect in SSR) and cleanly reset any previously applied keys that were removed from props.
+    useIsomorphicLayoutEffect(() => {
       const el = innerRef.current;
       if (!el) return;
+
+      const appliedKeys = appliedObjectKeysRef.current;
+      const initialDefaults = initialDefaultsRef.current;
+      const nextKeys = new Set();
+
       for (const [key, val] of objectProps) {
+        if (!initialDefaults.has(key)) {
+          const initialVal = isSignalLike(el[key]) ? el[key].peek() : el[key];
+          initialDefaults.set(key, initialVal);
+        }
         if (isSignalLike(el[key])) {
           el[key].value = val;
         } else {
           el[key] = val;
         }
+        nextKeys.add(key);
       }
+
+      for (const prevKey of appliedKeys) {
+        if (!nextKeys.has(prevKey)) {
+          const fallback = initialDefaults.get(prevKey);
+          if (isSignalLike(el[prevKey])) {
+            el[prevKey].value = fallback;
+          } else {
+            el[prevKey] = fallback;
+          }
+        }
+      }
+
+      appliedObjectKeysRef.current = nextKeys;
     });
 
     // Attach CustomEvent / non-synthetic DOM listeners (React 18 & 19 parity).

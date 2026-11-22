@@ -7,8 +7,10 @@ import '../src/index.js';
 
 function createMiniReact() {
   let cleanups = [];
+  let layoutEffects = [];
   let effects = [];
-  let refs = [];
+  let hookRefs = [];
+  let refCursor = 0;
 
   const React = {
     forwardRef(renderFn) {
@@ -17,9 +19,14 @@ function createMiniReact() {
       };
     },
     useRef(initialValue) {
-      const box = { current: initialValue };
-      refs.push(box);
-      return box;
+      const idx = refCursor++;
+      if (!hookRefs[idx]) {
+        hookRefs[idx] = { current: initialValue };
+      }
+      return hookRefs[idx];
+    },
+    useLayoutEffect(effectFn) {
+      layoutEffects.push(effectFn);
     },
     useEffect(effectFn) {
       effects.push(effectFn);
@@ -42,22 +49,49 @@ function createMiniReact() {
       return { el, refCb: props?.ref };
     },
     mount(WrapperComponent, props) {
+      layoutEffects = [];
       effects = [];
       cleanups = [];
+      hookRefs = [];
+      refCursor = 0;
       const rendered = WrapperComponent(props);
       document.body.appendChild(rendered.el);
       if (typeof rendered.refCb === 'function') rendered.refCb(rendered.el);
+      for (const lef of layoutEffects) {
+        const cleanup = lef();
+        if (typeof cleanup === 'function') cleanups.push(cleanup);
+      }
       for (const ef of effects) {
         const cleanup = ef();
         if (typeof cleanup === 'function') cleanups.push(cleanup);
       }
       return rendered.el;
     },
+    rerender(WrapperComponent, existingEl, props) {
+      for (const cleanup of cleanups) cleanup();
+      cleanups = [];
+      layoutEffects = [];
+      effects = [];
+      refCursor = 0;
+      const rendered = WrapperComponent(props);
+      if (typeof rendered.refCb === 'function') rendered.refCb(existingEl);
+      for (const lef of layoutEffects) {
+        const cleanup = lef();
+        if (typeof cleanup === 'function') cleanups.push(cleanup);
+      }
+      for (const ef of effects) {
+        const cleanup = ef();
+        if (typeof cleanup === 'function') cleanups.push(cleanup);
+      }
+      return existingEl;
+    },
     unmount(el) {
       for (const cleanup of cleanups) cleanup();
       cleanups = [];
+      layoutEffects = [];
       effects = [];
-      refs = [];
+      hookRefs = [];
+      refCursor = 0;
       el?.remove();
     },
   };
@@ -65,7 +99,7 @@ function createMiniReact() {
   return React;
 }
 
-test('@wcomp/elementum/react runtime wires refs, className, booleans, object props, and CustomEvents', () => {
+test('@wcomp/elementum/react runtime wires refs, className, booleans, object props, prop removal, and CustomEvents', () => {
   const React = createMiniReact();
 
   const ElBtn = createElementumReactComponent(React, 'el-button');
@@ -110,6 +144,7 @@ test('@wcomp/elementum/react runtime wires refs, className, booleans, object pro
     selectable: true,
     columns: cols,
     data: rows,
+    customMeta: { env: 'prod' },
     onSelectionChange: (e) => { selectionDetail = e.detail; },
     onCustomPing: () => { customPingCount++; },
   });
@@ -117,6 +152,19 @@ test('@wcomp/elementum/react runtime wires refs, className, booleans, object pro
   assert.equal(cbNode, tblEl);
   assert.deepEqual(tblEl.columns.value, cols);
   assert.deepEqual(tblEl.data.value, rows);
+  assert.deepEqual(tblEl.customMeta, { env: 'prod' });
+
+  // Removing object/array props resets signal & plain properties back to initial defaults
+  React.rerender(ElTbl, tblEl, {
+    ref: (node) => { cbNode = node; },
+    selectable: true,
+    columns: cols,
+    onSelectionChange: (e) => { selectionDetail = e.detail; },
+    onCustomPing: () => { customPingCount++; },
+  });
+  assert.deepEqual(tblEl.columns.value, cols);
+  assert.deepEqual(tblEl.data.value, [], 'Removed signal prop `data` must reset to initial empty array');
+  assert.equal(tblEl.customMeta, undefined, 'Removed plain object prop must reset to undefined');
 
   tblEl.dispatchEvent(new CustomEvent('selectionchange', { detail: { selected: [0] } }));
   tblEl.dispatchEvent(new CustomEvent('custom-ping'));

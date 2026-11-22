@@ -68,6 +68,9 @@ export class ElBreadcrumbItem extends Elementum {
   `;
 
   connected() {
+    if (!this.hasAttribute('role')) {
+      this.setAttribute('role', 'listitem');
+    }
     this.href.value = this.getAttribute('href') || '';
     this.current.value =
       (this.hasAttribute('current') && this.getAttribute('current') !== 'false') ||
@@ -185,9 +188,9 @@ export class ElBreadcrumb extends Elementum {
   render() {
     return html`
       <nav aria-label="Breadcrumb" part="nav">
-        <ol class="breadcrumb-list" part="list">
+        <div role="list" class="breadcrumb-list" part="list">
           <slot></slot>
-        </ol>
+        </div>
       </nav>
     `;
   }

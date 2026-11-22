@@ -198,7 +198,7 @@ try {
   let submittedFormData = null;
   let altClicks = 0;
 
-  function TestApp({ enableAltHandler, label, statusText }) {
+  function TestApp({ enableAltHandler, label, statusText, includeTableData = true }) {
     return React.createElement(
       React.StrictMode,
       null,
@@ -225,7 +225,10 @@ try {
         React.createElement(ElTabs, {
           onTabChange: (e) => { tabEvents.push(e.detail?.tab); },
         }),
-        React.createElement(ElTable, { columns: cols, data: rows }),
+        React.createElement(
+          ElTable,
+          includeTableData ? { columns: cols, data: rows } : { columns: cols }
+        ),
         React.createElement('span', { id: 'status-text' }, statusText)
       )
     );
@@ -240,12 +243,19 @@ try {
   assert.ok(inputRef.current instanceof win.HTMLElement, 'Forwarded ref must point to HTMLElement');
   assert.equal(inputRef.current.tagName.toLowerCase(), 'el-input');
 
-  // Complex object/array props assigned directly onto instance (not serialized to attributes)
+  // Complex object/array props assigned synchronously via useLayoutEffect (not serialized to attributes)
   const tblEl = container.querySelector('el-table');
   assert.deepEqual(tblEl.columns.value, cols);
   assert.deepEqual(tblEl.data.value, rows);
   assert.equal(tblEl.hasAttribute('columns'), false);
   assert.equal(tblEl.hasAttribute('data'), false);
+
+  // Removing data prop resets stale signal value back to initial empty array
+  await act(async () => {
+    root.render(React.createElement(TestApp, { enableAltHandler: true, label: 'Save', statusText: 'cleared', includeTableData: false }));
+  });
+  assert.deepEqual(tblEl.data.value, [], 'Removing data prop must reset el-table.data signal');
+  assert.deepEqual(tblEl.columns.value, cols, 'Retained columns prop must remain intact');
 
   // StrictMode double-effect check: dispatching event must invoke listener ONCE
   await act(async () => {
@@ -301,7 +311,7 @@ try {
   assert.deepEqual(tabEvents, ['security'], 'Listener leaked after React unmount on <el-tabs>');
 
   assert.equal(warnings.length, 0, 'Expected zero React console errors/warnings: ' + JSON.stringify(warnings));
-  console.log('✔ [React ' + React.version + '] StrictMode, refs, object props, startTransition, ElForm & unmount passed (0 warnings)');
+  console.log('✔ [React ' + React.version + '] StrictMode, refs, object props + removal, startTransition, ElForm & unmount passed (0 warnings)');
 } finally {
   console.error = origErr;
   console.warn = origWarn;
@@ -331,6 +341,8 @@ export function ConsumerExample() {
         name="username"
         value="ada"
         required
+        aria-label="Username"
+        data-testid="username-input"
         onChange={(e) => {
           void e.detail;
         }}
@@ -338,8 +350,10 @@ export function ConsumerExample() {
       <ElButton variant="primary" disabled={false} className="submit-btn">
         Submit
       </ElButton>
+      {/* @ts-expect-error Unknown prop must be rejected under strict TypeScript */}
+      <ElButton nonExistentProp="nope">Invalid</ElButton>
       <ElTabs onTabChange={(e) => { void e.detail; }} />
-      <ElTable columns={columns} data={data} />
+      <ElTable columns={columns} data={data} selectable />
     </form>
   );
 }

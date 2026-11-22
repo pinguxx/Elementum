@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team Directory (Vanilla + Elementum)</title>
+  <link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />
+</head>
+<body style="margin: 0; font-family: system-ui, sans-serif;">
+  <main style="max-width: 820px; margin: 32px auto; padding: 0 16px;">
+    <el-toaster></el-toaster>
+    <el-card bordered>
+      <div slot="header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <h2 style="margin: 0;">Team Directory (Vanilla)</h2>
+          <el-badge id="count-badge" variant="primary">3 members</el-badge>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <el-button id="open-btn" variant="primary">Add Member</el-button>
+          <el-theme-switch></el-theme-switch>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+        <el-input id="search" placeholder="Filter by name..."></el-input>
+        <el-select id="role-filter" value="All">
+          <option value="All">All Roles</option>
+          <option value="Engineer">Engineer</option>
+          <option value="Architect">Architect</option>
+          <option value="Researcher">Researcher</option>
+        </el-select>
+      </div>
+
+      <el-table id="team-table" selectable></el-table>
+    </el-card>
+
+    <el-dialog id="invite-dialog">
+      <h3 slot="header" style="margin: 0;">Invite Team Member</h3>
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <el-input id="new-name" placeholder="Full name"></el-input>
+        <el-select id="new-role" value="Engineer">
+          <option value="Engineer">Engineer</option>
+          <option value="Architect">Architect</option>
+          <option value="Researcher">Researcher</option>
+        </el-select>
+      </div>
+      <div slot="footer" style="display: flex; gap: 8px; justify-content: flex-end;">
+        <el-button id="cancel-btn" variant="secondary">Cancel</el-button>
+        <el-button id="invite-btn" variant="primary">Invite</el-button>
+      </div>
+    </el-dialog>
+  </main>
+
+  <script type="module">
+    import { signal, computed, effect, toast } from 'https://unpkg.com/@wcomp/elementum';
+
+    const members = signal([
+      { name: 'Ada Lovelace', role: 'Engineer', status: 'Active' },
+      { name: 'Grace Hopper', role: 'Architect', status: 'Active' },
+      { name: 'Alan Turing', role: 'Researcher', status: 'Invited' },
+    ]);
+    const query = signal('');
+    const roleFilter = signal('All');
+
+    const filtered = computed(() =>
+      members.value.filter(
+        (m) =>
+          (roleFilter.value === 'All' || m.role === roleFilter.value) &&
+          m.name.toLowerCase().includes(query.value.trim().toLowerCase())
+      )
+    );
+
+    const table = document.getElementById('team-table');
+    const badge = document.getElementById('count-badge');
+    const dialog = document.getElementById('invite-dialog');
+    const newName = document.getElementById('new-name');
+    const newRole = document.getElementById('new-role');
+
+    table.columns.value = [
+      { key: 'name', label: 'Name', sortable: true },
+      { key: 'role', label: 'Role', sortable: true },
+      { key: 'status', label: 'Status', sortable: true },
+    ];
+
+    effect(() => {
+      table.data.value = filtered.value;
+      badge.textContent = `${filtered.value.length} members`;
+    });
+
+    document.getElementById('search').addEventListener('input', (e) => { query.value = e.detail?.value ?? ''; });
+    document.getElementById('role-filter').addEventListener('change', (e) => { roleFilter.value = e.detail?.value ?? 'All'; });
+    document.getElementById('open-btn').addEventListener('click', () => { dialog.open = true; });
+    document.getElementById('cancel-btn').addEventListener('click', () => { dialog.open = false; });
+    document.getElementById('invite-btn').addEventListener('click', () => {
+      const name = (newName.value.value || '').trim();
+      if (!name) return;
+      const role = newRole.value.value || 'Engineer';
+      members.value = [...members.value, { name, role, status: 'Active' }];
+      toast.success(`Added ${name} (${role})`);
+      newName.value.value = '';
+      dialog.open = false;
+    });
+  </script>
+</body>
+</html>

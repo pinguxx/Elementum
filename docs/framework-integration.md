@@ -167,5 +167,8 @@ Tested, minimal copy-paste starter templates are available in the repository und
 - [**Vanilla HTML (Zero-Build CDN)**](../starters/vanilla-html)
 - [**Next.js App Router + DSD SSR**](../starters/next-app-router)
 - [**React 19 + TypeScript + Vite**](../starters/react-19)
+- [**Vue 3 + Vite**](../starters/vue-3)
+- [**Svelte 5 + Vite**](../starters/svelte-5)
 - [**AI Chat UI**](../starters/ai-chat)
+- [**3-Way Framework Comparison (React vs. Vue 3 vs. Vanilla)**](../starters/framework-comparison)
 

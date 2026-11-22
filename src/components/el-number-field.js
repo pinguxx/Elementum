@@ -470,6 +470,7 @@ export class ElNumberField extends Elementum {
             inputmode="decimal"
             part="input"
             role="spinbutton"
+            aria-label=${() => this.getAttribute('aria-label') || this.getAttribute('label') || this.getAttribute('name') || 'Number'}
             aria-valuenow=${() => this.value.value}
             aria-valuemin=${() => (this.min.value !== null ? this.min.value : null)}
             aria-valuemax=${() => (this.max.value !== null ? this.max.value : null)}

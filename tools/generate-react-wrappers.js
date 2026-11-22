@@ -61,11 +61,15 @@ for (const decl of declarations) {
   const eventLines = eventEntries.map(
     ([propName]) => `  ${propName}?: (event: CustomEvent<any> & Event) => void;`
   );
-  const propsBody = [...attrLines, ...eventLines].join('\n');
+  const attrBody = attrLines.join('\n');
+  const eventBody = eventLines.join('\n');
   const propsInterface = `${decl.name}Props`;
 
+  const attrsType = attrBody ? `{\n${attrBody}\n}` : '{}';
+  const eventsType = eventBody ? `{\n${eventBody}\n}` : '{}';
+
   dtsBlocks.push(
-    `export interface ${propsInterface} extends ElementumReactBaseProps<ElementFor<'${decl.tagName}'>> {\n${propsBody ? propsBody + '\n' : ''}}\nexport declare const ${decl.name}: ElementumReactComponent<${propsInterface}>;`
+    `export type ${propsInterface} = ElementumComponentProps<ElementFor<'${decl.tagName}'>, ${attrsType}, ${eventsType}>;\nexport declare const ${decl.name}: ElementumReactComponent<${propsInterface}>;`
   );
 }
 
@@ -100,26 +104,70 @@ export type ElementFor<Tag extends string> = Tag extends keyof HTMLElementTagNam
 
 export type ReactRef<T> = ((instance: T | null) => void) | { current: T | null } | null;
 
+type UnwrapSignal<T> = T extends { value: infer V; peek: () => any } ? V : never;
+
+type SignalPropKeys<E> = {
+  [K in keyof E]-?: E[K] extends { value: any; peek: () => any } ? K : never;
+}[keyof E];
+
+export type ElementSignalProps<E> = {
+  [K in SignalPropKeys<E>]?: UnwrapSignal<E[K]>;
+};
+
 export interface ElementumReactBaseProps<E extends HTMLElement = HTMLElement> {
+  key?: string | number | null;
   id?: string;
+  name?: string;
+  form?: string;
   className?: string;
   style?: string | Record<string, string | number | undefined>;
   slot?: string;
+  part?: string;
+  exportparts?: string;
   role?: string;
   title?: string;
   tabIndex?: number;
   hidden?: boolean;
+  unstyled?: boolean;
+  draggable?: boolean;
+  spellCheck?: boolean;
   dir?: 'ltr' | 'rtl' | 'auto';
   lang?: string;
   children?: unknown;
   ref?: ReactRef<E>;
+  [dataAttr: \`data-\${string}\`]: string | number | boolean | undefined;
+  [ariaAttr: \`aria-\${string}\`]: string | number | boolean | undefined;
   onChange?: (event: CustomEvent<any> & Event) => void;
   onInput?: (event: CustomEvent<any> & Event) => void;
   onSelect?: (event: CustomEvent<any> & Event) => void;
   onClose?: (event: CustomEvent<any> & Event) => void;
   onClick?: (event: MouseEvent) => void;
-  [prop: string]: any;
+  onDoubleClick?: (event: MouseEvent) => void;
+  onFocus?: (event: FocusEvent) => void;
+  onBlur?: (event: FocusEvent) => void;
+  onKeyDown?: (event: KeyboardEvent) => void;
+  onKeyUp?: (event: KeyboardEvent) => void;
+  onKeyPress?: (event: KeyboardEvent) => void;
+  onMouseDown?: (event: MouseEvent) => void;
+  onMouseUp?: (event: MouseEvent) => void;
+  onMouseEnter?: (event: MouseEvent) => void;
+  onMouseLeave?: (event: MouseEvent) => void;
+  onPointerDown?: (event: PointerEvent) => void;
+  onPointerUp?: (event: PointerEvent) => void;
+  onSubmit?: (event: Event) => void;
+  onReset?: (event: Event) => void;
 }
+
+export type ElementumComponentProps<
+  E extends HTMLElement,
+  Attrs extends Record<string, any> = {},
+  Events extends Record<string, any> = {}
+> = Omit<ElementumReactBaseProps<E>, keyof Attrs | keyof Events> &
+  Omit<ElementSignalProps<E>, keyof Attrs | keyof Events> & {
+    [K in keyof Attrs]?: K extends keyof ElementSignalProps<E>
+      ? Attrs[K] | ElementSignalProps<E>[K]
+      : Attrs[K];
+  } & Events;
 
 export interface ElementumReactComponent<P = ElementumReactBaseProps> {
   (props: P): any;
