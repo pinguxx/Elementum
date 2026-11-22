@@ -61,10 +61,17 @@ test('MCP server responds to tools/list and tools/call', async () => {
 });
 
 test('MCP protocol compliance: initialize negotiation, notifications, isError, parse error, batch & Edge handler', async () => {
+  const fs = await import('node:fs');
   const { handleJsonRpcLine } = await import('../mcp/server.js');
-  const { default: edgeHandler, config } = await import('../api/mcp.js');
+  const { createEdgeMcpHandler } = await import('../mcp/edge.js');
 
-  assert.equal(config.runtime, 'edge');
+  const manifest = JSON.parse(fs.readFileSync(new URL('../custom-elements.json', import.meta.url), 'utf8'));
+  const tokens = JSON.parse(fs.readFileSync(new URL('../tokens/figma-tokens.json', import.meta.url), 'utf8'));
+  const pkg = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+  const edgeHandler = createEdgeMcpHandler({ manifest, tokens, pkg });
+  const apiSrc = fs.readFileSync(new URL('../api/mcp.js', import.meta.url), 'utf8');
+  assert.ok(apiSrc.includes("runtime: 'edge'"), 'api/mcp.js must declare Vercel Edge runtime');
+  assert.ok(!apiSrc.includes(' with {'), 'api/mcp.js must not use ES2025 import attributes unsupported by Vercel esbuild');
 
   // 1. Negotiates modern protocolVersion & includes instructions
   const init2025 = handleJsonRpcLine(JSON.stringify({
