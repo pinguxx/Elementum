@@ -4,11 +4,11 @@ This document defines `@wcomp/elementum`'s compatibility promises, current pre-1
 
 ---
 
-## 1. Current Maturity Model (`0.6.x`)
+## 1. Current Maturity Model (`0.7.x`)
 
 Elementum explicitly distinguishes **verified evidence** from roadmap goals rather than treating every component uniformly. Live automated audit counts are maintained in [`QUALITY.md`](../QUALITY.md) via `npm run quality:report`.
 
-At `0.6.x`, component status is tracked across three evidence-backed tiers:
+At `0.7.x`, component status is tracked across three evidence-backed tiers:
 - **Production Verified**: Schema checked against `custom-elements.json` + unit instantiated + dedicated `test()` coverage + real-browser Playwright interaction test + `@axe-core/playwright` WCAG 2.2 AA audit.
 - **Stable**: Schema checked + unit instantiated + dedicated `test()` coverage.
 - **Experimental**: Passes automated catalog schema & mount contracts, pending dedicated interactive specs and Playwright E2E coverage.

@@ -2,12 +2,12 @@
 
 ## 1. Supported Versions
 
-Security fixes are released on the active `0.6.x` line (leading to `1.0.0`):
+Security fixes are released on the active `0.7.x` line (leading to `1.0.0`):
 
 | Version | Supported | Notes |
 | :--- | :---: | :--- |
-| `0.6.x` | ✅ Yes | Active security & stability updates |
-| `< 0.6.0` | ❌ No | Upgrade to the latest `0.6.x` release |
+| `0.7.x` | ✅ Yes | Active security & stability updates |
+| `< 0.7.0` | ❌ No | Upgrade to the latest `0.7.x` release |
 
 ---
 

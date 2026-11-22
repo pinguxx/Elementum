@@ -15,7 +15,7 @@
 
 [**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (109 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr)
 
-## 🧪 Verification & Browser Matrix (Beta — `v0.6.0`)
+## 🧪 Verification & Browser Matrix (Beta — `v0.7.0`)
 
 One command verifies everything end-to-end: `npm run verify:all` (see [QUALITY.md](https://github.com/pinguxx/Elementum/blob/main/QUALITY.md) for the auto-generated per-component matrix).
 

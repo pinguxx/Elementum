@@ -4,6 +4,27 @@ All notable changes to `@wcomp/elementum` are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] — 2026-11-21 ("Hardened React Wrappers, Multi-Framework Starters & 87/109 Production Verified")
+
+### Added
+- **Multi-Framework Starter Templates & 3-Way Comparison (`starters/`)**: Added copy-paste, StackBlitz-ready starter projects for Vanilla HTML CDN (`starters/vanilla-html`), Next.js App Router + DSD SSR (`starters/next-app-router`), React 19 + TypeScript (`starters/react-19`), Vue 3 (`starters/vue-3`), Svelte 5 (`starters/svelte-5`), and AI Chat UI (`starters/ai-chat`), plus a 3-way measured Team Directory comparison across React, Vue 3, and Vanilla (`starters/framework-comparison`).
+- **Ergonomic `renderComponentToDSD` Options Overload (`src/ssr.js`)**: Added 2-argument `renderComponentToDSD(tagName, { children, ...attributes })` support alongside the existing 4-argument class signature, with unit coverage in `test/ssr-dsd.test.js`.
+- **Expanded Real-Browser E2E & WCAG 2.2 AA Suite (`e2e/core-and-ai-suite.spec.js`)**: Added Playwright + `@axe-core/playwright` audits across core form controls, navigation/overlays, data display, the full AI specialist suite, and live browser execution of `examples/ledgerflow.html`, raising `QUALITY.md` Production Verified coverage from **42 / 109** to **87 / 109 (79.8%)**.
+
+### Changed
+- **Hardened `@wcomp/elementum/react` Runtime & Strict TypeScript (`src/react/runtime.js`, `tools/generate-react-wrappers.js`, `src/react/index.d.ts`)**:
+  - Switched complex object/array property sync to isomorphic `useLayoutEffect` (pre-paint in browser, SSR-safe in Node.js with zero warnings).
+  - Tracked applied object-prop keys and initial element defaults so removing a React prop cleanly resets stale signals and properties.
+  - Removed loose `[prop: string]: any;` from `ElementumReactBaseProps`, added `data-*`, `aria-*`, FACE (`name`, `form`), and standard DOM event types, and derived unwrapped `Signal<T>` component props automatically (`ElementSignalProps<E>`).
+  - Verified against real React 18 & React 19 consumers in `tools/verify-react.js` including prop removal and `@ts-expect-error` excess-property rejection.
+
+### Fixed
+- **`<el-toaster>` Empty-Viewport Click Interception (`src/components/el-toast.js`)**: Set `pointer-events: none` on `.toaster-viewport` and `.toast-list` (preserving `pointer-events: auto` on `.toast-card`) so empty toasters never intercept clicks on bottom-right page elements.
+- **WCAG 2.2 AA Accessibility Fixes (`src/components/el-breadcrumb.js`, `src/components/el-rating.js`, `src/components/el-number-field.js`)**:
+  - Added `role="list"` / `role="listitem"` semantics to `<el-breadcrumb>` and `<el-breadcrumb-item>` (WCAG 1.3.1).
+  - Removed nested interactive buttons inside `<el-rating role="slider">` to resolve WCAG 2.5.8 target-size obscuration.
+  - Forwarded accessible `aria-label` to the inner `role="spinbutton"` input in `<el-number-field>`.
+
 ## [0.6.0] — 2026-11-21 ("React Wrappers, Core Hardening & Production Readiness")
 
 ### Added
