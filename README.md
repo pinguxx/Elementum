@@ -13,7 +13,7 @@
 | ----- | ----- | ----- | ----- | ----- | 
 | **109 Custom Elements** | **0 Runtime Deps** | **2.19 KB** | **WCAG 2.2 AA** (@axe-core/playwright) | **MIT** | 
 
-[**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (109 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr)
+[**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (109 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr) · [**Deep Dive (Dev.to)**](https://dev.to/pinguxx/elementum-an-ai-native-ui-platform-with-built-in-mcp-agent-runtime-109-zero-dep-web-components-9oi)
 
 ## 🧪 Verification & Browser Matrix (Beta — `v0.7.0`)
 
