@@ -61,6 +61,7 @@
     "verify:starters": "node tools/verify-starters.js",
     "bench:frameworks": "node tools/bench-frameworks.js",
     "quality:report": "node tools/generate-quality-report.js",
+    "audits:report": "node tools/generate-audits.js",
     "check:release": "node tools/check-release-sync.js",
     "check:size": "node tools/check-size.js",
     "check:size:update": "node tools/check-size.js --update",

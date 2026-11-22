@@ -29,7 +29,7 @@
   "remotes": [
     {
       "type": "streamable-http",
-      "url": "https://elementum-sage.vercel.app/api/mcp"
+      "url": "https://elementum-sage.vercel.app/mcp"
     }
   ]
 }

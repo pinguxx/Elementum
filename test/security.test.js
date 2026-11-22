@@ -137,6 +137,7 @@ test('Security 6: MCP server supports ping, readOnly annotations on all 10 tools
   assert.match(pkg.version, /^\d+\.\d+\.\d+/);
   assert.equal(srv.version, pkg.version);
   assert.equal(srv.packages?.[0]?.version, pkg.version);
+  assert.equal(srv.remotes?.[0]?.url, 'https://elementum-sage.vercel.app/mcp');
   assert.deepEqual(srv.icons?.[0], {
     src: 'https://elementum-sage.vercel.app/icon.png',
     mimeType: 'image/png',

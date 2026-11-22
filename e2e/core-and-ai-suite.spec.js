@@ -7,6 +7,8 @@ test.describe('Core Forms, Navigation, Data Display, AI Suite & LedgerFlow (Play
     await page.waitForFunction(() => customElements.get('el-textarea') && customElements.get('el-slider'));
 
     await page.evaluate(() => {
+      document.body.innerHTML = '';
+      document.body.style.margin = '0';
       const stage = document.createElement('section');
       stage.id = 'e2e-forms-stage';
       stage.setAttribute('aria-label', 'Core Forms Stage');
@@ -86,6 +88,8 @@ test.describe('Core Forms, Navigation, Data Display, AI Suite & LedgerFlow (Play
     await page.waitForFunction(() => customElements.get('el-breadcrumb') && customElements.get('el-pagination'));
 
     await page.evaluate(() => {
+      document.body.innerHTML = '';
+      document.body.style.margin = '0';
       const stage = document.createElement('section');
       stage.id = 'e2e-nav-stage';
       stage.setAttribute('aria-label', 'Navigation and Overlays Stage');
@@ -160,6 +164,8 @@ test.describe('Core Forms, Navigation, Data Display, AI Suite & LedgerFlow (Play
     await page.waitForFunction(() => customElements.get('el-chip') && customElements.get('el-data-list'));
 
     await page.evaluate(() => {
+      document.body.innerHTML = '';
+      document.body.style.margin = '0';
       const stage = document.createElement('section');
       stage.id = 'e2e-display-stage';
       stage.setAttribute('aria-label', 'Data Display Stage');
@@ -216,6 +222,8 @@ test.describe('Core Forms, Navigation, Data Display, AI Suite & LedgerFlow (Play
     await page.waitForFunction(() => customElements.get('el-prompt-input') && customElements.get('el-tool-call'));
 
     await page.evaluate(() => {
+      document.body.innerHTML = '';
+      document.body.style.margin = '0';
       const stage = document.createElement('section');
       stage.id = 'e2e-ai-stage';
       stage.setAttribute('aria-label', 'AI Specialist Suite Stage');
@@ -319,6 +327,8 @@ test.describe('Core Forms, Navigation, Data Display, AI Suite & LedgerFlow (Play
     );
 
     await page.evaluate(() => {
+      document.body.innerHTML = '';
+      document.body.style.margin = '0';
       const stage = document.createElement('section');
       stage.id = 'e2e-layout-stage';
       stage.setAttribute('aria-label', 'Layout and Composite Sub-Components Stage');

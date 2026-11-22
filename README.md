@@ -17,7 +17,7 @@
 
 ## 🧪 Verification & Browser Matrix (Beta — `v0.7.0`)
 
-One command verifies everything end-to-end: `npm run verify:all` (see [QUALITY.md](https://github.com/pinguxx/Elementum/blob/main/QUALITY.md) for the auto-generated per-component matrix).
+One command verifies everything end-to-end: `npm run verify:all` (see [QUALITY.md](https://github.com/pinguxx/Elementum/blob/main/QUALITY.md) for the per-component matrix and [AUDITS.md](https://github.com/pinguxx/Elementum/blob/main/AUDITS.md) for the stamped audit snapshot, tool versions, findings log, and reproduction commands).
 
 Every architectural claim in Elementum is backed by automated verification in CI:
 

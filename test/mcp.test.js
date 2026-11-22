@@ -111,7 +111,7 @@ test('MCP protocol compliance: initialize negotiation, notifications, isError, p
   assert.deepEqual(batch, [{ jsonrpc: '2.0', id: 10, result: {} }]);
 
   // 6. Edge Runtime handler: POST, 202 notification, DELETE 204, OPTIONS 204, GET 405
-  const postRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/api/mcp', {
+  const postRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/mcp', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ jsonrpc: '2.0', id: 99, method: 'ping' }),
@@ -119,17 +119,17 @@ test('MCP protocol compliance: initialize negotiation, notifications, isError, p
   assert.equal(postRes.status, 200);
   assert.deepEqual(await postRes.json(), { jsonrpc: '2.0', id: 99, result: {} });
 
-  const notifRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/api/mcp', {
+  const notifRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/mcp', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ jsonrpc: '2.0', method: 'notifications/initialized' }),
   }));
   assert.equal(notifRes.status, 202);
 
-  const delRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/api/mcp', { method: 'DELETE' }));
+  const delRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/mcp', { method: 'DELETE' }));
   assert.equal(delRes.status, 204);
 
-  const getRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/api/mcp', { method: 'GET' }));
+  const getRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/mcp', { method: 'GET' }));
   assert.equal(getRes.status, 405);
 });
 
@@ -207,7 +207,7 @@ test('MCP separated component schema (variants, states, props, constraints vs ex
 
   // 6. Edge handler forwards metadata identically
   const edgeHandler = createEdgeMcpHandler({ manifest, tokens, pkg, metadata });
-  const edgeRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/api/mcp', {
+  const edgeRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/mcp', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({

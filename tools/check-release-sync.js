@@ -58,6 +58,11 @@ check(
   srv.packages?.[0]?.version === version,
   `expected "${version}", found "${srv.packages?.[0]?.version}"`
 );
+check(
+  'server.json (remotes[0].url)',
+  srv.remotes?.[0]?.url === 'https://elementum-sage.vercel.app/mcp',
+  `expected "https://elementum-sage.vercel.app/mcp", found "${srv.remotes?.[0]?.url}"`
+);
 
 // 3. CHANGELOG.md
 const changelog = readText('CHANGELOG.md');
@@ -136,6 +141,14 @@ for (const toolFile of ['tools/sync-penpot-mcp.js', 'tools/penpot-to-elementum.j
     `missing MCP clientInfo version: '${version}'`
   );
 }
+
+// 10. AUDITS.md
+const audits = readText('AUDITS.md');
+check(
+  'AUDITS.md',
+  audits.includes(`\`@wcomp/elementum@${version}\``),
+  `missing package version reference "\`@wcomp/elementum@${version}\`"`
+);
 
 if (failures.length > 0) {
   console.error(`❌ Release sync check FAILED for @wcomp/elementum@${version}:\n${failures.join('\n')}`);
