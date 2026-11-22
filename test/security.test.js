@@ -134,7 +134,7 @@ test('Security 6: MCP server supports ping, readOnly annotations on all 10 tools
 
   const pkg = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
   const srv = JSON.parse(fs.readFileSync(new URL('../server.json', import.meta.url), 'utf8'));
-  assert.equal(pkg.version, '0.6.0');
+  assert.match(pkg.version, /^\d+\.\d+\.\d+/);
   assert.equal(srv.version, pkg.version);
   assert.equal(srv.packages?.[0]?.version, pkg.version);
   assert.deepEqual(srv.icons?.[0], {

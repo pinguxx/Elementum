@@ -78,8 +78,8 @@ export class ElBadge extends Elementum {
 
     :host([variant="success"]) span {
       background: #dcfce7;
-      color: #15803d;
-      border: 1px solid rgba(21, 128, 61, 0.25);
+      color: #166534;
+      border: 1px solid rgba(22, 101, 52, 0.25);
     }
 
     :host([variant="danger"]) span {
