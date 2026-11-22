@@ -8,6 +8,15 @@ test.describe('SaaS Admin Dogfooding App (Zero-Shortcut Public API Verification)
 
     await page.goto('/examples/saas-admin.html');
     await page.waitForSelector('#btn-signin');
+    await page.waitForFunction(() => {
+      const btn = document.querySelector('#btn-signin');
+      const card = document.querySelector('.auth-card');
+      return (
+        Boolean(btn?.shadowRoot && card?.shadowRoot) &&
+        getComputedStyle(btn).opacity === '1' &&
+        getComputedStyle(card).opacity === '1'
+      );
+    });
 
     // 1. Audit auth screen with axe-core
     const authAxe = await new AxeBuilder({ page })
