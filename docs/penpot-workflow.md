@@ -195,7 +195,7 @@ The Elementum synchronizer (`tools/sync-tokens.js`) natively accepts both:
 
 ---
 
-## 4. Banishing the "AI Look" with Penpot Tokens
+## 4. Elevating UI Craft with Penpot Tokens
 
 When designing in Penpot for Elementum, adhere to these three core rules:
 

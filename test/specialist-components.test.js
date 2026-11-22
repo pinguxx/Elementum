@@ -222,13 +222,13 @@ test('<el-prompt-input> auto-resizes, handles Enter submit, and resets on demand
   });
 
   // Type message
-  textarea.value = 'Refactor UI components to banish AI slop';
+  textarea.value = 'Refactor UI components to follow design tokens';
   textarea.dispatchEvent(new Event('input', { bubbles: true }));
-  assert.equal(prompt.value.value, 'Refactor UI components to banish AI slop');
+  assert.equal(prompt.value.value, 'Refactor UI components to follow design tokens');
 
   // Press Enter to submit
   textarea.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
-  assert.equal(submittedValue, 'Refactor UI components to banish AI slop');
+  assert.equal(submittedValue, 'Refactor UI components to follow design tokens');
   assert.equal(prompt.value.value, ''); // Cleared on submit
 
   // Shift+Enter should NOT submit

@@ -164,7 +164,7 @@ The synchronizer automatically generates physical motion easing curves and multi
 --el-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 --el-transition-fluid: 280ms var(--el-ease-out-expo);
 
-/* Layered Ambient Elevation (Banishes flat 1px borders) */
+/* Layered Ambient Elevation (Replaces flat 1px borders) */
 --el-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 --el-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 8px 16px -4px rgba(0, 0, 0, 0.04);
 --el-border-translucent: rgba(15, 23, 42, 0.08);
