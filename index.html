@@ -97,6 +97,24 @@
       margin: 48px 0;
     }
 
+    .pillar-link {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      border-radius: var(--el-radius-lg, 12px);
+      outline: none;
+    }
+
+    .pillar-link:focus-visible {
+      outline: 2px solid var(--el-color-primary, #2563eb);
+      outline-offset: 2px;
+    }
+
+    .pillar-link el-card {
+      width: 100%;
+      height: 100%;
+    }
+
     .pillar-icon {
       font-size: 1.75rem;
       margin-bottom: 8px;
@@ -518,45 +536,53 @@
 
     <!-- The 4 Core Architectural Pillars -->
     <section class="pillars-grid">
-      <el-card hoverable>
-        <el-card-header>
-          <span class="pillar-icon">⚡</span>
-          <el-card-title>Micro-Signals Reactivity</el-card-title>
-        </el-card-header>
-        <el-card-content>
-          <p class="pillar-desc">Direct DOM text-node and attribute mutations via a ~2KB standard signal engine without virtual DOM diffing, memoization traps, or rerender cascades.</p>
-        </el-card-content>
-      </el-card>
+      <a class="pillar-link" href="./docs.html#signals">
+        <el-card hoverable>
+          <el-card-header>
+            <span class="pillar-icon">⚡</span>
+            <el-card-title>Micro-Signals Reactivity</el-card-title>
+          </el-card-header>
+          <el-card-content>
+            <p class="pillar-desc">Direct DOM text-node and attribute mutations via a ~2KB standard signal engine without virtual DOM diffing, memoization traps, or rerender cascades.</p>
+          </el-card-content>
+        </el-card>
+      </a>
 
-      <el-card hoverable>
-        <el-card-header>
-          <span class="pillar-icon">🎨</span>
-          <el-card-title>1:1 Penpot & Figma Sync</el-card-title>
-        </el-card-header>
-        <el-card-content>
-          <p class="pillar-desc">Bidirectional sync with free open-source Penpot (W3C DTCG) and Figma variables with automatic dark-mode token generation and zero layout shifts.</p>
-        </el-card-content>
-      </el-card>
+      <a class="pillar-link" href="./docs.html#penpot-mcp">
+        <el-card hoverable>
+          <el-card-header>
+            <span class="pillar-icon">🎨</span>
+            <el-card-title>1:1 Penpot & Figma Sync</el-card-title>
+          </el-card-header>
+          <el-card-content>
+            <p class="pillar-desc">Bidirectional sync with free open-source Penpot (W3C DTCG) and Figma variables with automatic dark-mode token generation and zero layout shifts.</p>
+          </el-card-content>
+        </el-card>
+      </a>
 
-      <el-card hoverable>
-        <el-card-header>
-          <span class="pillar-icon">🛡️</span>
-          <el-card-title>Native Standards &amp; Headless Behaviors</el-card-title>
-        </el-card-header>
-        <el-card-content>
-          <p class="pillar-desc">Zero-dependency Web Components with opt-in <code>unstyled</code> mode, 15 composable behaviors (focus recovery, roving focus, shortcuts, presence), and WAI-ARIA/RTL contract tests.</p>
-        </el-card-content>
-      </el-card>
+      <a class="pillar-link" href="./docs.html#behaviors-agent">
+        <el-card hoverable>
+          <el-card-header>
+            <span class="pillar-icon">🛡️</span>
+            <el-card-title>Native Standards &amp; Headless Behaviors</el-card-title>
+          </el-card-header>
+          <el-card-content>
+            <p class="pillar-desc">Zero-dependency Web Components with opt-in <code>unstyled</code> mode, 15 composable behaviors (focus recovery, roving focus, shortcuts, presence), and WAI-ARIA/RTL contract tests.</p>
+          </el-card-content>
+        </el-card>
+      </a>
 
-      <el-card hoverable>
-        <el-card-header>
-          <span class="pillar-icon">🤖</span>
-          <el-card-title>AI Agent, MCP &amp; WebMCP Native</el-card-title>
-        </el-card-header>
-        <el-card-content>
-          <p class="pillar-desc">Built-in MCP server, installable agent skills, AG-UI streaming, and Shadow-DOM-piercing <code>snapshot()</code>/<code>act()</code> runtime so agents both build and operate interfaces cleanly.</p>
-        </el-card-content>
-      </el-card>
+      <a class="pillar-link" href="./docs.html#mcp-server">
+        <el-card hoverable>
+          <el-card-header>
+            <span class="pillar-icon">🤖</span>
+            <el-card-title>AI Agent, MCP &amp; WebMCP Native</el-card-title>
+          </el-card-header>
+          <el-card-content>
+            <p class="pillar-desc">Built-in MCP server, installable agent skills, AG-UI streaming, and Shadow-DOM-piercing <code>snapshot()</code>/<code>act()</code> runtime so agents both build and operate interfaces cleanly.</p>
+          </el-card-content>
+        </el-card>
+      </a>
     </section>
 
     <!-- Interactive Component Playground -->
