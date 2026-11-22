@@ -3,9 +3,6 @@
   "functions": {
     "api/ssr.js": {
       "includeFiles": "src/**"
-    },
-    "api/mcp.js": {
-      "includeFiles": "{custom-elements.json,package.json,tokens/figma-tokens.json,mcp/**}"
     }
   },
   "rewrites": [

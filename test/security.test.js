@@ -68,7 +68,7 @@ test('Security 5: MCP server rejects oversized, malformed, and hostile inputs cl
 
   // 2. Malformed JSON
   const badJson = handleJsonRpcLine('{not valid json');
-  assert.equal(badJson.error.code, -32603);
+  assert.equal(badJson.error.code, -32700);
 
   // 3. Unknown JSON-RPC method
   const badMethod = handleJsonRpcLine(JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'evil/exec' }));

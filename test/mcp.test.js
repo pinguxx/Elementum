@@ -59,3 +59,69 @@ test('MCP server responds to tools/list and tools/call', async () => {
 
   proc.kill();
 });
+
+test('MCP protocol compliance: initialize negotiation, notifications, isError, parse error, batch & Edge handler', async () => {
+  const { handleJsonRpcLine } = await import('../mcp/server.js');
+  const { default: edgeHandler, config } = await import('../api/mcp.js');
+
+  assert.equal(config.runtime, 'edge');
+
+  // 1. Negotiates modern protocolVersion & includes instructions
+  const init2025 = handleJsonRpcLine(JSON.stringify({
+    jsonrpc: '2.0',
+    id: 1,
+    method: 'initialize',
+    params: { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'probe', version: '1.0' } },
+  }));
+  assert.equal(init2025.result.protocolVersion, '2025-03-26');
+  assert.equal(init2025.result.serverInfo.title, 'Elementum Design System MCP');
+  assert.ok(typeof init2025.result.instructions === 'string' && init2025.result.instructions.length > 20);
+
+  // 2. Notifications (no id) return null instead of -32601 error
+  assert.equal(
+    handleJsonRpcLine(JSON.stringify({ jsonrpc: '2.0', method: 'notifications/initialized' })),
+    null
+  );
+
+  // 3. Tool errors set isError: true
+  const errCall = handleJsonRpcLine(JSON.stringify({
+    jsonrpc: '2.0',
+    id: 2,
+    method: 'tools/call',
+    params: { name: 'get_component_doc', arguments: { tag: 'el-does-not-exist' } },
+  }));
+  assert.equal(errCall.result.isError, true);
+
+  // 4. Malformed JSON returns standard -32700 Parse error
+  const parseErr = handleJsonRpcLine('{bad json');
+  assert.equal(parseErr.error.code, -32700);
+
+  // 5. Batch JSON-RPC array filters out notifications and returns responses
+  const batch = handleJsonRpcLine(JSON.stringify([
+    { jsonrpc: '2.0', method: 'notifications/initialized' },
+    { jsonrpc: '2.0', id: 10, method: 'ping' },
+  ]));
+  assert.deepEqual(batch, [{ jsonrpc: '2.0', id: 10, result: {} }]);
+
+  // 6. Edge Runtime handler: POST, 202 notification, DELETE 204, OPTIONS 204, GET 405
+  const postRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/api/mcp', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ jsonrpc: '2.0', id: 99, method: 'ping' }),
+  }));
+  assert.equal(postRes.status, 200);
+  assert.deepEqual(await postRes.json(), { jsonrpc: '2.0', id: 99, result: {} });
+
+  const notifRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/api/mcp', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ jsonrpc: '2.0', method: 'notifications/initialized' }),
+  }));
+  assert.equal(notifRes.status, 202);
+
+  const delRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/api/mcp', { method: 'DELETE' }));
+  assert.equal(delRes.status, 204);
+
+  const getRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/api/mcp', { method: 'GET' }));
+  assert.equal(getRes.status, 405);
+});
