@@ -184,6 +184,7 @@ export class ElInput extends Elementum {
   `;
 
   #onInput = (e) => {
+    e.stopPropagation();
     this.value.value = e.target.value;
     this.setFormValue(e.target.value);
     this.validate();
@@ -191,6 +192,7 @@ export class ElInput extends Elementum {
   };
 
   #onChange = (e) => {
+    e.stopPropagation();
     this.value.value = e.target.value;
     this.setFormValue(e.target.value);
     this.validate();

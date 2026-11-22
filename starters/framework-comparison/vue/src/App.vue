@@ -62,7 +62,11 @@ function addMember() {
       </div>
 
       <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
-        <el-input placeholder="Filter by name..." :value="query" @input="(e) => (query = e.detail?.value ?? '')" />
+        <el-input
+          placeholder="Filter by name..."
+          :value="query"
+          @input="(e) => { const next = e.detail?.value ?? e.target?.value?.value; if (next !== undefined) query = next; }"
+        />
         <el-select :value="roleFilter" @change="(e) => (roleFilter = e.detail?.value ?? 'All')">
           <option value="All">All Roles</option>
           <option value="Engineer">Engineer</option>
@@ -77,7 +81,11 @@ function addMember() {
     <el-dialog :open="dialogOpen || undefined" @close="dialogOpen = false">
       <h3 slot="header" style="margin: 0;">Invite Team Member</h3>
       <div style="display: flex; flex-direction: column; gap: 12px;">
-        <el-input placeholder="Full name" :value="newName" @input="(e) => (newName = e.detail?.value ?? '')" />
+        <el-input
+          placeholder="Full name"
+          :value="newName"
+          @input="(e) => { const next = e.detail?.value ?? e.target?.value?.value; if (next !== undefined) newName = next; }"
+        />
         <el-select :value="newRole" @change="(e) => (newRole = e.detail?.value ?? 'Engineer')">
           <option value="Engineer">Engineer</option>
           <option value="Architect">Architect</option>

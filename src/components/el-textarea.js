@@ -127,6 +127,7 @@ export class ElTextarea extends Elementum {
   }
 
   #onInput = (e) => {
+    e.stopPropagation();
     const val = e.target.value;
     this.value.value = val;
     this.setFormValue(val);

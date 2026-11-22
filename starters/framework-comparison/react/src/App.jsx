@@ -69,7 +69,10 @@ export default function App() {
           <ElInput
             placeholder="Filter by name..."
             value={query}
-            onInput={(e) => setQuery(e.detail?.value ?? '')}
+            onInput={(e) => {
+              const next = e.detail?.value ?? e.target?.value?.value;
+              if (next !== undefined) setQuery(next);
+            }}
           />
           <ElSelect value={roleFilter} onChange={(e) => setRoleFilter(e.detail?.value ?? 'All')}>
             <option value="All">All Roles</option>
@@ -85,7 +88,14 @@ export default function App() {
       <ElDialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <h3 slot="header" style={{ margin: 0 }}>Invite Team Member</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <ElInput placeholder="Full name" value={newName} onInput={(e) => setNewName(e.detail?.value ?? '')} />
+          <ElInput
+            placeholder="Full name"
+            value={newName}
+            onInput={(e) => {
+              const next = e.detail?.value ?? e.target?.value?.value;
+              if (next !== undefined) setNewName(next);
+            }}
+          />
           <ElSelect value={newRole} onChange={(e) => setNewRole(e.detail?.value ?? 'Engineer')}>
             <option value="Engineer">Engineer</option>
             <option value="Architect">Architect</option>

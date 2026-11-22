@@ -87,7 +87,10 @@
       badge.textContent = `${filtered.value.length} members`;
     });
 
-    document.getElementById('search').addEventListener('input', (e) => { query.value = e.detail?.value ?? ''; });
+    document.getElementById('search').addEventListener('input', (e) => {
+      const next = e.detail?.value ?? e.target?.value?.value;
+      if (next !== undefined) query.value = next;
+    });
     document.getElementById('role-filter').addEventListener('change', (e) => { roleFilter.value = e.detail?.value ?? 'All'; });
     document.getElementById('open-btn').addEventListener('click', () => { dialog.open = true; });
     document.getElementById('cancel-btn').addEventListener('click', () => { dialog.open = false; });

@@ -211,15 +211,15 @@ Included skills under [skills/](https://github.com/pinguxx/Elementum/tree/main/s
 
 Clone or copy complete, runnable templates from [**`starters/`**](https://github.com/pinguxx/Elementum/tree/main/starters):
 
-| Starter | Stack | Description |
-| ------- | ----- | ----------- |
-| [**vanilla-html**](https://github.com/pinguxx/Elementum/tree/main/starters/vanilla-html) | HTML5 + unpkg CDN | Zero-build Custom Elements with fine-grained micro-signals counter & dialog. |
-| [**next-app-router**](https://github.com/pinguxx/Elementum/tree/main/starters/next-app-router) | Next.js 14+ / React 18/19 | Pure Node.js Declarative Shadow DOM SSR (`renderComponentToDSD`) with zero CLS. |
-| [**react-19**](https://github.com/pinguxx/Elementum/tree/main/starters/react-19) | React 19 + TypeScript + Vite | Native Custom Elements properties, boolean attributes, and event handling. |
-| [**vue-3**](https://github.com/pinguxx/Elementum/tree/main/starters/vue-3) | Vue 3 + Vite | Native Custom Elements integration with `compilerOptions.isCustomElement`. |
-| [**svelte-5**](https://github.com/pinguxx/Elementum/tree/main/starters/svelte-5) | Svelte 5 (Runes) + Vite | Zero-wrapper Svelte 5 Runes integration with Elementum Custom Elements. |
-| [**ai-chat**](https://github.com/pinguxx/Elementum/tree/main/starters/ai-chat) | HTML5 + AI Specialist Elements | Agent UI with `<el-prompt-input>`, `<el-reasoning-card>`, `<el-tool-call>`, and `<el-streaming-text>`. |
-| [**framework-comparison**](https://github.com/pinguxx/Elementum/tree/main/starters/framework-comparison) | React vs. Vue 3 vs. Vanilla | Same Team Directory app built 3 ways with measured LOC, gzip size, and ergonomics. |
+| Starter | Stack | Live Demo | Description |
+| ------- | ----- | --------- | ----------- |
+| [**vanilla-html**](https://github.com/pinguxx/Elementum/tree/main/starters/vanilla-html) | HTML5 + unpkg CDN | [Live Demo](https://elementum-sage.vercel.app/starters/vanilla-html/index.html) | Zero-build Custom Elements with fine-grained micro-signals counter & dialog. |
+| [**next-app-router**](https://github.com/pinguxx/Elementum/tree/main/starters/next-app-router) | Next.js 16 / React 19 | [Live Demo](https://elementum-next-dsd.vercel.app) | Pure Node.js Declarative Shadow DOM SSR (`renderComponentToDSD`) with zero CLS. |
+| [**react-19**](https://github.com/pinguxx/Elementum/tree/main/starters/react-19) | React 19 + TypeScript + Vite | — | Native Custom Elements properties, boolean attributes, and event handling. |
+| [**vue-3**](https://github.com/pinguxx/Elementum/tree/main/starters/vue-3) | Vue 3 + Vite | — | Native Custom Elements integration with `compilerOptions.isCustomElement`. |
+| [**svelte-5**](https://github.com/pinguxx/Elementum/tree/main/starters/svelte-5) | Svelte 5 (Runes) + Vite | — | Zero-wrapper Svelte 5 Runes integration with Elementum Custom Elements. |
+| [**ai-chat**](https://github.com/pinguxx/Elementum/tree/main/starters/ai-chat) | HTML5 + AI Specialist Elements | [Live Demo](https://elementum-sage.vercel.app/starters/ai-chat/index.html) | Agent UI with `<el-prompt-input>`, `<el-reasoning-card>`, `<el-tool-call>`, and `<el-streaming-text>`. |
+| [**framework-comparison**](https://github.com/pinguxx/Elementum/tree/main/starters/framework-comparison) | React vs. Vue 3 vs. Vanilla | [React](https://elementum-comparison-react.vercel.app) · [Vue](https://elementum-comparison-vue.vercel.app) · [Vanilla](https://elementum-sage.vercel.app/starters/framework-comparison/vanilla/index.html) | Same Team Directory app built 3 ways with measured LOC, gzip size, and ergonomics. |
 
 ### Quick Framework Snippets
 

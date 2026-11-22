@@ -18,6 +18,7 @@ To evaluate Elementum's framework-independent architecture under identical condi
 | **Complex Array Props (`<el-table>`)** | Direct JSX props (`columns`, `data`) via `useLayoutEffect` | `ref` + `watchEffect` on `.data.value` | Direct `.data.value` inside `effect()` |
 | **Strict TypeScript Props** | Generated per-component types (`src/react/index.d.ts`) | Native `HTMLElementTagNameMap` | Native `HTMLElementTagNameMap` |
 | **Accessibility & Theming** | Identical Shadow DOM + WCAG 2.2 AA | Identical Shadow DOM + WCAG 2.2 AA | Identical Shadow DOM + WCAG 2.2 AA |
+| **Live Demo** | [elementum-comparison-react.vercel.app](https://elementum-comparison-react.vercel.app) | [elementum-comparison-vue.vercel.app](https://elementum-comparison-vue.vercel.app) | [elementum-sage.vercel.app/starters/...](https://elementum-sage.vercel.app/starters/framework-comparison/vanilla/index.html) |
 
 ## Key Takeaways
 
