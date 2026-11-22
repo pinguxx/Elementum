@@ -31,6 +31,21 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
   }
+
+  function hasVisibleText(htmlSnippet) {
+    let inTag = false;
+    for (let i = 0; i < htmlSnippet.length; i++) {
+      const ch = htmlSnippet[i];
+      if (ch === '<') {
+        inTag = true;
+      } else if (ch === '>') {
+        inTag = false;
+      } else if (!inTag && !/\s/.test(ch)) {
+        return true;
+      }
+    }
+    return false;
+  }
   
   const allDeclarations = manifest.modules.flatMap((m) =>
     (m.declarations || []).map((d) => ({ ...d, modulePath: m.path }))
@@ -457,9 +472,9 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
       const buttonMatches = markup.match(/<el-button[^>]*>([\s\S]*?)<\/el-button>/gi) || [];
       for (const match of buttonMatches) {
         const tagOpen = match.match(/<el-button[^>]*>/i)?.[0] || '';
-        const textContent = match.replace(/<[^>]+>/g, '').trim();
+        const hasText = hasVisibleText(match);
         const hasAriaLabel = /aria-label=/i.test(tagOpen);
-        if (!textContent && !hasAriaLabel) {
+        if (!hasText && !hasAriaLabel) {
           violations.push({
             criterion: 'WCAG 1.1.1 (Non-text Content) / WCAG 4.1.2 (Name, Role, Value)',
             element: tagOpen,

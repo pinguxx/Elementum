@@ -155,4 +155,11 @@ test('Security 6: MCP server supports ping, readOnly annotations on all 10 tools
   });
   assert.ok(scaffold.code.includes('bad * / process.exit(1);//'));
   assert.ok(!scaffold.code.includes('*/\nprocess.exit(1)'));
+
+  const iconOnlyBtn = handleToolCall('lint_accessibility', { markup: '<el-button><svg></svg></el-button>' });
+  assert.equal(iconOnlyBtn.valid, false);
+  const labeledIconBtn = handleToolCall('lint_accessibility', { markup: '<el-button aria-label="Close"><svg></svg></el-button>' });
+  assert.equal(labeledIconBtn.valid, true);
+  const textChildBtn = handleToolCall('lint_accessibility', { markup: '<el-button><span>Save</span></el-button>' });
+  assert.equal(textChildBtn.valid, true);
 });
