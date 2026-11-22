@@ -208,13 +208,14 @@ export class ElToaster extends Elementum {
       min-width: 340px;
       max-width: 420px;
       width: 100%;
-      pointer-events: auto;
+      pointer-events: none;
     }
 
     .toast-list {
       position: relative;
       width: 100%;
       min-height: 64px;
+      pointer-events: none;
     }
 
     .toast-card {
