@@ -199,7 +199,7 @@ The Elementum synchronizer (`tools/sync-tokens.js`) natively accepts both:
 
 When designing in Penpot for Elementum, adhere to these three core rules:
 
-| AI Slop Anti-Pattern | Penpot & Elementum Best Practice |
+| Common Generic UI Pitfall | Penpot & Elementum Best Practice |
 | :--- | :--- |
 | Flat, opaque `#e2e8f0` 1px borders everywhere | Use **`--el-border-translucent`** (`rgba(15, 23, 42, 0.08)`) with multi-layer ambient box shadows |
 | Abrupt jumps when switching numbers/prices | Connect state to **`<el-number-flow>`** for fluid slot-machine rolling animations |

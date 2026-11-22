@@ -148,7 +148,7 @@ Selected highlights below — browse all **109 elements** interactively in the [
 
 * [examples/ledgerflow.html](https://github.com/pinguxx/Elementum/blob/main/examples/ledgerflow.html): **LedgerFlow (Penpot → MCP Generated App)**: End-to-end fintech dashboard designed in [**Penpot**](https://design.penpot.app/?screen=viewer&file-id=42288968-6e5e-808d-8008-f77162b618ca&page-id=d8ded059-05ee-80c0-8008-f774c97dd053&section=interactions&index=0&share-id=8218fc5e-f68d-4bab-8fd7-283dd92586e8) and compiled via `npm run penpot:generate` into 15 validated Elementum Web Components (`<el-number-flow>`, `<el-chart>`, `<el-meter>`, `<el-drawer>`, `<el-dialog>`, `<el-toaster>`).
 
-* [examples/references.html](https://github.com/pinguxx/Elementum/blob/main/examples/references.html): **Reference Hub (Anti-AI Slop)**: Real-world patterns reconstructed from curated galleries (SaaS Pricing with rolling odometers & border beams, Linear-style command menu, and segmented PIN auth).
+* [examples/references.html](https://github.com/pinguxx/Elementum/blob/main/examples/references.html): **Reference Hub (UI Craft Patterns)**: Real-world patterns reconstructed from curated galleries (SaaS Pricing with rolling odometers & border beams, Linear-style command menu, and segmented PIN auth).
 
 * [examples/agent-studio.html](https://github.com/pinguxx/Elementum/blob/main/examples/agent-studio.html): **AI Agent Studio & Command Center** demonstrating `<el-command>` (⌘K), `<el-prompt-input>`, `<el-reasoning-card>`, `<el-number-flow>` live token odometer, `<el-otp-input>` security key authorization, and `<el-border-beam>`.
 
@@ -199,7 +199,7 @@ Included skills under [skills/](https://github.com/pinguxx/Elementum/tree/main/s
 
 * [docs/penpot-workflow.md](https://github.com/pinguxx/Elementum/blob/main/docs/penpot-workflow.md): Free & open-source design token workflow with Penpot (W3C DTCG JSON) and automated compilation.
 
-* [docs/agent-craft-guide.md](https://github.com/pinguxx/Elementum/blob/main/docs/agent-craft-guide.md): Guide and system prompt rules for AI coding agents to banish generic AI look and adhere to high-craft standards.
+* [docs/agent-craft-guide.md](https://github.com/pinguxx/Elementum/blob/main/docs/agent-craft-guide.md): Simple guidelines for better UI development — practical visual hierarchy, motion, accessibility, mobile, and AI UI patterns for developers and coding agents.
 
 * [docs/theming.md](https://github.com/pinguxx/Elementum/blob/main/docs/theming.md): Complete design tokens, CSS custom properties, and `::part()` customization guide.
 
