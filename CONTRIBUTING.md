@@ -18,21 +18,31 @@ Thank you for contributing! Elementum prioritizes **reliability, accessibility, 
   ```
   This executes, in order:
   1. `npm run catalog:diff` — checks all components against `custom-elements.json` & `examples/catalog-data.js`
-  2. `npm run typecheck` — strict TypeScript check on `src/index.d.ts` (also check `src/react/index.d.ts`)
-  3. `npm run check:size` — enforces per-entrypoint gzipped byte budgets in [`size-budget.json`](./size-budget.json)
-  4. `npm test` — Node.js unit, fuzz, contract, SSR & security tests (CI enforces `--test-coverage-lines=95`)
-  5. `npm run verify:consumer` — packs `.tgz` and tests clean external installation
-  6. `npm run test:e2e` — real-browser Playwright + `@axe-core/playwright` WCAG 2.2 AA suite
+  2. `npm run check:release` — checks version & metadata synchronization across all release files
+  3. `npm run typecheck` — strict TypeScript check on `src/index.d.ts` (and `src/react/index.d.ts` / `src/a2ui.d.ts`)
+  4. `npm run check:size` — enforces per-entrypoint gzipped byte budgets in [`size-budget.json`](./size-budget.json)
+  5. `npm test` — Node.js unit, fuzz, contract, SSR, A2UI, MCP & security tests (CI enforces `--test-coverage-lines=95`)
+  6. `npm run verify:consumer` — packs `.tgz` and tests clean external installation
+  7. `npm run verify:react` — verifies `@wcomp/elementum/react` against real React 18 & 19 consumers
+  8. `npm run test:e2e` — real-browser Playwright + `@axe-core/playwright` WCAG 2.2 AA suite
+
+  Additional checks when touching starters or visual styles:
+  - `npm run verify:starters` — builds and typechecks all framework starter templates
+  - `npm run test:visual` — Playwright light/dark screenshot regression
 
 ---
 
 ## 2. Engineering Rules
 
+> **Full Change → Sync Matrix & Release Checklist:** See [`AGENTS.md`](./AGENTS.md) for the exact files to update for every change type.
+
 1. **Zero Runtime Dependencies**: Never add third-party packages to `dependencies` in `package.json`. Browser standards (`ElementInternals`, Shadow DOM, Popover/Dialog/Anchor/Signals) and composable primitives in [`src/behaviors/index.js`](./src/behaviors/index.js) cover all runtime behavior.
 2. **Maintain Coverage & Size Budgets**: Keep all files above **95% line coverage** (`node --test --experimental-test-coverage --test-coverage-lines=95`) and inside [`size-budget.json`](./size-budget.json).
 3. **Sync Generated Files After API Changes**:
    - After editing `src/tokens.css` / `tokens/penpot-tokens.json`: run `npm run tokens:sync` and `npm run ssr:static`.
-   - After changing public attributes, events, or components in `custom-elements.json`: run `npm run react:generate` (`src/react/index.js` & `index.d.ts`), `npm run quality:report` (`QUALITY.md`), and `npm run catalog:diff`.
+   - After changing public attributes, events, or components in `custom-elements.json`: run `npm run react:generate` (`src/react/index.js` & `index.d.ts`), `npm run mcp:metadata` (`mcp/component-metadata.json`), `npm run quality:report` (`QUALITY.md`), `npm run audits:report` (`AUDITS.md`), and `npm run catalog:diff`.
+   - After editing `starters/`: run `npm run verify:starters` and `npm run bench:frameworks -- --write`.
+   - When cutting a release (`vX.Y.Z`): follow the release sync checklist in [`AGENTS.md`](./AGENTS.md#3-release--publishing-checklist-vxyz) and verify `npm run check:release` passes before publishing the GitHub Release (which triggers npm OIDC Trusted Publishing via `.github/workflows/publish.yml`).
    - Do **not** include secrets or Penpot `userToken` JWTs in commits or screenshots.
 
 ---

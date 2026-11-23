@@ -20,31 +20,49 @@ Elementum is a zero-dependency, signal-driven Web Component library built direct
 
 ## 2. Directory Layout
 
+> For the operational **"If you change X → update Y"** checklist and release process, see [`AGENTS.md`](./AGENTS.md).
+
 ```
 Elementum/
+├── AGENTS.md                 # Cross-chat agent playbook, sync matrix & release checklist
+├── AGENT_GUIDE.md            # Architecture, reactivity, accessibility & MCP reference
+├── AUDITS.md                 # Permanent verification hub (tool versions, findings & repro)
+├── QUALITY.md                # Auto-generated 109/109 per-component verification matrix
+├── llms.txt                  # Compact LLM/agent index served at site root
 ├── custom-elements.json      # Custom Elements Manifest (CEM v1, 109 tags) for IDEs & MCP
-├── package.json              # Package metadata, subpath exports, and verification scripts
+├── server.json               # MCP Registry metadata (stdio + hosted /mcp Edge endpoint)
+├── package.json              # Package metadata, subpath exports, sideEffects & scripts
 ├── size-budget.json          # Per-entrypoint gzipped byte budgets enforced in CI
-├── skills.sh.json            # Distributable agent skills manifest (skills/elementum/SKILL.md)
-├── QUALITY.md                # Auto-generated per-component verification matrix
-├── AGENT_GUIDE.md            # Canonical agent and contributor instructions
+├── skills.sh.json            # Distributable agent skills manifest (skills/)
+├── vercel.json               # Vercel rewrites (/mcp -> Edge, /ssr -> Node)
+├── api/
+│   ├── mcp.js                # Vercel Edge Function for Streamable HTTP MCP (/mcp)
+│   └── ssr.js                # Vercel Serverless Function for DSD SSR (/ssr)
+├── mcp/
+│   ├── core.js               # Pure-JS, runtime-agnostic MCP core (10 tools, 2025-03-26)
+│   ├── edge.js               # Pure-JS Web Fetch adapter for Edge runtimes
+│   ├── server.js             # Node.js stdio CLI entrypoint (npx elementum-mcp)
+│   └── component-metadata.json # Separated variants, states, props, constraints & examples
 ├── src/
-│   ├── index.js              # Primary export entry point
-│   ├── index.d.ts            # Strict TypeScript definitions (tsc --noEmit --strict)
-│   ├── elementum.js          # Elementum base class (Shadow DOM, unstyled mode, FACE)
-│   ├── signal.js             # Signals, Computed, Effect reactivity engine
+│   ├── index.js / index.d.ts # Primary exports & strict TypeScript definitions
+│   ├── elementum.js          # Base class (Shadow DOM, unstyled mode, FACE)
+│   ├── signal.js             # Signals, Computed, Effect, Batch & AsyncSignal kernel
 │   ├── template.js           # html, svg, css tagged template parser and renderer
 │   ├── ssr.js                # Pure Node.js Declarative Shadow DOM SSR
 │   ├── ag-ui.js              # AG-UI streaming event store & RFC 6902 JSON Patch
-│   ├── behaviors/index.js    # 15 headless interaction, focus, motion & overlay behaviors
+│   ├── a2ui.js / a2ui.d.ts   # Locked-catalog declarative A2UI JSON surface renderer
+│   ├── react/                # Auto-generated React 18/19 wrappers & strict TS types
+│   ├── behaviors/index.js    # 16 headless interaction, focus, motion & overlay behaviors
 │   ├── agent/index.js        # Shadow-DOM-piercing agent runtime bridge (snapshot, act)
 │   ├── testing/index.js      # WAI-ARIA APG, RTL & DSD SSR contract validators
 │   ├── tokens.css            # W3C DTCG design tokens (light & dark mode)
 │   └── components/           # 109 zero-dependency Web Components
-├── docs/                     # behaviors-and-agent.md, theming.md, framework-integration.md, penpot-workflow.md
-├── mcp/server.js             # Hardened Model Context Protocol stdio server
-├── e2e/                      # Real-browser Playwright + axe-core WCAG 2.2 AA tests
-└── test/                     # 226+ Node.js unit, fuzz, behavior, contract & security tests
+├── starters/                 # CI-verified starters (Vanilla, Next.js, React 19, Vue 3, Svelte 5, AI Chat, 3-way comparison)
+├── benchmarks/agent-eval/    # 4-arm AI-agent UI benchmark protocol & Playwright/axe/MCP scorer
+├── docs/                     # agent-craft-guide.md, behaviors-and-agent.md, theming.md, framework-integration.md, penpot-workflow.md, accessibility-audit.md, stability-and-1.0.md
+├── examples/                 # Interactive demos (index, app, agent-studio, ag-ui, a2ui, ledgerflow, references, ssr-demo)
+├── e2e/                      # Playwright + axe-core WCAG 2.2 AA & visual regression suites
+└── test/                     # Node.js unit, fuzz, behavior, contract, React, A2UI & security tests
 ```
 
 ---
@@ -205,39 +223,44 @@ Every component must satisfy WCAG 2.2 Level AA:
 
 ## 7. Model Context Protocol (MCP) Server for Agents
 
-Elementum provides an MCP server (`mcp/server.js`) that agents can query over stdio JSON-RPC.
+Elementum provides a spec-compliant (`2025-03-26` / `2025-06-18`) MCP server powered by a shared pure-JS core (`mcp/core.js`):
+- **Local stdio**: `npx elementum-mcp` (via `mcp/server.js`)
+- **Hosted Streamable HTTP (Vercel Edge)**: `https://elementum-sage.vercel.app/mcp` (via `api/mcp.js` + `mcp/edge.js`)
 
-### Available MCP Tools
+### Available MCP Tools (10 Read-Only Tools)
 
 | Tool Name | Parameters | Purpose |
 | :--- | :--- | :--- |
 | `list_components` | `{}` | Lists all 109 registered components with tags and descriptions |
-| `get_component_doc` | `{ tag }` | Full metadata (attributes, slots, events, parts) from CEM |
+| `get_component_doc` | `{ tag, section? }` | Structured metadata (`variants`, `states`, `props`, `constraints`, `examples`, slots, events, parts) from CEM + `mcp/component-metadata.json` |
 | `get_component_maturity` | `{ tag }` | Evidence-based maturity tier from test & E2E verification |
 | `suggest_component` | `{ query }` | Recommends components for a UI goal |
-| `validate_component_usage` | `{ markup }` | Validates attributes and slots against CEM |
-| `list_tokens` | `{ category }` | Queries design tokens (color, spacing, radius, all) |
+| `validate_component_usage` | `{ html }` | Validates attributes, closed enum variants, and parent/child constraints |
+| `list_tokens` | `{ category }` | Queries design tokens (`color`, `spacing`, `radius`, `all`) |
 | `generate_snippet` | `{ tag, variant, size, label, disabled }` | Generates compliant HTML snippets |
 | `scaffold_component` | `{ tag, name, description, formAssociated, attributes }` | Generates ready-to-use component boilerplate |
-| `lint_accessibility` | `{ markup }` | Static HTML accessibility linter (`static-html-lint`) |
+| `lint_accessibility` | `{ html }` | Static HTML accessibility linter (`static-html-lint`) |
+| `validate_accessibility` | `{ html }` | Detailed WCAG 2.2 AA static accessibility audit |
 
-### Running the MCP Server
+### Running & Regenerating MCP Metadata
 ```bash
 # Start stdio server
-node mcp/server.js
-
-# Or via package bin
 npx elementum-mcp
+
+# Regenerate separated component metadata after CEM changes
+npm run mcp:metadata
 ```
 
 ---
 
-## 8. Headless Behaviors, Agent Runtime & Testing Contracts
+## 8. Headless Behaviors, Agent Runtime, A2UI & Testing Contracts
 
 Prefer reusing Elementum's shared primitives rather than re-implementing interaction or accessibility logic per component (full reference in [docs/behaviors-and-agent.md](./docs/behaviors-and-agent.md)):
 
-- **`@wcomp/elementum/behaviors`**: `createPressBehavior`, `createRovingFocus`, `createDismissableLayer`, `createFocusRecovery`, `createShortcuts`, `createDisclosureBehavior`, `createPopupPositioner`, `createPresenceBehavior`, `prefersReducedMotion`, `createSelectionBehavior`, `createReorderBehavior`, `highlightMatch`, `announce`, `setHostState`, `isRTL`.
+- **`@wcomp/elementum/behaviors`**: 16 primitives (`createPressBehavior`, `createRovingFocus`, `createDismissableLayer`, `createFocusRecovery`, `createShortcuts`, `createDisclosureBehavior`, `createPopupPositioner`, `createPresenceBehavior`, `prefersReducedMotion`, `createSelectionBehavior`, `createReorderBehavior`, `createHistory`, `highlightMatch`, `announce`, `setHostState`, `isRTL`).
 - **`@wcomp/elementum/agent`**: `snapshot(root)` and `act(root, command)` for Shadow-DOM-piercing agent inspection and interaction.
+- **`@wcomp/elementum/a2ui`**: Locked-catalog declarative A2UI JSON surface renderer with two-way micro-signal bindings (`createA2UiSurface`, `DEFAULT_A2UI_CATALOG`).
+- **`@wcomp/elementum/ag-ui`**: AG-UI streaming event store & RFC 6902 JSON Patch state deltas.
 - **`@wcomp/elementum/testing`**: `checkAriaPattern(el, pattern)`, `checkDirection(el)`, and `checkServerRender(tag, Ctor)`.
 - **`unstyled` mode**: Any `<el-*>` element accepts `unstyled` to disable default Shadow DOM stylesheets while keeping ARIA, keyboard behavior, and `data-*` state attributes.
 
@@ -245,21 +268,28 @@ Prefer reusing Elementum's shared primitives rather than re-implementing interac
 
 ## 9. Development & Verification Workflow
 
+See [`AGENTS.md`](./AGENTS.md) for the full **Change → Required Sync Matrix** and release checklist.
+
 ```bash
-# Run the complete verification pipeline (catalog diff, strict TS, size budgets, unit tests, tarball consumer, Playwright E2E)
+# Run the complete verification pipeline
 npm run verify:all
 
-# Individual checks
-npm run catalog:diff       # Verify all 109 components match catalog-data.js
-npm run typecheck          # Strict TypeScript check on src/index.d.ts
-npm run check:size         # Enforce per-entrypoint gzipped byte budgets (size-budget.json)
-npm test                   # 226+ unit, fuzz, behavior & security tests (>= 95% line coverage)
-npm run verify:consumer    # Pack .tgz and verify external consumer imports + strict TS
-npm run test:e2e           # Playwright + axe-core WCAG 2.2 AA real-browser suite
-
-# Scaffold a new component or sync design tokens
-npm run create el-my-element [--form]
-npm run tokens:sync tokens/penpot-tokens.json
+# Individual gates & generators
+npm run catalog:diff                 # Verify all 109 components match catalog-data.js
+npm run check:release                # Verify version sync across all 12 release files
+npm run typecheck                    # Strict TypeScript check on src/index.d.ts
+npm run check:size                   # Enforce per-entrypoint gzipped byte budgets (size-budget.json)
+npm test                             # Unit, fuzz, behavior, A2UI, MCP & security tests (>= 95% line coverage)
+npm run verify:consumer              # Pack .tgz and verify external consumer imports + strict TS
+npm run verify:react                 # Verify @wcomp/elementum/react on real React 18 & 19
+npm run verify:starters              # Install, typecheck & build all framework starters
+npm run test:e2e                     # Playwright + axe-core WCAG 2.2 AA real-browser suite
+npm run test:visual                  # Playwright light/dark screenshot regression
+npm run quality:report               # Regenerate QUALITY.md
+npm run audits:report                # Regenerate AUDITS.md
+npm run react:generate               # Regenerate src/react/index.js & index.d.ts
+npm run mcp:metadata                 # Regenerate mcp/component-metadata.json
+npm run bench:frameworks -- --write  # Re-measure React vs. Vue 3 vs. Vanilla comparison
 ```
 
 When authoring new features or components:
