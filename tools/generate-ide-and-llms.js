@@ -115,14 +115,21 @@ const fullLines = [
   '| :--- | :--- | :--- | :--- | :--- | :--- |',
 ];
 
+function escapeMdCell(val) {
+  return String(val || '')
+    .replaceAll('\\', '\\\\')
+    .replaceAll('|', '\\|')
+    .replace(/\r?\n/g, ' ');
+}
+
 for (const d of declarations) {
   const attrs = (d.attributes || [])
     .map((a) => (a.type?.text ? `${a.name}: ${a.type.text}` : a.name))
     .join(', ') || '—';
   const events = (d.events || []).map((e) => e.name).join(', ') || '—';
   const slots = (d.slots || []).map((s) => s.name || '(default)').join(', ') || '—';
-  const desc = (d.description || '').replace(/\|/g, '\\|').replace(/\r?\n/g, ' ');
-  fullLines.push(`| \`<${d.tagName}>\` | \`${d.name || ''}\` | ${attrs.replace(/\|/g, '\\|')} | ${events} | ${slots} | ${desc} |`);
+  const desc = escapeMdCell(d.description || '');
+  fullLines.push(`| \`<${d.tagName}>\` | \`${d.name || ''}\` | ${escapeMdCell(attrs)} | ${events} | ${slots} | ${desc} |`);
 }
 
 fullLines.push(
