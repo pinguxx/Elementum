@@ -18,6 +18,7 @@
 - Drop-in AI Agent Rules (`CLAUDE.md` / `.cursorrules`): https://github.com/pinguxx/Elementum/blob/main/docs/agent-rules-snippet.md
 - 4-Arm AI-Agent UI Benchmark Results: https://github.com/pinguxx/Elementum/blob/main/benchmarks/agent-eval/RESULTS.md
 - Theme Studio (Live Light/Dark + CSS/DTCG Export): https://elementum-sage.vercel.app/examples/registry.html#theme-studio
+- A2UI Renderer Guide (`@wcomp/elementum/a2ui`): https://github.com/pinguxx/Elementum/blob/main/docs/a2ui.md
 - A2UI Renderer Demo (with Live JSONL Stream): https://elementum-sage.vercel.app/examples/a2ui.html
 - AG-UI Streaming Demo: https://elementum-sage.vercel.app/examples/ag-ui.html
 - AI Agent Studio Demo: https://elementum-sage.vercel.app/examples/agent-studio.html

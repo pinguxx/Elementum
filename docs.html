@@ -335,6 +335,7 @@
       <option value="#behaviors-agent">— Behaviors, Agent &amp; Testing</option>
       <option value="#mcp-server">3. MCP Server Integration</option>
       <option value="#ag-ui-protocol">— AG-UI Protocol Integration</option>
+      <option value="#a2ui-protocol">— A2UI Declarative Renderer</option>
       <option value="#design-tokens">4. Figma & Penpot Workflow</option>
       <option value="#penpot-mcp">— Penpot MCP Design System Sync</option>
       <option value="#contributing">5. How to Contribute</option>
@@ -374,6 +375,7 @@
         <ul class="sidebar-menu">
           <li class="sidebar-item"><a href="#mcp-server">MCP Server Setup</a></li>
           <li class="sidebar-item"><a href="#ag-ui-protocol">AG-UI Protocol Integration</a></li>
+          <li class="sidebar-item"><a href="#a2ui-protocol">A2UI Declarative Renderer</a></li>
           <li class="sidebar-item"><a href="#design-tokens">Figma & Penpot Workflow</a></li>
           <li class="sidebar-item"><a href="#penpot-mcp">Penpot MCP Sync</a></li>
           <li class="sidebar-item"><a href="#contributing">How to Contribute</a></li>
@@ -924,6 +926,95 @@ console.log('Total tokens:', tokensSig.value);</el-code-block>
 
         <p>
           Try the live interactive AG-UI event streamer and HITL <code>&lt;el-tool-call&gt;</code> sandbox in the <a href="./examples/agent-studio.html">AI Agent Studio</a>.
+        </p>
+      </section>
+
+      <!-- 3c. A2UI DECLARATIVE RENDERER -->
+      <section id="a2ui-protocol" class="docs-section">
+        <h1>A2UI Declarative Agent Renderer</h1>
+        <p>
+          Elementum ships a zero-dependency <strong>Agent-to-UI (A2UI)</strong> renderer at <code>@wcomp/elementum/a2ui</code> (<code>createA2UiSurface</code>, <code>DEFAULT_A2UI_CATALOG</code>). Agents stream structured JSON messages instead of raw HTML or JavaScript, and Elementum renders them into a locked catalog of native Shadow DOM Web Components with two-way micro-signal bindings.
+        </p>
+
+        <el-callout variant="info" style="margin-bottom: 24px;">
+          <span slot="title">MCP + AG-UI + A2UI</span>
+          Use <strong>MCP</strong> for build-time schema verification, <strong>AG-UI</strong> for streaming agent execution &amp; tool approvals, and <strong>A2UI</strong> when an agent needs to compose safe, interactive UI surfaces dynamically at runtime with zero <code>innerHTML</code>.
+        </el-callout>
+
+        <h2>1. Supported A2UI Messages</h2>
+        <div class="api-table-wrapper">
+          <table class="api-table">
+            <thead>
+              <tr>
+                <th>A2UI Message</th>
+                <th>Behavior</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>dataModelUpdate</code></td>
+                <td>Updates values at a JSON Pointer <code>path</code> inside the reactive <code>surface.dataModel</code> signal.</td>
+              </tr>
+              <tr>
+                <td><code>surfaceUpdate</code></td>
+                <td>Upserts flat component definitions by <code>id</code> and incrementally reconciles the DOM tree.</td>
+              </tr>
+              <tr>
+                <td><code>beginRendering</code> / <code>createSurface</code></td>
+                <td>Sets the surface <code>root</code> component ID and mounts the Elementum component tree.</td>
+              </tr>
+              <tr>
+                <td><code>deleteSurface</code></td>
+                <td>Disposes all signal effects, event listeners, and DOM nodes for the surface.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>2. Mounting &amp; Streaming an A2UI Surface</h2>
+        <el-code-block language="javascript" copyable>import '@wcomp/elementum/tokens.css';
+import '@wcomp/elementum';
+import { effect } from '@wcomp/elementum';
+import { createA2UiSurface } from '@wcomp/elementum/a2ui';
+
+const surface = createA2UiSurface({
+  // Optional: restrict to a strict subset of DEFAULT_A2UI_CATALOG
+  allowedTypes: ['Card', 'Column', 'Text', 'ChoiceChip', 'TextField', 'Button'],
+  onAction: (ev) =&gt; {
+    console.log('Dispatched action:', ev.actionName, ev.context);
+  },
+});
+
+surface.mount(document.getElementById('a2ui-host'));
+
+effect(() =&gt; {
+  console.log('Reactive dataModel:', surface.dataModel.value);
+});
+
+// Stream one JSONL chunk at a time or pass a batch array:
+surface.processMessages([
+  { dataModelUpdate: { path: '/', contents: [{ key: 'seat', valueString: '14C' }] } },
+  {
+    surfaceUpdate: {
+      surfaceId: 'rebook',
+      components: [
+        { id: 'root', component: { Card: { title: { literalString: 'Rebook Flight' }, bordered: true, child: 'col' } } },
+        { id: 'col', component: { Column: { gap: '12px', children: ['chip14', 'chip9', 'btn'] } } },
+        { id: 'chip14', component: { ChoiceChip: { label: { literalString: '14C · Main Aisle' }, value: '14C', selected: { path: '/seat' } } } },
+        { id: 'chip9', component: { ChoiceChip: { label: { literalString: '9F · Exit Aisle' }, value: '9F', selected: { path: '/seat' } } } },
+        { id: 'btn', component: { Button: { variant: 'primary', label: { literalString: 'Confirm' }, action: { name: 'confirm', context: [{ key: 'seat', value: { path: '/seat' } }] } } } },
+      ],
+    },
+  },
+  { beginRendering: { surfaceId: 'rebook', root: 'root' } },
+]);</el-code-block>
+
+        <h2>3. Built-In Security Guarantees</h2>
+        <p>
+          Unregistered or disallowed component types (such as arbitrary script/iframe nodes) are silently dropped and reported via <code>surface.blockedTypes.value</code>. All <code>on*</code> inline event attributes and unsafe URL schemes (<code>javascript:</code>, <code>data:</code>) are stripped automatically.
+        </p>
+        <p>
+          Try the live interactive playground (including progressive JSONL stream simulation and locked-catalog enforcement) at <a href="./examples/a2ui.html">A2UI Live Playground</a>, or read the full reference in <a href="./docs/a2ui.md"><code>docs/a2ui.md</code></a>.
         </p>
       </section>
 

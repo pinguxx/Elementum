@@ -13,7 +13,7 @@
 | ----- | ----- | ----- | ----- | ----- | 
 | **109 Custom Elements** | **0 Runtime Deps** | **2.19 KB** | **WCAG 2.2 AA** (@axe-core/playwright) | **MIT** | 
 
-[**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (109 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr) · [**Deep Dive (Dev.to)**](https://dev.to/pinguxx/elementum-an-ai-native-ui-platform-with-built-in-mcp-agent-runtime-109-zero-dep-web-components-9oi)
+[**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (109 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**A2UI Demo**](https://elementum-sage.vercel.app/examples/a2ui.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr) · [**Deep Dive (Dev.to)**](https://dev.to/pinguxx/elementum-an-ai-native-ui-platform-with-built-in-mcp-agent-runtime-109-zero-dep-web-components-9oi)
 
 ## 🧪 Verification & Browser Matrix (Beta — `v0.8.0`)
 
@@ -279,6 +279,7 @@ Elementum/
 │   ├── elementum.js           # Base class: Shadow DOM, Constructable Stylesheets, unstyled mode, FACE
 │   ├── ssr.js                 # Pure Node.js Declarative Shadow DOM SSR
 │   ├── ag-ui.js               # AG-UI streaming event store & RFC 6902 JSON Patch
+│   ├── a2ui.js                # Declarative A2UI JSON surface renderer (see docs/a2ui.md)
 │   ├── behaviors/index.js     # 15 composable headless interaction, focus, motion & overlay behaviors
 │   ├── agent/index.js         # Shadow-DOM-piercing agent runtime bridge (snapshot, act)
 │   ├── testing/index.js       # WAI-ARIA APG, RTL & DSD SSR contract validators

@@ -27,6 +27,7 @@ At `0.8.x`, component status is tracked across three evidence-backed tiers:
 | `@wcomp/elementum/react` | **Stable** | Auto-generated wrappers tracked 1:1 with `custom-elements.json` |
 | `@wcomp/elementum/testing` | **Beta (`0.x` → `1.0`)** | Structural contract validators (`checkAriaPattern`, `checkDirection`, `checkServerRender`, `testComponent`) |
 | `@wcomp/elementum/ag-ui` | **Beta (`0.x` → `1.0`)** | AG-UI SSE store + RFC 6902 JSON Patch binding |
+| `@wcomp/elementum/a2ui` | **Beta (`0.x` → `1.0`)** | Declarative A2UI JSON surface renderer with locked catalog & two-way signals ([`docs/a2ui.md`](./a2ui.md)) |
 | `@wcomp/elementum/agent` | **Experimental** | Shadow-DOM-piercing `snapshot()` / `act()` — may iterate rapidly based on agent testing |
 
 ---
