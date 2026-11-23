@@ -29,7 +29,7 @@
       display: flex;
       flex-direction: column;
       gap: 14px;
-      padding-bottom: 24px;
+      padding-bottom: 28px;
       border-bottom: 1px solid var(--el-surface-border, #e2e8f0);
     }
     .hero-eyebrow {
@@ -83,8 +83,15 @@
       gap: 24px;
       align-items: center;
     }
+    .a2ui-live-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
     @media (max-width: 860px) {
-      .spotlight-grid { grid-template-columns: minmax(0, 1fr); }
+      .spotlight-grid,
+      .a2ui-live-grid { grid-template-columns: minmax(0, 1fr); }
     }
     .spotlight-frame {
       border-radius: 10px;
@@ -96,6 +103,27 @@
       display: block;
       width: 100%;
       height: auto;
+    }
+    .a2ui-json-box {
+      margin: 0;
+      padding: 14px;
+      border-radius: 10px;
+      background: var(--el-surface-muted, #f8fafc);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.78rem;
+      line-height: 1.55;
+      overflow-x: auto;
+      max-width: 100%;
+      color: var(--el-text-primary, #0f172a);
+    }
+    .mini-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--el-text-secondary, #475569);
+      margin-bottom: 8px;
     }
     .grid {
       display: grid;
@@ -162,6 +190,16 @@
       font-size: 0.84rem;
       color: var(--el-text-secondary, #475569);
     }
+    .closing-cta {
+      padding: 32px 28px;
+      border-radius: 14px;
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      background: var(--el-surface-muted, #f8fafc);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: flex-start;
+    }
   </style>
 </head>
 <body>
@@ -184,17 +222,21 @@
       <p class="lead">
         A shared UI foundation that works for design systems, multi-framework apps, Declarative Shadow DOM SSR, and runtime AI agent protocols (MCP, AG-UI, A2UI) with zero runtime dependencies.
       </p>
+      <div class="actions">
+        <el-button variant="primary" onclick="document.getElementById('featured-demos')?.scrollIntoView({ behavior: 'smooth' })">Explore the Live Demo</el-button>
+        <el-button variant="secondary" onclick="window.location.href='./docs.html#installation'">Get Started</el-button>
+      </div>
     </header>
 
-    <!-- Chapter 1: Featured Spotlight + Design Systems -> Live Code -->
-    <section class="chapter" aria-labelledby="ch1-heading">
+    <!-- Chapter 1: Featured Demonstrations (Design-to-Code + AI-Oriented Workflow) -->
+    <section class="chapter" id="featured-demos" aria-labelledby="ch1-heading">
       <div>
-        <div class="chapter-kicker">Chapter 1 · Featured Demonstration &amp; Design Systems</div>
-        <h2 id="ch1-heading" class="section-title">From Penpot &amp; W3C DTCG Tokens Directly to Live Code</h2>
-        <p class="muted-note">Define colors, typography, and spacing once in Penpot or Theme Studio, then compile and theme native Shadow DOM components with zero manual CSS drift.</p>
+        <div class="chapter-kicker">Chapter 1 · Two Core Workflows, One Contract</div>
+        <h2 id="ch1-heading" class="section-title">Design-to-Code &amp; AI Agent Workspaces Side by Side</h2>
+        <p class="muted-note">LedgerFlow proves the traditional Penpot-to-production workflow; AI Agent Studio proves the real-time agentic workflow—both powered by the same zero-dependency components.</p>
       </div>
 
-      <!-- Visual Priority Spotlight -->
+      <!-- Visual Priority Spotlight: LedgerFlow -->
       <el-card bordered>
         <el-card-content>
           <div class="spotlight-grid">
@@ -208,7 +250,7 @@
               </div>
               <h3 style="margin: 0; font-size: 1.35rem; letter-spacing: -0.02em;">LedgerFlow Treasury Dashboard</h3>
               <p class="card-desc">
-                What you are seeing: 15 validated Elementum Web Components compiled directly from Penpot design layers via MCP codegen—including live SVG area charts, semantic budget meters, animated counters, row inspection drawers, and a native Form-Associated expense modal.
+                What you are seeing: 15 validated Elementum Web Components compiled directly from Penpot design layers via MCP codegen—including live SVG area charts, semantic budget meters, animated counters, row inspection drawers, and a Form-Associated expense modal.
               </p>
               <div class="actions">
                 <el-button variant="primary" onclick="window.location.href='./examples/ledgerflow.html'">Launch LedgerFlow</el-button>
@@ -218,13 +260,74 @@
           </div>
         </el-card-content>
       </el-card>
+
+      <!-- Paired AI Workflow Card -->
+      <div class="grid">
+        <el-card hoverable bordered>
+          <el-card-header><el-card-title>AI Agent Studio (Command Center)</el-card-title></el-card-header>
+          <el-card-content>
+            <div class="card-body">
+              <p class="card-desc">Interactive AI workspace pairing a ⌘K command palette, auto-expanding prompt composer, collapsible reasoning cards, live token odometers, and OTP security approval.</p>
+              <div class="tag-row">
+                <el-badge variant="success" count="AI Workflow"></el-badge>
+              </div>
+              <div class="actions">
+                <el-button variant="primary" onclick="window.location.href='./examples/agent-studio.html'">Launch AI Studio</el-button>
+              </div>
+            </div>
+          </el-card-content>
+        </el-card>
+
+        <el-card hoverable bordered>
+          <el-card-header><el-card-title>AG-UI Streaming Workspace</el-card-title></el-card-header>
+          <el-card-content>
+            <div class="card-body">
+              <p class="card-desc">Live Server-Sent Events and RFC 6902 JSON Patch state deltas driving reasoning disclosures, streaming tokens, HITL tool-call approvals, and source citations.</p>
+              <div class="tag-row">
+                <el-badge variant="info" count="AG-UI"></el-badge>
+              </div>
+              <div class="actions">
+                <el-button variant="primary" onclick="window.location.href='./examples/ag-ui.html'">Launch AG-UI Demo</el-button>
+              </div>
+            </div>
+          </el-card-content>
+        </el-card>
+      </div>
     </section>
 
-    <!-- Chapter 2: One Contract, Any Framework + SSR -->
-    <section class="chapter" aria-labelledby="ch2-heading">
+    <!-- Chapter 2: Live Interactive A2UI Transformation -->
+    <section class="chapter" aria-labelledby="ch2-a2ui-heading">
       <div>
-        <div class="chapter-kicker">Chapter 2 · Framework Independence &amp; Zero-JS SSR</div>
-        <h2 id="ch2-heading" class="section-title">Same App Across React, Vue 3, Next.js &amp; Vanilla HTML</h2>
+        <div class="chapter-kicker">Chapter 2 · Declarative Agent-to-UI (A2UI)</div>
+        <h2 id="ch2-a2ui-heading" class="section-title">Structured JSON → Live, Locked-Catalog Web Components</h2>
+        <p class="muted-note">Agents never emit raw HTML or JavaScript. Click the live chips or button on the right—this card is rendered in real time by <code>@wcomp/elementum/a2ui</code> from the JSON on the left.</p>
+      </div>
+
+      <el-card bordered>
+        <el-card-content>
+          <div class="a2ui-live-grid">
+            <div style="min-width: 0;">
+              <div class="mini-label">1. Declarative A2UI JSON Message</div>
+              <pre id="showcase-a2ui-json" class="a2ui-json-box"></pre>
+            </div>
+            <div style="min-width: 0;">
+              <div class="mini-label">2. Live Rendered Elementum Surface (Interactive)</div>
+              <div id="showcase-a2ui-host"></div>
+              <div class="actions" style="margin-top: 14px;">
+                <el-button variant="primary" size="sm" onclick="window.location.href='./examples/a2ui.html'">Open Full A2UI Playground</el-button>
+                <el-button variant="secondary" size="sm" onclick="window.location.href='./docs.html#a2ui-protocol'">A2UI Docs</el-button>
+              </div>
+            </div>
+          </div>
+        </el-card-content>
+      </el-card>
+    </section>
+
+    <!-- Chapter 3: One Contract, Any Framework + SSR -->
+    <section class="chapter" aria-labelledby="ch3-heading">
+      <div>
+        <div class="chapter-kicker">Chapter 3 · Framework Independence &amp; Zero-JS SSR</div>
+        <h2 id="ch3-heading" class="section-title">Same App Across React, Vue 3, Next.js &amp; Vanilla HTML</h2>
         <p class="muted-note">Run the exact same Team Directory app across three stacks with measured LOC &amp; gzip budgets, and inspect instant Declarative Shadow DOM SSR before JavaScript hydrates.</p>
       </div>
 
@@ -267,63 +370,7 @@
       </div>
     </section>
 
-    <!-- Chapter 3: Runtime AI Interfaces -->
-    <section class="chapter" aria-labelledby="ch3-heading">
-      <div>
-        <div class="chapter-kicker">Chapter 3 · Runtime AI Agent Protocols</div>
-        <h2 id="ch3-heading" class="section-title">Streaming Agent UX with AG-UI &amp; Declarative A2UI</h2>
-        <p class="muted-note">Connect coding agents at build time via MCP, stream execution &amp; tool approvals at runtime via AG-UI, and let agents compose safe, locked-catalog surfaces via A2UI.</p>
-      </div>
-
-      <div class="grid">
-        <el-card hoverable bordered>
-          <el-card-header><el-card-title>A2UI Declarative Renderer</el-card-title></el-card-header>
-          <el-card-content>
-            <div class="card-body">
-              <p class="card-desc">Stream A2UI JSONL chunks into locked Elementum Web Components with two-way micro-signal bindings, action dispatch, and automatic blocking of unregistered tags.</p>
-              <div class="tag-row">
-                <el-badge variant="primary" count="A2UI"></el-badge>
-              </div>
-              <div class="actions">
-                <el-button variant="primary" onclick="window.location.href='./examples/a2ui.html'">Launch A2UI Playground</el-button>
-              </div>
-            </div>
-          </el-card-content>
-        </el-card>
-
-        <el-card hoverable bordered>
-          <el-card-header><el-card-title>AG-UI Streaming Workspace</el-card-title></el-card-header>
-          <el-card-content>
-            <div class="card-body">
-              <p class="card-desc">Live Server-Sent Events and RFC 6902 JSON Patch deltas driving reasoning cards, streaming tokens, HITL tool-call approvals, and source citations.</p>
-              <div class="tag-row">
-                <el-badge variant="info" count="AG-UI"></el-badge>
-              </div>
-              <div class="actions">
-                <el-button variant="primary" onclick="window.location.href='./examples/ag-ui.html'">Launch AG-UI Demo</el-button>
-              </div>
-            </div>
-          </el-card-content>
-        </el-card>
-
-        <el-card hoverable bordered>
-          <el-card-header><el-card-title>AI Agent Studio</el-card-title></el-card-header>
-          <el-card-content>
-            <div class="card-body">
-              <p class="card-desc">Interactive AI command center combining command palettes (⌘K), auto-expanding prompt composers, collapsible reasoning cards, token odometers, and OTP approval.</p>
-              <div class="tag-row">
-                <el-badge variant="success" count="AI Studio"></el-badge>
-              </div>
-              <div class="actions">
-                <el-button variant="primary" onclick="window.location.href='./examples/agent-studio.html'">Launch AI Studio</el-button>
-              </div>
-            </div>
-          </el-card-content>
-        </el-card>
-      </div>
-    </section>
-
-    <!-- Chapter 4: Production Proof & Verification -->
+    <!-- Chapter 4: Production Proof & Inspectable Evidence -->
     <section class="chapter" aria-labelledby="ch4-heading">
       <div>
         <div class="chapter-kicker">Chapter 4 · Production Reference Apps &amp; Inspectable Evidence</div>
@@ -415,6 +462,83 @@ export function OrdersPanel({ rows, onFilter }) {
         </el-card>
       </div>
     </section>
+
+    <!-- Closing Action Band -->
+    <section class="closing-cta" aria-labelledby="closing-heading">
+      <div>
+        <h2 id="closing-heading" style="margin: 0 0 6px; font-size: 1.45rem; letter-spacing: -0.02em;">Ready to build with Elementum?</h2>
+        <p class="muted-note">Install once, connect your AI coding agent via MCP in 10 seconds, and ship accessible interfaces across any framework.</p>
+      </div>
+      <div class="actions">
+        <el-button variant="primary" onclick="window.location.href='./docs.html#installation'">Get Started</el-button>
+        <el-button variant="secondary" onclick="window.location.href='./examples/index.html'">Browse Components</el-button>
+        <el-button variant="secondary" onclick="window.location.href='./index.html#mcp-connect'">Connect an AI Agent</el-button>
+        <el-button variant="secondary" onclick="window.open('https://github.com/pinguxx/Elementum', '_blank', 'noopener,noreferrer')">Explore the Source ↗</el-button>
+      </div>
+    </section>
   </main>
+
+  <el-toaster></el-toaster>
+
+  <script type="module">
+    import { effect, toast } from './src/index.js';
+    import { createA2UiSurface } from './src/a2ui.js';
+
+    const host = document.getElementById('showcase-a2ui-host');
+    const jsonBox = document.getElementById('showcase-a2ui-json');
+
+    const DEMO_MESSAGES = [
+      {
+        dataModelUpdate: {
+          path: '/',
+          contents: [{ key: 'tier', valueString: 'Pro Team' }],
+        },
+      },
+      {
+        surfaceUpdate: {
+          surfaceId: 'showcase-mini',
+          components: [
+            { id: 'root', component: { Card: { title: { literalString: 'Upgrade Workspace Plan' }, bordered: true, child: 'col' } } },
+            { id: 'col', component: { Column: { gap: '12px', children: ['badge', 'chips', 'applyBtn'] } } },
+            { id: 'badge', component: { Badge: { variant: 'success', label: { literalString: 'Locked Catalog · 0 innerHTML' } } } },
+            { id: 'chips', component: { Row: { children: ['c1', 'c2'] } } },
+            { id: 'c1', component: { ChoiceChip: { label: { literalString: 'Pro Team' }, value: 'Pro Team', selected: { path: '/tier' } } } },
+            { id: 'c2', component: { ChoiceChip: { label: { literalString: 'Enterprise' }, value: 'Enterprise', selected: { path: '/tier' } } } },
+            {
+              id: 'applyBtn',
+              component: {
+                Button: {
+                  variant: 'primary',
+                  label: { literalString: 'Confirm Selection' },
+                  action: { name: 'confirm_plan', context: [{ key: 'tier', value: { path: '/tier' } }] },
+                },
+              },
+            },
+          ],
+        },
+      },
+      { beginRendering: { surfaceId: 'showcase-mini', root: 'root' } },
+    ];
+
+    const surface = createA2UiSurface({
+      allowedTypes: ['Card', 'Column', 'Row', 'Badge', 'ChoiceChip', 'Button'],
+      onAction: (ev) => {
+        toast.success(`A2UI Action "${ev.actionName}" → tier: ${ev.context.tier}`);
+      },
+    });
+    surface.mount(host);
+    surface.processMessages(DEMO_MESSAGES);
+
+    effect(() => {
+      const liveSnapshot = {
+        dataModel: surface.dataModel.value,
+        surfaceUpdate: {
+          surfaceId: 'showcase-mini',
+          components: ['Card', 'Badge', 'ChoiceChip(Pro Team)', 'ChoiceChip(Enterprise)', 'Button(confirm_plan)'],
+        },
+      };
+      jsonBox.textContent = JSON.stringify(liveSnapshot, null, 2);
+    });
+  </script>
 </body>
 </html>
