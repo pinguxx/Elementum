@@ -112,6 +112,7 @@
   color-scheme: light;
 }
 
+[data-theme="dark"],
 :root[data-theme="dark"] {
   /* Brand Colors */
   --el-color-primary: #3b82f6;
