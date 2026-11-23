@@ -300,7 +300,11 @@ export class ElDrawer extends Elementum {
   // =========================================================================
 
   #onPointerDown = (e) => {
-    if (e.target.closest('button, a, input, select, textarea')) return;
+    const interactiveSelector = 'button, a, input, select, textarea, el-button, el-input, el-select, el-textarea, el-switch, el-checkbox';
+    if (e.target.closest?.(interactiveSelector)) return;
+    if (typeof e.composedPath === 'function' && e.composedPath().some((n) => n?.matches?.(interactiveSelector))) {
+      return;
+    }
     const panel = this.root?.querySelector('.drawer-panel');
     if (!panel) return;
 
@@ -326,16 +330,6 @@ export class ElDrawer extends Elementum {
       pointerId: e.pointerId,
       initialHeight: panel.offsetHeight || 320
     };
-
-    try {
-      if (e.pointerId !== undefined) {
-        panel.setPointerCapture?.(e.pointerId);
-      }
-    } catch {
-      // Ignore in mock DOM
-    }
-
-    panel.style.transition = 'none';
   };
 
   #onPointerMove = (e) => {

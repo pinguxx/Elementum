@@ -94,7 +94,6 @@ export function buildStarterIndexHtml() {
       font-family: var(--el-font-sans, system-ui, sans-serif);
       background: var(--el-step-1, var(--el-surface-base, #f8fafc));
       color: var(--el-text-primary, #0f172a);
-      transition: background-color 180ms ease, color 180ms ease;
     }
     main {
       max-width: 960px;
