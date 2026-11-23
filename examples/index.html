@@ -2935,6 +2935,106 @@ ${optionsHtml}
       stage.replaceChildren(...Array.from(doc.body.childNodes));
     }
 
+    function wireStageInteractions(stage, comp, props) {
+      const tag = comp.tag;
+      const p = props || {};
+
+      if (tag === 'el-toast') {
+        const btn = stage.querySelector('el-button');
+        if (btn) {
+          btn.addEventListener('click', () => {
+            const msg = p.message || 'Operation executed successfully.';
+            const type = p.type || 'success';
+            const dur = Number(p.duration) || 4000;
+            const fn = typeof window.toast?.[type] === 'function' ? window.toast[type] : window.toast;
+            if (typeof fn === 'function') fn(msg, { duration: dur });
+          });
+        }
+      } else if (tag === 'el-toaster') {
+        const btn = stage.querySelector('el-button');
+        if (btn) {
+          btn.addEventListener('click', () => {
+            const pos = p.position || 'bottom-right';
+            if (typeof window.toast === 'function') window.toast(`Notification at ${pos}`);
+          });
+        }
+      } else if (tag === 'el-dialog') {
+        const dlg = stage.querySelector('#demo-dialog-inst') || stage.querySelector('el-dialog');
+        const btns = stage.querySelectorAll('el-button');
+        if (dlg && btns.length > 0) {
+          btns[0].addEventListener('click', () => dlg.showModal?.());
+          btns.forEach((b, idx) => {
+            if (idx > 0) b.addEventListener('click', () => dlg.close?.());
+          });
+        }
+      } else if (tag === 'el-drawer') {
+        const drw = stage.querySelector('#demo-drawer-inst') || stage.querySelector('el-drawer');
+        const btns = stage.querySelectorAll('el-button');
+        if (drw && btns.length > 0) {
+          btns[0].addEventListener('click', () => drw.show?.());
+          btns.forEach((b, idx) => {
+            if (idx > 0) b.addEventListener('click', () => drw.close?.());
+          });
+        }
+      } else if (tag === 'el-alert-dialog') {
+        const adlg = stage.querySelector('#demo-alert-dialog-inst') || stage.querySelector('el-alert-dialog');
+        if (adlg) {
+          adlg.querySelectorAll('el-button:not([slot="trigger"])').forEach((b) => {
+            b.addEventListener('click', () => adlg.close?.());
+          });
+        }
+      } else if (tag === 'el-dropdown') {
+        const dd = stage.querySelector('#demo-dropdown') || stage.querySelector('el-dropdown');
+        if (dd) {
+          dd.querySelectorAll('[slot="menu"] button').forEach((b) => {
+            b.addEventListener('click', () => {
+              dd.close?.();
+              const label = b.textContent.trim();
+              if (label.includes('Delete')) {
+                window.toast?.error?.(`Selected: ${label}`);
+              } else {
+                window.toast?.(`Selected: ${label}`);
+              }
+            });
+          });
+        }
+      } else if (tag.startsWith('el-command')) {
+        const cmd = stage.querySelector('#demo-cmd-inst');
+        const btn = stage.querySelector('el-button');
+        if (cmd && btn) {
+          btn.addEventListener('click', () => {
+            cmd.removeAttribute('inline');
+            cmd.show?.();
+          });
+        }
+      } else if (tag === 'el-number-flow') {
+        const nf = stage.querySelector('#preview-number-flow') || stage.querySelector('el-number-flow');
+        const btns = stage.querySelectorAll('el-button');
+        if (nf && btns.length === 3) {
+          btns[0].addEventListener('click', () => {
+            const cur = Number(nf.getAttribute('value') || 0);
+            nf.setAttribute('value', String(Math.max(0, cur - 1250)));
+          });
+          btns[1].addEventListener('click', () => {
+            const cur = Number(nf.getAttribute('value') || 0);
+            nf.setAttribute('value', String(cur + 1250));
+          });
+          btns[2].addEventListener('click', () => {
+            nf.setAttribute('value', String(Math.floor(10000 + Math.random() * 89999)));
+          });
+        }
+      }
+
+      stage.querySelectorAll('a[href^="#"]').forEach((a) => {
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (tag.startsWith('el-navigation-menu') || tag.startsWith('el-sidebar')) {
+            window.toast?.(`Selected: ${a.textContent.trim().split('\n')[0]}`);
+          }
+        });
+      });
+    }
+
     // 8. Update Live Rendered Preview & Code Snippet
     function updateLivePreview(comp) {
       const stage = document.getElementById('live-stage');
@@ -2943,6 +3043,7 @@ ${optionsHtml}
 
       const markup = buildComponentMarkup(comp, currentProps);
       mountSanitizedPreview(stage, markup);
+      wireStageInteractions(stage, comp, currentProps);
       const syncedTarget = syncDeclaredPropsToStage(stage, comp, currentProps);
       let cleanMarkup = markup.replace(/\s+data-preview-target\b/g, '');
 
