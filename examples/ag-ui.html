@@ -298,8 +298,8 @@
 
     <!-- Scenario Launcher -->
     <section class="scenario-bar" aria-label="AG-UI Scenarios">
-      <span class="scenario-label">Run AG-UI Stream:</span>
-      <el-button id="btn-scenario-deploy" variant="primary" size="sm">1. Deploy Audit (HITL Approval)</el-button>
+      <span class="scenario-label">Choose a Scenario to Stream:</span>
+      <el-button id="btn-scenario-deploy" variant="secondary" size="sm">1. Deploy Audit (HITL Approval)</el-button>
       <el-button id="btn-scenario-refactor" variant="secondary" size="sm">2. Refactor + Diff &amp; Citations</el-button>
       <el-button id="btn-scenario-patch" variant="secondary" size="sm">3. Live JSON Patch Burst</el-button>
     </section>
@@ -810,6 +810,7 @@ await store.connectSSE(res);"
       runPatchBurstScenario();
     });
     document.getElementById('btn-reset').addEventListener('click', () => {
+      setActiveScenarioBtn(null);
       resetDemo();
       toast.info('AG-UI store reset.');
     });
