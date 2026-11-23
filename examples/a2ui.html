@@ -108,10 +108,18 @@
 
   <main>
     <header class="hero">
-      <h1>Declarative A2UI Renderer for Elementum</h1>
-      <p>
-        Stream declarative A2UI JSON messages (<code>createSurface</code>, <code>surfaceUpdate</code>, <code>dataModelUpdate</code>) into a locked catalog of native Elementum Web Components with two-way micro-signal bindings and zero executable code.
-      </p>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap;">
+        <div>
+          <h1>Declarative A2UI Renderer for Elementum</h1>
+          <p>
+            Stream declarative A2UI JSON messages (<code>createSurface</code>, <code>surfaceUpdate</code>, <code>dataModelUpdate</code>) into a locked catalog of native Elementum Web Components with two-way micro-signal bindings and zero executable code.
+          </p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <el-button variant="secondary" size="sm" onclick="window.location.href='../docs.html#a2ui-protocol'">A2UI Docs</el-button>
+          <el-button variant="secondary" size="sm" onclick="window.open('https://github.com/pinguxx/Elementum/blob/main/docs/a2ui.md', '_blank', 'noopener,noreferrer')">docs/a2ui.md ↗</el-button>
+        </div>
+      </div>
 
       <div class="intent-bar">
         <el-button id="intent-stream" variant="primary">▶ Simulate Agent Stream (JSONL)</el-button>
