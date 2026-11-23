@@ -91,17 +91,23 @@ export class ElButton extends Elementum {
     :host([size="sm"]) button {
       padding: var(--el-spacing-xs, 4px) var(--el-spacing-sm, 8px);
       font-size: 0.8125rem;
+      line-height: 1.2;
+      min-height: 32px;
     }
 
     :host([size="md"]) button,
     :host(:not([size])) button {
       padding: var(--el-spacing-sm, 8px) var(--el-spacing-md, 16px);
       font-size: 0.9375rem;
+      line-height: 1.2;
+      min-height: 38px;
     }
 
     :host([size="lg"]) button {
       padding: var(--el-spacing-md, 16px) var(--el-spacing-lg, 24px);
       font-size: 1.0625rem;
+      line-height: 1.2;
+      min-height: 46px;
     }
 
     /* Color Variants (from Figma tokens) */
