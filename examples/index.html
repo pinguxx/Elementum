@@ -2917,6 +2917,19 @@ ${optionsHtml}
       }, null, 2);
     }
 
+    function mountSanitizedPreview(stage, htmlMarkup) {
+      const doc = new DOMParser().parseFromString(htmlMarkup, 'text/html');
+      doc.body.querySelectorAll('script, iframe, object, embed').forEach((n) => n.remove());
+      doc.body.querySelectorAll('*').forEach((el) => {
+        for (const attr of Array.from(el.attributes)) {
+          if (/^on/i.test(attr.name) || (/^(href|src)$/i.test(attr.name) && /^\s*javascript:/i.test(attr.value))) {
+            el.removeAttribute(attr.name);
+          }
+        }
+      });
+      stage.replaceChildren(...Array.from(doc.body.childNodes));
+    }
+
     // 8. Update Live Rendered Preview & Code Snippet
     function updateLivePreview(comp) {
       const stage = document.getElementById('live-stage');
@@ -2924,7 +2937,7 @@ ${optionsHtml}
       if (!stage || !codeBox) return;
 
       const markup = buildComponentMarkup(comp, currentProps);
-      stage.innerHTML = markup;
+      mountSanitizedPreview(stage, markup);
       const syncedTarget = syncDeclaredPropsToStage(stage, comp, currentProps);
       let cleanMarkup = markup.replace(/\s+data-preview-target\b/g, '');
 

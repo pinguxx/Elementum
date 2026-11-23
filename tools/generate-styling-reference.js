@@ -127,7 +127,8 @@ lines.push(
 );
 
 for (const t of rootTokens) {
-  lines.push(`| \`${t.name}\` | \`${t.value.replace(/\|/g, '\\|')}\` |`);
+  const safeVal = t.value.replace(/\\/g, '\\\\').replace(/\|/g, '\\|');
+  lines.push(`| \`${t.name}\` | \`${safeVal}\` |`);
 }
 
 lines.push('');

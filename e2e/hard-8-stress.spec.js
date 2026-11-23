@@ -47,8 +47,13 @@ test.describe('Hard-8 Complex Component Stress Tests (1000+ rows, Nested Modals,
       table.addEventListener('sort', (e) => { sortDetail = e.detail; });
       const firstHeader = table.shadowRoot.querySelector('th[data-key], th button, th.sortable, thead th:nth-child(2)');
       if (firstHeader) firstHeader.click();
-      // Slice to 20 rows for fast axe-core DOM scan after stress benchmark completes
-      table.data = table.data.value.slice(0, 20);
+      // Replace with 20 rows for fast axe-core DOM scan after stress benchmark completes
+      table.data = Array.from({ length: 20 }, (_, i) => ({
+        id: i + 1,
+        name: `Member ${String(i + 1).padStart(4, '0')}`,
+        role: ['Engineer', 'Architect', 'Researcher', 'Designer'][i % 4],
+        spend: (i * 17) % 900,
+      }));
       return {
         hasHeader: Boolean(firstHeader),
         sortDetail,

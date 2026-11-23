@@ -40,7 +40,7 @@ el-button::part(button) {
 | `<el-alert-dialog>` | `dialog` | `--el-font-sans`, `--el-radius-lg`, `--el-surface-base`, `--el-surface-border`, `--el-surface-elevated`, `--el-text-primary` |
 | `<el-alert>` | `alert`, `content`, `description`, `dismiss`, `icon`, `title` | `--el-font-sans`, `--el-radius-md`, `--el-radius-sm`, `--el-surface-base`, `--el-surface-border`, `--el-text-muted`, `--el-text-primary`, `--el-text-secondary` |
 | `<el-aspect-ratio>` | `container` | _(inherits root tokens)_ |
-| `<el-autocomplete>` | `actions`, `announcer`, `chip`, `chips`, `clear-button`, `input`, `listbox`, `option`, `prefix`, `spinner`, `wrapper` | `--el-color-primary`, `--el-font-sans`, `--el-radius-md`, `--el-radius-sm`, `--el-surface-border`, `--el-surface-card`, `--el-surface-muted`, `--el-text-muted` _(+1 more)_ |
+| `<el-autocomplete>` | `actions`, `announcer`, `chip`, `chips`, `clear-button`, `input`, `listbox`, `option`, `prefix`, `spinner`, `wrapper` | `--el-color-primary`, `--el-color-primary-hover`, `--el-font-sans`, `--el-radius-md`, `--el-radius-sm`, `--el-surface-border`, `--el-surface-card`, `--el-surface-muted` _(+2 more)_ |
 | `<el-avatar>` | `avatar`, `initials`, `overflow`, `status` | `--el-avatar-overlap`, `--el-color-danger`, `--el-color-success`, `--el-font-sans`, `--el-radius-full`, `--el-radius-md`, `--el-surface-border`, `--el-surface-card` _(+3 more)_ |
 | `<el-badge>` | `badge` | `--el-color-primary`, `--el-font-sans`, `--el-radius-full`, `--el-surface-border`, `--el-surface-muted`, `--el-text-muted`, `--el-text-primary` |
 | `<el-border-beam>` | _(tokens / slots)_ | `--el-color-accent`, `--el-color-primary` |
