@@ -13,14 +13,19 @@
 - UI Development Guidelines for Agents: https://github.com/pinguxx/Elementum/blob/main/docs/agent-craft-guide.md
 - Framework Integration Guide: https://github.com/pinguxx/Elementum/blob/main/docs/framework-integration.md
 - Theming, Tokens & Tailwind Guide: https://github.com/pinguxx/Elementum/blob/main/docs/theming.md
-- A2UI Renderer Demo: https://elementum-sage.vercel.app/examples/a2ui.html
+- Tailwind CSS 1-Page Guide: https://github.com/pinguxx/Elementum/blob/main/docs/tailwind-guide.md
+- Auto-Generated `::part()` & Token Reference: https://github.com/pinguxx/Elementum/blob/main/docs/styling-reference.md
+- Drop-in AI Agent Rules (`CLAUDE.md` / `.cursorrules`): https://github.com/pinguxx/Elementum/blob/main/docs/agent-rules-snippet.md
+- 4-Arm AI-Agent UI Benchmark Results: https://github.com/pinguxx/Elementum/blob/main/benchmarks/agent-eval/RESULTS.md
+- Theme Studio (Live Light/Dark + CSS/DTCG Export): https://elementum-sage.vercel.app/examples/registry.html#theme-studio
+- A2UI Renderer Demo (with Live JSONL Stream): https://elementum-sage.vercel.app/examples/a2ui.html
 - AG-UI Streaming Demo: https://elementum-sage.vercel.app/examples/ag-ui.html
 - AI Agent Studio Demo: https://elementum-sage.vercel.app/examples/agent-studio.html
 - Live Declarative Shadow DOM SSR: https://elementum-sage.vercel.app/ssr
 
 ## Quick Install & MCP
-- npm: `npm install @wcomp/elementum`
-- CDN: `<link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />` and `<script type="module" src="https://unpkg.com/@wcomp/elementum"></script>`
+- npm + init CLI: `npm install @wcomp/elementum && npx @wcomp/elementum init`
+- Zero-Build 2-Line CDN: `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@wcomp/elementum@0.7.0/src/tokens.css" />` and `<script type="module" src="https://esm.sh/@wcomp/elementum@0.7.0"></script>`
 - Local MCP Server (stdio): `npx elementum-mcp`
 - Hosted MCP Server (Streamable HTTP): `https://elementum-sage.vercel.app/mcp`
 - Installable Agent Skills: `npx skills@latest add pinguxx/Elementum --skill elementum`

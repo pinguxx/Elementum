@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nova Cloud Console</title>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background: #fff; color: #222; }
+    .top { display: flex; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #ddd; }
+    .wrap { width: 960px; margin: 20px auto; }
+    .cards { display: flex; gap: 16px; }
+    .card { flex: 1; border: 1px solid #ddd; padding: 14px; border-radius: 6px; }
+    .sub { color: #aaa; font-size: 12px; }
+    .btn { background: #3b82f6; color: #fff; border: none; padding: 8px 12px; border-radius: 4px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    td, th { border: 1px solid #eee; padding: 8px; }
+  </style>
+</head>
+<body>
+  <div class="top">
+    <div><b>Nova Cloud</b> <span style="background:#e0f2fe;color:#38bdf8;padding:2px 6px;font-size:11px;">Pro</span></div>
+    <div><a href="#">Overview</a> <a href="#">Team</a> <a href="#">Billing</a></div>
+    <button class="btn" onclick="document.body.style.background='#111'">🌙</button>
+  </div>
+  <div class="wrap">
+    <h2>Team &amp; Billing Console</h2>
+    <div class="cards">
+      <div class="card"><div class="sub">Active Seats</div><h3>18</h3></div>
+      <div class="card"><div class="sub">Monthly Spend</div><h3>$432/mo</h3></div>
+      <div class="card"><div class="sub">API Quota</div><h3>74%</h3></div>
+    </div>
+    <div style="margin-top:20px;">
+      <input id="s" placeholder="Search" />
+      <select id="r"><option>All</option><option>Engineer</option><option>Architect</option><option>Researcher</option></select>
+      <button class="btn">Invite Member</button>
+      <table>
+        <tr><th>Name</th><th>Email</th><th>Role</th></tr>
+        <tr><td>Elena Vance</td><td>elena@novacloud.dev</td><td>Architect</td></tr>
+        <tr><td>Marcus Chen</td><td>marcus@novacloud.dev</td><td>Engineer</td></tr>
+        <tr><td>Priya Nair</td><td>priya@novacloud.dev</td><td>Researcher</td></tr>
+        <tr><td>David Kim</td><td>david@novacloud.dev</td><td>Engineer</td></tr>
+      </table>
+    </div>
+    <div style="margin-top:20px;">
+      <h3>AI Billing Assistant</h3>
+      <input placeholder="Ask billing..." />
+      <p class="sub">Spend is $432/mo across 18 seats.</p>
+    </div>
+  </div>
+</body>
+</html>

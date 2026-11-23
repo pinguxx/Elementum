@@ -1122,7 +1122,15 @@
 
           <!-- Live Generated Markup Snippet -->
           <div class="code-container">
-            <button class="copy-btn" id="btn-copy-code">Copy HTML 📋</button>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.08);flex-wrap:wrap;">
+              <div id="code-format-tabs" role="tablist" aria-label="Code framework format" style="display:flex;gap:6px;flex-wrap:wrap;">
+                <button type="button" class="copy-btn code-fmt-tab" data-fmt="html" style="position:static;background:var(--el-color-primary,#2563eb);color:#fff;border-color:transparent;">HTML</button>
+                <button type="button" class="copy-btn code-fmt-tab" data-fmt="react" style="position:static;">React</button>
+                <button type="button" class="copy-btn code-fmt-tab" data-fmt="vue" style="position:static;">Vue 3</button>
+                <button type="button" class="copy-btn code-fmt-tab" data-fmt="a2ui" style="position:static;">A2UI JSON</button>
+              </div>
+              <button class="copy-btn" id="btn-copy-code" style="position:static;">Copy HTML 📋</button>
+            </div>
             <pre class="code-block" id="generated-code-box"></pre>
           </div>
         </div>
@@ -2868,6 +2876,46 @@ ${optionsHtml}
       return targetEl;
     }
 
+    let activeCodeFormat = 'html';
+
+    function toPascalCase(tag) {
+      return tag.split('-').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('');
+    }
+
+    function formatFrameworkSnippet(comp, cleanMarkup, props, fmt) {
+      if (fmt === 'html') return cleanMarkup;
+      const pascal = toPascalCase(comp.tag);
+      if (fmt === 'react') {
+        const jsx = cleanMarkup
+          .replace(new RegExp(`<${comp.tag}\\b`, 'g'), `<${pascal}`)
+          .replace(new RegExp(`</${comp.tag}>`, 'g'), `</${pascal}>`)
+          .replace(/\bclass=/g, 'className=');
+        return `import '@wcomp/elementum/tokens.css';\nimport { ${pascal} } from '@wcomp/elementum/react';\n\nexport function Example() {\n  return (\n    ${jsx.replace(/\n/g, '\n    ')}\n  );\n}`;
+      }
+      if (fmt === 'vue') {
+        return `<script setup>\nimport '@wcomp/elementum/tokens.css';\nimport '@wcomp/elementum/components/${comp.tag}.js';\n</script>\n\n<template>\n  ${cleanMarkup.replace(/\n/g, '\n  ')}\n</template>`;
+      }
+      // A2UI JSON representation
+      const a2uiTypeMap = {
+        'el-button': 'Button', 'el-card': 'Card', 'el-input': 'TextField',
+        'el-badge': 'Badge', 'el-switch': 'Switch', 'el-checkbox': 'Checkbox',
+        'el-meter': 'Meter', 'el-progress': 'Progress', 'el-callout': 'Callout',
+        'el-chip': 'ChoiceChip', 'el-divider': 'Divider',
+      };
+      const a2uiType = a2uiTypeMap[comp.tag] || pascal.replace(/^El/, '');
+      const cleanProps = {};
+      Object.entries(props || {}).forEach(([k, v]) => {
+        if (v !== undefined && v !== '' && v !== false) cleanProps[k] = v;
+      });
+      return JSON.stringify({
+        surfaceUpdate: {
+          surfaceId: 'preview',
+          components: [{ id: 'node-1', type: a2uiType, props: cleanProps }],
+        },
+        beginRendering: { surfaceId: 'preview', root: 'node-1' },
+      }, null, 2);
+    }
+
     // 8. Update Live Rendered Preview & Code Snippet
     function updateLivePreview(comp) {
       const stage = document.getElementById('live-stage');
@@ -2877,8 +2925,30 @@ ${optionsHtml}
       const markup = buildComponentMarkup(comp, currentProps);
       stage.innerHTML = markup;
       const syncedTarget = syncDeclaredPropsToStage(stage, comp, currentProps);
-      const cleanMarkup = markup.replace(/\s+data-preview-target\b/g, '');
-      codeBox.textContent = cleanMarkup;
+      let cleanMarkup = markup.replace(/\s+data-preview-target\b/g, '');
+
+      const renderCodeForFormat = () => {
+        const formatted = formatFrameworkSnippet(comp, cleanMarkup, currentProps, activeCodeFormat);
+        codeBox.textContent = formatted;
+        const copyBtn = document.getElementById('btn-copy-code');
+        const labels = { html: 'Copy HTML 📋', react: 'Copy React 📋', vue: 'Copy Vue 📋', a2ui: 'Copy A2UI JSON 📋' };
+        if (copyBtn) copyBtn.textContent = labels[activeCodeFormat] || 'Copy 📋';
+        document.querySelectorAll('.code-fmt-tab').forEach(btn => {
+          const isActive = btn.dataset.fmt === activeCodeFormat;
+          btn.style.background = isActive ? 'var(--el-color-primary, #2563eb)' : '';
+          btn.style.color = isActive ? '#fff' : '';
+          btn.style.borderColor = isActive ? 'transparent' : '';
+        });
+      };
+
+      document.querySelectorAll('.code-fmt-tab').forEach(btn => {
+        btn.onclick = () => {
+          activeCodeFormat = btn.dataset.fmt || 'html';
+          renderCodeForFormat();
+        };
+      });
+
+      renderCodeForFormat();
 
       // Attach event listeners to live element for event console
       const liveEl = syncedTarget || stage.querySelector(comp.tag) || stage.firstElementChild;
@@ -2907,7 +2977,8 @@ ${optionsHtml}
               currentProps.value = e.detail.value;
               const knobVal = document.querySelector('[data-prop="value"]');
               if (knobVal) knobVal.value = e.detail.value;
-              codeBox.textContent = buildComponentMarkup(comp, currentProps).replace(/\s+data-preview-target\b/g, '');
+              cleanMarkup = buildComponentMarkup(comp, currentProps).replace(/\s+data-preview-target\b/g, '');
+              renderCodeForFormat();
             }
           });
         });
@@ -2915,8 +2986,9 @@ ${optionsHtml}
 
       // Hook up copy code button
       document.getElementById('btn-copy-code').onclick = () => {
-        navigator.clipboard.writeText(cleanMarkup);
-        toast.success('Markup copied to clipboard!');
+        const textToCopy = formatFrameworkSnippet(comp, cleanMarkup, currentProps, activeCodeFormat);
+        navigator.clipboard.writeText(textToCopy);
+        toast.success(`${activeCodeFormat.toUpperCase()} snippet copied to clipboard!`);
       };
     }
 

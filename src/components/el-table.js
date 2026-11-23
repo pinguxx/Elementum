@@ -364,29 +364,56 @@ export class ElTable extends Elementum {
           ${() => {
             const rows = Array.isArray(this.sortedData.value) ? this.sortedData.value : [];
             const cols = Array.isArray(this.columns.value) ? this.columns.value : [];
-            return rows.map(
-              (row, idx) => html`
-                <tr class=${() => (this.isRowSelected(idx) ? 'selected' : '')}>
-                  ${() =>
-                    this.selectable.value
-                      ? html`
-                          <td class="checkbox-cell">
-                            <input
-                              type="checkbox"
-                              aria-label=${`Select row ${idx + 1}`}
-                              .checked=${() => this.isRowSelected(idx)}
-                              @change=${() => this.toggleRow(idx)}
-                            />
-                          </td>
-                        `
-                      : ''}
-                  ${() =>
-                    cols.map(
-                      (col) => html`<td>${row[col.key] ?? ''}</td>`
-                    )}
+            const isSelectable = this.selectable.value;
+            const selectedSet = new Set(this.selected.value);
+            if (typeof document !== 'undefined') {
+              const frag = document.createDocumentFragment();
+              for (let idx = 0; idx < rows.length; idx++) {
+                const row = rows[idx];
+                const tr = document.createElement('tr');
+                const isSelected = selectedSet.has(idx);
+                if (isSelected) tr.className = 'selected';
+                if (isSelectable) {
+                  const tdCb = document.createElement('td');
+                  tdCb.className = 'checkbox-cell';
+                  const cb = document.createElement('input');
+                  cb.type = 'checkbox';
+                  cb.setAttribute('aria-label', `Select row ${idx + 1}`);
+                  cb.checked = isSelected;
+                  cb.addEventListener('change', () => this.toggleRow(idx));
+                  tdCb.appendChild(cb);
+                  tr.appendChild(tdCb);
+                }
+                for (let c = 0; c < cols.length; c++) {
+                  const td = document.createElement('td');
+                  const val = row[cols[c].key];
+                  td.textContent = val == null ? '' : String(val);
+                  tr.appendChild(td);
+                }
+                frag.appendChild(tr);
+              }
+              return frag;
+            }
+            return rows.map((row, idx) => {
+              const isSelected = selectedSet.has(idx);
+              return html`
+                <tr class=${isSelected ? 'selected' : ''}>
+                  ${isSelectable
+                    ? html`
+                        <td class="checkbox-cell">
+                          <input
+                            type="checkbox"
+                            aria-label=${`Select row ${idx + 1}`}
+                            .checked=${isSelected}
+                            @change=${() => this.toggleRow(idx)}
+                          />
+                        </td>
+                      `
+                    : ''}
+                  ${cols.map((col) => html`<td>${row[col.key] ?? ''}</td>`)}
                 </tr>
-              `
-            );
+              `;
+            });
           }}
         </tbody>
       </table>

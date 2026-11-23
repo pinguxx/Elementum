@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nova Cloud — Team &amp; Billing Console (Conventional CSS)</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #f8fafc; color: #0f172a; }
+    .nav { position: sticky; top: 0; background: #fff; border-bottom: 1px solid #e2e8f0; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-weight: 700; display: flex; gap: 8px; align-items: center; }
+    .pill { background: #dbeafe; color: #3b82f6; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column; gap: 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; }
+    .muted { color: #94a3b8; font-size: 13px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #e2e8f0; }
+    .btn { background: #2563eb; color: #fff; border: 0; padding: 8px 14px; border-radius: 8px; cursor: pointer; }
+    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); align-items: center; justify-content: center; }
+    .modal-bg.open { display: flex; }
+    .modal { background: #fff; padding: 20px; border-radius: 12px; width: 380px; max-width: 92vw; }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="brand">Nova Cloud <span class="pill">Pro</span></div>
+    <nav style="display:flex;gap:14px;">
+      <a href="#overview">Overview</a>
+      <a href="#team">Team</a>
+      <a href="#billing">Billing</a>
+    </nav>
+    <button id="theme-btn" class="btn" type="button">Theme</button>
+  </header>
+
+  <main class="container" id="overview">
+    <h1>Team &amp; Billing Console</h1>
+    <div class="grid">
+      <div class="card"><div class="muted">Active Seats</div><h2>18</h2></div>
+      <div class="card"><div class="muted">Monthly Spend</div><h2>$432/mo</h2></div>
+      <div class="card"><div class="muted">API Quota</div><h2>74%</h2><progress value="74" max="100" style="width:100%"></progress></div>
+    </div>
+
+    <section class="card" id="team">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input id="search" placeholder="Filter by name..." />
+          <select id="role"><option>All</option><option>Engineer</option><option>Architect</option><option>Researcher</option></select>
+        </div>
+        <button id="open-modal" class="btn" type="button">Invite Member</button>
+      </div>
+      <table>
+        <thead><tr><th>Name</th><th>Email</th><th>Role</th></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </section>
+
+    <section class="card" id="billing">
+      <h2>AI Billing Assistant</h2>
+      <div style="display:flex;gap:8px;">
+        <input id="ai-q" placeholder="Ask a billing question..." style="flex:1;padding:8px;" />
+        <button class="btn" type="button" id="ai-send">Ask</button>
+      </div>
+      <details style="margin-top:10px;"><summary>Reasoning steps</summary><p class="muted">Checked 30-day invoices and quota usage.</p></details>
+      <p id="ai-out">Monthly spend is $432/mo across 18 seats (74% quota).</p>
+    </section>
+  </main>
+
+  <div class="modal-bg" id="modal">
+    <div class="modal">
+      <h3>Invite Member</h3>
+      <form id="invite-form" style="display:flex;flex-direction:column;gap:10px;">
+        <input name="name" placeholder="Name" required />
+        <input name="email" type="email" placeholder="Email" required />
+        <button class="btn" type="submit">Send Invite</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const rows = [
+      { name: 'Elena Vance', email: 'elena@novacloud.dev', role: 'Architect' },
+      { name: 'Marcus Chen', email: 'marcus@novacloud.dev', role: 'Engineer' },
+      { name: 'Priya Nair', email: 'priya@novacloud.dev', role: 'Researcher' },
+      { name: 'David Kim', email: 'david@novacloud.dev', role: 'Engineer' },
+    ];
+    function draw() {
+      const q = document.getElementById('search').value.toLowerCase();
+      const r = document.getElementById('role').value;
+      const list = rows.filter(x => x.name.toLowerCase().includes(q) && (r === 'All' || x.role === r));
+      document.getElementById('tbody').innerHTML = list.map(x => `<tr><td>${x.name}</td><td>${x.email}</td><td>${x.role}</td></tr>`).join('');
+    }
+    document.getElementById('search').addEventListener('input', draw);
+    document.getElementById('role').addEventListener('change', draw);
+    document.getElementById('open-modal').addEventListener('click', () => document.getElementById('modal').classList.add('open'));
+    draw();
+  </script>
+</body>
+</html>

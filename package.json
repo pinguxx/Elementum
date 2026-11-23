@@ -11,12 +11,14 @@
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "bin": {
+    "elementum": "./bin/elementum.js",
     "elementum-mcp": "./mcp/server.js"
   },
   "publishConfig": {
     "access": "public"
   },
   "files": [
+    "bin",
     "src",
     "custom-elements.json",
     "tokens",
@@ -87,7 +89,8 @@
     "penpot:design-app": "node tools/design-ledgerflow-penpot.js",
     "penpot:generate": "node tools/penpot-to-elementum.js",
     "react:generate": "node tools/generate-react-wrappers.js",
-    "mcp:metadata": "node tools/generate-mcp-metadata.js"
+    "mcp:metadata": "node tools/generate-mcp-metadata.js",
+    "docs:styling": "node tools/generate-styling-reference.js"
   },
   "peerDependencies": {
     "react": ">=18.0.0"

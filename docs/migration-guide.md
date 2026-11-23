@@ -119,3 +119,19 @@ export function ProfileForm() {
 
 - Instead of `@property()` decorator reflection triggering asynchronous `update()` cycles across the template, Elementum fields use direct synchronous signals (`variant = signal('primary')`) reflected cleanly via `observedAttributes`.
 - Authoring custom components alongside Elementum works directly in plain ES modules with zero build transforms (`html`, `css`, `signal`, `Elementum`). See [`docs/framework-integration.md`](./framework-integration.md) for Vue 3, Svelte 5, and Next.js App Router setup.
+
+---
+
+## 5. Coming from `shadcn/ui` + Radix
+
+Teams using `shadcn/ui` love owning clean, accessible primitives without fighting heavy runtime frameworks. Elementum gives you that same control **across React, Vue, Svelte, Next.js, and Vanilla HTML** without maintaining 40+ copied component files in your repo:
+
+| `shadcn/ui` Pattern | Elementum Equivalent | Benefit |
+| :--- | :--- | :--- |
+| `npx shadcn add button dialog table` | `npm install @wcomp/elementum` + `npx @wcomp/elementum init` | 109 tree-shakeable components (`sideEffects` configured), 0 runtime deps |
+| `<Button variant="destructive">` | `<el-button variant="danger">` or `<ElButton variant="danger">` | Native focus ring, WCAG 2.2 AA contrast, zero React re-render overhead |
+| `<Dialog>` + `<DialogTrigger>` + `<DialogContent>` | `<el-dialog title="...">` + `dialog.showModal()` | Native top-layer `<dialog>`, Escape dismiss, focus restoration |
+| `cn("rounded-xl", className)` | `class="[&::part(card)]:rounded-xl"` or `unstyled` | Keep Tailwind utilities directly—see [`docs/tailwind-guide.md`](./tailwind-guide.md) & [`docs/styling-reference.md`](./styling-reference.md) |
+| Copy-pasting Tailwind theme vars | `--el-*` DTCG tokens (`src/tokens.css`) + [Theme Studio](../examples/registry.html#theme-studio) | 1:1 light/dark mode + Penpot/Figma sync |
+| Prompting AI without schema validation | Hosted MCP (`https://elementum-sage.vercel.app/mcp`) + [`docs/agent-rules-snippet.md`](./agent-rules-snippet.md) | Verifies tags, attributes, and WCAG 2.2 AA before shipping |
+

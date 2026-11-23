@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nova Cloud — Team &amp; Billing Console (Elementum Docs Only)</title>
+  <link rel="stylesheet" href="/src/tokens.css" />
+  <script type="module" src="/src/index.js"></script>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; background: var(--el-surface-base, #fff); color: var(--el-text-primary, #0f172a); }
+    main { max-width: 1120px; margin: 0 auto; padding: 24px 16px; display: flex; flex-direction: column; gap: 20px; }
+    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  </style>
+</head>
+<body>
+  <el-navbar sticky brand="Nova Cloud" badge="Pro" href="#overview">
+    <a href="#overview">Overview</a>
+    <a href="#team">Team</a>
+    <a href="#billing">Billing</a>
+    <el-theme-switch slot="actions"></el-theme-switch>
+  </el-navbar>
+
+  <main>
+    <h1>Team &amp; Billing Console</h1>
+    <section class="kpis">
+      <el-card bordered><el-card-header><el-card-title>Active Seats</el-card-title></el-card-header><el-card-content><strong>18</strong> <el-badge color="green" count="Active"></el-badge></el-card-content></el-card>
+      <el-card bordered><el-card-header><el-card-title>Monthly Spend</el-card-title></el-card-header><el-card-content><strong>$432/mo</strong></el-card-content></el-card>
+      <el-card bordered><el-card-header><el-card-title>API Quota</el-card-title></el-card-header><el-card-content><strong>74%</strong><el-meter value="74" max="100"></el-meter></el-card-content></el-card>
+    </section>
+
+    <section id="team">
+      <el-card bordered>
+        <el-card-header><el-card-title>Team Directory</el-card-title></el-card-header>
+        <el-card-content>
+          <div class="bar">
+            <el-input id="q" placeholder="Filter members..."></el-input>
+            <el-select id="role" value="All">
+              <option value="All">All</option>
+              <option value="Engineer">Engineer</option>
+              <option value="Architect">Architect</option>
+              <option value="Researcher">Researcher</option>
+            </el-select>
+            <el-button id="invite" kind="primary" variant="primary">Invite Member</el-button>
+          </div>
+          <el-table id="tbl" selectable></el-table>
+        </el-card-content>
+      </el-card>
+    </section>
+
+    <section id="billing">
+      <el-card bordered>
+        <el-card-header><el-card-title>AI Billing Assistant</el-card-title></el-card-header>
+        <el-card-content style="display:flex;flex-direction:column;gap:12px;">
+          <el-prompt-input id="prompt" placeholder="Ask billing question..."></el-prompt-input>
+          <el-reasoning-card state="done" label="Reasoning">Analyzed 30-day usage logs.</el-reasoning-card>
+          <el-tool-call tool-name="query_usage" name="query_usage" status="success"></el-tool-call>
+          <el-streaming-text text="Spend is $432/mo across 18 seats (74% API quota)."></el-streaming-text>
+        </el-card-content>
+      </el-card>
+    </section>
+  </main>
+
+  <el-dialog id="dlg" title="Invite Member">
+    <form id="f" style="display:flex;flex-direction:column;gap:12px;">
+      <el-input name="name" placeholder="Name" required></el-input>
+      <el-input name="email" type="email" placeholder="Email" required></el-input>
+      <el-button type="submit" variant="primary">Send</el-button>
+    </form>
+  </el-dialog>
+  <el-toaster></el-toaster>
+
+  <script type="module">
+    const tbl = document.getElementById('tbl');
+    tbl.columns = [
+      { key: 'name', label: 'Name', sortable: true },
+      { key: 'role', label: 'Role', sortable: true },
+    ];
+    tbl.data = [
+      { name: 'Elena Vance', role: 'Architect' },
+      { name: 'Marcus Chen', role: 'Engineer' },
+      { name: 'Priya Nair', role: 'Researcher' },
+      { name: 'David Kim', role: 'Engineer' },
+    ];
+    document.getElementById('invite').addEventListener('click', () => document.getElementById('dlg').showModal());
+  </script>
+</body>
+</html>

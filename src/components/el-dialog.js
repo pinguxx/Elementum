@@ -225,6 +225,13 @@ export class ElDialog extends Elementum {
   #onDialogClose = (e) => {
     const dlg = e.target;
     this.isOpen.value = false;
+    this.setAttribute('data-state', 'closed');
+    if (dlg && typeof dlg.setAttribute === 'function') {
+      dlg.setAttribute('data-state', 'closed');
+    }
+    if (this.hasAttribute('open')) {
+      this.removeAttribute('open');
+    }
     const returnValue = dlg.returnValue;
     dlg.returnValue = ''; // Reset per modern web guidance to prevent stale leaks
     this.emit('close', { returnValue });

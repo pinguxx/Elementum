@@ -98,7 +98,7 @@ const { server, port } = await startStaticServer(rootDir);
 const relUrlPath = '/' + path.relative(rootDir, targetPath).split(path.sep).join('/');
 const url = `http://127.0.0.1:${port}${relUrlPath}`;
 
-const browser = await chromium.launch();
+const browser = await chromium.launch({ args: ['--disable-dev-shm-usage', '--disable-gpu', '--no-sandbox'] });
 try {
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
   const page = await context.newPage();

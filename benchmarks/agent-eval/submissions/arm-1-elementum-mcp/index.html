@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nova Cloud — Team &amp; Billing Console (Elementum + MCP)</title>
+  <link rel="stylesheet" href="/src/tokens.css" />
+  <script type="module" src="/src/index.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--el-font-sans, system-ui, sans-serif);
+      background: var(--el-surface-base, #ffffff);
+      color: var(--el-text-primary, #0f172a);
+    }
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 20px 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .kpi-value {
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 4px 0;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .toolbar-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      flex: 1;
+      min-width: 240px;
+    }
+    .ai-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .form-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <el-navbar sticky brand="Nova Cloud" badge="Pro" badge-variant="primary" href="#overview">
+    <a href="#overview" active>Overview</a>
+    <a href="#team">Team</a>
+    <a href="#billing">Billing</a>
+    <el-theme-switch slot="actions"></el-theme-switch>
+  </el-navbar>
+
+  <main id="overview">
+    <header>
+      <h1 style="margin:0 0 6px;font-size:1.75rem;">Team &amp; Billing Console</h1>
+      <p style="margin:0;color:var(--el-text-secondary,#475569);">Manage workspace seats, monitor monthly spend, and query billing telemetry with AI.</p>
+    </header>
+
+    <section class="kpi-grid" aria-label="Workspace KPIs">
+      <el-card bordered>
+        <el-card-header><el-card-title>Active Seats</el-card-title></el-card-header>
+        <el-card-content>
+          <div class="kpi-value" id="kpi-seats">18</div>
+          <el-badge variant="success" count="4 online now"></el-badge>
+        </el-card-content>
+      </el-card>
+      <el-card bordered>
+        <el-card-header><el-card-title>Monthly Spend</el-card-title></el-card-header>
+        <el-card-content>
+          <div class="kpi-value">$432/mo</div>
+          <el-badge variant="info" count="Pro Plan"></el-badge>
+        </el-card-content>
+      </el-card>
+      <el-card bordered>
+        <el-card-header><el-card-title>API Quota</el-card-title></el-card-header>
+        <el-card-content>
+          <div class="kpi-value">74%</div>
+          <el-meter value="74" min="0" max="100" label="API Quota Usage"></el-meter>
+        </el-card-content>
+      </el-card>
+    </section>
+
+    <section id="team" aria-labelledby="team-heading">
+      <el-card bordered>
+        <el-card-header>
+          <el-card-title id="team-heading">Team Directory</el-card-title>
+        </el-card-header>
+        <el-card-content style="display:flex;flex-direction:column;gap:14px;">
+          <div class="toolbar">
+            <div class="toolbar-filters">
+              <el-input id="search-input" placeholder="Filter by name..." aria-label="Filter team members by name" style="flex:1;min-width:180px;"></el-input>
+              <el-select id="role-select" value="All" aria-label="Filter by role">
+                <option value="All">All Roles</option>
+                <option value="Engineer">Engineer</option>
+                <option value="Architect">Architect</option>
+                <option value="Researcher">Researcher</option>
+              </el-select>
+            </div>
+            <el-button id="btn-invite" variant="primary">Invite Member</el-button>
+          </div>
+          <el-table id="team-table" selectable></el-table>
+          <el-empty-state id="team-empty" title="No matching members" description="Adjust your search query or role filter." style="display:none;"></el-empty-state>
+        </el-card-content>
+      </el-card>
+    </section>
+
+    <section id="billing" aria-labelledby="ai-heading">
+      <el-card bordered>
+        <el-card-header>
+          <el-card-title id="ai-heading">AI Billing Assistant</el-card-title>
+        </el-card-header>
+        <el-card-content class="ai-stack">
+          <el-prompt-input id="ai-prompt" placeholder="Ask about monthly spend, seats, or API quota..."></el-prompt-input>
+          <el-reasoning-card id="ai-reasoning" label="Billing analysis steps" duration="1.2s">
+            Checked 30-day workspace invoices, seat count (18 active), and Tuesday batch token spike.
+          </el-reasoning-card>
+          <el-tool-call id="ai-tool" name="query_usage" status="success" duration="180ms"></el-tool-call>
+          <el-streaming-text id="ai-stream" text="Monthly spend is $432/mo across 18 seats. API quota is at 74% with 8 days remaining in the cycle."></el-streaming-text>
+          <el-sources id="ai-sources"></el-sources>
+        </el-card-content>
+      </el-card>
+    </section>
+  </main>
+
+  <el-dialog id="invite-dialog" title="Invite Team Member">
+    <form id="invite-form" class="form-grid">
+      <el-input id="invite-name" name="name" label="Full Name" placeholder="Ada Lovelace" required></el-input>
+      <el-input id="invite-email" name="email" type="email" label="Work Email" placeholder="ada@novacloud.dev" required></el-input>
+      <el-select id="invite-role" name="role" value="Engineer" aria-label="Member Role">
+        <option value="Engineer">Engineer</option>
+        <option value="Architect">Architect</option>
+        <option value="Researcher">Researcher</option>
+      </el-select>
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px;">
+        <el-button id="btn-cancel-invite" variant="secondary" type="button">Cancel</el-button>
+        <el-button variant="primary" type="submit">Send Invite</el-button>
+      </div>
+    </form>
+  </el-dialog>
+
+  <el-toaster></el-toaster>
+
+  <script type="module">
+    import { toast } from '/src/index.js';
+
+    const members = [
+      { name: 'Elena Vance', email: 'elena@novacloud.dev', role: 'Architect', status: 'Active' },
+      { name: 'Marcus Chen', email: 'marcus@novacloud.dev', role: 'Engineer', status: 'Active' },
+      { name: 'Priya Nair', email: 'priya@novacloud.dev', role: 'Researcher', status: 'Active' },
+      { name: 'David Kim', email: 'david@novacloud.dev', role: 'Engineer', status: 'Invited' },
+    ];
+
+    const table = document.getElementById('team-table');
+    const empty = document.getElementById('team-empty');
+    const searchInput = document.getElementById('search-input');
+    const roleSelect = document.getElementById('role-select');
+    const dialog = document.getElementById('invite-dialog');
+    const form = document.getElementById('invite-form');
+
+    table.columns = [
+      { key: 'name', label: 'Name', sortable: true },
+      { key: 'email', label: 'Email', sortable: true },
+      { key: 'role', label: 'Role', sortable: true },
+      { key: 'status', label: 'Status', sortable: true },
+    ];
+
+    let query = '';
+    let roleFilter = 'All';
+
+    function renderRows() {
+      const filtered = members.filter((m) => {
+        const matchName = m.name.toLowerCase().includes(query.toLowerCase());
+        const matchRole = roleFilter === 'All' || m.role === roleFilter;
+        return matchName && matchRole;
+      });
+      table.data = filtered;
+      table.style.display = filtered.length ? 'block' : 'none';
+      empty.style.display = filtered.length ? 'none' : 'block';
+    }
+
+    searchInput.addEventListener('input', (e) => {
+      query = e.detail?.value ?? e.target.value ?? '';
+      renderRows();
+    });
+    roleSelect.addEventListener('change', (e) => {
+      roleFilter = e.detail?.value ?? e.target.value ?? 'All';
+      renderRows();
+    });
+
+    document.getElementById('btn-invite').addEventListener('click', () => dialog.showModal());
+    document.getElementById('btn-cancel-invite').addEventListener('click', () => dialog.close());
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('invite-name').value || 'New Member';
+      const email = document.getElementById('invite-email').value || 'member@novacloud.dev';
+      const role = document.getElementById('invite-role').value || 'Engineer';
+      members.unshift({ name, email, role, status: 'Invited' });
+      document.getElementById('kpi-seats').textContent = String(14 + members.length);
+      renderRows();
+      dialog.close();
+      toast.success(`Invited ${name} as ${role}`);
+    });
+
+    const sources = document.getElementById('ai-sources');
+    sources.sources = [
+      { title: 'Invoice #2026-11', url: '#billing', snippet: '$432.00 across 18 seats' },
+      { title: 'Usage Telemetry', url: '#overview', snippet: '74% of 10M monthly API quota' },
+    ];
+
+    document.getElementById('ai-prompt').addEventListener('submit', (e) => {
+      const q = e.detail?.value || 'billing summary';
+      document.getElementById('ai-stream').setAttribute('text', `Answer for "${q}": Current spend is $432/mo with 74% quota used.`);
+      toast.info('Updated billing analysis');
+    });
+
+    renderRows();
+  </script>
+</body>
+</html>

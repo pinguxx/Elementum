@@ -1,6 +1,8 @@
 # Theming & Customization in Elementum
 
-Elementum provides a design-token architecture that bridges Figma Design Tokens and native Web Components through CSS Custom Properties and standard CSS `::part()` selectors.
+Elementum provides a design-token architecture that bridges Penpot/Figma W3C DTCG Design Tokens and native Web Components through CSS Custom Properties and standard CSS `::part()` selectors.
+
+> **Quick Links:** [**Interactive Theme Studio**](../examples/registry.html#theme-studio) (pick color, radius & font, preview light/dark, download `tokens.css` or DTCG JSON) · [**Auto-Generated `::part()` & Token Reference**](./styling-reference.md) · [**Tailwind CSS 1-Page Guide**](./tailwind-guide.md)
 
 ---
 

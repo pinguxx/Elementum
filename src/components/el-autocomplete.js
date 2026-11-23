@@ -256,8 +256,8 @@ export class ElAutocomplete extends Elementum {
     }
 
     .match-highlight {
-      background: color-mix(in srgb, var(--el-color-primary, #2563eb) 18%, transparent);
-      color: var(--el-color-primary, #1d4ed8);
+      background: color-mix(in srgb, var(--el-color-primary, #2563eb) 14%, transparent);
+      color: var(--el-color-primary-hover, #1d4ed8);
       font-weight: 700;
       border-radius: 3px;
       padding: 0 2px;

@@ -920,36 +920,73 @@ button.textContent = 'Submit Order';</code></pre>
     </section>
 
     <!-- SECTION: Create / Visual Theme Studio -->
-    <section>
+    <section id="theme-studio">
       <div class="section-header">
         <div>
           <h2 class="section-title">Theme Studio ("Create")</h2>
-          <p class="section-desc">Generate custom design tokens live. Export to CSS or Penpot W3C DTCG JSON.</p>
+          <p class="section-desc">Pick brand color, radius, typography, and preview live Light &amp; Dark surfaces. Copy or download <code>tokens.css</code> and Penpot/Figma W3C DTCG JSON.</p>
         </div>
       </div>
 
       <div class="create-studio">
         <div class="studio-controls">
           <div>
-            <label class="control-label">Primary Color</label>
+            <label class="control-label" for="studio-primary-color">Primary Color</label>
             <input type="color" id="studio-primary-color" value="#2563eb" oninput="updateCustomTheme()" style="width: 100%; height: 38px; border: 1px solid var(--el-surface-border); border-radius: var(--el-radius-md); cursor: pointer; background: transparent;" />
           </div>
 
           <div>
-            <label class="control-label">Border Radius (<span id="studio-radius-val">10px</span>)</label>
+            <label class="control-label" for="studio-radius-slider">Border Radius (<span id="studio-radius-val">10px</span>)</label>
             <input type="range" id="studio-radius-slider" min="0" max="24" value="10" oninput="updateCustomRadius()" style="width: 100%;" />
           </div>
 
           <div>
-            <label class="control-label">Typographic Flow (<span id="studio-flow-val">1.25em</span>)</label>
+            <label class="control-label" for="studio-flow-slider">Typographic Flow (<span id="studio-flow-val">1.25em</span>)</label>
             <input type="range" id="studio-flow-slider" min="0.8" max="2.0" step="0.05" value="1.25" oninput="updateCustomFlow()" style="width: 100%;" />
+          </div>
+
+          <div>
+            <label class="control-label" for="studio-font-select">Font Family</label>
+            <select id="studio-font-select" onchange="updateCustomFont(this.value)" style="width: 100%; height: 38px; padding: 0 10px; border: 1px solid var(--el-surface-border); border-radius: var(--el-radius-md); background: var(--el-surface-base); color: var(--el-text-primary); font-size: 13px;">
+              <option value="Inter, system-ui, -apple-system, sans-serif">Inter / System Sans</option>
+              <option value="'Plus Jakarta Sans', system-ui, sans-serif">Plus Jakarta / Modern</option>
+              <option value="Georgia, 'Times New Roman', serif">Editorial Serif</option>
+              <option value="'JetBrains Mono', ui-monospace, monospace">JetBrains Mono / Technical</option>
+            </select>
           </div>
         </div>
 
-        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin: 16px 0;">
+          <div style="padding: 16px; border-radius: var(--el-radius-md); background: #ffffff; color: #0f172a; border: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 10px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <strong style="font-size: 13px;">Light Surface Preview</strong>
+              <el-badge variant="success" count="WCAG AA"></el-badge>
+            </div>
+            <el-input placeholder="Workspace name" value="Acme Cloud"></el-input>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <el-button variant="primary" size="sm">Primary Action</el-button>
+              <el-button variant="secondary" size="sm">Secondary</el-button>
+            </div>
+          </div>
+          <div data-theme="dark" style="padding: 16px; border-radius: var(--el-radius-md); background: #0f172a; color: #f8fafc; border: 1px solid #1e293b; --el-surface-base:#0f172a; --el-surface-card:#1e293b; --el-surface-border:#334155; --el-text-base:#f8fafc; --el-text-primary:#f8fafc; display: flex; flex-direction: column; gap: 10px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <strong style="font-size: 13px;">Dark Surface Preview</strong>
+              <el-badge variant="info" count="Dark Mode"></el-badge>
+            </div>
+            <el-input placeholder="Workspace name" value="Acme Cloud"></el-input>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <el-button variant="primary" size="sm">Primary Action</el-button>
+              <el-button variant="secondary" size="sm">Secondary</el-button>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
           <el-button variant="primary" onclick="copyCssTokens()">Copy Full CSS Theme</el-button>
+          <el-button variant="secondary" onclick="downloadCssTokens()">Download tokens.css</el-button>
           <el-button variant="secondary" onclick="openThemeCodeModal()">View Theme Code</el-button>
-          <el-button variant="secondary" onclick="exportPenpotTokens()">Export Penpot DTCG JSON</el-button>
+          <el-button variant="secondary" onclick="exportPenpotTokens()">Copy DTCG JSON</el-button>
+          <el-button variant="secondary" onclick="downloadDtcgTokens()">Download tokens.dtcg.json</el-button>
         </div>
       </div>
     </section>
@@ -3682,6 +3719,33 @@ import './components/el-router.js';</code></pre>
     window.exportPenpotTokens = function() {
       const dtcgJson = window.generatePenpotDtcgJson();
       copySnippet(dtcgJson, 'Penpot W3C DTCG Token JSON copied to clipboard!');
+    };
+
+    window.updateCustomFont = function(fontStack) {
+      document.documentElement.style.setProperty('--el-font-sans', fontStack);
+      document.body.style.fontFamily = fontStack;
+    };
+
+    function triggerDownload(filename, content, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    window.downloadCssTokens = function() {
+      triggerDownload('tokens.css', window.generateFullThemeCss(), 'text/css');
+      toast.success('Downloaded tokens.css');
+    };
+
+    window.downloadDtcgTokens = function() {
+      triggerDownload('tokens.dtcg.json', window.generatePenpotDtcgJson(), 'application/json');
+      toast.success('Downloaded tokens.dtcg.json');
     };
 
     window.openThemeCodeModal = function() {

@@ -86,7 +86,8 @@
       </p>
 
       <div class="intent-bar">
-        <el-button id="intent-flight" variant="primary">Intent: Rebook Delayed Flight</el-button>
+        <el-button id="intent-stream" variant="primary">▶ Simulate Agent Stream (JSONL)</el-button>
+        <el-button id="intent-flight" variant="secondary">Intent: Rebook Delayed Flight</el-button>
         <el-button id="intent-billing" variant="secondary">Intent: Explain Spend Spike</el-button>
         <el-button id="intent-security" variant="secondary">Security: Locked Catalog Test</el-button>
       </div>
@@ -99,6 +100,10 @@
       </section>
 
       <section style="display: flex; flex-direction: column; gap: 16px;">
+        <div>
+          <h2 class="panel-title">Live A2UI JSONL Stream</h2>
+          <pre id="stream-log" class="log-box">Click "▶ Simulate Agent Stream (JSONL)" to watch progressive rendering...</pre>
+        </div>
         <div>
           <h2 class="panel-title">Live Reactive Data Model (Two-Way Bound)</h2>
           <pre id="data-model-view" class="log-box">{}</pre>
@@ -120,7 +125,9 @@
     const host = document.getElementById('a2ui-surface-host');
     const dataView = document.getElementById('data-model-view');
     const actionLog = document.getElementById('action-log');
+    const streamLog = document.getElementById('stream-log');
     const logs = [];
+    let activeStreamTimer = null;
 
     function pushLog(entry) {
       logs.unshift(`[${new Date().toLocaleTimeString()}] ${entry}`);
@@ -129,7 +136,15 @@
 
     let currentSurface = null;
 
-    function mountIntent(messages, options = {}) {
+    function stopActiveStream() {
+      if (activeStreamTimer) {
+        clearInterval(activeStreamTimer);
+        activeStreamTimer = null;
+      }
+    }
+
+    function initSurface(options = {}) {
+      stopActiveStream();
       if (currentSurface) currentSurface.destroy();
       currentSurface = createA2UiSurface({
         ...options,
@@ -143,11 +158,60 @@
       effect(() => {
         dataView.textContent = JSON.stringify(currentSurface.dataModel.value, null, 2);
       });
+    }
 
+    function mountIntent(messages, options = {}) {
+      initSurface(options);
+      streamLog.textContent = messages.map((m) => JSON.stringify(m)).join('\n');
       currentSurface.processMessages(messages);
       if (currentSurface.blockedTypes.value.length > 0) {
         pushLog(`BLOCKED unregistered/disallowed types: ${currentSurface.blockedTypes.value.join(', ')}`);
       }
+    }
+
+    function simulateAgentStream() {
+      const STREAM_CHUNKS = [
+        { dataModelUpdate: { path: '/', contents: [{ key: 'plan', valueString: 'Pro Team ($49/mo)' }, { key: 'seats', valueString: '12' }, { key: 'autoScale', valueBoolean: true }] } },
+        { surfaceUpdate: { surfaceId: 'billing-stream', components: [
+          { id: 'root', component: { Card: { title: { literalString: 'AI Billing Assistant — Live Stream' }, bordered: true, child: 'col' } } },
+          { id: 'col', component: { Column: { gap: '12px', children: ['statusBadge', 'summaryText'] } } },
+          { id: 'statusBadge', component: { Badge: { variant: 'info', label: { literalString: 'Streaming chunks...' } } } },
+          { id: 'summaryText', component: { Text: { text: { literalString: 'Analyzing workspace billing & seat utilization...' }, usageHint: 'body' } } },
+        ] } },
+        { beginRendering: { surfaceId: 'billing-stream', root: 'root' } },
+        { surfaceUpdate: { surfaceId: 'billing-stream', components: [
+          { id: 'col', component: { Column: { gap: '12px', children: ['statusBadge', 'summaryText', 'quotaMeter'] } } },
+          { id: 'quotaMeter', component: { Meter: { value: 78, min: 0, max: 100, label: 'API Token Quota (78% used)' } } },
+        ] } },
+        { surfaceUpdate: { surfaceId: 'billing-stream', components: [
+          { id: 'col', component: { Column: { gap: '12px', children: ['statusBadge', 'summaryText', 'quotaMeter', 'scaleSwitch'] } } },
+          { id: 'scaleSwitch', component: { Switch: { label: { literalString: 'Auto-scale seat pool when usage > 85%' }, checked: { path: '/autoScale' } } } },
+        ] } },
+        { surfaceUpdate: { surfaceId: 'billing-stream', components: [
+          { id: 'col', component: { Column: { gap: '12px', children: ['statusBadge', 'summaryText', 'quotaMeter', 'scaleSwitch', 'applyBtn'] } } },
+          { id: 'statusBadge', component: { Badge: { variant: 'success', label: { literalString: 'Stream Complete · 6 Chunks' } } } },
+          { id: 'summaryText', component: { Text: { text: { literalString: 'Ready to apply recommended auto-scaling policy for 12 active seats.' }, usageHint: 'body' } } },
+          { id: 'applyBtn', component: { Button: { variant: 'primary', label: { literalString: 'Apply Recommended Policy' }, action: { name: 'apply_stream_policy', context: [{ key: 'plan', value: { path: '/plan' } }, { key: 'autoScale', value: { path: '/autoScale' } }] } } } },
+        ] } },
+      ];
+
+      initSurface();
+      streamLog.textContent = '';
+      pushLog('STREAM started: streaming 6 A2UI JSONL chunks...');
+      let i = 0;
+      const tick = () => {
+        if (i >= STREAM_CHUNKS.length) {
+          stopActiveStream();
+          pushLog('STREAM finished: all 6 chunks rendered into live Shadow DOM.');
+          return;
+        }
+        const chunk = STREAM_CHUNKS[i++];
+        streamLog.textContent += (streamLog.textContent ? '\n' : '') + JSON.stringify(chunk);
+        streamLog.scrollTop = streamLog.scrollHeight;
+        currentSurface.processMessage(chunk);
+      };
+      tick();
+      activeStreamTimer = setInterval(tick, 320);
     }
 
     const FLIGHT_INTENT = [
@@ -255,6 +319,7 @@
       { createSurface: { surfaceId: 'locked-test', root: 'root' } },
     ];
 
+    document.getElementById('intent-stream').addEventListener('click', () => simulateAgentStream());
     document.getElementById('intent-flight').addEventListener('click', () => mountIntent(FLIGHT_INTENT));
     document.getElementById('intent-billing').addEventListener('click', () => mountIntent(BILLING_INTENT));
     document.getElementById('intent-security').addEventListener('click', () => mountIntent(SECURITY_INTENT));

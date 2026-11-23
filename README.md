@@ -35,53 +35,47 @@ Every architectural claim in Elementum is backed by automated verification in CI
 
 ## ⚡ Quick Start
 
-### Option A: Zero-Build CDN (Vanilla HTML)
+### Option A: Zero-Build 2-Line CDN (HTML, CodePen, Claude Artifacts)
 
-Elementum runs directly in any modern browser without Webpack, Vite, or Babel.
+Paste two pinned lines into any HTML file—no build step, bundler, or `npm install` required:
 
-```
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <!-- 1. Include Design Tokens -->
-  <link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />
-
-  <!-- 2. Import Component Library -->
-  <script type="module" src="https://unpkg.com/@wcomp/elementum"></script>
-</head>
-<body>
-  <!-- Native Form with Form-Associated Custom Elements -->
-  <form id="my-form">
-    <el-input name="username" placeholder="Enter username...">
-      <span slot="prefix">👤</span>
-    </el-input>
-
-    <el-select name="role" value="member">
-      <option value="member">Team Member</option>
-      <option value="admin">Administrator</option>
-    </el-select>
-
-    <el-button type="submit" variant="primary">Save Changes</el-button>
-  </form>
-</body>
-</html>
-
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@wcomp/elementum@0.7.0/src/tokens.css" />
+<script type="module" src="https://esm.sh/@wcomp/elementum@0.7.0"></script>
 ```
 
-### Option B: npm Install (Bundlers & Frameworks)
+Or import individual tree-shakeable components with an ES import map:
 
+```html
+<script type="importmap">
+  {
+    "imports": {
+      "@wcomp/elementum": "https://esm.sh/@wcomp/elementum@0.7.0",
+      "@wcomp/elementum/": "https://esm.sh/@wcomp/elementum@0.7.0/"
+    }
+  }
+</script>
+<script type="module">
+  import '@wcomp/elementum/components/el-button.js';
+  import '@wcomp/elementum/components/el-input.js';
+</script>
 ```
+
+### Option B: npm Install + One-Command Project Setup
+
+```bash
 npm install @wcomp/elementum
-
+npx @wcomp/elementum init   # Detects React/Next/Vue/Svelte/Vanilla, writes .mcp.json, .cursor/mcp.json & elementum.rules.md
 ```
 
 Import the design tokens CSS and register the Custom Elements in your app entry point:
 
-```
+```js
 import '@wcomp/elementum/tokens.css';
 import '@wcomp/elementum';
-
 ```
+
+> Using Tailwind CSS or migrating from shadcn/Radix? See [**Tailwind CSS 1-Page Guide**](docs/tailwind-guide.md), [**Auto-Generated `::part()` & Token Reference**](docs/styling-reference.md), [**Migration Guide**](docs/migration-guide.md), and [**Theme Studio**](https://elementum-sage.vercel.app/examples/registry.html#theme-studio).
 
 ## 💡 Core Principles
 
@@ -359,18 +353,28 @@ See [docs/penpot-workflow.md](https://github.com/pinguxx/Elementum/blob/main/doc
 
 ## Agent MCP Server
 
-### Remote (Streamable HTTP — no install required)
+### One-Click & Copy-Paste Setup (Hosted Edge Endpoint — 100/100 on `mcptry.com`)
 
-Connect any HTTP-capable MCP client (Cursor, Claude, VS Code) to:
+Endpoint: **`https://elementum-sage.vercel.app/mcp`** (Streamable HTTP, zero install required).
 
-`https://elementum-sage.vercel.app/mcp`
-
-Or proxy from a stdio-only client:
-
-```
-npx mcp-remote https://elementum-sage.vercel.app/mcp
-
-```
+- **Cursor (One-Click)**: [Install in Cursor](cursor://anysphere.cursor-deeplink/mcp/install?name=elementum&config=eyJ1cmwiOiJodHRwczovL2VsZW1lbnR1bS1zYWdlLnZlcmNlbC5hcHAvbWNwIn0%3D) or add to `.cursor/mcp.json`:
+  ```json
+  { "mcpServers": { "elementum": { "url": "https://elementum-sage.vercel.app/mcp" } } }
+  ```
+- **Claude Code**:
+  ```bash
+  claude mcp add --transport http elementum https://elementum-sage.vercel.app/mcp
+  ```
+- **VS Code Copilot (`.vscode/mcp.json`)**:
+  ```json
+  { "servers": { "elementum": { "type": "http", "url": "https://elementum-sage.vercel.app/mcp" } } }
+  ```
+- **Windsurf / Antigravity (`.mcp.json`)**:
+  ```json
+  { "mcpServers": { "elementum": { "url": "https://elementum-sage.vercel.app/mcp" } } }
+  ```
+- **Auto-configure any repo + drop-in rules**: Run `npx @wcomp/elementum init` or copy [`docs/agent-rules-snippet.md`](docs/agent-rules-snippet.md) into `CLAUDE.md` / `.cursorrules`.
+- **Stdio-only proxy**: `npx mcp-remote https://elementum-sage.vercel.app/mcp`
 
 ### Local (stdio)
 

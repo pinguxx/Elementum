@@ -177,6 +177,7 @@ export class ElDropdown extends Elementum {
         part="panel"
         role="region"
         aria-hidden=${() => !this.isOpen.value}
+        ?inert=${() => !this.isOpen.value}
       >
         <slot name="menu"></slot>
         <slot name="content"></slot>
