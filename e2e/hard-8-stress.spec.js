@@ -98,9 +98,9 @@ test.describe('Hard-8 Complex Component Stress Tests (1000+ rows, Nested Modals,
     });
 
     await page.click('#open-outer');
-    await page.waitForTimeout(50);
+    await page.waitForFunction(() => document.getElementById('outer-dialog')?.getAttribute('data-state') === 'open');
     await page.click('#open-inner');
-    await page.waitForTimeout(50);
+    await page.waitForFunction(() => document.getElementById('inner-dialog')?.getAttribute('data-state') === 'open');
 
     const bothOpen = await page.evaluate(() => ({
       outer: document.getElementById('outer-dialog').getAttribute('data-state') === 'open',
@@ -111,7 +111,7 @@ test.describe('Hard-8 Complex Component Stress Tests (1000+ rows, Nested Modals,
 
     // Pressing Escape should close the inner dialog
     await page.keyboard.press('Escape');
-    await page.waitForTimeout(60);
+    await page.waitForFunction(() => document.getElementById('inner-dialog')?.getAttribute('data-state') !== 'open');
 
     const afterFirstEsc = await page.evaluate(() => ({
       inner: document.getElementById('inner-dialog').getAttribute('data-state') === 'open',
@@ -120,7 +120,7 @@ test.describe('Hard-8 Complex Component Stress Tests (1000+ rows, Nested Modals,
 
     // Ensure outer can still be closed cleanly
     await page.evaluate(() => document.getElementById('outer-dialog').close());
-    await page.waitForTimeout(40);
+    await page.waitForFunction(() => document.getElementById('outer-dialog')?.getAttribute('data-state') !== 'open');
     const outerClosed = await page.evaluate(() => document.getElementById('outer-dialog').getAttribute('data-state') === 'open');
     expect(outerClosed).toBe(false);
   });

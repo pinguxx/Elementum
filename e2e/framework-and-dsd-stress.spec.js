@@ -254,6 +254,11 @@ test.describe('Framework Parity, 50+ Component DSD Stress & Showcase Verificatio
     });
     expect(linksPresent).toBe(true);
 
+    await page.waitForFunction(() => {
+      const btn = document.querySelector('el-button');
+      return btn && getComputedStyle(btn).opacity === '1';
+    });
+
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
       .analyze();
