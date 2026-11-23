@@ -1287,7 +1287,8 @@
           });
           select.setAttribute('data-prop', prop.name);
           select.onchange = (e) => {
-            currentProps[prop.name] = e.target.value;
+            const matched = prop.options.find((opt) => String(opt) === e.target.value);
+            if (matched !== undefined) currentProps[prop.name] = matched;
             updateLivePreview(comp);
           };
           field.appendChild(select);
@@ -1321,7 +1322,7 @@
           input.setAttribute('data-prop', prop.name);
           input.value = currentProps[prop.name] ?? '';
           input.oninput = (e) => {
-            currentProps[prop.name] = e.target.value;
+            currentProps[prop.name] = escapeHtml(e.target.value);
             updateLivePreview(comp);
           };
           field.appendChild(input);
