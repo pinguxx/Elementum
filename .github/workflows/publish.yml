@@ -35,7 +35,30 @@ jobs:
           chmod +x ./mcp-publisher
       - name: Validate server.json
         run: ./mcp-publisher validate
+      - name: Wait for npm registry propagation
+        run: |
+          VERSION=$(jq -r .version server.json)
+          URL="https://registry.npmjs.org/@wcomp/elementum/${VERSION}"
+          echo "Waiting for ${URL} to become visible on npm registry CDN..."
+          for i in $(seq 1 40); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${URL}")
+            if [ "${STATUS}" = "200" ]; then
+              echo "✔ @wcomp/elementum@${VERSION} is live on npm (HTTP 200)."
+              break
+            fi
+            echo "Attempt ${i}/40: HTTP ${STATUS} — sleeping 15s..."
+            sleep 15
+          done
       - name: Login to Official MCP Registry (GitHub OIDC)
         run: ./mcp-publisher login github-oidc
-      - name: Publish to Official MCP Registry
-        run: ./mcp-publisher publish
+      - name: Publish to Official MCP Registry (with retry)
+        run: |
+          for attempt in 1 2 3 4 5; do
+            if ./mcp-publisher publish; then
+              echo "✔ Published to Official MCP Registry on attempt ${attempt}."
+              exit 0
+            fi
+            echo "Attempt ${attempt}/5 failed (waiting 30s for MCP Registry npm cache)..."
+            sleep 30
+          done
+          exit 1
