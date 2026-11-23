@@ -220,6 +220,33 @@ test.describe('Full Catalog Real-Browser Sweep (All 109 Components, Permutations
     await page.locator('#live-stage el-button').nth(1).click();
     const afterVal = Number(await page.locator('#preview-number-flow').getAttribute('value'));
     expect(afterVal).toBe(beforeVal + 1250);
+
+    // 6. el-tabs: clicking second tab button updates value on <el-tabs>
+    await page.goto('/examples/index.html#el-tabs');
+    const secondTabBtn = page.locator('#live-stage el-tabs').locator('button[role="tab"]').nth(1);
+    await secondTabBtn.click();
+    await expect(secondTabBtn).toHaveAttribute('aria-selected', 'true');
+
+    // 7. el-accordion: clicking second item header toggles open state
+    await page.goto('/examples/index.html#el-accordion');
+    const secondAccItem = page.locator('#live-stage el-accordion-item').nth(1);
+    await secondAccItem.locator('button').first().click();
+    await expect(secondAccItem).toHaveAttribute('open', '');
+
+    // 8. el-switch & el-checkbox: clicking toggles checked state
+    await page.goto('/examples/index.html#el-switch');
+    const swEl = page.locator('#live-stage el-switch').first();
+    const swInitial = await swEl.evaluate((el) => Boolean(el.checked?.value ?? el.hasAttribute('checked')));
+    await swEl.click();
+    const swAfter = await swEl.evaluate((el) => Boolean(el.checked?.value ?? el.hasAttribute('checked')));
+    expect(swAfter).toBe(!swInitial);
+
+    // 9. el-dropdown: clicking trigger opens menu, clicking menu action closes menu & fires toast
+    await page.goto('/examples/index.html#el-dropdown');
+    await page.locator('#demo-dropdown [slot="trigger"]').click();
+    await expect(page.locator('#demo-dropdown')).toHaveAttribute('data-state', 'open');
+    await page.locator('#demo-dropdown [slot="menu"] button').first().click();
+    await expect(page.locator('#demo-dropdown')).toHaveAttribute('data-state', 'closed');
   });
 
   test('npx @wcomp/elementum init generated vanilla starter index.html works end-to-end in browser (dark theme canvas, toast, and dialog)', async ({ page }) => {

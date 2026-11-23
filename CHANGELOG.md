@@ -4,6 +4,19 @@ All notable changes to `@wcomp/elementum` are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.5] — 2026-11-23 ("A2UI Live Validator & CodePen Export, APG Keyboard E2E, Multi-Arm Benchmark Runner & Toast Stacking Fix")
+
+### Added
+- **A2UI Live Schema/Security Validator & CodePen Export (`examples/a2ui.html`)**: Added an editable JSON/JSONL composer with real-time `DEFAULT_A2UI_CATALOG` & security rule validation badge (`✔ Valid A2UI` / `🛡 Security Rule(s) Triggered`), **Copy Standalone HTML 📋**, and 1-click **Open Surface in CodePen ↗**.
+- **WAI-ARIA APG Keyboard-Only State Machine Suite (`e2e/a11y-keyboard-apg.spec.js`, `docs/accessibility-audit.md`)**: Added real-browser keyboard state-machine E2E coverage across all 10 high-complexity composite widgets (`el-dialog`, `el-alert-dialog`, `el-drawer`, `el-tabs`, `el-command`, `el-autocomplete`, `el-calendar`, `el-table`, `el-tree-view`, `el-navigation-menu`).
+- **Multi-Arm AI-Agent Benchmark Matrix Runner (`benchmarks/agent-eval/run-matrix.js`, `npm run bench:agents`)**: Added automated matrix runner scoring all submissions and computing aggregate mean severe WCAG and mobile overflow deltas.
+- **Framework Demo Generator (`npx @wcomp/elementum init --example`) & Homepage 48s Walkthrough (`bin/elementum.js`, `index.html`)**: Added `--example` flag generating `src/ElementumDemo.tsx` / `.vue` / `.svelte`, platform-aware next-step terminal hints, and an interactive 4-step **48-Second Onboarding Walkthrough** + **Open Starter in CodePen ↗** on `index.html`.
+- **Expanded Interactive Catalog E2E (`e2e/catalog-sweep.spec.js`, `examples/catalog-data.js`)**: Verified click interactions across `el-tabs`, `el-accordion`, `el-switch`, `el-dropdown`, `el-dialog`, `el-drawer`, `el-toast`, `el-toaster`, and `el-number-flow`, plus `.variation-preview` bounding-box checks across all 109 components.
+
+### Fixed
+- **`<el-toaster>` Duplicate Deck Coordination & Hover Stack Order (`src/components/el-toast.js`)**: Coordinated multiple mounted `<el-toaster>` instances so only the active toaster renders the fixed viewport stack, preserved newest-first card order on hover/expand, wired the `expand` boolean attribute, and added `toast.clear()`.
+- **`<el-drawer>` Child Button Click Handling (`src/components/el-drawer.js`)**: Prevented premature `setPointerCapture` on `pointerdown` from swallowing clicks on child `<el-button>` elements inside `<el-drawer>`.
+
 ## [0.8.4] — 2026-11-23 ("Vanilla Starter Dark Theme Canvas, Toast Wiring & ElToaster Instance Methods")
 
 ### Fixed

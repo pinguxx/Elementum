@@ -1,6 +1,6 @@
 {
   "name": "@wcomp/elementum",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "mcpName": "io.github.pinguxx/elementum",
   "description": "Ultra-lightweight, signal-driven, frameworkless Web Components for modern design systems",
   "type": "module",
@@ -82,6 +82,7 @@
     "verify:react": "node tools/verify-react.js",
     "verify:starters": "node tools/verify-starters.js",
     "bench:frameworks": "node tools/bench-frameworks.js",
+    "bench:agents": "node benchmarks/agent-eval/run-matrix.js",
     "quality:report": "node tools/generate-quality-report.js",
     "audits:report": "node tools/generate-audits.js",
     "check:release": "node tools/check-release-sync.js",

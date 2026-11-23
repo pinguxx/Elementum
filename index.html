@@ -495,7 +495,7 @@
 <body>
 
   <!-- Top Sticky Navigation Bar -->
-  <el-navbar sticky brand="⚡ Elementum" badge="v0.8.4" badge-variant="success" href="./index.html">
+  <el-navbar sticky brand="⚡ Elementum" badge="v0.8.5" badge-variant="success" href="./index.html">
     <a href="./index.html" active>Home</a>
     <a href="./docs.html">Docs</a>
     <a href="./examples/index.html">Catalog</a>
@@ -744,23 +744,44 @@
       </div>
     </section>
 
-    <!-- One-Click MCP & CLI Setup -->
+    <!-- One-Click MCP & CLI Setup + 48-Second Walkthrough -->
     <section class="doc-hub-section" id="mcp-connect" aria-labelledby="mcp-connect-heading" style="margin-top: 28px;">
       <div class="doc-hub-header">
-        <h2 id="mcp-connect-heading">Connect Any AI Coding Agent in 10 Seconds</h2>
+        <h2 id="mcp-connect-heading">From Empty Project to Verified UI in 48 Seconds</h2>
         <p>Hosted Streamable HTTP MCP endpoint (100/100 on <code>mcptry.com</code>): <code>https://elementum-sage.vercel.app/mcp</code></p>
       </div>
-      <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px;">
+      <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px;">
         <a href="cursor://anysphere.cursor-deeplink/mcp/install?name=elementum&amp;config=eyJ1cmwiOiJodHRwczovL2VsZW1lbnR1bS1zYWdlLnZlcmNlbC5hcHAvbWNwIn0%3D" style="display:inline-flex;align-items:center;padding:8px 14px;border-radius:8px;background:var(--el-color-primary,#2563eb);color:#fff;font-size:13px;font-weight:600;text-decoration:none;">Install in Cursor ↗</a>
         <el-button size="sm" variant="secondary" onclick="navigator.clipboard.writeText('claude mcp add --transport http elementum https://elementum-sage.vercel.app/mcp')">Copy Claude Code CLI</el-button>
-        <el-button size="sm" variant="secondary" onclick="navigator.clipboard.writeText('npx @wcomp/elementum init')">Copy npx init CLI</el-button>
+        <el-button size="sm" variant="secondary" onclick="navigator.clipboard.writeText('npm install @wcomp/elementum && npx @wcomp/elementum init')">Copy npx init CLI</el-button>
+        <el-button id="btn-home-codepen-starter" size="sm" variant="secondary">Open Starter in CodePen ↗</el-button>
         <el-button size="sm" variant="secondary" onclick="window.location.href='./examples/registry.html#theme-studio'">Open Theme Studio</el-button>
       </div>
-      <pre style="margin:0;padding:12px 14px;border-radius:10px;background:var(--el-surface-muted,#f1f5f9);border:1px solid var(--el-surface-border,#e2e8f0);font-size:12px;overflow-x:auto;"><code>// .mcp.json (Windsurf, Antigravity, Claude Code) &amp; .cursor/mcp.json (Cursor)
-{ "mcpServers": { "elementum": { "url": "https://elementum-sage.vercel.app/mcp" } } }
 
-// .vscode/mcp.json (VS Code Copilot)
-{ "servers": { "elementum": { "type": "http", "url": "https://elementum-sage.vercel.app/mcp" } } }</code></pre>
+      <el-tabs value="step-init" style="margin-bottom: 14px;">
+        <el-tab value="step-install" label="1. Install (2s)">
+          <pre style="margin:8px 0 0;padding:12px 14px;border-radius:10px;background:var(--el-surface-muted,#f1f5f9);border:1px solid var(--el-surface-border,#e2e8f0);font-size:12.5px;overflow-x:auto;"><code>$ npm install @wcomp/elementum
+added 1 package, 0 runtime dependencies in 1.4s</code></pre>
+        </el-tab>
+        <el-tab value="step-init" label="2. Auto-Detect &amp; Init (6s)">
+          <pre style="margin:8px 0 0;padding:12px 14px;border-radius:10px;background:var(--el-surface-muted,#f1f5f9);border:1px solid var(--el-surface-border,#e2e8f0);font-size:12.5px;overflow-x:auto;"><code>$ npx @wcomp/elementum init [--example]
+Initialized Elementum (detected: react | next | vue | svelte | vanilla):
+  - .mcp.json            (Windsurf, Antigravity, Claude Code)
+  - .cursor/mcp.json     (Cursor 11-tool MCP server)
+  - elementum.rules.md   (Framework-tailored component &amp; token contract)
+  - elementum-tokens.css (Light &amp; dark brand overrides)
+  - index.html / src/ElementumDemo.tsx (Ready-to-open starter screen)</code></pre>
+        </el-tab>
+        <el-tab value="step-build" label="3. Build or Stream (34s)">
+          <pre style="margin:8px 0 0;padding:12px 14px;border-radius:10px;background:var(--el-surface-muted,#f1f5f9);border:1px solid var(--el-surface-border,#e2e8f0);font-size:12.5px;overflow-x:auto;"><code>import '@wcomp/elementum/tokens.css';
+import { ElNavbar, ElCard, ElTable, ElDialog, ElButton } from '@wcomp/elementum/react';
+// Or stream declarative A2UI JSON via createA2UiSurface() from '@wcomp/elementum/a2ui'</code></pre>
+        </el-tab>
+        <el-tab value="step-check" label="4. Verify Contract (6s)">
+          <pre style="margin:8px 0 0;padding:12px 14px;border-radius:10px;background:var(--el-surface-muted,#f1f5f9);border:1px solid var(--el-surface-border,#e2e8f0);font-size:12.5px;overflow-x:auto;"><code>$ npx @wcomp/elementum check src/
+Elementum Check: scanned 4 file(s), 14 &lt;el-*&gt; tag(s) (0 error(s), 0 warning(s)) in 110ms.</code></pre>
+        </el-tab>
+      </el-tabs>
     </section>
 
     <!-- Footer -->
@@ -1046,6 +1067,63 @@
     btnCopy.addEventListener('click', () => {
       navigator.clipboard.writeText(stageCode.textContent);
       toast.success('Snippet copied to clipboard!');
+    });
+
+    document.getElementById('btn-home-codepen-starter')?.addEventListener('click', () => {
+      const starterHtml = `<link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />
+<script type="module">
+  import { toast } from 'https://unpkg.com/@wcomp/elementum';
+  window.addEventListener('DOMContentLoaded', () => {
+    const dlg = document.getElementById('demo-dlg');
+    document.getElementById('btn-new')?.addEventListener('click', () => dlg.showModal());
+    document.getElementById('btn-save')?.addEventListener('click', () => {
+      dlg.close();
+      toast.success('Item created!');
+    });
+    document.getElementById('btn-toast')?.addEventListener('click', () => toast.info('Hello from Elementum!'));
+  });
+<\/script>
+
+<div style="max-width:720px;margin:24px auto;padding:0 16px;font-family:system-ui,sans-serif;">
+  <el-navbar brand="⚡ Elementum Starter" badge="Ready" badge-variant="success">
+    <div slot="actions" style="display:flex;gap:8px;align-items:center;">
+      <el-theme-switch></el-theme-switch>
+      <el-button id="btn-new" variant="primary" size="sm">New Item</el-button>
+    </div>
+  </el-navbar>
+  <el-card bordered style="margin-top:16px;">
+    <h3 slot="header" style="margin:0;">109 Zero-Dependency Web Components</h3>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <el-input placeholder="Type a note..." aria-label="Note" style="flex:1;"></el-input>
+      <el-button id="btn-toast" variant="secondary">Trigger Toast</el-button>
+    </div>
+  </el-card>
+  <el-dialog id="demo-dlg" title="Create Item">
+    <el-input placeholder="Item name" aria-label="Item name"></el-input>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px;">
+      <el-button id="btn-save" variant="primary">Save</el-button>
+    </div>
+  </el-dialog>
+  <el-toaster></el-toaster>
+</div>`;
+      const form = document.createElement('form');
+      form.action = 'https://codepen.io/pen/define';
+      form.method = 'POST';
+      form.target = '_blank';
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'data';
+      input.value = JSON.stringify({
+        title: 'Elementum — Zero-Build Starter App',
+        description: '109 zero-dependency Web Components from @wcomp/elementum',
+        html: starterHtml,
+        css: 'body { margin: 0; background: var(--el-step-1, #f8fafc); color: var(--el-text-primary, #0f172a); }',
+        editors: '100',
+      });
+      form.appendChild(input);
+      document.body.appendChild(form);
+      form.submit();
+      form.remove();
     });
 
     // Initial render

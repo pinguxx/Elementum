@@ -39,6 +39,10 @@ To interpret these results accurately:
 ## Reproduce All 4 Arms Locally
 
 ```bash
+# Score all arms + baseline at once and compute aggregate mean/median deltas:
+npm run bench:agents
+
+# Or score individual submissions:
 node benchmarks/agent-eval/score.js benchmarks/agent-eval/submissions/arm-1-elementum-mcp/index.html --arm="Arm 1: Elementum + MCP"
 node benchmarks/agent-eval/score.js benchmarks/agent-eval/submissions/arm-2-elementum-docs/index.html --arm="Arm 2: Elementum + Docs Only"
 node benchmarks/agent-eval/score.js benchmarks/agent-eval/submissions/arm-3-conventional/index.html --arm="Arm 3: Conventional CSS"

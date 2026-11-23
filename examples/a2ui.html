@@ -131,14 +131,32 @@
 
     <div class="workspace">
       <section>
-        <h2 class="panel-title">Live Rendered Elementum Surface</h2>
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+          <h2 class="panel-title" style="margin:0;">Live Rendered Elementum Surface</h2>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <el-button id="btn-copy-a2ui-html" variant="secondary" size="sm">Copy Standalone HTML 📋</el-button>
+            <el-button id="btn-a2ui-codepen" variant="secondary" size="sm">Open Surface in CodePen ↗</el-button>
+          </div>
+        </div>
         <div id="a2ui-surface-host"></div>
       </section>
 
       <section style="display: flex; flex-direction: column; gap: 16px;">
         <div class="inspector-card">
-          <h2 class="panel-title">Live A2UI JSONL Stream</h2>
-          <pre id="stream-log" class="log-box">Click "▶ Simulate Agent Stream (JSONL)" to watch progressive rendering...</pre>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+            <h2 class="panel-title" style="margin:0;">Live A2UI JSONL Stream &amp; Schema Validator</h2>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <el-badge id="a2ui-validation-badge" variant="success">✔ Valid A2UI</el-badge>
+              <el-button id="btn-apply-a2ui" variant="secondary" size="sm">⚡ Render Edited JSON</el-button>
+            </div>
+          </div>
+          <textarea
+            id="stream-log"
+            aria-label="Editable A2UI JSONL Stream"
+            spellcheck="false"
+            style="width:100%; min-height:175px; padding:12px 14px; border-radius:8px; background:var(--el-surface-muted, #f8fafc); border:1px solid var(--el-surface-border, #e2e8f0); font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size:0.78rem; line-height:1.5; color:var(--el-text-primary, #0f172a); resize:vertical;"
+          ></textarea>
+          <div id="a2ui-validation-details" style="margin-top:8px; font-size:0.78rem; color:var(--el-text-secondary, #475569);"></div>
         </div>
         <div class="inspector-card">
           <h2 class="panel-title">Live Reactive Data Model (Two-Way Bound)</h2>
@@ -156,18 +174,78 @@
 
   <script type="module">
     import { effect, toast } from '../src/index.js';
-    import { createA2UiSurface } from '../src/a2ui.js';
+    import { createA2UiSurface, DEFAULT_A2UI_CATALOG } from '../src/a2ui.js';
 
     const host = document.getElementById('a2ui-surface-host');
     const dataView = document.getElementById('data-model-view');
     const actionLog = document.getElementById('action-log');
     const streamLog = document.getElementById('stream-log');
+    const validationBadge = document.getElementById('a2ui-validation-badge');
+    const validationDetails = document.getElementById('a2ui-validation-details');
     const logs = [];
     let activeStreamTimer = null;
+    let activeMessages = [];
 
     function pushLog(entry) {
       logs.unshift(`[${new Date().toLocaleTimeString()}] ${entry}`);
       actionLog.textContent = logs.slice(0, 8).join('\n\n');
+    }
+
+    function validateMessagesLive(messages) {
+      const issues = [];
+      let totalNodes = 0;
+      const unsafeUrlRe = /^\s*(javascript|data|vbscript):/i;
+
+      for (const msg of messages) {
+        const upd = msg?.surfaceUpdate || msg?.updateComponents;
+        if (upd && Array.isArray(upd.components)) {
+          for (const raw of upd.components) {
+            totalNodes++;
+            let type = raw?.type;
+            let props = raw?.props || {};
+            if (raw?.component && typeof raw.component === 'object') {
+              const entries = Object.entries(raw.component);
+              if (entries.length > 0) {
+                [type, props] = entries[0];
+              }
+            }
+            if (!type || !(type in DEFAULT_A2UI_CATALOG)) {
+              issues.push(`Blocked unknown type "${type || 'unknown'}" (node "${raw?.id || '?'}")`);
+            }
+            for (const [k, v] of Object.entries(props || {})) {
+              if (/^on/i.test(k)) issues.push(`Stripped inline event handler "${k}" on "${raw?.id}"`);
+              if (/^(href|src|action|formaction)$/i.test(k) && typeof v === 'string' && unsafeUrlRe.test(v)) {
+                issues.push(`Blocked unsafe URL scheme on "${raw?.id}.${k}"`);
+              }
+            }
+          }
+        }
+      }
+
+      if (issues.length === 0) {
+        validationBadge.setAttribute('variant', 'success');
+        validationBadge.textContent = `✔ Valid A2UI · ${totalNodes} Nodes`;
+        validationDetails.textContent = 'All component types belong to DEFAULT_A2UI_CATALOG with 0 unsafe URLs or inline handlers.';
+      } else {
+        validationBadge.setAttribute('variant', 'warning');
+        validationBadge.textContent = `🛡 ${issues.length} Security Rule(s) Triggered`;
+        validationDetails.textContent = issues.join(' · ');
+      }
+    }
+
+    function parseStreamTextarea() {
+      const raw = streamLog.value.trim();
+      if (!raw) return [];
+      try {
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [parsed];
+      } catch {
+        return raw
+          .split('\n')
+          .map((l) => l.trim())
+          .filter(Boolean)
+          .map((l) => JSON.parse(l));
+      }
     }
 
     let currentSurface = null;
@@ -197,8 +275,10 @@
     }
 
     function mountIntent(messages, options = {}) {
+      activeMessages = messages;
       initSurface(options);
-      streamLog.textContent = messages.map((m) => JSON.stringify(m)).join('\n');
+      streamLog.value = messages.map((m) => JSON.stringify(m)).join('\n');
+      validateMessagesLive(messages);
       currentSurface.processMessages(messages);
       if (currentSurface.blockedTypes.value.length > 0) {
         pushLog(`BLOCKED unregistered/disallowed types: ${currentSurface.blockedTypes.value.join(', ')}`);
@@ -231,8 +311,9 @@
         ] } },
       ];
 
+      activeMessages = [];
       initSurface();
-      streamLog.textContent = '';
+      streamLog.value = '';
       pushLog('STREAM started: streaming 6 A2UI JSONL chunks...');
       let i = 0;
       const tick = () => {
@@ -242,8 +323,10 @@
           return;
         }
         const chunk = STREAM_CHUNKS[i++];
-        streamLog.textContent += (streamLog.textContent ? '\n' : '') + JSON.stringify(chunk);
+        activeMessages.push(chunk);
+        streamLog.value += (streamLog.value ? '\n' : '') + JSON.stringify(chunk);
         streamLog.scrollTop = streamLog.scrollHeight;
+        validateMessagesLive(activeMessages);
         currentSurface.processMessage(chunk);
       };
       tick();
@@ -378,6 +461,71 @@
     document.getElementById('intent-security').addEventListener('click', () => {
       setActiveIntentBtn('intent-security');
       mountIntent(SECURITY_INTENT);
+    });
+
+    document.getElementById('btn-apply-a2ui').addEventListener('click', () => {
+      try {
+        const msgs = parseStreamTextarea();
+        mountIntent(msgs);
+        toast.success('Rendered edited A2UI JSON surface!');
+      } catch (err) {
+        validationBadge.setAttribute('variant', 'danger');
+        validationBadge.textContent = '❌ Invalid JSON';
+        validationDetails.textContent = err.message;
+        toast.error('Invalid A2UI JSON syntax');
+      }
+    });
+
+    function buildStandaloneA2UiHtml() {
+      const jsonStr = JSON.stringify(activeMessages, null, 2);
+      return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Elementum A2UI Surface</title>
+  <link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />
+</head>
+<body style="max-width:640px;margin:32px auto;padding:0 20px;font-family:system-ui,sans-serif;background:var(--el-step-1,#f8fafc);color:var(--el-text-primary,#0f172a);">
+  <div id="a2ui-host"></div>
+  <el-toaster></el-toaster>
+  <script type="module">
+    import { toast } from 'https://unpkg.com/@wcomp/elementum';
+    import { createA2UiSurface } from 'https://unpkg.com/@wcomp/elementum/a2ui';
+
+    const surface = createA2UiSurface({
+      onAction: (ev) => toast.success('Action: ' + ev.actionName),
+    });
+    surface.mount(document.getElementById('a2ui-host'));
+    surface.processMessages(${jsonStr});
+  <\/script>
+</body>
+</html>`;
+    }
+
+    document.getElementById('btn-copy-a2ui-html').addEventListener('click', () => {
+      navigator.clipboard.writeText(buildStandaloneA2UiHtml());
+      toast.success('Standalone A2UI HTML copied to clipboard!');
+    });
+
+    document.getElementById('btn-a2ui-codepen').addEventListener('click', () => {
+      const penData = {
+        title: 'Elementum — Declarative A2UI Surface',
+        description: 'Zero-dependency Agent-to-UI (A2UI) surface rendered by @wcomp/elementum/a2ui',
+        html: buildStandaloneA2UiHtml(),
+        editors: '100',
+      };
+      const form = document.createElement('form');
+      form.action = 'https://codepen.io/pen/define';
+      form.method = 'POST';
+      form.target = '_blank';
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'data';
+      input.value = JSON.stringify(penData);
+      form.appendChild(input);
+      document.body.appendChild(form);
+      form.submit();
+      form.remove();
     });
 
     setActiveIntentBtn('intent-flight');

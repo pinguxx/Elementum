@@ -106,6 +106,19 @@ test('runInit in a vanilla project creates a working starter index.html and work
     assert.equal(checkReport.errorCount, 0);
     assert.equal(checkReport.warningCount, 0);
     assert.ok(checkReport.totalTagsChecked >= 8);
+
+    // Verify --example flag in a React project with a src/ directory writes src/ElementumDemo.tsx
+    const reactTmp = fs.mkdtempSync(path.join(os.tmpdir(), 'el-init-react-ex-'));
+    try {
+      fs.writeFileSync(path.join(reactTmp, 'package.json'), JSON.stringify({ dependencies: { react: '^19.0.0' } }));
+      fs.mkdirSync(path.join(reactTmp, 'src'), { recursive: true });
+      const exRes = runInit(['--example'], reactTmp);
+      assert.equal(exRes.framework, 'react');
+      assert.ok(exRes.written.includes('src/ElementumDemo.tsx'));
+      assert.ok(fs.existsSync(path.join(reactTmp, 'src', 'ElementumDemo.tsx')));
+    } finally {
+      fs.rmSync(reactTmp, { recursive: true, force: true });
+    }
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }

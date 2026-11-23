@@ -188,6 +188,101 @@ export function buildStarterIndexHtml() {
 `;
 }
 
+export function buildFrameworkExample(framework) {
+  if (framework === 'react' || framework === 'next') {
+    return {
+      filename: 'ElementumDemo.tsx',
+      code: `import '@wcomp/elementum/tokens.css';
+import { ElCard, ElButton, ElInput, ElBadge, ElThemeSwitch, ElToaster } from '@wcomp/elementum/react';
+import { toast } from '@wcomp/elementum';
+
+export function ElementumDemo() {
+  return (
+    <div style={{ maxWidth: 640, margin: '32px auto', display: 'grid', gap: 16 }}>
+      <ElCard bordered>
+        <div slot="header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <strong>⚡ Elementum Ready</strong>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <ElBadge variant="success">WCAG 2.2 AA</ElBadge>
+            <ElThemeSwitch />
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <ElInput placeholder="Type a notification..." aria-label="Notification text" />
+          <ElButton variant="primary" onClick={() => toast.success('Elementum is live!')}>
+            Trigger Toast
+          </ElButton>
+        </div>
+      </ElCard>
+      <ElToaster />
+    </div>
+  );
+}
+`,
+    };
+  }
+  if (framework === 'vue') {
+    return {
+      filename: 'ElementumDemo.vue',
+      code: `<script setup>
+import '@wcomp/elementum/tokens.css';
+import { toast } from '@wcomp/elementum';
+
+function notify() {
+  toast.success('Elementum is live in Vue 3!');
+}
+</script>
+
+<template>
+  <div style="max-width: 640px; margin: 32px auto; display: grid; gap: 16px;">
+    <el-card bordered>
+      <div slot="header" style="display: flex; justify-content: space-between; align-items: center;">
+        <strong>⚡ Elementum Ready</strong>
+        <el-theme-switch></el-theme-switch>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <el-input placeholder="Type a notification..." aria-label="Notification text"></el-input>
+        <el-button variant="primary" @click="notify">Trigger Toast</el-button>
+      </div>
+    </el-card>
+    <el-toaster></el-toaster>
+  </div>
+</template>
+`,
+    };
+  }
+  if (framework === 'svelte') {
+    return {
+      filename: 'ElementumDemo.svelte',
+      code: `<script>
+  import '@wcomp/elementum/tokens.css';
+  import { toast } from '@wcomp/elementum';
+</script>
+
+<div style="max-width: 640px; margin: 32px auto; display: grid; gap: 16px;">
+  <el-card bordered>
+    <div slot="header" style="display: flex; justify-content: space-between; align-items: center;">
+      <strong>⚡ Elementum Ready</strong>
+      <el-theme-switch></el-theme-switch>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <el-input placeholder="Type a notification..." aria-label="Notification text"></el-input>
+      <el-button variant="primary" onclick={() => toast.success('Elementum is live in Svelte 5!')}>
+        Trigger Toast
+      </el-button>
+    </div>
+  </el-card>
+  <el-toaster></el-toaster>
+</div>
+`,
+    };
+  }
+  return {
+    filename: 'index.html',
+    code: buildStarterIndexHtml(),
+  };
+}
+
 function mergeJsonFile(filePath, patch, dryRun) {
   let existing = {};
   if (fs.existsSync(filePath)) {
@@ -215,6 +310,7 @@ export function runInit(argv = process.argv.slice(2), cwd = process.cwd()) {
   const args = new Set(argv);
   const dryRun = args.has('--dry-run');
   const mcpOnly = args.has('--mcp-only');
+  const withExample = args.has('--example');
   const dirArg = argv.find((a) => a.startsWith('--dir='));
   const targetDir = dirArg ? path.resolve(cwd, dirArg.slice('--dir='.length)) : cwd;
 
@@ -252,6 +348,17 @@ export function runInit(argv = process.argv.slice(2), cwd = process.cwd()) {
           fs.writeFileSync(indexHtmlFile, buildStarterIndexHtml(), 'utf8');
         }
         written.push('index.html');
+      }
+    } else if (withExample) {
+      const ex = buildFrameworkExample(framework);
+      const srcDir = fs.existsSync(path.join(targetDir, 'src')) ? path.join(targetDir, 'src') : targetDir;
+      const exPath = path.join(srcDir, ex.filename);
+      const relExPath = path.relative(targetDir, exPath).replaceAll('\\', '/');
+      if (!fs.existsSync(exPath)) {
+        if (!dryRun) {
+          fs.writeFileSync(exPath, ex.code, 'utf8');
+        }
+        written.push(relExPath);
       }
     }
   }
@@ -351,7 +458,7 @@ if (isCliEntry(import.meta.url)) {
   const args = process.argv.slice(2);
   if (args.includes('--help') || args.includes('-h')) {
     console.log(
-      `Usage:\n  npx @wcomp/elementum init [--dir=<path>] [--mcp-only] [--dry-run]\n  npx @wcomp/elementum check [files-or-dirs...] [--json]`
+      `Usage:\n  npx @wcomp/elementum init [--dir=<path>] [--example] [--mcp-only] [--dry-run]\n  npx @wcomp/elementum check [files-or-dirs...] [--json]`
     );
     process.exit(0);
   }
@@ -379,5 +486,17 @@ if (isCliEntry(import.meta.url)) {
   console.log(`${prefix} (detected: ${result.framework}) in ${result.targetDir}:`);
   for (const f of result.written) {
     console.log(`  - ${f}`);
+  }
+  if (!result.dryRun) {
+    if (result.framework === 'vanilla' && result.written.includes('index.html')) {
+      const openCmd = process.platform === 'win32' ? 'start index.html' : process.platform === 'darwin' ? 'open index.html' : 'xdg-open index.html';
+      console.log(`\nNext steps:\n  1. Open your starter page: ${openCmd}\n  2. Validate markup & accessibility anytime: npx @wcomp/elementum check`);
+    } else {
+      const importLine =
+        result.framework === 'react' || result.framework === 'next'
+          ? `import '@wcomp/elementum/tokens.css';\n     import { ElButton, ElCard, ElDialog } from '@wcomp/elementum/react';`
+          : `import '@wcomp/elementum/tokens.css';\n     import '@wcomp/elementum';`;
+      console.log(`\nNext steps:\n  1. Import in your app entry:\n     ${importLine}\n  2. Validate markup & accessibility anytime: npx @wcomp/elementum check`);
+    }
   }
 }
