@@ -88,7 +88,17 @@
       const q = document.getElementById('search').value.toLowerCase();
       const r = document.getElementById('role').value;
       const list = rows.filter(x => x.name.toLowerCase().includes(q) && (r === 'All' || x.role === r));
-      document.getElementById('tbody').innerHTML = list.map(x => `<tr><td>${x.name}</td><td>${x.email}</td><td>${x.role}</td></tr>`).join('');
+      const tbody = document.getElementById('tbody');
+      tbody.textContent = '';
+      for (const x of list) {
+        const tr = document.createElement('tr');
+        for (const val of [x.name, x.email, x.role]) {
+          const td = document.createElement('td');
+          td.textContent = val;
+          tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+      }
     }
     document.getElementById('search').addEventListener('input', draw);
     document.getElementById('role').addEventListener('change', draw);

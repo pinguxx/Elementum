@@ -2887,9 +2887,10 @@ ${optionsHtml}
       const pascal = toPascalCase(comp.tag);
       if (fmt === 'react') {
         const jsx = cleanMarkup
-          .replace(new RegExp(`<${comp.tag}\\b`, 'g'), `<${pascal}`)
-          .replace(new RegExp(`</${comp.tag}>`, 'g'), `</${pascal}>`)
-          .replace(/\bclass=/g, 'className=');
+          .replaceAll(`<${comp.tag} `, `<${pascal} `)
+          .replaceAll(`<${comp.tag}>`, `<${pascal}>`)
+          .replaceAll(`</${comp.tag}>`, `</${pascal}>`)
+          .replaceAll(' class=', ' className=');
         return `import '@wcomp/elementum/tokens.css';\nimport { ${pascal} } from '@wcomp/elementum/react';\n\nexport function Example() {\n  return (\n    ${jsx.replace(/\n/g, '\n    ')}\n  );\n}`;
       }
       if (fmt === 'vue') {

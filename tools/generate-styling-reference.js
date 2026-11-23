@@ -17,7 +17,7 @@ const outPath = path.join(rootDir, 'docs', 'styling-reference.md');
 
 function parseRootTokens(cssText) {
   const tokens = [];
-  const rootMatch = cssText.match(/:root[^{]*\{([\s\S]*?)\}/);
+  const rootMatch = cssText.match(/:root[^{]*\{([^}]*)\}/);
   if (!rootMatch) return tokens;
   const re = /(--el-[a-z0-9-]+)\s*:\s*([^;]+);/gi;
   let m;
