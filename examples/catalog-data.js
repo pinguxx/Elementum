@@ -1776,7 +1776,7 @@ export const components = {
     "examples": [
       {
         "title": "Destructive Action Dialog",
-        "code": "<el-alert-dialog id=\"demo-alert-dlg\" title=\"Delete Production Instance?\">\n  <p style=\"margin: 0 0 16px 0; color: var(--el-text-muted);\">This action is irreversible and will purge all 14 active nodes.</p>\n  <div style=\"display: flex; justify-content: flex-end; gap: 8px;\">\n    <el-button variant=\"secondary\" onclick=\"document.getElementById('demo-alert-dlg').close()\">Cancel</el-button>\n    <el-button variant=\"danger\" onclick=\"document.getElementById('demo-alert-dlg').close()\">Delete Permanently</el-button>\n  </div>\n</el-alert-dialog>"
+        "code": "<el-alert-dialog id=\"demo-alert-dlg\" title=\"Delete Production Instance?\">\n  <el-button slot=\"trigger\" variant=\"danger\">Delete Production Instance</el-button>\n  <p style=\"margin: 0 0 16px 0; color: var(--el-text-muted);\">This action is irreversible and will purge all 14 active nodes.</p>\n  <div style=\"display: flex; justify-content: flex-end; gap: 8px;\">\n    <el-button variant=\"secondary\" onclick=\"document.getElementById('demo-alert-dlg').close()\">Cancel</el-button>\n    <el-button variant=\"danger\" onclick=\"document.getElementById('demo-alert-dlg').close()\">Delete Permanently</el-button>\n  </div>\n</el-alert-dialog>"
       }
     ]
   },
@@ -4122,7 +4122,7 @@ export const components = {
     "examples": [
       {
         "title": "Global Toast Container",
-        "code": "<el-toaster position=\"bottom-right\"></el-toaster>"
+        "code": "<div style=\"display: flex; gap: 8px; flex-wrap: wrap;\">\n  <el-toaster position=\"bottom-right\"></el-toaster>\n  <el-button variant=\"primary\" onclick=\"toast.success('Deployment live in us-east-1!')\">Trigger Success Toast</el-button>\n  <el-button variant=\"secondary\" onclick=\"toast.info('3 background workers synced.')\">Stack Info Toast</el-button>\n</div>"
       }
     ]
   },

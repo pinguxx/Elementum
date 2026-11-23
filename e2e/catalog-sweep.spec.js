@@ -123,7 +123,7 @@ test.describe('Full Catalog Real-Browser Sweep (All 109 Components, Permutations
           }
         }
 
-        // 4. Verify all rendered examples in .variation-card have upgraded <el-*> elements
+        // 4. Verify all rendered examples in .variation-card have upgraded <el-*> elements and visible preview height
         const exampleCards = Array.from(document.querySelectorAll('.variation-card'));
         for (const card of exampleCards) {
           totalExamples++;
@@ -151,11 +151,20 @@ test.describe('Full Catalog Real-Browser Sweep (All 109 Components, Permutations
     expect(report.failures, `Catalog sweep failures (${report.failures.length}):\n${report.failures.join('\n')}`).toEqual([]);
   });
 
-  test('interactive catalog previews actually respond to user clicks (el-toast, el-toaster, el-dialog, el-drawer, el-dropdown, el-command, el-number-flow)', async ({ page }) => {
+  test('interactive catalog previews actually respond to user clicks (el-toast, el-toaster, el-dialog, el-drawer, el-dropdown, el-command, el-number-flow) and sidebar search persists on selection', async ({ page }) => {
     await page.goto('/examples/index.html#el-toast');
     await page.waitForLoadState('networkidle');
 
+    // 0. Sidebar search filter persists when clicking a filtered result
+    const searchBox = page.locator('#component-search-input');
+    await searchBox.fill('toas');
+    await expect(page.locator('#sidebar-categories .nav-item-btn')).toHaveCount(2);
+    await page.locator('#sidebar-categories .nav-item-btn').nth(1).click();
+    await expect(page.locator('#sidebar-categories .nav-item-btn')).toHaveCount(2);
+    await searchBox.fill('');
+
     // 1. el-toast: clicking "Trigger SUCCESS Toast" must mount a visible .toast-card inside global <el-toaster>
+    await page.goto('/examples/index.html#el-toast');
     await page.locator('#live-stage el-button').first().click();
     const toastCount = await page.evaluate(() => {
       const toaster = document.querySelector('body > el-toaster');
@@ -163,15 +172,17 @@ test.describe('Full Catalog Real-Browser Sweep (All 109 Components, Permutations
     });
     expect(toastCount).toBeGreaterThan(0);
 
-    // 2. el-toaster: clicking "Dispatch Test Toast" must mount a toast card
+    // 2. el-toaster: clicking "Dispatch Test Toast" and bottom ".variation-preview el-button" must mount toast cards
     await page.goto('/examples/index.html#el-toaster');
     await page.evaluate(() => window.toast?.clear?.());
     await page.locator('#live-stage el-button').first().click();
+    await expect(page.locator('.variation-preview el-button').first()).toBeVisible();
+    await page.locator('.variation-preview el-button').first().click();
     const toasterCards = await page.evaluate(() => {
       const toasters = Array.from(document.querySelectorAll('el-toaster'));
       return toasters.reduce((sum, t) => sum + (t.shadowRoot?.querySelectorAll('.toast-card').length || 0), 0);
     });
-    expect(toasterCards).toBeGreaterThan(0);
+    expect(toasterCards).toBeGreaterThanOrEqual(2);
 
     // 3. el-dialog: clicking "Open Dialog" opens #demo-dialog-inst, clicking "Cancel" closes it
     await page.goto('/examples/index.html#el-dialog');

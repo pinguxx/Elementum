@@ -1007,7 +1007,7 @@
     document.getElementById('sidebar-backdrop')?.addEventListener('click', closeMobileSidebar);
 
     // 2. Render Left Sidebar with Categories
-    function renderSidebar(filterQuery = '') {
+    function renderSidebar(filterQuery = searchInput?.value || '') {
       sidebarContainer.innerHTML = '';
       const query = filterQuery.toLowerCase().trim();
 
