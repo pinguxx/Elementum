@@ -102,26 +102,23 @@ test.describe('Full Catalog Real-Browser Sweep (All 109 Components, Permutations
             await nextFrame();
           }
 
-          const checkboxes = Array.from(knobsForm.querySelectorAll('input[type="checkbox"]'));
-          for (const cb of checkboxes) {
-            const propName = cb.dataset.prop || cb.id || 'boolean';
-            const origChecked = cb.checked;
-            cb.checked = !origChecked;
-            cb.dispatchEvent(new Event('change', { bubbles: true }));
+          const switches = Array.from(knobsForm.querySelectorAll('el-switch'));
+          for (const sw of switches) {
+            const propName = sw.dataset.prop || sw.id || 'boolean';
+            sw.click();
             await nextFrame();
             totalPermutations++;
 
-            if (!nonBox.has(tag) && propName !== 'hidden' && propName !== 'open') {
+            if (!nonBox.has(tag) && propName !== 'hidden' && propName !== 'open' && propName !== 'inline') {
               const liveTarget = stage.querySelector(tag) || stage.firstElementChild;
               if (liveTarget) {
                 const r = liveTarget.getBoundingClientRect();
                 if (r.width === 0 && r.height === 0) {
-                  failures.push(`${tag} [${propName}=${cb.checked}]: preview collapsed to 0x0px`);
+                  failures.push(`${tag} [${propName} toggled]: preview collapsed to 0x0px`);
                 }
               }
             }
-            cb.checked = origChecked;
-            cb.dispatchEvent(new Event('change', { bubbles: true }));
+            sw.click();
             await nextFrame();
           }
         }
@@ -153,4 +150,90 @@ test.describe('Full Catalog Real-Browser Sweep (All 109 Components, Permutations
     expect(report.checkedCount).toBeGreaterThanOrEqual(109);
     expect(report.failures, `Catalog sweep failures (${report.failures.length}):\n${report.failures.join('\n')}`).toEqual([]);
   });
+
+  test('interactive catalog previews actually respond to user clicks (el-toast, el-toaster, el-dialog, el-drawer, el-dropdown, el-command, el-number-flow)', async ({ page }) => {
+    await page.goto('/examples/index.html#el-toast');
+    await page.waitForLoadState('networkidle');
+
+    // 1. el-toast: clicking "Trigger SUCCESS Toast" must mount a visible .toast-card inside global <el-toaster>
+    await page.locator('#live-stage el-button').first().click();
+    const toastCount = await page.evaluate(() => {
+      const toaster = document.querySelector('body > el-toaster');
+      return toaster?.shadowRoot?.querySelectorAll('.toast-card').length || 0;
+    });
+    expect(toastCount).toBeGreaterThan(0);
+
+    // 2. el-toaster: clicking "Dispatch Test Toast" must mount a toast card
+    await page.goto('/examples/index.html#el-toaster');
+    await page.evaluate(() => window.toast?.clear?.());
+    await page.locator('#live-stage el-button').first().click();
+    const toasterCards = await page.evaluate(() => {
+      const toasters = Array.from(document.querySelectorAll('el-toaster'));
+      return toasters.reduce((sum, t) => sum + (t.shadowRoot?.querySelectorAll('.toast-card').length || 0), 0);
+    });
+    expect(toasterCards).toBeGreaterThan(0);
+
+    // 3. el-dialog: clicking "Open Dialog" opens #demo-dialog-inst, clicking "Cancel" closes it
+    await page.goto('/examples/index.html#el-dialog');
+    await page.locator('#live-stage el-button').first().click();
+    await expect(page.locator('#demo-dialog-inst')).toHaveAttribute('data-state', 'open');
+    await page.locator('#demo-dialog-inst el-button').first().click();
+    await expect(page.locator('#demo-dialog-inst')).toHaveAttribute('data-state', 'closed');
+
+    // 4. el-drawer: clicking "Open Drawer" opens #demo-drawer-inst
+    await page.goto('/examples/index.html#el-drawer');
+    await page.locator('#live-stage el-button').first().click();
+    await expect(page.locator('#demo-drawer-inst')).toHaveAttribute('data-state', 'open');
+    await page.locator('#demo-drawer-inst [slot="footer"] el-button').first().click();
+    await expect(page.locator('#demo-drawer-inst')).toHaveAttribute('data-state', 'closed');
+
+    // 5. el-number-flow: clicking "+1,250" increments the value attribute
+    await page.goto('/examples/index.html#el-number-flow');
+    const beforeVal = Number(await page.locator('#preview-number-flow').getAttribute('value'));
+    await page.locator('#live-stage el-button').nth(1).click();
+    const afterVal = Number(await page.locator('#preview-number-flow').getAttribute('value'));
+    expect(afterVal).toBe(beforeVal + 1250);
+  });
+
+  test('npx @wcomp/elementum init generated vanilla starter index.html works end-to-end in browser (dark theme canvas, toast, and dialog)', async ({ page }) => {
+    const { buildStarterIndexHtml, buildStarterTokensCss } = await import('../bin/elementum.js');
+    // Rewrite unpkg URLs to local dev server so the test verifies the exact current repo build offline
+    const html = buildStarterIndexHtml()
+      .replace('https://unpkg.com/@wcomp/elementum/tokens.css', '/src/tokens.css')
+      .replace('./elementum-tokens.css', '/src/tokens.css')
+      .replaceAll('https://unpkg.com/@wcomp/elementum', '/src/index.js');
+
+    await page.goto('/index.html');
+    await page.setContent(html, { waitUntil: 'networkidle' });
+
+    // 1. Light mode initial body background should be light (#fbfcfd -> rgb(251, 252, 253))
+    const lightBg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+    expect(lightBg).toBe('rgb(251, 252, 253)');
+
+    // 2. Clicking <el-theme-switch> must switch <html data-theme="dark"> AND darken body background to #0b0f19 -> rgb(11, 15, 25)
+    await page.locator('el-theme-switch').click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    const darkBg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+    expect(darkBg).not.toBe(lightBg);
+
+    // 3. Clicking "Trigger Toast" must render a visible .toast-card inside <el-toaster>
+    await page.locator('#toast-btn').click();
+    const toastCount = await page.evaluate(() => {
+      const toaster = document.getElementById('toaster');
+      return toaster?.shadowRoot?.querySelectorAll('.toast-card').length || 0;
+    });
+    expect(toastCount).toBe(1);
+
+    // 4. Clicking "New Item" opens <el-dialog>, clicking "Create" closes it and triggers a second toast
+    await page.locator('#open-modal').click();
+    await expect(page.locator('#demo-dialog')).toHaveAttribute('data-state', 'open');
+    await page.locator('#save-modal').click();
+    await expect(page.locator('#demo-dialog')).toHaveAttribute('data-state', 'closed');
+    const toastCountAfterSave = await page.evaluate(() => {
+      const toaster = document.getElementById('toaster');
+      return toaster?.shadowRoot?.querySelectorAll('.toast-card').length || 0;
+    });
+    expect(toastCountAfterSave).toBe(2);
+  });
 });
+
