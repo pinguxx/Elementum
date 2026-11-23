@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elementum A2UI Renderer — Locked-Catalog Declarative Agent UI</title>
+  <link rel="stylesheet" href="../src/tokens.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: var(--el-font-sans, system-ui, -apple-system, sans-serif);
+      background: var(--el-surface-base, #ffffff);
+      color: var(--el-text-primary, #0f172a);
+      min-height: 100dvh;
+    }
+    main {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+    }
+    .hero {
+      margin-bottom: 28px;
+    }
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 1.9rem;
+      letter-spacing: -0.02em;
+    }
+    .hero p {
+      margin: 0;
+      color: var(--el-text-muted, #64748b);
+      max-width: 68ch;
+      line-height: 1.55;
+    }
+    .intent-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 20px 0 24px;
+    }
+    .workspace {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 820px) {
+      .workspace { grid-template-columns: 1fr; }
+    }
+    .panel-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--el-text-muted, #64748b);
+      margin: 0 0 10px;
+    }
+    pre.log-box {
+      margin: 0;
+      padding: 14px;
+      border-radius: 10px;
+      background: var(--el-surface-muted, #f1f5f9);
+      border: 1px solid var(--el-border-translucent, rgba(15, 23, 42, 0.08));
+      font-size: 0.8rem;
+      overflow-x: auto;
+      line-height: 1.5;
+      max-height: 280px;
+    }
+  </style>
+</head>
+<body>
+  <el-navbar sticky brand="⚡ Elementum" badge="A2UI" badge-variant="primary" href="../index.html">
+    <a href="../index.html">Home</a>
+    <a href="../docs.html">Docs</a>
+    <a href="./index.html">Catalog</a>
+    <a href="./ag-ui.html">AG-UI</a>
+    <a href="./a2ui.html" active>A2UI</a>
+    <el-theme-switch slot="actions"></el-theme-switch>
+  </el-navbar>
+
+  <main>
+    <header class="hero">
+      <h1>Declarative A2UI Renderer for Elementum</h1>
+      <p>
+        Stream declarative A2UI JSON messages (<code>createSurface</code>, <code>surfaceUpdate</code>, <code>dataModelUpdate</code>) into a locked catalog of native Elementum Web Components with two-way micro-signal bindings and zero executable code.
+      </p>
+
+      <div class="intent-bar">
+        <el-button id="intent-flight" variant="primary">Intent: Rebook Delayed Flight</el-button>
+        <el-button id="intent-billing" variant="secondary">Intent: Explain Spend Spike</el-button>
+        <el-button id="intent-security" variant="secondary">Security: Locked Catalog Test</el-button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <section>
+        <h2 class="panel-title">Live Rendered Elementum Surface</h2>
+        <div id="a2ui-surface-host"></div>
+      </section>
+
+      <section style="display: flex; flex-direction: column; gap: 16px;">
+        <div>
+          <h2 class="panel-title">Live Reactive Data Model (Two-Way Bound)</h2>
+          <pre id="data-model-view" class="log-box">{}</pre>
+        </div>
+        <div>
+          <h2 class="panel-title">Dispatched Agent Actions &amp; Security Log</h2>
+          <pre id="action-log" class="log-box">Click any interactive control on the surface...</pre>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <el-toaster></el-toaster>
+
+  <script type="module">
+    import { effect, toast } from '../src/index.js';
+    import { createA2UiSurface } from '../src/a2ui.js';
+
+    const host = document.getElementById('a2ui-surface-host');
+    const dataView = document.getElementById('data-model-view');
+    const actionLog = document.getElementById('action-log');
+    const logs = [];
+
+    function pushLog(entry) {
+      logs.unshift(`[${new Date().toLocaleTimeString()}] ${entry}`);
+      actionLog.textContent = logs.slice(0, 8).join('\n\n');
+    }
+
+    let currentSurface = null;
+
+    function mountIntent(messages, options = {}) {
+      if (currentSurface) currentSurface.destroy();
+      currentSurface = createA2UiSurface({
+        ...options,
+        onAction: (ev) => {
+          toast.success(`Action "${ev.actionName}" dispatched!`);
+          pushLog(`ACTION ${ev.actionName}\n${JSON.stringify(ev.context, null, 2)}`);
+        },
+      });
+      currentSurface.mount(host);
+
+      effect(() => {
+        dataView.textContent = JSON.stringify(currentSurface.dataModel.value, null, 2);
+      });
+
+      currentSurface.processMessages(messages);
+      if (currentSurface.blockedTypes.value.length > 0) {
+        pushLog(`BLOCKED unregistered/disallowed types: ${currentSurface.blockedTypes.value.join(', ')}`);
+      }
+    }
+
+    const FLIGHT_INTENT = [
+      {
+        dataModelUpdate: {
+          path: '/',
+          contents: [
+            { key: 'route', valueString: 'UA 418 · SFO -> JFK · Departs 6:45 PM (Gate B12)' },
+            { key: 'seat', valueString: '14C' },
+            { key: 'note', valueString: '' },
+          ],
+        },
+      },
+      {
+        surfaceUpdate: {
+          surfaceId: 'flight-rebook',
+          components: [
+            { id: 'root', component: { Card: { title: { literalString: 'Rebook Next Nonstop Flight' }, bordered: true, child: 'col' } } },
+            { id: 'col', component: { Column: { gap: '14px', children: ['badgeRow', 'routeText', 'seatLabel', 'seatRow', 'noteField', 'confirmBtn'] } } },
+            { id: 'badgeRow', component: { Row: { children: ['nonstopBadge', 'statusBadge'] } } },
+            { id: 'nonstopBadge', component: { Badge: { variant: 'success', label: { literalString: 'NONSTOP' } } } },
+            { id: 'statusBadge', component: { Badge: { variant: 'primary', label: { literalString: 'Aisle Seats Available' } } } },
+            { id: 'routeText', component: { Text: { text: { path: '/route' }, usageHint: 'body' } } },
+            { id: 'seatLabel', component: { Text: { text: { literalString: 'Choose your aisle seat:' }, usageHint: 'caption' } } },
+            { id: 'seatRow', component: { Row: { children: ['chip14', 'chip9', 'chip21'] } } },
+            { id: 'chip14', component: { ChoiceChip: { label: { literalString: '14C · Main Aisle' }, value: '14C', selected: { path: '/seat' } } } },
+            { id: 'chip9', component: { ChoiceChip: { label: { literalString: '9F · Exit Aisle' }, value: '9F', selected: { path: '/seat' } } } },
+            { id: 'chip21', component: { ChoiceChip: { label: { literalString: '21C · Rear Aisle' }, value: '21C', selected: { path: '/seat' } } } },
+            { id: 'noteField', component: { TextField: { placeholder: 'Optional rebooking note...', value: { path: '/note' } } } },
+            {
+              id: 'confirmBtn',
+              component: {
+                Button: {
+                  variant: 'primary',
+                  label: { literalString: 'Confirm Rebooking' },
+                  action: {
+                    name: 'confirm_rebooking',
+                    context: [
+                      { key: 'route', value: { path: '/route' } },
+                      { key: 'seat', value: { path: '/seat' } },
+                      { key: 'note', value: { path: '/note' } },
+                    ],
+                  },
+                },
+              },
+            },
+          ],
+        },
+      },
+      { beginRendering: { surfaceId: 'flight-rebook', root: 'root' } },
+    ];
+
+    const BILLING_INTENT = [
+      {
+        dataModelUpdate: {
+          path: '/',
+          contents: [
+            { key: 'summary', valueString: 'Last week was $109 vs. $86 usual (+26%). Token throughput spiked during Tuesday batch runs.' },
+            { key: 'capEnabled', valueBoolean: true },
+          ],
+        },
+      },
+      {
+        surfaceUpdate: {
+          surfaceId: 'billing-explain',
+          components: [
+            { id: 'root', component: { Card: { title: { literalString: 'Weekly Spend Comparison' }, bordered: true, child: 'col' } } },
+            { id: 'col', component: { Column: { gap: '14px', children: ['summaryText', 'meter', 'capSwitch', 'saveBtn'] } } },
+            { id: 'summaryText', component: { Text: { text: { path: '/summary' }, usageHint: 'body' } } },
+            { id: 'meter', component: { Meter: { value: 87, min: 0, max: 100, label: 'Monthly Quota Used' } } },
+            { id: 'capSwitch', component: { Switch: { label: { literalString: 'Enable $90 weekly spend cap' }, checked: { path: '/capEnabled' } } } },
+            {
+              id: 'saveBtn',
+              component: {
+                Button: {
+                  variant: 'primary',
+                  label: { literalString: 'Apply Spend Cap' },
+                  action: {
+                    name: 'apply_spend_cap',
+                    context: [{ key: 'capEnabled', value: { path: '/capEnabled' } }],
+                  },
+                },
+              },
+            },
+          ],
+        },
+      },
+      { beginRendering: { surfaceId: 'billing-explain', root: 'root' } },
+    ];
+
+    const SECURITY_INTENT = [
+      {
+        surfaceUpdate: {
+          surfaceId: 'locked-test',
+          components: [
+            { id: 'root', type: 'Card', props: { title: 'Locked Catalog Enforcement', bordered: true }, children: ['col'] },
+            { id: 'col', type: 'Column', children: ['info', 'evilScript', 'evilIframe', 'okBtn'] },
+            { id: 'info', type: 'Callout', props: { variant: 'success', text: 'Only approved Elementum catalog components render. Unregistered Script/Iframe nodes are silently dropped.' } },
+            { id: 'evilScript', type: 'RawScript', props: { text: 'alert("xss")' } },
+            { id: 'evilIframe', type: 'CustomIframe', props: { src: 'javascript:alert(1)' } },
+            { id: 'okBtn', type: 'Button', props: { variant: 'secondary', label: 'Verified Safe Action', action: { name: 'security_verified' } } },
+          ],
+        },
+      },
+      { createSurface: { surfaceId: 'locked-test', root: 'root' } },
+    ];
+
+    document.getElementById('intent-flight').addEventListener('click', () => mountIntent(FLIGHT_INTENT));
+    document.getElementById('intent-billing').addEventListener('click', () => mountIntent(BILLING_INTENT));
+    document.getElementById('intent-security').addEventListener('click', () => mountIntent(SECURITY_INTENT));
+
+    mountIntent(FLIGHT_INTENT);
+  </script>
+</body>
+</html>

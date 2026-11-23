@@ -1,0 +1,46 @@
+# Elementum (`@wcomp/elementum`)
+
+> An AI-native, framework-independent UI engineering platform that connects design systems, zero-dependency Web Components, and AI agents through a shared, verifiable component contract.
+
+## Key Links
+- Homepage & Live Showcase: https://elementum-sage.vercel.app/
+- Interactive Component Catalog (109 elements): https://elementum-sage.vercel.app/examples/index.html
+- Documentation: https://elementum-sage.vercel.app/docs.html
+- Hosted MCP Server (Vercel Edge, Streamable HTTP): https://elementum-sage.vercel.app/mcp
+- GitHub Repository: https://github.com/pinguxx/Elementum
+- Audit & Verification Hub (109/109 Production Verified): https://github.com/pinguxx/Elementum/blob/main/AUDITS.md
+- Component Quality Matrix: https://github.com/pinguxx/Elementum/blob/main/QUALITY.md
+- UI Development Guidelines for Agents: https://github.com/pinguxx/Elementum/blob/main/docs/agent-craft-guide.md
+- Framework Integration Guide: https://github.com/pinguxx/Elementum/blob/main/docs/framework-integration.md
+- Theming, Tokens & Tailwind Guide: https://github.com/pinguxx/Elementum/blob/main/docs/theming.md
+- A2UI Renderer Demo: https://elementum-sage.vercel.app/examples/a2ui.html
+- AG-UI Streaming Demo: https://elementum-sage.vercel.app/examples/ag-ui.html
+- AI Agent Studio Demo: https://elementum-sage.vercel.app/examples/agent-studio.html
+- Live Declarative Shadow DOM SSR: https://elementum-sage.vercel.app/ssr
+
+## Quick Install & MCP
+- npm: `npm install @wcomp/elementum`
+- CDN: `<link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />` and `<script type="module" src="https://unpkg.com/@wcomp/elementum"></script>`
+- Local MCP Server (stdio): `npx elementum-mcp`
+- Hosted MCP Server (Streamable HTTP): `https://elementum-sage.vercel.app/mcp`
+- Installable Agent Skills: `npx skills@latest add pinguxx/Elementum --skill elementum`
+
+## Package Subpath Exports
+- `@wcomp/elementum` — 109 Custom Elements + micro-signals (`signal`, `computed`, `effect`, `batch`, `asyncSignal`)
+- `@wcomp/elementum/tokens.css` — Light & Dark W3C DTCG CSS custom properties
+- `@wcomp/elementum/react` — Strictly-typed React 18 & 19 wrappers for all 109 components
+- `@wcomp/elementum/ssr` — Pure Node.js Declarative Shadow DOM SSR (`renderComponentToDSD`, `renderTemplateToString`)
+- `@wcomp/elementum/behaviors` — 16 composable headless interaction, focus, motion & overlay primitives
+- `@wcomp/elementum/agent` — Shadow-DOM-piercing `snapshot(root)` and `act(root, command)`
+- `@wcomp/elementum/ag-ui` — AG-UI streaming event store & RFC 6902 JSON Patch state deltas
+- `@wcomp/elementum/a2ui` — Declarative A2UI JSON surface renderer with locked catalog allowlist & two-way signal bindings
+- `@wcomp/elementum/testing` — WAI-ARIA APG, RTL & DSD SSR contract validators
+- `@wcomp/elementum/custom-elements.json` — W3C Custom Elements Manifest
+
+## Exact API Rules for AI Coding Agents
+1. Query `get_component_doc` and `list_tokens` via MCP before writing markup; validate with `validate_component_usage` and `lint_accessibility`.
+2. Open/close `<el-dialog>` with `dialog.showModal()` / `dialog.close()` (not `dialog.open = true`).
+3. Complex array/object props in Vanilla/Vue use `.value` signals (`table.columns.value = cols; table.data.value = rows;`); in `@wcomp/elementum/react` pass them directly as JSX props (`<ElTable columns={cols} data={rows} />`).
+4. Read `e.detail?.value` on `input` / `change` / `submit` events.
+5. Add `<html data-dsd>` whenever pre-rendering with `renderComponentToDSD`.
+6. Use `<el-prompt-input>`, `<el-reasoning-card>`, `<el-tool-call>`, `<el-streaming-text>`, `<el-sources>`, and `<el-diff-viewer>` for AI interfaces.

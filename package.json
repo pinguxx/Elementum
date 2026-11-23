@@ -32,6 +32,10 @@
     },
     "./ssr": "./src/ssr.js",
     "./ag-ui": "./src/ag-ui.js",
+    "./a2ui": {
+      "types": "./src/a2ui.d.ts",
+      "default": "./src/a2ui.js"
+    },
     "./react": {
       "types": "./src/react/index.d.ts",
       "default": "./src/react/index.js"
