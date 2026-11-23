@@ -37,11 +37,11 @@ Every architectural claim in Elementum is backed by automated verification in CI
 
 ### Option A: Zero-Build 2-Line CDN (HTML, CodePen, Claude Artifacts)
 
-Paste two pinned lines into any HTML file—no build step, bundler, or `npm install` required:
+Paste two lines into any HTML file or CodePen—no build step, bundler, or `npm install` required *(for production, pin a version like `@wcomp/elementum@0.8.1`)*:
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum@0.8.1/src/tokens.css" />
-<script type="module" src="https://unpkg.com/@wcomp/elementum@0.8.1/src/index.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />
+<script type="module" src="https://unpkg.com/@wcomp/elementum"></script>
 ```
 
 Or import individual tree-shakeable components with an ES import map:
@@ -50,8 +50,8 @@ Or import individual tree-shakeable components with an ES import map:
 <script type="importmap">
   {
     "imports": {
-      "@wcomp/elementum": "https://unpkg.com/@wcomp/elementum@0.8.1/src/index.js",
-      "@wcomp/elementum/": "https://unpkg.com/@wcomp/elementum@0.8.1/src/"
+      "@wcomp/elementum": "https://unpkg.com/@wcomp/elementum",
+      "@wcomp/elementum/": "https://unpkg.com/@wcomp/elementum/src/"
     }
   }
 </script>
