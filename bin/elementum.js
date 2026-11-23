@@ -67,13 +67,13 @@ export function buildAgentRulesSnippet(framework) {
 export function buildStarterTokensCss() {
   return `/* Elementum custom theme overrides (import after @wcomp/elementum/tokens.css) */
 :root {
-  --el-accent-primary: #2563eb;
+  --el-color-primary: #2563eb;
   --el-radius-md: 10px;
 }
 
 [data-theme="dark"],
 :root[data-theme="dark"] {
-  --el-accent-primary: #60a5fa;
+  --el-color-primary: #3b82f6;
 }
 `;
 }
@@ -87,13 +87,14 @@ export function buildStarterIndexHtml() {
   <title>Elementum Starter App</title>
   <link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />
   <link rel="stylesheet" href="./elementum-tokens.css" />
-  <script type="module" src="https://unpkg.com/@wcomp/elementum"></script>
   <style>
     body {
       margin: 0;
+      min-height: 100vh;
       font-family: var(--el-font-sans, system-ui, sans-serif);
-      background: var(--el-bg-primary, #f8fafc);
+      background: var(--el-step-1, var(--el-surface-base, #f8fafc));
       color: var(--el-text-primary, #0f172a);
+      transition: background-color 180ms ease, color 180ms ease;
     }
     main {
       max-width: 960px;
@@ -126,7 +127,7 @@ export function buildStarterIndexHtml() {
         Your project is configured with 109 zero-dependency Web Components, W3C design tokens, and the Elementum MCP server (<code>.mcp.json</code>).
       </p>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-        <el-input id="quick-input" placeholder="Type a message..." aria-label="Quick message"></el-input>
+        <el-input id="quick-input" placeholder="Type a message..." aria-label="Quick message" style="flex:1;min-width:220px;"></el-input>
         <el-button id="toast-btn" variant="secondary">Trigger Toast</el-button>
       </div>
     </el-card>
@@ -158,17 +159,29 @@ export function buildStarterIndexHtml() {
   <el-toaster id="toaster"></el-toaster>
 
   <script type="module">
+    import { toast } from 'https://unpkg.com/@wcomp/elementum';
+
     const dialog = document.getElementById('demo-dialog');
-    const toaster = document.getElementById('toaster');
+    const quickInput = document.getElementById('quick-input');
+    const itemNameInput = document.getElementById('item-name');
+
+    const readInput = (el, fallback) => {
+      const raw = typeof el?.value === 'object' && el.value !== null && 'value' in el.value
+        ? el.value.value
+        : (el?.getAttribute('value') || '');
+      return String(raw || '').trim() || fallback;
+    };
+
     document.getElementById('open-modal').addEventListener('click', () => dialog.showModal());
     document.getElementById('close-modal').addEventListener('click', () => dialog.close());
     document.getElementById('save-modal').addEventListener('click', () => {
+      const name = readInput(itemNameInput, 'New item');
       dialog.close();
-      toaster.show?.({ title: 'Created', description: 'New item saved.', variant: 'success' });
+      toast.success('Item Created', { description: \`Saved "\${name}" successfully.\` });
     });
     document.getElementById('toast-btn').addEventListener('click', () => {
-      const val = document.getElementById('quick-input').value || 'Hello from Elementum!';
-      toaster.show?.({ title: 'Notification', description: val, variant: 'info' });
+      const msg = readInput(quickInput, 'Hello from Elementum!');
+      toast.info('Notification', { description: msg });
     });
   </script>
 </body>

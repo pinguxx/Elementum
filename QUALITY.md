@@ -9,7 +9,7 @@
 - **🔵 Stable**: Catalog schema verified + instantiated in unit tests + explicit `test()` coverage.
 - **🟡 Experimental**: Covered by automated catalog schema & mount contract tests (`Catalog Contract 1–6`), pending dedicated behavior & browser E2E suites.
 
-## Summary (`@wcomp/elementum@0.8.3`)
+## Summary (`@wcomp/elementum@0.8.4`)
 
 - **Total Registered Custom Elements**: **109**
 - **🟢 Production Verified**: **109**

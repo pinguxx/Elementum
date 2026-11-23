@@ -4,6 +4,12 @@ All notable changes to `@wcomp/elementum` are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.4] — 2026-11-23 ("Vanilla Starter Dark Theme Canvas, Toast Wiring & ElToaster Instance Methods")
+
+### Fixed
+- **Vanilla Starter `index.html` Dark Mode & Toast Wiring (`bin/elementum.js`)**: Updated generated `index.html` `body` background to `var(--el-step-1, var(--el-surface-base))` and `elementum-tokens.css` to `--el-color-primary` so toggling `<el-theme-switch>` smoothly switches the entire page canvas between light and dark themes; wired `Trigger Toast` and modal `Create` buttons to `toast.info()` / `toast.success()` reading `<el-input>` signal `.value.value`.
+- **`<el-toaster>` Instance Convenience Methods (`src/components/el-toast.js`)**: Added `.show()`, `.success()`, `.error()`, `.warning()`, `.info()`, and `.clear()` instance methods on `ElToaster` (delegating to the `toast` manager) and accepted `opts.title` as a fallback for `opts.message`.
+
 ## [0.8.3] — 2026-11-23 ("Windows PowerShell & Symlink CLI Fix + Starter index.html for Vanilla Projects")
 
 ### Fixed

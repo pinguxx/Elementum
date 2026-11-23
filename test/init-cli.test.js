@@ -67,7 +67,7 @@ test('runInit writes .mcp.json, .cursor/mcp.json, elementum.rules.md, and elemen
     assert.ok(rules.includes('showModal()'));
 
     const tokens = fs.readFileSync(path.join(tmp, 'elementum-tokens.css'), 'utf8');
-    assert.ok(tokens.includes('--el-accent-primary'));
+    assert.ok(tokens.includes('--el-color-primary'));
 
     // Second run with --mcp-only skips rules & tokens
     const mcpOnlyRes = runInit(['--mcp-only'], tmp);

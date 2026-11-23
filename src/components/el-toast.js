@@ -25,7 +25,7 @@ export class ToastManager {
 
     const item = {
       id,
-      message: opts.message || '',
+      message: opts.message || opts.title || '',
       description: opts.description || '',
       variant: opts.variant || 'info', // 'info' | 'success' | 'danger' | 'warning' | 'loading'
       duration,
@@ -471,6 +471,30 @@ export class ElToaster extends Elementum {
       viewport.removeEventListener('mouseenter', this.#onMouseEnter);
       viewport.removeEventListener('mouseleave', this.#onMouseLeave);
     }
+  }
+
+  show(msgOrOpts, maybeOpts) {
+    return toast.show(msgOrOpts, maybeOpts);
+  }
+
+  success(message, opts) {
+    return toast.success(message, opts);
+  }
+
+  error(message, opts) {
+    return toast.error(message, opts);
+  }
+
+  warning(message, opts) {
+    return toast.warning(message, opts);
+  }
+
+  info(message, opts) {
+    return toast.info(message, opts);
+  }
+
+  clear() {
+    return toast.clear();
   }
 
   #onMouseEnter = () => {
