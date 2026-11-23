@@ -15,7 +15,7 @@
 
 [**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (109 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**A2UI Demo**](https://elementum-sage.vercel.app/examples/a2ui.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr) · [**Deep Dive (Dev.to)**](https://dev.to/pinguxx/elementum-an-ai-native-ui-platform-with-built-in-mcp-agent-runtime-109-zero-dep-web-components-9oi)
 
-## 🧪 Verification & Browser Matrix (Beta — `v0.8.0`)
+## 🧪 Verification & Browser Matrix (Beta — `v0.8.1`)
 
 One command verifies everything end-to-end: `npm run verify:all` (see [QUALITY.md](https://github.com/pinguxx/Elementum/blob/main/QUALITY.md) for the per-component matrix and [AUDITS.md](https://github.com/pinguxx/Elementum/blob/main/AUDITS.md) for the stamped audit snapshot, tool versions, findings log, and reproduction commands).
 
@@ -40,8 +40,8 @@ Every architectural claim in Elementum is backed by automated verification in CI
 Paste two pinned lines into any HTML file—no build step, bundler, or `npm install` required:
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum@0.8.0/src/tokens.css" />
-<script type="module" src="https://unpkg.com/@wcomp/elementum@0.8.0/src/index.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum@0.8.1/src/tokens.css" />
+<script type="module" src="https://unpkg.com/@wcomp/elementum@0.8.1/src/index.js"></script>
 ```
 
 Or import individual tree-shakeable components with an ES import map:
@@ -50,8 +50,8 @@ Or import individual tree-shakeable components with an ES import map:
 <script type="importmap">
   {
     "imports": {
-      "@wcomp/elementum": "https://unpkg.com/@wcomp/elementum@0.8.0/src/index.js",
-      "@wcomp/elementum/": "https://unpkg.com/@wcomp/elementum@0.8.0/src/"
+      "@wcomp/elementum": "https://unpkg.com/@wcomp/elementum@0.8.1/src/index.js",
+      "@wcomp/elementum/": "https://unpkg.com/@wcomp/elementum@0.8.1/src/"
     }
   }
 </script>

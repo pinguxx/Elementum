@@ -26,7 +26,7 @@
 
 ## Quick Install & MCP
 - npm + init CLI: `npm install @wcomp/elementum && npx @wcomp/elementum init`
-- Zero-Build 2-Line CDN: `<link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum@0.8.0/src/tokens.css" />` and `<script type="module" src="https://unpkg.com/@wcomp/elementum@0.8.0/src/index.js"></script>`
+- Zero-Build 2-Line CDN: `<link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum@0.8.1/src/tokens.css" />` and `<script type="module" src="https://unpkg.com/@wcomp/elementum@0.8.1/src/index.js"></script>`
 - Local MCP Server (stdio): `npx elementum-mcp`
 - Hosted MCP Server (Streamable HTTP): `https://elementum-sage.vercel.app/mcp`
 - Installable Agent Skills: `npx skills@latest add pinguxx/Elementum --skill elementum`

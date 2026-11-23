@@ -1,10 +1,12 @@
 {
   "name": "@wcomp/elementum",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "mcpName": "io.github.pinguxx/elementum",
   "description": "Ultra-lightweight, signal-driven, frameworkless Web Components for modern design systems",
   "type": "module",
   "sideEffects": [
+    "./src/index.js",
+    "./src/react/index.js",
     "./src/components/*.js",
     "./src/tokens.css"
   ],

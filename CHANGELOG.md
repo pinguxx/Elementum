@@ -4,6 +4,14 @@ All notable changes to `@wcomp/elementum` are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.1] — 2026-11-22 ("Vite/Rollup sideEffects Fix, Scoped Dark Mode & Showcase Polish")
+
+### Fixed
+- **Vite / Rollup Custom Element Tree-Shaking (`package.json`)**: Added `./src/index.js` and `./src/react/index.js` to `"sideEffects"` alongside `./src/components/*.js` and `./src/tokens.css`, ensuring Vite/Rollup bundlers never drop custom element registration when importing `@wcomp/elementum` or `@wcomp/elementum/react`.
+- **Scoped Dark Mode (`src/tokens.css`)**: Added `[data-theme="dark"]` alongside `:root[data-theme="dark"]` so scoped dark-mode containers receive full dark surface and text tokens.
+- **Button Height Normalization (`src/components/el-button.js`)**: Added consistent `line-height: 1.2` and `min-height` across `sm`/`md`/`lg` variants so sibling buttons with icons or Unicode arrows align pixel-for-pixel.
+- **Switch Track Collapse (`src/components/el-switch.js`)**: Added `flex-shrink: 0` to `.track` so switch pills never squish in narrow flex layouts.
+
 ## [0.8.0] — 2026-11-22 ("A2UI Renderer, 100/100 Edge MCP, 109/109 Production Verified & Init CLI")
 
 ### Added
