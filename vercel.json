@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "ignoreCommand": "git diff HEAD^ HEAD --quiet -- index.html docs.html showcase.html llms.txt vercel.json api/ mcp/ src/ examples/ .well-known/",
   "functions": {
     "api/ssr.js": {
       "includeFiles": "src/**"
