@@ -4,6 +4,27 @@ All notable changes to `@wcomp/elementum` are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] — 2026-11-22 ("A2UI Renderer, 100/100 Edge MCP, 109/109 Production Verified & Init CLI")
+
+### Added
+- **Declarative A2UI Renderer (`@wcomp/elementum/a2ui`)**: Zero-dependency A2UI JSON surface renderer (`createA2UiSurface`) with strict locked-catalog allowlist, two-way micro-signal data model bindings, action dispatching, TypeScript definitions (`src/a2ui.d.ts`), unit tests (`test/a2ui.test.js`), and interactive playground with progressive JSONL agent stream simulation (`examples/a2ui.html`).
+- **Zero-Dep Project Setup CLI (`npx @wcomp/elementum init`)**: Added `bin/elementum.js` (with `test/init-cli.test.js`) that auto-detects Next.js, React, Vue, Svelte, Vite, or Vanilla projects, writes `.mcp.json` and `.cursor/mcp.json`, and drops in `elementum.rules.md` + starter `elementum-tokens.css`.
+- **100/100 Vercel Edge MCP Server (`mcp/core.js`, `mcp/edge.js`, `api/mcp.js`)**: Extracted pure-JS MCP core with zero Node built-ins, `2025-03-26` / `2025-06-18` protocol negotiation, JSON-RPC batching, structured `isError` responses, and `mcp/component-metadata.json`.
+- **109 / 109 Production Verified & Hard-8 Stress Suite (`e2e/hard-8-stress.spec.js`, `AUDITS.md`, `QUALITY.md`)**: Reached 100% Production Verified coverage across all 109 components, plus dedicated stress tests for 1,200-row `<el-table>`, nested `<el-dialog>`, and RTL mobile touch viewports.
+- **Auto-Generated Styling Reference & Developer Guides**: Added `npm run docs:styling` (`docs/styling-reference.md`), 1-page Tailwind CSS guide (`docs/tailwind-guide.md`), drop-in agent rules (`docs/agent-rules-snippet.md`), `shadcn/ui` migration table (`docs/migration-guide.md`), `llms.txt`, and `AGENTS.md`.
+- **Catalog Framework Tabs & Theme Studio Upgrades**: Added live **HTML / React / Vue 3 / A2UI JSON** copy tabs to `examples/index.html`, and upgraded Theme Studio (`examples/registry.html#theme-studio`) with Font Family selector, live Light/Dark preview, and `tokens.css` / `tokens.dtcg.json` file downloads.
+- **4-Arm AI-Agent UI Benchmark (`benchmarks/agent-eval/`)**: Added reproducible Playwright + `axe-core` + MCP scoring harness (`score.js`) and published 4-arm comparison results in `benchmarks/agent-eval/RESULTS.md`.
+
+### Changed
+- **Tree-Shaking `sideEffects` (`package.json`)**: Scoped `"sideEffects"` strictly to `["./src/components/*.js", "./src/tokens.css"]` for optimal bundler tree-shaking.
+- **150x+ `<el-table>` Render Speedup (`src/components/el-table.js`, `src/template.js`)**: Added `DocumentFragment` fast-path rendering in `NodePart` and `el-table`, reducing 1,200-row render time from ~16s to < 1s.
+
+### Fixed
+- **Duplicate Composed `InputEvent` (`src/components/el-input.js`, `src/components/el-textarea.js`)**: Added `e.stopPropagation()` before emitting custom `input`/`change` events so React/Vue/Vanilla listeners always receive `e.detail.value`.
+- **`<el-dialog>` Escape `data-state` Sync (`src/components/el-dialog.js`)**: Synced `data-state="closed"` and removed `open` attribute when native `<dialog>` closes via Escape.
+- **WCAG 2.2 AA Fixes**: Darkened `<el-badge variant="success">` for WebKit contrast (`6.97:1`), darkened `<el-autocomplete>` `.match-highlight` contrast (`5.3+:1`), and added `?inert` to closed `<el-dropdown>` panels to eliminate `aria-hidden-focus`.
+- **A2UI & AG-UI Interactive Demo Polish**: Fixed `<el-chip>` click/toggle race in `src/a2ui.js` `ChoiceChip` binding and synced active primary button states in `examples/a2ui.html` and `examples/ag-ui.html`.
+
 ## [0.7.0] — 2026-11-21 ("Hardened React Wrappers, Multi-Framework Starters & 87/109 Production Verified")
 
 ### Added
