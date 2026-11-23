@@ -235,4 +235,37 @@ test('MCP separated component schema (variants, states, props, constraints vs ex
     assert.ok(doc.constraints && typeof doc.constraints === 'object', `${decl.tagName} missing constraints`);
     assert.ok(Array.isArray(doc.examples), `${decl.tagName} missing examples`);
   }
+
+  // 8. Multi-format generate_snippet (html, react, vue, a2ui) & validate_a2ui_messages
+  const reactSnippet = handleToolCall('generate_snippet', { tag: 'el-button', variant: 'primary', label: 'Deploy', format: 'react' });
+  assert.equal(reactSnippet.format, 'react');
+  assert.ok(reactSnippet.snippet.includes("from '@wcomp/elementum/react'"));
+  assert.ok(reactSnippet.snippet.includes('<ElButton variant="primary">Deploy</ElButton>'));
+
+  const vueSnippet = handleToolCall('generate_snippet', { tag: 'el-button', variant: 'secondary', label: 'Save', format: 'vue' });
+  assert.equal(vueSnippet.format, 'vue');
+  assert.ok(vueSnippet.snippet.includes('<script setup>'));
+
+  const a2uiSnippet = handleToolCall('generate_snippet', { tag: 'el-button', variant: 'primary', label: 'Run', format: 'a2ui' });
+  assert.equal(a2uiSnippet.format, 'a2ui');
+  const parsedA2ui = JSON.parse(a2uiSnippet.snippet);
+  const validA2uiCheck = handleToolCall('validate_a2ui_messages', { messages: parsedA2ui });
+  assert.equal(validA2uiCheck.valid, true);
+  assert.equal(validA2uiCheck.componentCount, 1);
+
+  const invalidA2uiCheck = handleToolCall('validate_a2ui_messages', {
+    messages: [
+      { unknownEnvelope: {} },
+      {
+        surfaceUpdate: {
+          surfaceId: 's1',
+          components: [
+            { id: 'bad1', type: 'EvilScript', props: { onclick: 'alert(1)', href: 'javascript:alert(1)' } },
+          ],
+        },
+      },
+    ],
+  });
+  assert.equal(invalidA2uiCheck.valid, false);
+  assert.ok(invalidA2uiCheck.issues.length >= 3);
 });

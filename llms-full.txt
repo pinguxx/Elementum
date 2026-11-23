@@ -1,0 +1,591 @@
+# Elementum (`@wcomp/elementum`)
+
+> An AI-native, framework-independent UI engineering platform that connects design systems, zero-dependency Web Components, and AI agents through a shared, verifiable component contract.
+
+## Key Links
+- Homepage & Live Showcase: https://elementum-sage.vercel.app/
+- Interactive Component Catalog (109 elements): https://elementum-sage.vercel.app/examples/index.html
+- Documentation: https://elementum-sage.vercel.app/docs.html
+- Hosted MCP Server (Vercel Edge, Streamable HTTP): https://elementum-sage.vercel.app/mcp
+- GitHub Repository: https://github.com/pinguxx/Elementum
+- Audit & Verification Hub (109/109 Production Verified): https://github.com/pinguxx/Elementum/blob/main/AUDITS.md
+- Component Quality Matrix: https://github.com/pinguxx/Elementum/blob/main/QUALITY.md
+- UI Development Guidelines for Agents: https://github.com/pinguxx/Elementum/blob/main/docs/agent-craft-guide.md
+- Framework Integration Guide: https://github.com/pinguxx/Elementum/blob/main/docs/framework-integration.md
+- Theming, Tokens & Tailwind Guide: https://github.com/pinguxx/Elementum/blob/main/docs/theming.md
+- Tailwind CSS 1-Page Guide: https://github.com/pinguxx/Elementum/blob/main/docs/tailwind-guide.md
+- Auto-Generated `::part()` & Token Reference: https://github.com/pinguxx/Elementum/blob/main/docs/styling-reference.md
+- Full Single-File LLM Reference (`/llms-full.txt`): https://elementum-sage.vercel.app/llms-full.txt
+- Drop-in AI Agent Rules (`CLAUDE.md` / `.cursorrules`): https://github.com/pinguxx/Elementum/blob/main/docs/agent-rules-snippet.md
+- 4-Arm AI-Agent UI Benchmark Results: https://github.com/pinguxx/Elementum/blob/main/benchmarks/agent-eval/RESULTS.md
+- Theme Studio (Live Light/Dark + CSS/DTCG Export): https://elementum-sage.vercel.app/examples/registry.html#theme-studio
+- A2UI Renderer Guide (`@wcomp/elementum/a2ui`): https://github.com/pinguxx/Elementum/blob/main/docs/a2ui.md
+- A2UI Renderer Demo (with Live JSONL Stream): https://elementum-sage.vercel.app/examples/a2ui.html
+- AG-UI Streaming Demo: https://elementum-sage.vercel.app/examples/ag-ui.html
+- AI Agent Studio Demo: https://elementum-sage.vercel.app/examples/agent-studio.html
+- Live Declarative Shadow DOM SSR: https://elementum-sage.vercel.app/ssr
+
+## Quick Install & MCP
+- npm + init CLI: `npm install @wcomp/elementum && npx @wcomp/elementum init`
+- Local Markup & A11y Checker CLI: `npx @wcomp/elementum check [files-or-dirs...]`
+- Zero-Build 2-Line CDN: `<link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />` and `<script type="module" src="https://unpkg.com/@wcomp/elementum"></script>`
+- Local MCP Server (stdio): `npx elementum-mcp`
+- Hosted MCP Server (Streamable HTTP): `https://elementum-sage.vercel.app/mcp`
+- Installable Agent Skills: `npx skills@latest add pinguxx/Elementum --skill elementum`
+
+## Package Subpath Exports
+- `@wcomp/elementum` — 109 Custom Elements + micro-signals (`signal`, `computed`, `effect`, `batch`, `asyncSignal`)
+- `@wcomp/elementum/tokens.css` — Light & Dark W3C DTCG CSS custom properties
+- `@wcomp/elementum/react` — Strictly-typed React 18 & 19 wrappers for all 109 components
+- `@wcomp/elementum/ssr` — Pure Node.js Declarative Shadow DOM SSR (`renderComponentToDSD`, `renderTemplateToString`)
+- `@wcomp/elementum/behaviors` — 16 composable headless interaction, focus, motion & overlay primitives
+- `@wcomp/elementum/agent` — Shadow-DOM-piercing `snapshot(root)` and `act(root, command)`
+- `@wcomp/elementum/ag-ui` — AG-UI streaming event store & RFC 6902 JSON Patch state deltas
+- `@wcomp/elementum/a2ui` — Declarative A2UI JSON surface renderer with locked catalog allowlist & two-way signal bindings
+- `@wcomp/elementum/testing` — WAI-ARIA APG, RTL & DSD SSR contract validators
+- `@wcomp/elementum/custom-elements.json` — W3C Custom Elements Manifest
+
+## Exact API Rules for AI Coding Agents
+1. Query `get_component_doc` and `list_tokens` via MCP before writing markup; validate with `validate_component_usage` and `lint_accessibility`.
+2. Open/close `<el-dialog>` with `dialog.showModal()` / `dialog.close()` (not `dialog.open = true`).
+3. Complex array/object props in Vanilla/Vue use `.value` signals (`table.columns.value = cols; table.data.value = rows;`); in `@wcomp/elementum/react` pass them directly as JSX props (`<ElTable columns={cols} data={rows} />`).
+4. Read `e.detail?.value` on `input` / `change` / `submit` events.
+5. Add `<html data-dsd>` whenever pre-rendering with `renderComponentToDSD`.
+6. Use `<el-prompt-input>`, `<el-reasoning-card>`, `<el-tool-call>`, `<el-streaming-text>`, `<el-sources>`, and `<el-diff-viewer>` for AI interfaces.
+
+---
+
+# Complete 109-Component Schema Contract (`custom-elements.json`)
+
+| Tag | Class | Attributes | Events | Slots | Summary |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `<el-accordion>` | `ElAccordion` | multiple: boolean | change | — | Accordion container coordinating multiple or single disclosure expansion. |
+| `<el-accordion-item>` | `ElAccordionItem` | title: string, value: string, open: boolean | — | — | Accessible disclosure item for accordion panel. |
+| `<el-alert>` | `ElAlert` | variant: 'default' \| 'info' \| 'success' \| 'warning' \| 'destructive', title: string, dismissible: boolean | dismiss | — | Inline notification banner with contextual variants, dismissibility and icon slots. |
+| `<el-alert-dialog>` | `ElAlertDialog` | — | — | — | Modal confirmation dialog for destructive or high-impact actions. |
+| `<el-aspect-ratio>` | `ElAspectRatio` | ratio: string | — | — | CLS-free container enforcing fixed aspect ratios for responsive media. |
+| `<el-autocomplete>` | `ElAutocomplete` | name: string, value: string, placeholder: string, disabled: boolean, required: boolean, multiple: boolean, url: string, query-param: string, debounce: number, min-chars: number, label-key: string, value-key: string, size: 'sm' \| 'md' \| 'lg' | select, remove, change, clear | — | Form-associated combobox component supporting static data arrays, remote URL queries with debouncing, flexible key mapping, and ARIA 1.2 accessibility. |
+| `<el-avatar>` | `ElAvatar` | src: string, alt: string, name: string, size: 'sm' \| 'md' \| 'lg', shape: 'circle' \| 'square', status: 'online' \| 'offline' \| 'busy' \| 'away' | — | — | User avatar with image fallback, automatic initials, and status indicator. |
+| `<el-avatar-group>` | `ElAvatarGroup` | — | — | — | Clustered avatar stack with overlapping borders. |
+| `<el-badge>` | `ElBadge` | variant: 'default' \| 'success' \| 'danger', count: string | — | — | Minimal status indicator and notification badge. |
+| `<el-border-beam>` | `ElBorderBeam` | size: number, duration: number, color-from: string, color-to: string, border-width: number, reverse: boolean | — | — | Luminous animated border ray highlight that circles any container perimeter. |
+| `<el-breadcrumb>` | `ElBreadcrumb` | separator: string | — | — | Semantic navigation trail container with configurable separators. |
+| `<el-breadcrumb-item>` | `ElBreadcrumbItem` | href: string, current: boolean | — | — | Individual breadcrumb link or terminal item. |
+| `<el-button>` | `ElButton` | variant: 'primary' \| 'secondary' \| 'danger' \| 'ghost', size: 'sm' \| 'md' \| 'lg', disabled: boolean | click | (default), prefix, suffix | Frameworkless, signal-driven button component with 1:1 Figma variant parity. |
+| `<el-calendar>` | `ElCalendar` | value: string | select | — | Standalone accessible calendar month-grid component. |
+| `<el-callout>` | `ElCallout` | variant: string, size: string | — | — | ElCallout Web Component (<el-callout>). |
+| `<el-card>` | `ElCard` | hoverable: boolean | — | — | Structured card container with header, title, description, content and footer subcomponents. |
+| `<el-card-content>` | `ElCardContent` | — | — | — |  |
+| `<el-card-description>` | `ElCardDescription` | — | — | — |  |
+| `<el-card-footer>` | `ElCardFooter` | — | — | — |  |
+| `<el-card-header>` | `ElCardHeader` | — | — | — |  |
+| `<el-card-title>` | `ElCardTitle` | — | — | — |  |
+| `<el-carousel>` | `ElCarousel` | auto-play: boolean, interval: number, loop: boolean | slide-change | — | Accessible touch-swipeable and keyboard navigable carousel with autoplay and indicators. |
+| `<el-carousel-slide>` | `ElCarouselSlide` | — | — | — |  |
+| `<el-chart>` | `ElChart` | type: 'area' \| 'line' \| 'bar', x-key: string, y-key: string, secondary-key: string, height: number, show-grid: boolean, show-dots: boolean | — | — | Zero-dependency native SVG chart primitive with area, bar, line modes, reactive tooltips, and token theming. |
+| `<el-checkbox>` | `ElCheckbox` | — | — | — | Form-associated accessible checkbox with indeterminate tri-state support. |
+| `<el-checkbox-card>` | `ElCheckboxCard` | value: string, checked: string, disabled: string | — | — | ElCheckboxCard Web Component (<el-checkbox-card>). |
+| `<el-chip>` | `ElChip` | variant: 'primary' \| 'success' \| 'danger' \| 'warning' \| 'muted', size: 'sm' \| 'md', removable: boolean, selectable: boolean, selected: boolean, value: string | remove, change | — | Interactive pill / tag chip supporting selection, dismiss buttons, and slot icons. |
+| `<el-code-block>` | `ElCodeBlock` | code: string, language: string, copyable: string, compact: string | — | — | ElCodeBlock Web Component (<el-code-block>). |
+| `<el-collapsible>` | `ElCollapsible` | — | — | — | Accessible disclosure panel with smooth animated height expansion. |
+| `<el-command>` | `ElCommand` | open: boolean, placeholder: string | select | — | Accessible keyboard-first command menu and search palette (⌘K / cmdk style). |
+| `<el-command-group>` | `ElCommandGroup` | heading: string | — | — | ElCommandGroup Web Component (<el-command-group>). |
+| `<el-command-item>` | `ElCommandItem` | value: string, shortcut: string, disabled: string | — | — | ElCommandItem Web Component (<el-command-item>). |
+| `<el-context-menu>` | `ElContextMenu` | — | — | — | Floating context menu opening at cursor coordinates on right-click. |
+| `<el-data-list>` | `ElDataList` | orientation: string, size: string | — | — | ElDataList Web Component (<el-data-list>). |
+| `<el-data-list-item>` | `ElDataListItem` | label: string, value: string, copyable: string | — | — | ElDataListItem Web Component (<el-data-list-item>). |
+| `<el-datepicker>` | `ElDatepicker` | value: string, placeholder: string, disabled: boolean, required: boolean | change | — | Form-associated composite Datepicker combining dropdown, input, and calendar. |
+| `<el-dialog>` | `ElDialog` | open: boolean, title: string | open, close | header, (default), footer | Accessible modal dialog powered by native <dialog> with overscroll containment. |
+| `<el-diff-viewer>` | `ElDiffViewer` | filename: string, before: string, after: string, mode: string, approval: string | — | — | ElDiffViewer Web Component (<el-diff-viewer>). |
+| `<el-drawer>` | `ElDrawer` | open: boolean, placement: 'left' \| 'right' \| 'top' \| 'bottom', title: string | open, close | — | Accessible slide-over drawer panel with backdrop light-dismiss and keyboard traps. |
+| `<el-dropdown>` | `ElDropdown` | open: boolean | open, close | — | Accessible overlay container with light-dismiss and trigger slot. |
+| `<el-dropzone>` | `ElDropzone` | accept: string, max-size: number, multiple: boolean, disabled: boolean | files-selected | — | Drag and drop file upload target with type filtering and size constraint validation. |
+| `<el-empty-state>` | `ElEmptyState` | title: string, description: string | — | — | Zero-data placeholder graphic with title, description, and action CTA slots. |
+| `<el-field>` | `ElField` | — | — | — | Accessible form field wrapper providing label, description, and error messaging. |
+| `<el-fieldset>` | `ElFieldset` | legend: string, disabled: boolean | — | — | Accessible field grouping container with legend and cascade disable support. |
+| `<el-form>` | `ElForm` | — | submit | — | Form container orchestrating validation, serialization and data collection across Elementum inputs. |
+| `<el-input>` | `ElInput` | value: string, placeholder: string, disabled: boolean, readonly: boolean, required: boolean, pattern: string, minlength: number, size: 'sm' \| 'md' \| 'lg' | input, change | — | Form-associated text/form input with prefix/suffix slots and design token styling. |
+| `<el-inset>` | `ElInset` | side: string, clip: string | — | — | ElInset Web Component (<el-inset>). |
+| `<el-insight-card>` | `ElInsightCard` | title: string, category: string, metric: string, delta: string, variant: string, summary: string, action-label: string | — | — | ElInsightCard Web Component (<el-insight-card>). |
+| `<el-kbd>` | `ElKbd` | keys: string, size: 'sm' \| 'md' \| 'lg' | — | — | Keycap keyboard shortcut parser and badge renderer. |
+| `<el-menubar>` | `ElMenubar` | — | — | — | Desktop application menubar with arrow key roving focus and hover switching. |
+| `<el-meter>` | `ElMeter` | — | — | — | Scalar gauge primitive for displaying storage, CPU, and threshold metrics. |
+| `<el-navbar>` | `ElNavbar` | brand: string, href: string, badge: string, badge-variant: string, sticky: string, open: string | — | — | ElNavbar Web Component (<el-navbar>). |
+| `<el-navigation-menu>` | `ElNavigationMenu` | orientation: string | — | — | ElNavigationMenu Web Component (<el-navigation-menu>). |
+| `<el-navigation-menu-content>` | `ElNavigationMenuContent` | — | — | — | ElNavigationMenuContent Web Component (<el-navigation-menu-content>). |
+| `<el-navigation-menu-item>` | `ElNavigationMenuItem` | — | — | — | ElNavigationMenuItem Web Component (<el-navigation-menu-item>). |
+| `<el-navigation-menu-trigger>` | `ElNavigationMenuTrigger` | — | — | — | ElNavigationMenuTrigger Web Component (<el-navigation-menu-trigger>). |
+| `<el-number-field>` | `ElNumberField` | — | — | — | Precision numeric stepper with keyboard arrow scrubbing and bounds. |
+| `<el-number-flow>` | `ElNumberFlow` | value: number \| string, prefix: string, suffix: string, duration: number, animated: boolean | — | — | Smooth vertical rolling odometer number reel with prefix/suffix support and reduced-motion fallback. |
+| `<el-otp-input>` | `ElOtpInput` | length: number, value: string, type: 'text' \| 'password', disabled: boolean, required: boolean | complete, change | — | Segmented one-time-password and PIN verification box with auto-advance, backspace retreat, and paste splitting. |
+| `<el-pagination>` | `ElPagination` | page: number, total: number, page-size: number, sibling-count: number | pagechange | — | Accessible pagination component with dynamic page windowing, ellipsis, and W3C navigation semantics. |
+| `<el-popover>` | `ElPopover` | — | — | — | Non-modal floating overlay anchored to a trigger with light-dismiss. |
+| `<el-preview-card>` | `ElPreviewCard` | — | — | — | Hover card popup showing rich preview content with hover intent delays. |
+| `<el-progress>` | `ElProgress` | value: number, max: number, variant: 'primary' \| 'success' \| 'danger', size: 'sm' \| 'md' \| 'lg', indeterminate: boolean, striped: boolean | — | — | Accessible progress bar with determinate and indeterminate states and WCAG role='progressbar'. |
+| `<el-prompt-input>` | `ElPromptInput` | value: string, placeholder: string, disabled: boolean, loading: boolean, max-rows: number, min-rows: number, clear-on-submit: boolean | submit, input, change | — | Auto-expanding AI prompt composer with action bar slots and Enter-to-submit keyboard shortcuts. |
+| `<el-radio>` | `ElRadio` | — | — | — | Accessible radio button primitive working inside ElRadioGroup. |
+| `<el-radio-card>` | `ElRadioCard` | value: string, checked: string, disabled: string | — | — | ElRadioCard Web Component (<el-radio-card>). |
+| `<el-radio-card-group>` | `ElRadioCardGroup` | name: string, value: string, columns: string | — | — | ElRadioCardGroup Web Component (<el-radio-card-group>). |
+| `<el-radio-group>` | `ElRadioGroup` | value: string, name: string, disabled: string, required: string, orientation: string | — | — | ElRadioGroup Web Component (<el-radio-group>). |
+| `<el-rating>` | `ElRating` | value: number, max: number, readonly: boolean, disabled: boolean | change | — | Form-associated star rating component with keyboard arrows and hover preview. |
+| `<el-reasoning-card>` | `ElReasoningCard` | open: boolean, thinking: boolean, duration: string, summary: string | toggle | — | Collapsible AI thinking process disclosure with pulsing indicator dot and duration timer badge. |
+| `<el-resizable>` | `ElResizable` | direction: 'horizontal' \| 'vertical', size: number, min: number, max: number | resize | — | Split-pane divider handle with pointer dragging and keyboard arrow resize. |
+| `<el-resizable-handle>` | `ElResizableHandle` | disabled: string | — | — | ElResizableHandle Web Component (<el-resizable-handle>). |
+| `<el-resizable-panel>` | `ElResizablePanel` | default-size: string, min-size: string, max-size: string | — | — | ElResizablePanel Web Component (<el-resizable-panel>). |
+| `<el-route>` | `ElRoute` | path: string, exact: string | — | — | ElRoute Web Component (<el-route>). |
+| `<el-route-link>` | `ElRouteLink` | to: string, exact: string | — | — | ElRouteLink Web Component (<el-route-link>). |
+| `<el-router>` | `ElRouter` | default: string | — | — | ElRouter Web Component (<el-router>). |
+| `<el-scroll-area>` | `ElScrollArea` | — | — | — | Custom cross-browser scrollbar container avoiding OS layout shifts. |
+| `<el-segmented-control>` | `ElSegmentedControl` | value: string, disabled: boolean, size: 'sm' \| 'md' \| 'lg' | change | — | Form-associated pill segment switcher with arrow key navigation and ARIA radiogroup semantics. |
+| `<el-select>` | `ElSelect` | value: string, placeholder: string, disabled: boolean, required: boolean | change | — | Form-associated custom select dropdown with option list. |
+| `<el-separator>` | `ElSeparator` | — | — | — | Visual or semantic horizontal/vertical content divider. |
+| `<el-sidebar>` | `ElSidebar` | collapsed: boolean, collapsible: 'offcanvas' \| 'icon' \| 'none', side: 'left' \| 'right' | collapse, expand | — | Collapsible application sidebar with off-canvas drawer mode and responsive collapse. |
+| `<el-sidebar-content>` | `ElSidebarContent` | — | — | — |  |
+| `<el-sidebar-footer>` | `ElSidebarFooter` | — | — | — |  |
+| `<el-sidebar-header>` | `ElSidebarHeader` | — | — | — |  |
+| `<el-sidebar-trigger>` | `ElSidebarTrigger` | — | — | — |  |
+| `<el-skeleton>` | `ElSkeleton` | variant: 'text' \| 'circular' \| 'rectangular', animation: 'pulse' \| 'wave' \| 'none', width: string, height: string | — | — | Shimmer wave/pulse placeholder box preventing layout shifts. |
+| `<el-slider>` | `ElSlider` | — | — | — | Accessible continuous or stepped range slider with keyboard navigation. |
+| `<el-sources>` | `ElSources` | sources: string, label: string, expanded: string | — | — | ElSources Web Component (<el-sources>). |
+| `<el-spinner>` | `ElSpinner` | size: 'sm' \| 'md' \| 'lg', variant: 'primary' \| 'muted' \| 'white', label: string | — | — | Smooth SVG loading spinner with accessible status role. |
+| `<el-streaming-text>` | `ElStreamingText` | text: string, speed: number, cursor: boolean, auto-start: boolean | stream-start, stream-end, stream-tick | — | Simulated token-by-token streaming typewriter text with organic jitter, blinking cursor, and completion events. |
+| `<el-switch>` | `ElSwitch` | checked: boolean, disabled: boolean, required: boolean, size: 'sm' \| 'md' \| 'lg' | change | — | Form-associated accessible toggle switch with keyboard support and token styling. |
+| `<el-tab>` | `ElTab` | label: string, value: string | — | — | Individual tab panel inside <el-tabs>. |
+| `<el-table>` | `ElTable` | selectable: boolean | sort, selectionchange | — | Fine-grained reactive data table with column sorting and row selection. |
+| `<el-tabs>` | `ElTabs` | value: string | tabchange | — | Accessible tablist and tab panel container with keyboard navigation. |
+| `<el-task-list>` | `ElTaskList` | heading: string, tasks: string, compact: string | — | — | ElTaskList Web Component (<el-task-list>). |
+| `<el-textarea>` | `ElTextarea` | placeholder: string, rows: number, auto-resize: boolean, disabled: boolean, required: boolean, maxlength: number | input, change | — | Form-associated auto-resizing multi-line text input with character counting. |
+| `<el-theme-switch>` | `ElThemeSwitch` | — | themechange | — | Color theme toggle between Light and Dark mode with localStorage persistence. |
+| `<el-timeline>` | `ElTimeline` | orientation: 'vertical' \| 'horizontal' | — | — | Activity progression trail container. |
+| `<el-timeline-item>` | `ElTimelineItem` | status: 'default' \| 'active' \| 'success' \| 'warning' \| 'destructive', date: string | — | — | Individual chronological milestone node with status badges. |
+| `<el-toast>` | `ElToast` | — | — | — | Individual notification toast item managed by ToastManager. |
+| `<el-toaster>` | `ElToaster` | — | — | — | Viewport overlay container rendering programmatic toast notifications. |
+| `<el-toggle>` | `ElToggle` | — | — | — | Two-state toggle button with pressed state and group support. |
+| `<el-toggle-group>` | `ElToggleGroup` | type: string, value: string, disabled: string | — | — | ElToggleGroup Web Component (<el-toggle-group>). |
+| `<el-tool-call>` | `ElToolCall` | name: string, status: string, args: string, result: string, call-id: string, approval: string, open: string | — | — | ElToolCall Web Component (<el-tool-call>). |
+| `<el-toolbar>` | `ElToolbar` | — | — | — | Accessible action bar container with roving tabindex keyboard navigation. |
+| `<el-tooltip>` | `ElTooltip` | content: string, placement: 'top' \| 'bottom' \| 'left' \| 'right', delay: number | — | — | Accessible lightweight tooltip anchored to wrapped trigger element. |
+| `<el-tree-item>` | `ElTreeItem` | label: string, expanded: boolean, selected: boolean, disabled: boolean | expand, collapse, select | — | Expandable/collapsible tree node. |
+| `<el-tree-view>` | `ElTreeView` | — | — | — | Hierarchical tree list container with keyboard navigation. |
+| `<el-visually-hidden>` | `ElVisuallyHidden` | — | — | — | ElVisuallyHidden Web Component (<el-visually-hidden>). |
+
+---
+
+# Drop-in AI Agent Rules (`CLAUDE.md` / `.cursorrules` / `AGENTS.md`)
+
+Copy the block below into your project's `CLAUDE.md`, `.cursorrules`, `.github/copilot-instructions.md`, or `AGENTS.md` (or run `npx @wcomp/elementum init` to generate `elementum.rules.md`, `.mcp.json`, and `.cursor/mcp.json` automatically).
+
+---
+
+```markdown
+## Elementum UI Rules (`@wcomp/elementum`)
+
+1. **Always verify component APIs via Elementum MCP** (`https://elementum-sage.vercel.app/mcp`):
+   - Before writing UI markup, call `get_component_schema` or `list_components` so you never invent tag names, attributes, or enum values.
+   - Before finishing, call `validate_component_usage` and `lint_accessibility` on the generated HTML.
+
+2. **Imports**:
+   - Plain HTML / Vue / Svelte / Lit:
+     ```js
+     import '@wcomp/elementum/tokens.css';
+     import '@wcomp/elementum';
+     ```
+   - React 18 / 19 & Next.js (strict typed wrappers):
+     ```tsx
+     import '@wcomp/elementum/tokens.css';
+     import { ElButton, ElInput, ElDialog, ElTable } from '@wcomp/elementum/react';
+     ```
+   - Zero-build CDN (import map):
+     ```html
+     <link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />
+     <script type="module" src="https://unpkg.com/@wcomp/elementum"></script>
+     ```
+
+3. **Exact Component Conventions**:
+   - **Dialogs**: Open/close `<el-dialog>` with `dialog.showModal()` and `dialog.close()` (never assign `dialog.open = true`).
+   - **Inputs & Textareas**: Read `e.detail?.value ?? e.target.value` on `input` / `change`.
+   - **Tables**: Pass `.columns` and `.data` as JS array properties (or React props on `<ElTable>`).
+   - **Badges**: Put text inside the `count` attribute (`<el-badge variant="success" count="Active"></el-badge>`) or default slot.
+   - **Styling**: Override `--el-*` design tokens or target `::part(...)` selectors (see `docs/styling-reference.md`). Add `unstyled` to strip default Shadow DOM styles while preserving ARIA & keyboard behavior.
+   - **Declarative Agent UI (A2UI)**: Use `createA2UiSurface` from `@wcomp/elementum/a2ui` to stream safe JSON surfaces into locked Elementum components.
+```
+
+---
+
+# A2UI Declarative Renderer (`@wcomp/elementum/a2ui`)
+
+`@wcomp/elementum/a2ui` is a zero-dependency, signal-driven **Agent-to-UI (A2UI)** renderer that maps declarative A2UI JSON messages (`createSurface`, `beginRendering`, `surfaceUpdate`, `dataModelUpdate`, `deleteSurface`) onto a **locked catalog** of native Elementum Web Components.
+
+Instead of letting an LLM generate raw HTML or executable JavaScript, your agent streams safe, structured JSON messages—and Elementum renders them into accessible Shadow DOM components with two-way micro-signal data bindings and zero `innerHTML`.
+
+> **Live Playground:** Try the interactive A2UI renderer (including the **▶ Simulate Agent Stream (JSONL)** progressive streaming demo and locked-catalog security test) at [`examples/a2ui.html`](https://elementum-sage.vercel.app/examples/a2ui.html).
+
+---
+
+## 1. How MCP, AG-UI, and A2UI Fit Together
+
+| Protocol / Layer | Role in Elementum | Entrypoint |
+| :--- | :--- | :--- |
+| **MCP** (Build / Prompt Time) | Gives coding agents live schemas, design tokens, and WCAG validation when writing application code. | `https://elementum-sage.vercel.app/mcp` / `npx elementum-mcp` |
+| **AG-UI** (Runtime Event Stream) | Streams agent execution lifecycle, reasoning text, tool calls, and RFC 6902 JSON Patch state deltas. | `@wcomp/elementum/ag-ui` (`createAgUiStore`) |
+| **A2UI** (Runtime Declarative UI) | Lets an agent compose safe, interactive UI surfaces on the fly from a locked catalog of Elementum components. | `@wcomp/elementum/a2ui` (`createA2UiSurface`) |
+
+---
+
+## 2. Quick Start
+
+```js
+import '@wcomp/elementum/tokens.css';
+import '@wcomp/elementum';
+import { effect } from '@wcomp/elementum';
+import { createA2UiSurface } from '@wcomp/elementum/a2ui';
+
+const surface = createA2UiSurface({
+  onAction: (event) => {
+    // Dispatched when the user clicks a Button with an `action` payload
+    console.log('Agent action:', event.actionName, event.context);
+  },
+});
+
+surface.mount(document.getElementById('a2ui-host'));
+
+// React to two-way data model updates via Elementum micro-signals
+effect(() => {
+  console.log('Current form state:', surface.dataModel.value);
+});
+
+// Feed A2UI messages (supports both v0.8 nested and v0.9 flat formats)
+surface.processMessages([
+  {
+    dataModelUpdate: {
+      path: '/',
+      contents: [
+        { key: 'seat', valueString: '14C' },
+        { key: 'note', valueString: '' },
+      ],
+    },
+  },
+  {
+    surfaceUpdate: {
+      surfaceId: 'rebook',
+      components: [
+        { id: 'root', component: { Card: { title: { literalString: 'Rebook Flight' }, bordered: true, child: 'col' } } },
+        { id: 'col', component: { Column: { gap: '12px', children: ['seat14', 'seat9', 'note', 'confirm'] } } },
+        { id: 'seat14', component: { ChoiceChip: { label: { literalString: '14C · Main Aisle' }, value: '14C', selected: { path: '/seat' } } } },
+        { id: 'seat9', component: { ChoiceChip: { label: { literalString: '9F · Exit Aisle' }, value: '9F', selected: { path: '/seat' } } } },
+        { id: 'note', component: { TextField: { placeholder: 'Optional note...', value: { path: '/note' } } } },
+        {
+          id: 'confirm',
+          component: {
+            Button: {
+              variant: 'primary',
+              label: { literalString: 'Confirm Rebooking' },
+              action: {
+                name: 'confirm_rebooking',
+                context: [
+                  { key: 'seat', value: { path: '/seat' } },
+                  { key: 'note', value: { path: '/note' } },
+                ],
+              },
+            },
+          },
+        },
+      ],
+    },
+  },
+  { beginRendering: { surfaceId: 'rebook', root: 'root' } },
+]);
+```
+
+---
+
+## 3. Supported A2UI Message Types
+
+| Message Key | Purpose |
+| :--- | :--- |
+| `dataModelUpdate` | Updates values at a JSON Pointer `path` (e.g. `/`, `/user/email`) in the reactive `surface.dataModel` signal. |
+| `surfaceUpdate` | Upserts flat component nodes by `id` into the surface graph and triggers incremental DOM reconciliation. |
+| `beginRendering` / `createSurface` | Declares the `root` component ID for the surface and mounts the rendered Elementum tree. |
+| `deleteSurface` | Tears down active signal effects, event listeners, and DOM nodes for the surface. |
+
+---
+
+## 4. Progressive JSONL Streaming
+
+Because `surface.processMessage(msg)` accepts one message at a time and merges updates incrementally, you can pipe any streaming NDJSON / JSONL LLM response directly into Elementum:
+
+```js
+async function streamA2UiResponse(url, surface) {
+  const res = await fetch(url);
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop() || '';
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed) surface.processMessage(JSON.parse(trimmed));
+    }
+  }
+}
+```
+
+---
+
+## 5. Built-In Locked Catalog (`DEFAULT_A2UI_CATALOG`)
+
+| Category | A2UI Component Type | Rendered Elementum Element |
+| :--- | :--- | :--- |
+| **Layout** | `Column`, `Row`, `List`, `Divider` | Flex `div`, `<el-separator>` |
+| **Surfaces & Display** | `Card`, `Text`, `Badge`, `Callout`, `Alert`, `Progress`, `Meter`, `Avatar`, `CodeBlock` | `<el-card>`, `<span>`, `<el-badge>`, `<el-callout>`, `<el-alert>`, `<el-progress>`, `<el-meter>`, `<el-avatar>`, `<el-code-block>` |
+| **Forms & Controls** | `Button`, `TextField`, `TextArea`, `Select`, `Switch`, `CheckBox`, `Slider`, `DatePicker`, `ChoiceChip`, `Tabs`, `Dialog` | `<el-button>`, `<el-input>`, `<el-textarea>`, `<el-select>`, `<el-switch>`, `<el-checkbox>`, `<el-slider>`, `<el-datepicker>`, `<el-chip>`, `<el-tabs>`, `<el-dialog>` |
+| **AI Primitives** | `PromptInput`, `ReasoningCard`, `ToolCall`, `StreamingText`, `Sources` | `<el-prompt-input>`, `<el-reasoning-card>`, `<el-tool-call>`, `<el-streaming-text>`, `<el-sources>` |
+
+---
+
+## 6. Security Model (Zero Executable Code)
+
+`@wcomp/elementum/a2ui` enforces defense-in-depth by default:
+
+1. **Locked Catalog Allowlist**: Only component types present in `DEFAULT_A2UI_CATALOG` (or your custom `catalog` / `allowedTypes` subset) can render. Unregistered types (e.g. `RawScript`, `CustomIframe`) are silently dropped and recorded in `surface.blockedTypes.value`.
+2. **Zero `innerHTML`**: All text and labels are bound via `textContent` and fine-grained signal `effect()`s.
+3. **Inline Event Handler Stripping**: Any attribute matching `/^on/i` (`onclick`, `onerror`, etc.) is rejected.
+4. **URL Scheme Allowlist**: `href` and `src` attributes only allow `https://`, `http://`, `/`, or `#` URLs (`javascript:` and `data:` are blocked).
+
+```js
+// Restrict an untrusted agent to a minimal 4-component subset
+const restrictedSurface = createA2UiSurface({
+  allowedTypes: ['Card', 'Column', 'Text', 'Button'],
+  onAction: (ev) => handleSafeAction(ev),
+});
+```
+
+---
+
+## 7. API Reference
+
+```ts
+import {
+  createA2UiSurface,
+  DEFAULT_A2UI_CATALOG,
+  type A2UiSurfaceOptions,
+  type A2UiSurface,
+  type A2UiActionEvent,
+} from '@wcomp/elementum/a2ui';
+```
+
+- `surface.mount(container)`: Mounts the surface into a DOM element.
+- `surface.processMessage(message)`: Applies a single A2UI JSON message.
+- `surface.processMessages(messages)`: Applies an array of A2UI JSON messages.
+- `surface.dataModel`: Reactive `Signal<Record<string, unknown>>` holding the live two-way bound data model.
+- `surface.blockedTypes`: Reactive `Signal<string[]>` listing any disallowed component types dropped by the locked catalog.
+- `surface.destroy()`: Disposes all signal effects, removes event listeners, and clears mounted DOM nodes.
+
+---
+
+# Styling Reference: `::part()` Selectors & `--el-*` Design Tokens
+
+> Auto-generated from `src/components/el-*.js` and `src/tokens.css` via `npm run docs:styling`.
+> Use this cheat sheet to style Elementum components with Tailwind CSS (`[&::part(...)]:...`), custom CSS, or design-system overrides without reading component source files.
+
+- **Components scanned**: 78
+- **Components exposing `::part()`**: 65 (201 part selectors total)
+- **Global `--el-*` design tokens in `src/tokens.css`**: 78
+
+## Quick Usage Recipes
+
+```css
+/* Override tokens globally or scoped to any container */
+.brand-surface {
+  --el-accent-primary: #7c3aed;
+  --el-radius-md: 12px;
+}
+
+/* Target internal Shadow DOM parts directly */
+el-button::part(button) {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+```
+
+```html
+<!-- Tailwind CSS v3/v4 arbitrary ::part() + token classes -->
+<el-card class="[&::part(card)]:rounded-2xl [--el-surface-border:#e2e8f0]">
+  <el-button variant="primary" class="[&::part(button)]:shadow-md">Deploy</el-button>
+</el-card>
+```
+
+---
+
+## Per-Component `::part()` & Token Matrix
+
+| Component | Exposed `::part(...)` Selectors | Consumed `--el-*` Tokens |
+| :--- | :--- | :--- |
+| `<el-accordion>` | `chevron`, `header`, `panel`, `title` | `--el-color-primary`, `--el-radius-md`, `--el-radius-sm`, `--el-spacing-md`, `--el-surface-base`, `--el-surface-border`, `--el-text-base`, `--el-text-muted` |
+| `<el-alert-dialog>` | `dialog` | `--el-font-sans`, `--el-radius-lg`, `--el-surface-base`, `--el-surface-border`, `--el-surface-elevated`, `--el-text-primary` |
+| `<el-alert>` | `alert`, `content`, `description`, `dismiss`, `icon`, `title` | `--el-font-sans`, `--el-radius-md`, `--el-radius-sm`, `--el-surface-base`, `--el-surface-border`, `--el-text-muted`, `--el-text-primary`, `--el-text-secondary` |
+| `<el-aspect-ratio>` | `container` | _(inherits root tokens)_ |
+| `<el-autocomplete>` | `actions`, `announcer`, `chip`, `chips`, `clear-button`, `input`, `listbox`, `option`, `prefix`, `spinner`, `wrapper` | `--el-color-primary`, `--el-color-primary-hover`, `--el-font-sans`, `--el-radius-md`, `--el-radius-sm`, `--el-surface-border`, `--el-surface-card`, `--el-surface-muted` _(+2 more)_ |
+| `<el-avatar>` | `avatar`, `initials`, `overflow`, `status` | `--el-avatar-overlap`, `--el-color-danger`, `--el-color-success`, `--el-font-sans`, `--el-radius-full`, `--el-radius-md`, `--el-surface-border`, `--el-surface-card` _(+3 more)_ |
+| `<el-badge>` | `badge` | `--el-color-primary`, `--el-font-sans`, `--el-radius-full`, `--el-surface-border`, `--el-surface-muted`, `--el-text-muted`, `--el-text-primary` |
+| `<el-border-beam>` | _(tokens / slots)_ | `--el-color-accent`, `--el-color-primary` |
+| `<el-breadcrumb>` | `list`, `nav`, `separator` | `--el-font-sans`, `--el-text-muted`, `--el-text-primary` |
+| `<el-button>` | `button` | `--el-color-danger`, `--el-color-primary`, `--el-color-primary-hover`, `--el-radius-md`, `--el-spacing-lg`, `--el-spacing-md`, `--el-spacing-sm`, `--el-spacing-xs` _(+6 more)_ |
+| `<el-calendar>` | `calendar` | `--el-color-primary`, `--el-radius-sm`, `--el-spacing-sm`, `--el-spacing-xs`, `--el-surface-base`, `--el-surface-border`, `--el-surface-muted`, `--el-text-base` _(+2 more)_ |
+| `<el-callout>` | _(tokens / slots)_ | `--el-radius-md`, `--el-surface-border`, `--el-surface-muted`, `--el-text-secondary`, `--el-text-sm` |
+| `<el-card>` | `body`, `header` | `--el-color-primary`, `--el-font-sans`, `--el-radius-lg`, `--el-surface-base`, `--el-surface-border`, `--el-text-muted`, `--el-text-primary` |
+| `<el-carousel>` | `controls`, `dots`, `track`, `viewport` | `--el-color-primary`, `--el-font-sans`, `--el-radius-md`, `--el-surface-border`, `--el-surface-elevated`, `--el-surface-muted`, `--el-text-primary` |
+| `<el-chart>` | _(tokens / slots)_ | `--el-chart-1`, `--el-chart-2`, `--el-color-primary`, `--el-font-sans`, `--el-radius-md`, `--el-surface-base`, `--el-surface-border`, `--el-text-muted` _(+4 more)_ |
+| `<el-checkbox-card>` | _(tokens / slots)_ | `--el-primary`, `--el-primary-subtle`, `--el-radius-lg`, `--el-radius-sm`, `--el-surface-border`, `--el-surface-card`, `--el-surface-muted`, `--el-text-base` _(+3 more)_ |
+| `<el-checkbox>` | `box` | `--el-color-primary`, `--el-font-sans`, `--el-radius-sm`, `--el-surface-base`, `--el-surface-border`, `--el-surface-card`, `--el-text-primary` |
+| `<el-chip>` | `chip`, `remove-button` | `--el-color-danger`, `--el-color-primary`, `--el-ease-out-expo`, `--el-font-sans`, `--el-radius-full`, `--el-surface-border`, `--el-surface-muted`, `--el-text-primary` _(+1 more)_ |
+| `<el-code-block>` | `body`, `code`, `container`, `copy-button`, `header`, `language`, `pre` | `--el-code-attr`, `--el-code-bg`, `--el-code-border`, `--el-code-comment`, `--el-code-fg`, `--el-code-fn`, `--el-code-header-bg`, `--el-code-keyword` _(+8 more)_ |
+| `<el-collapsible>` | `content`, `trigger` | `--el-font-sans`, `--el-text-primary` |
+| `<el-command>` | `backdrop`, `content`, `dialog`, `empty`, `footer`, `heading`, `input`, `items`, `list`, `search-bar`, `shortcut` | `--el-border-translucent`, `--el-color-primary`, `--el-font-mono`, `--el-radius-lg`, `--el-radius-md`, `--el-shadow-popover`, `--el-surface-border`, `--el-surface-card` _(+3 more)_ |
+| `<el-context-menu>` | `menu`, `trigger` | `--el-color-primary`, `--el-font-sans`, `--el-radius-md`, `--el-radius-sm`, `--el-surface-base`, `--el-surface-border`, `--el-surface-muted`, `--el-text-base` |
+| `<el-data-list>` | _(tokens / slots)_ | `--el-radius-sm`, `--el-surface-border`, `--el-surface-muted`, `--el-text-muted`, `--el-text-primary`, `--el-text-sm` |
+| `<el-datepicker>` | `dropdown`, `input`, `panel-content` | `--el-radius-sm`, `--el-spacing-sm`, `--el-spacing-xs`, `--el-surface-border`, `--el-surface-muted`, `--el-text-base`, `--el-text-muted` |
+| `<el-dialog>` | `body`, `dialog`, `footer` | `--el-radius-lg`, `--el-radius-sm`, `--el-spacing-lg`, `--el-spacing-md`, `--el-spacing-sm`, `--el-surface-base`, `--el-surface-border`, `--el-surface-muted` _(+2 more)_ |
+| `<el-diff-viewer>` | `body`, `container`, `footer`, `header` | `--el-color-danger`, `--el-color-primary`, `--el-color-success`, `--el-ease-out-expo`, `--el-font-mono`, `--el-font-sans`, `--el-radius-md`, `--el-shadow-subtle` _(+6 more)_ |
+| `<el-drawer>` | `body`, `footer`, `handle`, `header`, `panel` | `--el-color-primary`, `--el-drawer-size`, `--el-font-sans`, `--el-radius-md`, `--el-radius-xl`, `--el-spacing-lg`, `--el-spacing-md`, `--el-spacing-sm` _(+6 more)_ |
+| `<el-dropdown>` | `panel`, `trigger` | `--el-radius-md`, `--el-spacing-sm`, `--el-spacing-xs`, `--el-surface-base`, `--el-surface-border` |
+| `<el-dropzone>` | `dropzone`, `file-list`, `headline`, `icon`, `subtext` | `--el-color-primary`, `--el-font-sans`, `--el-radius-lg`, `--el-radius-sm`, `--el-surface-base`, `--el-surface-border`, `--el-surface-muted`, `--el-text-muted` _(+2 more)_ |
+| `<el-empty-state>` | `actions`, `description`, `icon`, `title` | `--el-font-sans`, `--el-radius-lg`, `--el-surface-base`, `--el-surface-border`, `--el-surface-muted`, `--el-text-muted`, `--el-text-primary`, `--el-text-secondary` |
+| `<el-field>` | `control`, `description`, `error`, `label` | `--el-color-danger`, `--el-font-sans`, `--el-spacing-xs`, `--el-text-muted`, `--el-text-primary` |
+| `<el-form>` | `form`, `legend` | `--el-font-sans`, `--el-radius-md`, `--el-surface-base`, `--el-surface-border`, `--el-text-primary` |
+| `<el-input>` | `input`, `wrapper` | `--el-color-primary`, `--el-radius-md`, `--el-spacing-sm`, `--el-spacing-xs`, `--el-surface-base`, `--el-surface-border`, `--el-surface-muted`, `--el-text-base` _(+1 more)_ |
+| `<el-inset>` | _(tokens / slots)_ | `--el-radius-md` |
+| `<el-insight-card>` | `card` | `--el-color-primary`, `--el-ease-out-expo`, `--el-font-sans`, `--el-radius-md`, `--el-shadow-card`, `--el-surface-base`, `--el-surface-border`, `--el-text-primary` _(+1 more)_ |
+| `<el-kbd>` | `key` | `--el-font-mono`, `--el-radius-sm`, `--el-surface-border`, `--el-surface-muted`, `--el-text-secondary` |
+| `<el-menubar>` | `menubar` | `--el-color-primary`, `--el-font-sans`, `--el-radius-md`, `--el-radius-sm`, `--el-surface-base`, `--el-surface-border`, `--el-surface-muted`, `--el-text-base` |
+| `<el-meter>` | `fill`, `track` | `--el-color-danger`, `--el-color-primary`, `--el-color-success`, `--el-color-warning`, `--el-font-sans`, `--el-surface-muted` |
+| `<el-navbar>` | `actions`, `brand`, `header`, `nav`, `start`, `toggle` | `--el-color-primary`, `--el-font-sans`, `--el-radius-md`, `--el-step-4`, `--el-surface-border`, `--el-surface-card`, `--el-surface-muted`, `--el-text-primary` _(+1 more)_ |
+| `<el-navigation-menu>` | _(tokens / slots)_ | `--el-primary`, `--el-radius-lg`, `--el-radius-md`, `--el-surface-border`, `--el-surface-card`, `--el-surface-muted`, `--el-text-primary`, `--el-text-sm` |
+| `<el-number-field>` | `decrement`, `increment`, `input`, `prefix`, `suffix`, `wrapper` | `--el-color-danger`, `--el-color-primary`, `--el-font-sans`, `--el-radius-md`, `--el-radius-sm`, `--el-shadow-subtle`, `--el-surface-base`, `--el-surface-border` _(+4 more)_ |
+| `<el-number-flow>` | `digits`, `prefix`, `suffix`, `wrapper` | _(inherits root tokens)_ |
+| `<el-otp-input>` | `cell`, `container` | `--el-color-primary`, `--el-font-sans`, `--el-radius-md`, `--el-surface-border`, `--el-surface-card`, `--el-surface-muted`, `--el-text-primary` |
+| `<el-pagination>` | `next-button`, `pagination`, `prev-button` | `--el-color-primary`, `--el-font-sans`, `--el-radius-md`, `--el-surface-border`, `--el-surface-card`, `--el-surface-muted`, `--el-text-muted`, `--el-text-primary` |
+| `<el-popover>` | `arrow`, `popup`, `trigger` | `--el-font-sans`, `--el-radius-md`, `--el-shadow-popover`, `--el-surface-border`, `--el-surface-card`, `--el-surface-elevated`, `--el-text-primary` |
+| `<el-preview-card>` | `card`, `trigger` | `--el-font-sans`, `--el-radius-lg`, `--el-surface-border`, `--el-surface-card`, `--el-surface-elevated`, `--el-text-primary` |
+| `<el-progress>` | `bar`, `track` | `--el-color-danger`, `--el-color-info`, `--el-color-primary`, `--el-color-success`, `--el-color-warning`, `--el-radius-full`, `--el-surface-border`, `--el-surface-muted` _(+1 more)_ |
+| `<el-prompt-input>` | `actions`, `bottom-bar`, `container`, `submit-button`, `textarea`, `tools` | `--el-border-translucent`, `--el-color-primary`, `--el-color-primary-focus`, `--el-color-primary-hover`, `--el-font-sans`, `--el-radius-full`, `--el-radius-xl`, `--el-shadow-card` _(+6 more)_ |
+| `<el-radio-card>` | _(tokens / slots)_ | `--el-primary`, `--el-primary-subtle`, `--el-radius-lg`, `--el-surface-border`, `--el-surface-card`, `--el-surface-muted`, `--el-text-base`, `--el-text-muted` _(+2 more)_ |
+| `<el-radio>` | `circle`, `dot` | `--el-color-primary`, `--el-font-sans`, `--el-surface-base`, `--el-surface-border`, `--el-surface-card`, `--el-text-primary` |
+| `<el-rating>` | _(tokens / slots)_ | `--el-font-sans`, `--el-radius-sm`, `--el-surface-border` |
+| `<el-reasoning-card>` | `body`, `chevron`, `container`, `header`, `indicator`, `title` | `--el-border-translucent`, `--el-color-primary`, `--el-font-mono`, `--el-font-sans`, `--el-radius-full`, `--el-radius-lg`, `--el-shadow-subtle`, `--el-surface-elevated` _(+5 more)_ |
+| `<el-resizable>` | `handle` | `--el-color-primary`, `--el-radius-md`, `--el-surface-border`, `--el-surface-card` |
+| `<el-router>` | _(tokens / slots)_ | `--el-color-primary`, `--el-route-link-active-color` |
+| `<el-scroll-area>` | `viewport` | `--el-font-sans`, `--el-surface-border`, `--el-text-muted` |
+| `<el-segmented-control>` | `group`, `segment` | `--el-color-primary`, `--el-ease-out-expo`, `--el-font-sans`, `--el-radius-md`, `--el-shadow-sm`, `--el-surface-border`, `--el-surface-card`, `--el-surface-muted` _(+2 more)_ |
+| `<el-select>` | `select`, `wrapper` | `--el-color-primary`, `--el-radius-md`, `--el-spacing-md`, `--el-surface-base`, `--el-surface-border`, `--el-text-base`, `--el-text-muted` |
+| `<el-separator>` | `separator` | `--el-spacing-sm`, `--el-surface-border` |
+| `<el-sidebar>` | _(tokens / slots)_ | `--el-font-sans`, `--el-radius-lg`, `--el-radius-md`, `--el-radius-sm`, `--el-surface-border`, `--el-surface-card`, `--el-surface-elevated`, `--el-surface-muted` _(+2 more)_ |
+| `<el-skeleton>` | `skeleton` | `--el-radius-md`, `--el-radius-sm`, `--el-skeleton-bg`, `--el-skeleton-shimmer` |
+| `<el-slider>` | `range`, `thumb`, `track` | `--el-color-primary`, `--el-color-primary-hover`, `--el-font-sans`, `--el-surface-base`, `--el-surface-border` |
+| `<el-sources>` | `container`, `list`, `pills` | `--el-color-primary`, `--el-ease-out-expo`, `--el-font-sans`, `--el-radius-md`, `--el-shadow-subtle`, `--el-surface-base`, `--el-surface-border`, `--el-surface-muted` _(+2 more)_ |
+| `<el-spinner>` | `label`, `spinner` | `--el-color-danger`, `--el-color-info`, `--el-color-primary`, `--el-color-success`, `--el-color-warning`, `--el-font-sans`, `--el-text-muted`, `--el-text-primary` _(+1 more)_ |
+| `<el-streaming-text>` | `cursor`, `text` | `--el-color-primary` |
+| `<el-switch>` | `label`, `thumb`, `track` | `--el-color-primary`, `--el-spacing-sm`, `--el-surface-border`, `--el-text-base` |
+| `<el-table>` | `table` | `--el-color-primary`, `--el-surface-border`, `--el-surface-muted`, `--el-text-base`, `--el-text-muted`, `--el-text-secondary` |
+| `<el-tabs>` | `panels`, `tablist` | `--el-color-primary`, `--el-spacing-md`, `--el-spacing-sm`, `--el-surface-border`, `--el-surface-muted`, `--el-text-base`, `--el-text-muted` |
+| `<el-task-list>` | `container`, `header`, `list` | `--el-font-mono`, `--el-font-sans`, `--el-radius-md`, `--el-surface-base`, `--el-surface-border`, `--el-surface-muted`, `--el-text-muted`, `--el-text-primary` _(+1 more)_ |
+| `<el-textarea>` | `footer`, `textarea`, `wrapper` | `--el-color-primary`, `--el-font-sans`, `--el-radius-md`, `--el-surface-base`, `--el-surface-border`, `--el-surface-muted`, `--el-text-muted`, `--el-text-primary` |
+| `<el-theme-switch>` | `button` | `--el-color-primary`, `--el-radius-full`, `--el-spacing-xs`, `--el-step-4`, `--el-surface-border`, `--el-surface-muted`, `--el-text-primary` |
+| `<el-timeline>` | `content`, `date`, `description`, `gutter`, `line`, `node`, `title` | `--el-color-danger`, `--el-color-primary`, `--el-color-success`, `--el-font-sans`, `--el-surface-base`, `--el-surface-border`, `--el-text-muted`, `--el-text-primary` _(+1 more)_ |
+| `<el-toast>` | _(tokens / slots)_ | `--el-color-danger`, `--el-color-primary`, `--el-color-primary-hover`, `--el-color-success`, `--el-font-sans`, `--el-radius-lg`, `--el-radius-md`, `--el-surface-border` _(+4 more)_ |
+| `<el-toggle>` | `button` | `--el-color-danger`, `--el-color-info`, `--el-color-primary`, `--el-color-primary-hover`, `--el-color-success`, `--el-color-warning`, `--el-ease-out-expo`, `--el-font-sans` _(+8 more)_ |
+| `<el-tool-call>` | `approval`, `approve-button`, `args`, `badge`, `body`, `container`, `header`, `icon`, `name`, `reject-button`, `result` | `--el-color-danger`, `--el-color-primary`, `--el-color-success`, `--el-font-mono`, `--el-font-sans`, `--el-radius-lg`, `--el-radius-md`, `--el-shadow-subtle` _(+6 more)_ |
+| `<el-toolbar>` | `toolbar` | `--el-font-sans`, `--el-radius-md`, `--el-spacing-xs`, `--el-surface-base`, `--el-surface-border` |
+| `<el-tooltip>` | `bubble` | `--el-radius-sm`, `--el-tooltip-bg`, `--el-tooltip-border`, `--el-tooltip-text` |
+| `<el-tree-view>` | `icon`, `item`, `label`, `subtree` | `--el-color-primary`, `--el-font-sans`, `--el-radius-sm`, `--el-surface-border`, `--el-surface-muted`, `--el-text-muted`, `--el-text-primary`, `--el-text-secondary` |
+| `<el-visually-hidden>` | _(tokens / slots)_ | _(inherits root tokens)_ |
+
+---
+
+## Global Root Tokens (`src/tokens.css`)
+
+| Token | Light Default |
+| :--- | :--- |
+| `--el-color-primary` | `#2563eb` |
+| `--el-color-primary-hover` | `#1d4ed8` |
+| `--el-color-secondary` | `#4b5563` |
+| `--el-color-danger` | `#dc2626` |
+| `--el-color-success` | `#16a34a` |
+| `--el-color-warning` | `#d97706` |
+| `--el-color-info` | `#0284c7` |
+| `--el-color-accent` | `#7c3aed` |
+| `--el-surface-base` | `#ffffff` |
+| `--el-surface-card` | `#ffffff` |
+| `--el-surface-elevated` | `#ffffff` |
+| `--el-surface-muted` | `#f3f4f6` |
+| `--el-surface-border` | `#e5e7eb` |
+| `--el-border-translucent` | `rgba(15, 23, 42, 0.08)` |
+| `--el-shadow-sm` | `0 1px 2px 0 rgba(0, 0, 0, 0.05)` |
+| `--el-shadow-subtle` | `0 1px 2px 0 rgba(0, 0, 0, 0.05)` |
+| `--el-shadow-card` | `0 1px 3px rgba(0, 0, 0, 0.06), 0 8px 16px -4px rgba(0, 0, 0, 0.04)` |
+| `--el-shadow-popover` | `0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05)` |
+| `--el-shadow-glow` | `0 0 20px -5px rgba(37, 99, 235, 0.25)` |
+| `--el-ease-out-expo` | `cubic-bezier(0.16, 1, 0.3, 1)` |
+| `--el-ease-in-fast` | `cubic-bezier(0.7, 0, 0.84, 0)` |
+| `--el-transition-snappy` | `150ms var(--el-ease-in-fast)` |
+| `--el-transition-fluid` | `280ms var(--el-ease-out-expo)` |
+| `--el-text-base` | `#111827` |
+| `--el-text-primary` | `#0f172a` |
+| `--el-text-secondary` | `#475569` |
+| `--el-text-muted` | `#6b7280` |
+| `--el-text-inverse` | `#ffffff` |
+| `--el-font-sans` | `system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif` |
+| `--el-font-mono` | `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace` |
+| `--el-spacing-xs` | `4px` |
+| `--el-spacing-sm` | `8px` |
+| `--el-spacing-md` | `16px` |
+| `--el-spacing-lg` | `24px` |
+| `--el-spacing-xl` | `32px` |
+| `--el-radius-sm` | `4px` |
+| `--el-radius-md` | `8px` |
+| `--el-radius-lg` | `16px` |
+| `--el-radius-xl` | `24px` |
+| `--el-radius-full` | `9999px` |
+| `--el-chart-1` | `#2563eb` |
+| `--el-chart-2` | `#10b981` |
+| `--el-chart-3` | `#f59e0b` |
+| `--el-chart-4` | `#8b5cf6` |
+| `--el-chart-5` | `#ec4899` |
+| `--el-code-bg` | `#0f172a` |
+| `--el-code-fg` | `#e2e8f0` |
+| `--el-code-border` | `#1e293b` |
+| `--el-code-header-bg` | `rgba(15, 23, 42, 0.85)` |
+| `--el-code-comment` | `#94a3b8` |
+| `--el-code-string` | `#86efac` |
+| `--el-code-keyword` | `#c084fc` |
+| `--el-code-number` | `#fbbf24` |
+| `--el-code-tag` | `#f472b6` |
+| `--el-code-attr` | `#7dd3fc` |
+| `--el-code-fn` | `#60a5fa` |
+| `--el-typeset-size` | `1rem` |
+| `--el-typeset-leading` | `1.75` |
+| `--el-typeset-flow` | `1.25em` |
+| `--el-typeset-font-body` | `var(--el-font-sans)` |
+| `--el-step-1` | `#fbfcfd` |
+| `--el-step-2` | `#f8fafc` |
+| `--el-step-3` | `#f1f5f9` |
+| `--el-step-4` | `#e2e8f0` |
+| `--el-step-5` | `#cbd5e1` |
+| `--el-step-6` | `#e2e8f0` |
+| `--el-step-7` | `#cbd5e1` |
+| `--el-step-8` | `#94a3b8` |
+| `--el-step-9` | `#2563eb` |
+| `--el-step-10` | `#1d4ed8` |
+| `--el-step-11` | `#475569` |
+| `--el-step-12` | `#0f172a` |
+| `--el-typeset-font-heading` | `var(--el-font-sans)` |
+| `--el-tooltip-bg` | `#0f172a` |
+| `--el-tooltip-text` | `#ffffff` |
+| `--el-tooltip-border` | `rgba(255, 255, 255, 0.12)` |
+| `--el-skeleton-bg` | `#e2e8f0` |
+| `--el-skeleton-shimmer` | `rgba(255, 255, 255, 0.6)` |

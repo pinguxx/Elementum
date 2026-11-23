@@ -1130,7 +1130,10 @@
                 <button type="button" class="copy-btn code-fmt-tab" data-fmt="vue" style="position:static;">Vue 3</button>
                 <button type="button" class="copy-btn code-fmt-tab" data-fmt="a2ui" style="position:static;">A2UI JSON</button>
               </div>
-              <button class="copy-btn" id="btn-copy-code" style="position:static;">Copy HTML 📋</button>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <button type="button" class="copy-btn" id="btn-open-codepen" style="position:static;" title="Open live component in CodePen with unpkg CDN">Open in CodePen ↗</button>
+                <button type="button" class="copy-btn" id="btn-copy-code" style="position:static;">Copy HTML 📋</button>
+              </div>
             </div>
             <pre class="code-block" id="generated-code-box"></pre>
           </div>
@@ -3006,6 +3009,31 @@ ${optionsHtml}
         navigator.clipboard.writeText(textToCopy);
         toast.success(`${activeCodeFormat.toUpperCase()} snippet copied to clipboard!`);
       };
+
+      // Hook up 1-click Open in CodePen button
+      const codepenBtn = document.getElementById('btn-open-codepen');
+      if (codepenBtn) {
+        codepenBtn.onclick = () => {
+          const penData = {
+            title: `Elementum — <${comp.tag}>`,
+            description: comp.description || `Live zero-build demo of <${comp.tag}> from @wcomp/elementum`,
+            html: `<link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />\n<script type="module" src="https://unpkg.com/@wcomp/elementum"><\/script>\n\n<div style="padding: 24px; font-family: system-ui, sans-serif;">\n  ${cleanMarkup.replace(/\n/g, '\n  ')}\n</div>`,
+            editors: '100',
+          };
+          const form = document.createElement('form');
+          form.action = 'https://codepen.io/pen/define';
+          form.method = 'POST';
+          form.target = '_blank';
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'data';
+          input.value = JSON.stringify(penData);
+          form.appendChild(input);
+          document.body.appendChild(form);
+          form.submit();
+          form.remove();
+        };
+      }
     }
 
     // Initial render

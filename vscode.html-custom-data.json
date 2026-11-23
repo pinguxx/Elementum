@@ -1,0 +1,2657 @@
+{
+  "version": 1.1,
+  "tags": [
+    {
+      "name": "el-accordion",
+      "description": "Accordion container coordinating multiple or single disclosure expansion.",
+      "attributes": [
+        {
+          "name": "multiple",
+          "description": "multiple attribute on <el-accordion>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-accordion"
+        }
+      ]
+    },
+    {
+      "name": "el-accordion-item",
+      "description": "Accessible disclosure item for accordion panel.",
+      "attributes": [
+        {
+          "name": "title",
+          "description": "title attribute on <el-accordion-item>"
+        },
+        {
+          "name": "value",
+          "description": "value attribute on <el-accordion-item>"
+        },
+        {
+          "name": "open",
+          "description": "open attribute on <el-accordion-item>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-accordion-item"
+        }
+      ]
+    },
+    {
+      "name": "el-alert",
+      "description": "Inline notification banner with contextual variants, dismissibility and icon slots.",
+      "attributes": [
+        {
+          "name": "variant",
+          "description": "variant attribute on <el-alert>",
+          "values": [
+            {
+              "name": "default"
+            },
+            {
+              "name": "info"
+            },
+            {
+              "name": "success"
+            },
+            {
+              "name": "warning"
+            },
+            {
+              "name": "destructive"
+            }
+          ]
+        },
+        {
+          "name": "title",
+          "description": "title attribute on <el-alert>"
+        },
+        {
+          "name": "dismissible",
+          "description": "dismissible attribute on <el-alert>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-alert"
+        }
+      ]
+    },
+    {
+      "name": "el-alert-dialog",
+      "description": "Modal confirmation dialog for destructive or high-impact actions.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-alert-dialog"
+        }
+      ]
+    },
+    {
+      "name": "el-aspect-ratio",
+      "description": "CLS-free container enforcing fixed aspect ratios for responsive media.",
+      "attributes": [
+        {
+          "name": "ratio",
+          "description": "ratio attribute on <el-aspect-ratio>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-aspect-ratio"
+        }
+      ]
+    },
+    {
+      "name": "el-autocomplete",
+      "description": "Form-associated combobox component supporting static data arrays, remote URL queries with debouncing, flexible key mapping, and ARIA 1.2 accessibility.",
+      "attributes": [
+        {
+          "name": "name",
+          "description": "name attribute on <el-autocomplete>"
+        },
+        {
+          "name": "value",
+          "description": "value attribute on <el-autocomplete>"
+        },
+        {
+          "name": "placeholder",
+          "description": "placeholder attribute on <el-autocomplete>"
+        },
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-autocomplete>",
+          "valueSet": "v"
+        },
+        {
+          "name": "required",
+          "description": "required attribute on <el-autocomplete>",
+          "valueSet": "v"
+        },
+        {
+          "name": "multiple",
+          "description": "multiple attribute on <el-autocomplete>",
+          "valueSet": "v"
+        },
+        {
+          "name": "url",
+          "description": "url attribute on <el-autocomplete>"
+        },
+        {
+          "name": "query-param",
+          "description": "query-param attribute on <el-autocomplete>"
+        },
+        {
+          "name": "debounce",
+          "description": "debounce attribute on <el-autocomplete>"
+        },
+        {
+          "name": "min-chars",
+          "description": "min-chars attribute on <el-autocomplete>"
+        },
+        {
+          "name": "label-key",
+          "description": "label-key attribute on <el-autocomplete>"
+        },
+        {
+          "name": "value-key",
+          "description": "value-key attribute on <el-autocomplete>"
+        },
+        {
+          "name": "size",
+          "description": "size attribute on <el-autocomplete>",
+          "values": [
+            {
+              "name": "sm"
+            },
+            {
+              "name": "md"
+            },
+            {
+              "name": "lg"
+            }
+          ]
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-autocomplete"
+        }
+      ]
+    },
+    {
+      "name": "el-avatar",
+      "description": "User avatar with image fallback, automatic initials, and status indicator.",
+      "attributes": [
+        {
+          "name": "src",
+          "description": "src attribute on <el-avatar>"
+        },
+        {
+          "name": "alt",
+          "description": "alt attribute on <el-avatar>"
+        },
+        {
+          "name": "name",
+          "description": "name attribute on <el-avatar>"
+        },
+        {
+          "name": "size",
+          "description": "size attribute on <el-avatar>",
+          "values": [
+            {
+              "name": "sm"
+            },
+            {
+              "name": "md"
+            },
+            {
+              "name": "lg"
+            }
+          ]
+        },
+        {
+          "name": "shape",
+          "description": "shape attribute on <el-avatar>",
+          "values": [
+            {
+              "name": "circle"
+            },
+            {
+              "name": "square"
+            }
+          ]
+        },
+        {
+          "name": "status",
+          "description": "status attribute on <el-avatar>",
+          "values": [
+            {
+              "name": "online"
+            },
+            {
+              "name": "offline"
+            },
+            {
+              "name": "busy"
+            },
+            {
+              "name": "away"
+            }
+          ]
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-avatar"
+        }
+      ]
+    },
+    {
+      "name": "el-avatar-group",
+      "description": "Clustered avatar stack with overlapping borders.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-avatar-group"
+        }
+      ]
+    },
+    {
+      "name": "el-badge",
+      "description": "Minimal status indicator and notification badge.",
+      "attributes": [
+        {
+          "name": "variant",
+          "description": "variant attribute on <el-badge>",
+          "values": [
+            {
+              "name": "default"
+            },
+            {
+              "name": "success"
+            },
+            {
+              "name": "danger"
+            }
+          ]
+        },
+        {
+          "name": "count",
+          "description": "count attribute on <el-badge>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-badge"
+        }
+      ]
+    },
+    {
+      "name": "el-border-beam",
+      "description": "Luminous animated border ray highlight that circles any container perimeter.",
+      "attributes": [
+        {
+          "name": "size",
+          "description": "size attribute on <el-border-beam>"
+        },
+        {
+          "name": "duration",
+          "description": "duration attribute on <el-border-beam>"
+        },
+        {
+          "name": "color-from",
+          "description": "color-from attribute on <el-border-beam>"
+        },
+        {
+          "name": "color-to",
+          "description": "color-to attribute on <el-border-beam>"
+        },
+        {
+          "name": "border-width",
+          "description": "border-width attribute on <el-border-beam>"
+        },
+        {
+          "name": "reverse",
+          "description": "reverse attribute on <el-border-beam>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-border-beam"
+        }
+      ]
+    },
+    {
+      "name": "el-breadcrumb",
+      "description": "Semantic navigation trail container with configurable separators.",
+      "attributes": [
+        {
+          "name": "separator",
+          "description": "separator attribute on <el-breadcrumb>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-breadcrumb"
+        }
+      ]
+    },
+    {
+      "name": "el-breadcrumb-item",
+      "description": "Individual breadcrumb link or terminal item.",
+      "attributes": [
+        {
+          "name": "href",
+          "description": "href attribute on <el-breadcrumb-item>"
+        },
+        {
+          "name": "current",
+          "description": "current attribute on <el-breadcrumb-item>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-breadcrumb-item"
+        }
+      ]
+    },
+    {
+      "name": "el-button",
+      "description": "Frameworkless, signal-driven button component with 1:1 Figma variant parity.",
+      "attributes": [
+        {
+          "name": "variant",
+          "description": "variant attribute on <el-button>",
+          "values": [
+            {
+              "name": "primary"
+            },
+            {
+              "name": "secondary"
+            },
+            {
+              "name": "danger"
+            },
+            {
+              "name": "ghost"
+            }
+          ]
+        },
+        {
+          "name": "size",
+          "description": "size attribute on <el-button>",
+          "values": [
+            {
+              "name": "sm"
+            },
+            {
+              "name": "md"
+            },
+            {
+              "name": "lg"
+            }
+          ]
+        },
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-button>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-button"
+        }
+      ]
+    },
+    {
+      "name": "el-calendar",
+      "description": "Standalone accessible calendar month-grid component.",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "value attribute on <el-calendar>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-calendar"
+        }
+      ]
+    },
+    {
+      "name": "el-callout",
+      "description": "ElCallout Web Component (<el-callout>).",
+      "attributes": [
+        {
+          "name": "variant",
+          "description": "variant attribute on <el-callout>"
+        },
+        {
+          "name": "size",
+          "description": "size attribute on <el-callout>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-callout"
+        }
+      ]
+    },
+    {
+      "name": "el-card",
+      "description": "Structured card container with header, title, description, content and footer subcomponents.",
+      "attributes": [
+        {
+          "name": "hoverable",
+          "description": "hoverable attribute on <el-card>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-card"
+        }
+      ]
+    },
+    {
+      "name": "el-card-content",
+      "description": "<el-card-content> Elementum Web Component",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-card-content"
+        }
+      ]
+    },
+    {
+      "name": "el-card-description",
+      "description": "<el-card-description> Elementum Web Component",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-card-description"
+        }
+      ]
+    },
+    {
+      "name": "el-card-footer",
+      "description": "<el-card-footer> Elementum Web Component",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-card-footer"
+        }
+      ]
+    },
+    {
+      "name": "el-card-header",
+      "description": "<el-card-header> Elementum Web Component",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-card-header"
+        }
+      ]
+    },
+    {
+      "name": "el-card-title",
+      "description": "<el-card-title> Elementum Web Component",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-card-title"
+        }
+      ]
+    },
+    {
+      "name": "el-carousel",
+      "description": "Accessible touch-swipeable and keyboard navigable carousel with autoplay and indicators.",
+      "attributes": [
+        {
+          "name": "auto-play",
+          "description": "auto-play attribute on <el-carousel>",
+          "valueSet": "v"
+        },
+        {
+          "name": "interval",
+          "description": "interval attribute on <el-carousel>"
+        },
+        {
+          "name": "loop",
+          "description": "loop attribute on <el-carousel>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-carousel"
+        }
+      ]
+    },
+    {
+      "name": "el-carousel-slide",
+      "description": "<el-carousel-slide> Elementum Web Component",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-carousel-slide"
+        }
+      ]
+    },
+    {
+      "name": "el-chart",
+      "description": "Zero-dependency native SVG chart primitive with area, bar, line modes, reactive tooltips, and token theming.",
+      "attributes": [
+        {
+          "name": "type",
+          "description": "type attribute on <el-chart>",
+          "values": [
+            {
+              "name": "area"
+            },
+            {
+              "name": "line"
+            },
+            {
+              "name": "bar"
+            }
+          ]
+        },
+        {
+          "name": "x-key",
+          "description": "x-key attribute on <el-chart>"
+        },
+        {
+          "name": "y-key",
+          "description": "y-key attribute on <el-chart>"
+        },
+        {
+          "name": "secondary-key",
+          "description": "secondary-key attribute on <el-chart>"
+        },
+        {
+          "name": "height",
+          "description": "height attribute on <el-chart>"
+        },
+        {
+          "name": "show-grid",
+          "description": "show-grid attribute on <el-chart>",
+          "valueSet": "v"
+        },
+        {
+          "name": "show-dots",
+          "description": "show-dots attribute on <el-chart>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-chart"
+        }
+      ]
+    },
+    {
+      "name": "el-checkbox",
+      "description": "Form-associated accessible checkbox with indeterminate tri-state support.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-checkbox"
+        }
+      ]
+    },
+    {
+      "name": "el-checkbox-card",
+      "description": "ElCheckboxCard Web Component (<el-checkbox-card>).",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "value attribute on <el-checkbox-card>"
+        },
+        {
+          "name": "checked",
+          "description": "checked attribute on <el-checkbox-card>"
+        },
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-checkbox-card>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-checkbox-card"
+        }
+      ]
+    },
+    {
+      "name": "el-chip",
+      "description": "Interactive pill / tag chip supporting selection, dismiss buttons, and slot icons.",
+      "attributes": [
+        {
+          "name": "variant",
+          "description": "variant attribute on <el-chip>",
+          "values": [
+            {
+              "name": "primary"
+            },
+            {
+              "name": "success"
+            },
+            {
+              "name": "danger"
+            },
+            {
+              "name": "warning"
+            },
+            {
+              "name": "muted"
+            }
+          ]
+        },
+        {
+          "name": "size",
+          "description": "size attribute on <el-chip>",
+          "values": [
+            {
+              "name": "sm"
+            },
+            {
+              "name": "md"
+            }
+          ]
+        },
+        {
+          "name": "removable",
+          "description": "removable attribute on <el-chip>",
+          "valueSet": "v"
+        },
+        {
+          "name": "selectable",
+          "description": "selectable attribute on <el-chip>",
+          "valueSet": "v"
+        },
+        {
+          "name": "selected",
+          "description": "selected attribute on <el-chip>",
+          "valueSet": "v"
+        },
+        {
+          "name": "value",
+          "description": "value attribute on <el-chip>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-chip"
+        }
+      ]
+    },
+    {
+      "name": "el-code-block",
+      "description": "ElCodeBlock Web Component (<el-code-block>).",
+      "attributes": [
+        {
+          "name": "code",
+          "description": "code attribute on <el-code-block>"
+        },
+        {
+          "name": "language",
+          "description": "language attribute on <el-code-block>"
+        },
+        {
+          "name": "copyable",
+          "description": "copyable attribute on <el-code-block>"
+        },
+        {
+          "name": "compact",
+          "description": "compact attribute on <el-code-block>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-code-block"
+        }
+      ]
+    },
+    {
+      "name": "el-collapsible",
+      "description": "Accessible disclosure panel with smooth animated height expansion.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-collapsible"
+        }
+      ]
+    },
+    {
+      "name": "el-command",
+      "description": "Accessible keyboard-first command menu and search palette (⌘K / cmdk style).",
+      "attributes": [
+        {
+          "name": "open",
+          "description": "open attribute on <el-command>",
+          "valueSet": "v"
+        },
+        {
+          "name": "placeholder",
+          "description": "placeholder attribute on <el-command>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-command"
+        }
+      ]
+    },
+    {
+      "name": "el-command-group",
+      "description": "ElCommandGroup Web Component (<el-command-group>).",
+      "attributes": [
+        {
+          "name": "heading",
+          "description": "heading attribute on <el-command-group>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-command-group"
+        }
+      ]
+    },
+    {
+      "name": "el-command-item",
+      "description": "ElCommandItem Web Component (<el-command-item>).",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "value attribute on <el-command-item>"
+        },
+        {
+          "name": "shortcut",
+          "description": "shortcut attribute on <el-command-item>"
+        },
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-command-item>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-command-item"
+        }
+      ]
+    },
+    {
+      "name": "el-context-menu",
+      "description": "Floating context menu opening at cursor coordinates on right-click.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-context-menu"
+        }
+      ]
+    },
+    {
+      "name": "el-data-list",
+      "description": "ElDataList Web Component (<el-data-list>).",
+      "attributes": [
+        {
+          "name": "orientation",
+          "description": "orientation attribute on <el-data-list>"
+        },
+        {
+          "name": "size",
+          "description": "size attribute on <el-data-list>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-data-list"
+        }
+      ]
+    },
+    {
+      "name": "el-data-list-item",
+      "description": "ElDataListItem Web Component (<el-data-list-item>).",
+      "attributes": [
+        {
+          "name": "label",
+          "description": "label attribute on <el-data-list-item>"
+        },
+        {
+          "name": "value",
+          "description": "value attribute on <el-data-list-item>"
+        },
+        {
+          "name": "copyable",
+          "description": "copyable attribute on <el-data-list-item>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-data-list-item"
+        }
+      ]
+    },
+    {
+      "name": "el-datepicker",
+      "description": "Form-associated composite Datepicker combining dropdown, input, and calendar.",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "value attribute on <el-datepicker>"
+        },
+        {
+          "name": "placeholder",
+          "description": "placeholder attribute on <el-datepicker>"
+        },
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-datepicker>",
+          "valueSet": "v"
+        },
+        {
+          "name": "required",
+          "description": "required attribute on <el-datepicker>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-datepicker"
+        }
+      ]
+    },
+    {
+      "name": "el-dialog",
+      "description": "Accessible modal dialog powered by native <dialog> with overscroll containment.",
+      "attributes": [
+        {
+          "name": "open",
+          "description": "open attribute on <el-dialog>",
+          "valueSet": "v"
+        },
+        {
+          "name": "title",
+          "description": "title attribute on <el-dialog>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-dialog"
+        }
+      ]
+    },
+    {
+      "name": "el-diff-viewer",
+      "description": "ElDiffViewer Web Component (<el-diff-viewer>).",
+      "attributes": [
+        {
+          "name": "filename",
+          "description": "filename attribute on <el-diff-viewer>"
+        },
+        {
+          "name": "before",
+          "description": "before attribute on <el-diff-viewer>"
+        },
+        {
+          "name": "after",
+          "description": "after attribute on <el-diff-viewer>"
+        },
+        {
+          "name": "mode",
+          "description": "mode attribute on <el-diff-viewer>"
+        },
+        {
+          "name": "approval",
+          "description": "approval attribute on <el-diff-viewer>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-diff-viewer"
+        }
+      ]
+    },
+    {
+      "name": "el-drawer",
+      "description": "Accessible slide-over drawer panel with backdrop light-dismiss and keyboard traps.",
+      "attributes": [
+        {
+          "name": "open",
+          "description": "open attribute on <el-drawer>",
+          "valueSet": "v"
+        },
+        {
+          "name": "placement",
+          "description": "placement attribute on <el-drawer>",
+          "values": [
+            {
+              "name": "left"
+            },
+            {
+              "name": "right"
+            },
+            {
+              "name": "top"
+            },
+            {
+              "name": "bottom"
+            }
+          ]
+        },
+        {
+          "name": "title",
+          "description": "title attribute on <el-drawer>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-drawer"
+        }
+      ]
+    },
+    {
+      "name": "el-dropdown",
+      "description": "Accessible overlay container with light-dismiss and trigger slot.",
+      "attributes": [
+        {
+          "name": "open",
+          "description": "open attribute on <el-dropdown>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-dropdown"
+        }
+      ]
+    },
+    {
+      "name": "el-dropzone",
+      "description": "Drag and drop file upload target with type filtering and size constraint validation.",
+      "attributes": [
+        {
+          "name": "accept",
+          "description": "accept attribute on <el-dropzone>"
+        },
+        {
+          "name": "max-size",
+          "description": "max-size attribute on <el-dropzone>"
+        },
+        {
+          "name": "multiple",
+          "description": "multiple attribute on <el-dropzone>",
+          "valueSet": "v"
+        },
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-dropzone>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-dropzone"
+        }
+      ]
+    },
+    {
+      "name": "el-empty-state",
+      "description": "Zero-data placeholder graphic with title, description, and action CTA slots.",
+      "attributes": [
+        {
+          "name": "title",
+          "description": "title attribute on <el-empty-state>"
+        },
+        {
+          "name": "description",
+          "description": "description attribute on <el-empty-state>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-empty-state"
+        }
+      ]
+    },
+    {
+      "name": "el-field",
+      "description": "Accessible form field wrapper providing label, description, and error messaging.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-field"
+        }
+      ]
+    },
+    {
+      "name": "el-fieldset",
+      "description": "Accessible field grouping container with legend and cascade disable support.",
+      "attributes": [
+        {
+          "name": "legend",
+          "description": "legend attribute on <el-fieldset>"
+        },
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-fieldset>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-fieldset"
+        }
+      ]
+    },
+    {
+      "name": "el-form",
+      "description": "Form container orchestrating validation, serialization and data collection across Elementum inputs.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-form"
+        }
+      ]
+    },
+    {
+      "name": "el-input",
+      "description": "Form-associated text/form input with prefix/suffix slots and design token styling.",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "value attribute on <el-input>"
+        },
+        {
+          "name": "placeholder",
+          "description": "placeholder attribute on <el-input>"
+        },
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-input>",
+          "valueSet": "v"
+        },
+        {
+          "name": "readonly",
+          "description": "readonly attribute on <el-input>",
+          "valueSet": "v"
+        },
+        {
+          "name": "required",
+          "description": "required attribute on <el-input>",
+          "valueSet": "v"
+        },
+        {
+          "name": "pattern",
+          "description": "pattern attribute on <el-input>"
+        },
+        {
+          "name": "minlength",
+          "description": "minlength attribute on <el-input>"
+        },
+        {
+          "name": "size",
+          "description": "size attribute on <el-input>",
+          "values": [
+            {
+              "name": "sm"
+            },
+            {
+              "name": "md"
+            },
+            {
+              "name": "lg"
+            }
+          ]
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-input"
+        }
+      ]
+    },
+    {
+      "name": "el-inset",
+      "description": "ElInset Web Component (<el-inset>).",
+      "attributes": [
+        {
+          "name": "side",
+          "description": "side attribute on <el-inset>"
+        },
+        {
+          "name": "clip",
+          "description": "clip attribute on <el-inset>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-inset"
+        }
+      ]
+    },
+    {
+      "name": "el-insight-card",
+      "description": "ElInsightCard Web Component (<el-insight-card>).",
+      "attributes": [
+        {
+          "name": "title",
+          "description": "title attribute on <el-insight-card>"
+        },
+        {
+          "name": "category",
+          "description": "category attribute on <el-insight-card>"
+        },
+        {
+          "name": "metric",
+          "description": "metric attribute on <el-insight-card>"
+        },
+        {
+          "name": "delta",
+          "description": "delta attribute on <el-insight-card>"
+        },
+        {
+          "name": "variant",
+          "description": "variant attribute on <el-insight-card>"
+        },
+        {
+          "name": "summary",
+          "description": "summary attribute on <el-insight-card>"
+        },
+        {
+          "name": "action-label",
+          "description": "action-label attribute on <el-insight-card>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-insight-card"
+        }
+      ]
+    },
+    {
+      "name": "el-kbd",
+      "description": "Keycap keyboard shortcut parser and badge renderer.",
+      "attributes": [
+        {
+          "name": "keys",
+          "description": "keys attribute on <el-kbd>"
+        },
+        {
+          "name": "size",
+          "description": "size attribute on <el-kbd>",
+          "values": [
+            {
+              "name": "sm"
+            },
+            {
+              "name": "md"
+            },
+            {
+              "name": "lg"
+            }
+          ]
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-kbd"
+        }
+      ]
+    },
+    {
+      "name": "el-menubar",
+      "description": "Desktop application menubar with arrow key roving focus and hover switching.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-menubar"
+        }
+      ]
+    },
+    {
+      "name": "el-meter",
+      "description": "Scalar gauge primitive for displaying storage, CPU, and threshold metrics.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-meter"
+        }
+      ]
+    },
+    {
+      "name": "el-navbar",
+      "description": "ElNavbar Web Component (<el-navbar>).",
+      "attributes": [
+        {
+          "name": "brand",
+          "description": "brand attribute on <el-navbar>"
+        },
+        {
+          "name": "href",
+          "description": "href attribute on <el-navbar>"
+        },
+        {
+          "name": "badge",
+          "description": "badge attribute on <el-navbar>"
+        },
+        {
+          "name": "badge-variant",
+          "description": "badge-variant attribute on <el-navbar>"
+        },
+        {
+          "name": "sticky",
+          "description": "sticky attribute on <el-navbar>"
+        },
+        {
+          "name": "open",
+          "description": "open attribute on <el-navbar>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-navbar"
+        }
+      ]
+    },
+    {
+      "name": "el-navigation-menu",
+      "description": "ElNavigationMenu Web Component (<el-navigation-menu>).",
+      "attributes": [
+        {
+          "name": "orientation",
+          "description": "orientation attribute on <el-navigation-menu>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-navigation-menu"
+        }
+      ]
+    },
+    {
+      "name": "el-navigation-menu-content",
+      "description": "ElNavigationMenuContent Web Component (<el-navigation-menu-content>).",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-navigation-menu-content"
+        }
+      ]
+    },
+    {
+      "name": "el-navigation-menu-item",
+      "description": "ElNavigationMenuItem Web Component (<el-navigation-menu-item>).",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-navigation-menu-item"
+        }
+      ]
+    },
+    {
+      "name": "el-navigation-menu-trigger",
+      "description": "ElNavigationMenuTrigger Web Component (<el-navigation-menu-trigger>).",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-navigation-menu-trigger"
+        }
+      ]
+    },
+    {
+      "name": "el-number-field",
+      "description": "Precision numeric stepper with keyboard arrow scrubbing and bounds.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-number-field"
+        }
+      ]
+    },
+    {
+      "name": "el-number-flow",
+      "description": "Smooth vertical rolling odometer number reel with prefix/suffix support and reduced-motion fallback.",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "value attribute on <el-number-flow>"
+        },
+        {
+          "name": "prefix",
+          "description": "prefix attribute on <el-number-flow>"
+        },
+        {
+          "name": "suffix",
+          "description": "suffix attribute on <el-number-flow>"
+        },
+        {
+          "name": "duration",
+          "description": "duration attribute on <el-number-flow>"
+        },
+        {
+          "name": "animated",
+          "description": "animated attribute on <el-number-flow>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-number-flow"
+        }
+      ]
+    },
+    {
+      "name": "el-otp-input",
+      "description": "Segmented one-time-password and PIN verification box with auto-advance, backspace retreat, and paste splitting.",
+      "attributes": [
+        {
+          "name": "length",
+          "description": "length attribute on <el-otp-input>"
+        },
+        {
+          "name": "value",
+          "description": "value attribute on <el-otp-input>"
+        },
+        {
+          "name": "type",
+          "description": "type attribute on <el-otp-input>",
+          "values": [
+            {
+              "name": "text"
+            },
+            {
+              "name": "password"
+            }
+          ]
+        },
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-otp-input>",
+          "valueSet": "v"
+        },
+        {
+          "name": "required",
+          "description": "required attribute on <el-otp-input>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-otp-input"
+        }
+      ]
+    },
+    {
+      "name": "el-pagination",
+      "description": "Accessible pagination component with dynamic page windowing, ellipsis, and W3C navigation semantics.",
+      "attributes": [
+        {
+          "name": "page",
+          "description": "page attribute on <el-pagination>"
+        },
+        {
+          "name": "total",
+          "description": "total attribute on <el-pagination>"
+        },
+        {
+          "name": "page-size",
+          "description": "page-size attribute on <el-pagination>"
+        },
+        {
+          "name": "sibling-count",
+          "description": "sibling-count attribute on <el-pagination>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-pagination"
+        }
+      ]
+    },
+    {
+      "name": "el-popover",
+      "description": "Non-modal floating overlay anchored to a trigger with light-dismiss.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-popover"
+        }
+      ]
+    },
+    {
+      "name": "el-preview-card",
+      "description": "Hover card popup showing rich preview content with hover intent delays.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-preview-card"
+        }
+      ]
+    },
+    {
+      "name": "el-progress",
+      "description": "Accessible progress bar with determinate and indeterminate states and WCAG role='progressbar'.",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "value attribute on <el-progress>"
+        },
+        {
+          "name": "max",
+          "description": "max attribute on <el-progress>"
+        },
+        {
+          "name": "variant",
+          "description": "variant attribute on <el-progress>",
+          "values": [
+            {
+              "name": "primary"
+            },
+            {
+              "name": "success"
+            },
+            {
+              "name": "danger"
+            }
+          ]
+        },
+        {
+          "name": "size",
+          "description": "size attribute on <el-progress>",
+          "values": [
+            {
+              "name": "sm"
+            },
+            {
+              "name": "md"
+            },
+            {
+              "name": "lg"
+            }
+          ]
+        },
+        {
+          "name": "indeterminate",
+          "description": "indeterminate attribute on <el-progress>",
+          "valueSet": "v"
+        },
+        {
+          "name": "striped",
+          "description": "striped attribute on <el-progress>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-progress"
+        }
+      ]
+    },
+    {
+      "name": "el-prompt-input",
+      "description": "Auto-expanding AI prompt composer with action bar slots and Enter-to-submit keyboard shortcuts.",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "value attribute on <el-prompt-input>"
+        },
+        {
+          "name": "placeholder",
+          "description": "placeholder attribute on <el-prompt-input>"
+        },
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-prompt-input>",
+          "valueSet": "v"
+        },
+        {
+          "name": "loading",
+          "description": "loading attribute on <el-prompt-input>",
+          "valueSet": "v"
+        },
+        {
+          "name": "max-rows",
+          "description": "max-rows attribute on <el-prompt-input>"
+        },
+        {
+          "name": "min-rows",
+          "description": "min-rows attribute on <el-prompt-input>"
+        },
+        {
+          "name": "clear-on-submit",
+          "description": "clear-on-submit attribute on <el-prompt-input>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-prompt-input"
+        }
+      ]
+    },
+    {
+      "name": "el-radio",
+      "description": "Accessible radio button primitive working inside ElRadioGroup.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-radio"
+        }
+      ]
+    },
+    {
+      "name": "el-radio-card",
+      "description": "ElRadioCard Web Component (<el-radio-card>).",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "value attribute on <el-radio-card>"
+        },
+        {
+          "name": "checked",
+          "description": "checked attribute on <el-radio-card>"
+        },
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-radio-card>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-radio-card"
+        }
+      ]
+    },
+    {
+      "name": "el-radio-card-group",
+      "description": "ElRadioCardGroup Web Component (<el-radio-card-group>).",
+      "attributes": [
+        {
+          "name": "name",
+          "description": "name attribute on <el-radio-card-group>"
+        },
+        {
+          "name": "value",
+          "description": "value attribute on <el-radio-card-group>"
+        },
+        {
+          "name": "columns",
+          "description": "columns attribute on <el-radio-card-group>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-radio-card-group"
+        }
+      ]
+    },
+    {
+      "name": "el-radio-group",
+      "description": "ElRadioGroup Web Component (<el-radio-group>).",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "value attribute on <el-radio-group>"
+        },
+        {
+          "name": "name",
+          "description": "name attribute on <el-radio-group>"
+        },
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-radio-group>"
+        },
+        {
+          "name": "required",
+          "description": "required attribute on <el-radio-group>"
+        },
+        {
+          "name": "orientation",
+          "description": "orientation attribute on <el-radio-group>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-radio-group"
+        }
+      ]
+    },
+    {
+      "name": "el-rating",
+      "description": "Form-associated star rating component with keyboard arrows and hover preview.",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "value attribute on <el-rating>"
+        },
+        {
+          "name": "max",
+          "description": "max attribute on <el-rating>"
+        },
+        {
+          "name": "readonly",
+          "description": "readonly attribute on <el-rating>",
+          "valueSet": "v"
+        },
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-rating>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-rating"
+        }
+      ]
+    },
+    {
+      "name": "el-reasoning-card",
+      "description": "Collapsible AI thinking process disclosure with pulsing indicator dot and duration timer badge.",
+      "attributes": [
+        {
+          "name": "open",
+          "description": "open attribute on <el-reasoning-card>",
+          "valueSet": "v"
+        },
+        {
+          "name": "thinking",
+          "description": "thinking attribute on <el-reasoning-card>",
+          "valueSet": "v"
+        },
+        {
+          "name": "duration",
+          "description": "duration attribute on <el-reasoning-card>"
+        },
+        {
+          "name": "summary",
+          "description": "summary attribute on <el-reasoning-card>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-reasoning-card"
+        }
+      ]
+    },
+    {
+      "name": "el-resizable",
+      "description": "Split-pane divider handle with pointer dragging and keyboard arrow resize.",
+      "attributes": [
+        {
+          "name": "direction",
+          "description": "direction attribute on <el-resizable>",
+          "values": [
+            {
+              "name": "horizontal"
+            },
+            {
+              "name": "vertical"
+            }
+          ]
+        },
+        {
+          "name": "size",
+          "description": "size attribute on <el-resizable>"
+        },
+        {
+          "name": "min",
+          "description": "min attribute on <el-resizable>"
+        },
+        {
+          "name": "max",
+          "description": "max attribute on <el-resizable>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-resizable"
+        }
+      ]
+    },
+    {
+      "name": "el-resizable-handle",
+      "description": "ElResizableHandle Web Component (<el-resizable-handle>).",
+      "attributes": [
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-resizable-handle>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-resizable-handle"
+        }
+      ]
+    },
+    {
+      "name": "el-resizable-panel",
+      "description": "ElResizablePanel Web Component (<el-resizable-panel>).",
+      "attributes": [
+        {
+          "name": "default-size",
+          "description": "default-size attribute on <el-resizable-panel>"
+        },
+        {
+          "name": "min-size",
+          "description": "min-size attribute on <el-resizable-panel>"
+        },
+        {
+          "name": "max-size",
+          "description": "max-size attribute on <el-resizable-panel>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-resizable-panel"
+        }
+      ]
+    },
+    {
+      "name": "el-route",
+      "description": "ElRoute Web Component (<el-route>).",
+      "attributes": [
+        {
+          "name": "path",
+          "description": "path attribute on <el-route>"
+        },
+        {
+          "name": "exact",
+          "description": "exact attribute on <el-route>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-route"
+        }
+      ]
+    },
+    {
+      "name": "el-route-link",
+      "description": "ElRouteLink Web Component (<el-route-link>).",
+      "attributes": [
+        {
+          "name": "to",
+          "description": "to attribute on <el-route-link>"
+        },
+        {
+          "name": "exact",
+          "description": "exact attribute on <el-route-link>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-route-link"
+        }
+      ]
+    },
+    {
+      "name": "el-router",
+      "description": "ElRouter Web Component (<el-router>).",
+      "attributes": [
+        {
+          "name": "default",
+          "description": "default attribute on <el-router>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-router"
+        }
+      ]
+    },
+    {
+      "name": "el-scroll-area",
+      "description": "Custom cross-browser scrollbar container avoiding OS layout shifts.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-scroll-area"
+        }
+      ]
+    },
+    {
+      "name": "el-segmented-control",
+      "description": "Form-associated pill segment switcher with arrow key navigation and ARIA radiogroup semantics.",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "value attribute on <el-segmented-control>"
+        },
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-segmented-control>",
+          "valueSet": "v"
+        },
+        {
+          "name": "size",
+          "description": "size attribute on <el-segmented-control>",
+          "values": [
+            {
+              "name": "sm"
+            },
+            {
+              "name": "md"
+            },
+            {
+              "name": "lg"
+            }
+          ]
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-segmented-control"
+        }
+      ]
+    },
+    {
+      "name": "el-select",
+      "description": "Form-associated custom select dropdown with option list.",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "value attribute on <el-select>"
+        },
+        {
+          "name": "placeholder",
+          "description": "placeholder attribute on <el-select>"
+        },
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-select>",
+          "valueSet": "v"
+        },
+        {
+          "name": "required",
+          "description": "required attribute on <el-select>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-select"
+        }
+      ]
+    },
+    {
+      "name": "el-separator",
+      "description": "Visual or semantic horizontal/vertical content divider.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-separator"
+        }
+      ]
+    },
+    {
+      "name": "el-sidebar",
+      "description": "Collapsible application sidebar with off-canvas drawer mode and responsive collapse.",
+      "attributes": [
+        {
+          "name": "collapsed",
+          "description": "collapsed attribute on <el-sidebar>",
+          "valueSet": "v"
+        },
+        {
+          "name": "collapsible",
+          "description": "collapsible attribute on <el-sidebar>",
+          "values": [
+            {
+              "name": "offcanvas"
+            },
+            {
+              "name": "icon"
+            },
+            {
+              "name": "none"
+            }
+          ]
+        },
+        {
+          "name": "side",
+          "description": "side attribute on <el-sidebar>",
+          "values": [
+            {
+              "name": "left"
+            },
+            {
+              "name": "right"
+            }
+          ]
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-sidebar"
+        }
+      ]
+    },
+    {
+      "name": "el-sidebar-content",
+      "description": "<el-sidebar-content> Elementum Web Component",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-sidebar-content"
+        }
+      ]
+    },
+    {
+      "name": "el-sidebar-footer",
+      "description": "<el-sidebar-footer> Elementum Web Component",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-sidebar-footer"
+        }
+      ]
+    },
+    {
+      "name": "el-sidebar-header",
+      "description": "<el-sidebar-header> Elementum Web Component",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-sidebar-header"
+        }
+      ]
+    },
+    {
+      "name": "el-sidebar-trigger",
+      "description": "<el-sidebar-trigger> Elementum Web Component",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-sidebar-trigger"
+        }
+      ]
+    },
+    {
+      "name": "el-skeleton",
+      "description": "Shimmer wave/pulse placeholder box preventing layout shifts.",
+      "attributes": [
+        {
+          "name": "variant",
+          "description": "variant attribute on <el-skeleton>",
+          "values": [
+            {
+              "name": "text"
+            },
+            {
+              "name": "circular"
+            },
+            {
+              "name": "rectangular"
+            }
+          ]
+        },
+        {
+          "name": "animation",
+          "description": "animation attribute on <el-skeleton>",
+          "values": [
+            {
+              "name": "pulse"
+            },
+            {
+              "name": "wave"
+            },
+            {
+              "name": "none"
+            }
+          ]
+        },
+        {
+          "name": "width",
+          "description": "width attribute on <el-skeleton>"
+        },
+        {
+          "name": "height",
+          "description": "height attribute on <el-skeleton>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-skeleton"
+        }
+      ]
+    },
+    {
+      "name": "el-slider",
+      "description": "Accessible continuous or stepped range slider with keyboard navigation.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-slider"
+        }
+      ]
+    },
+    {
+      "name": "el-sources",
+      "description": "ElSources Web Component (<el-sources>).",
+      "attributes": [
+        {
+          "name": "sources",
+          "description": "sources attribute on <el-sources>"
+        },
+        {
+          "name": "label",
+          "description": "label attribute on <el-sources>"
+        },
+        {
+          "name": "expanded",
+          "description": "expanded attribute on <el-sources>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-sources"
+        }
+      ]
+    },
+    {
+      "name": "el-spinner",
+      "description": "Smooth SVG loading spinner with accessible status role.",
+      "attributes": [
+        {
+          "name": "size",
+          "description": "size attribute on <el-spinner>",
+          "values": [
+            {
+              "name": "sm"
+            },
+            {
+              "name": "md"
+            },
+            {
+              "name": "lg"
+            }
+          ]
+        },
+        {
+          "name": "variant",
+          "description": "variant attribute on <el-spinner>",
+          "values": [
+            {
+              "name": "primary"
+            },
+            {
+              "name": "muted"
+            },
+            {
+              "name": "white"
+            }
+          ]
+        },
+        {
+          "name": "label",
+          "description": "label attribute on <el-spinner>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-spinner"
+        }
+      ]
+    },
+    {
+      "name": "el-streaming-text",
+      "description": "Simulated token-by-token streaming typewriter text with organic jitter, blinking cursor, and completion events.",
+      "attributes": [
+        {
+          "name": "text",
+          "description": "text attribute on <el-streaming-text>"
+        },
+        {
+          "name": "speed",
+          "description": "speed attribute on <el-streaming-text>"
+        },
+        {
+          "name": "cursor",
+          "description": "cursor attribute on <el-streaming-text>",
+          "valueSet": "v"
+        },
+        {
+          "name": "auto-start",
+          "description": "auto-start attribute on <el-streaming-text>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-streaming-text"
+        }
+      ]
+    },
+    {
+      "name": "el-switch",
+      "description": "Form-associated accessible toggle switch with keyboard support and token styling.",
+      "attributes": [
+        {
+          "name": "checked",
+          "description": "checked attribute on <el-switch>",
+          "valueSet": "v"
+        },
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-switch>",
+          "valueSet": "v"
+        },
+        {
+          "name": "required",
+          "description": "required attribute on <el-switch>",
+          "valueSet": "v"
+        },
+        {
+          "name": "size",
+          "description": "size attribute on <el-switch>",
+          "values": [
+            {
+              "name": "sm"
+            },
+            {
+              "name": "md"
+            },
+            {
+              "name": "lg"
+            }
+          ]
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-switch"
+        }
+      ]
+    },
+    {
+      "name": "el-tab",
+      "description": "Individual tab panel inside <el-tabs>.",
+      "attributes": [
+        {
+          "name": "label",
+          "description": "label attribute on <el-tab>"
+        },
+        {
+          "name": "value",
+          "description": "value attribute on <el-tab>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-tab"
+        }
+      ]
+    },
+    {
+      "name": "el-table",
+      "description": "Fine-grained reactive data table with column sorting and row selection.",
+      "attributes": [
+        {
+          "name": "selectable",
+          "description": "selectable attribute on <el-table>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-table"
+        }
+      ]
+    },
+    {
+      "name": "el-tabs",
+      "description": "Accessible tablist and tab panel container with keyboard navigation.",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "Active tab value"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-tabs"
+        }
+      ]
+    },
+    {
+      "name": "el-task-list",
+      "description": "ElTaskList Web Component (<el-task-list>).",
+      "attributes": [
+        {
+          "name": "heading",
+          "description": "heading attribute on <el-task-list>"
+        },
+        {
+          "name": "tasks",
+          "description": "tasks attribute on <el-task-list>"
+        },
+        {
+          "name": "compact",
+          "description": "compact attribute on <el-task-list>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-task-list"
+        }
+      ]
+    },
+    {
+      "name": "el-textarea",
+      "description": "Form-associated auto-resizing multi-line text input with character counting.",
+      "attributes": [
+        {
+          "name": "placeholder",
+          "description": "placeholder attribute on <el-textarea>"
+        },
+        {
+          "name": "rows",
+          "description": "rows attribute on <el-textarea>"
+        },
+        {
+          "name": "auto-resize",
+          "description": "auto-resize attribute on <el-textarea>",
+          "valueSet": "v"
+        },
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-textarea>",
+          "valueSet": "v"
+        },
+        {
+          "name": "required",
+          "description": "required attribute on <el-textarea>",
+          "valueSet": "v"
+        },
+        {
+          "name": "maxlength",
+          "description": "maxlength attribute on <el-textarea>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-textarea"
+        }
+      ]
+    },
+    {
+      "name": "el-theme-switch",
+      "description": "Color theme toggle between Light and Dark mode with localStorage persistence.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-theme-switch"
+        }
+      ]
+    },
+    {
+      "name": "el-timeline",
+      "description": "Activity progression trail container.",
+      "attributes": [
+        {
+          "name": "orientation",
+          "description": "orientation attribute on <el-timeline>",
+          "values": [
+            {
+              "name": "vertical"
+            },
+            {
+              "name": "horizontal"
+            }
+          ]
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-timeline"
+        }
+      ]
+    },
+    {
+      "name": "el-timeline-item",
+      "description": "Individual chronological milestone node with status badges.",
+      "attributes": [
+        {
+          "name": "status",
+          "description": "status attribute on <el-timeline-item>",
+          "values": [
+            {
+              "name": "default"
+            },
+            {
+              "name": "active"
+            },
+            {
+              "name": "success"
+            },
+            {
+              "name": "warning"
+            },
+            {
+              "name": "destructive"
+            }
+          ]
+        },
+        {
+          "name": "date",
+          "description": "date attribute on <el-timeline-item>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-timeline-item"
+        }
+      ]
+    },
+    {
+      "name": "el-toast",
+      "description": "Individual notification toast item managed by ToastManager.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-toast"
+        }
+      ]
+    },
+    {
+      "name": "el-toaster",
+      "description": "Viewport overlay container rendering programmatic toast notifications.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-toaster"
+        }
+      ]
+    },
+    {
+      "name": "el-toggle",
+      "description": "Two-state toggle button with pressed state and group support.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-toggle"
+        }
+      ]
+    },
+    {
+      "name": "el-toggle-group",
+      "description": "ElToggleGroup Web Component (<el-toggle-group>).",
+      "attributes": [
+        {
+          "name": "type",
+          "description": "type attribute on <el-toggle-group>"
+        },
+        {
+          "name": "value",
+          "description": "value attribute on <el-toggle-group>"
+        },
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-toggle-group>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-toggle-group"
+        }
+      ]
+    },
+    {
+      "name": "el-tool-call",
+      "description": "ElToolCall Web Component (<el-tool-call>).",
+      "attributes": [
+        {
+          "name": "name",
+          "description": "name attribute on <el-tool-call>"
+        },
+        {
+          "name": "status",
+          "description": "status attribute on <el-tool-call>"
+        },
+        {
+          "name": "args",
+          "description": "args attribute on <el-tool-call>"
+        },
+        {
+          "name": "result",
+          "description": "result attribute on <el-tool-call>"
+        },
+        {
+          "name": "call-id",
+          "description": "call-id attribute on <el-tool-call>"
+        },
+        {
+          "name": "approval",
+          "description": "approval attribute on <el-tool-call>"
+        },
+        {
+          "name": "open",
+          "description": "open attribute on <el-tool-call>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-tool-call"
+        }
+      ]
+    },
+    {
+      "name": "el-toolbar",
+      "description": "Accessible action bar container with roving tabindex keyboard navigation.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-toolbar"
+        }
+      ]
+    },
+    {
+      "name": "el-tooltip",
+      "description": "Accessible lightweight tooltip anchored to wrapped trigger element.",
+      "attributes": [
+        {
+          "name": "content",
+          "description": "content attribute on <el-tooltip>"
+        },
+        {
+          "name": "placement",
+          "description": "placement attribute on <el-tooltip>",
+          "values": [
+            {
+              "name": "top"
+            },
+            {
+              "name": "bottom"
+            },
+            {
+              "name": "left"
+            },
+            {
+              "name": "right"
+            }
+          ]
+        },
+        {
+          "name": "delay",
+          "description": "delay attribute on <el-tooltip>"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-tooltip"
+        }
+      ]
+    },
+    {
+      "name": "el-tree-item",
+      "description": "Expandable/collapsible tree node.",
+      "attributes": [
+        {
+          "name": "label",
+          "description": "label attribute on <el-tree-item>"
+        },
+        {
+          "name": "expanded",
+          "description": "expanded attribute on <el-tree-item>",
+          "valueSet": "v"
+        },
+        {
+          "name": "selected",
+          "description": "selected attribute on <el-tree-item>",
+          "valueSet": "v"
+        },
+        {
+          "name": "disabled",
+          "description": "disabled attribute on <el-tree-item>",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-tree-item"
+        }
+      ]
+    },
+    {
+      "name": "el-tree-view",
+      "description": "Hierarchical tree list container with keyboard navigation.",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-tree-view"
+        }
+      ]
+    },
+    {
+      "name": "el-visually-hidden",
+      "description": "ElVisuallyHidden Web Component (<el-visually-hidden>).",
+      "attributes": [],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-visually-hidden"
+        }
+      ]
+    }
+  ]
+}

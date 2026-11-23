@@ -23,12 +23,22 @@
     "bin",
     "src",
     "custom-elements.json",
+    "vscode.html-custom-data.json",
+    "llms.txt",
+    "llms-full.txt",
     "tokens",
     "mcp",
     "skills",
     "LICENSE",
     "README.md"
   ],
+  "contributes": {
+    "html": {
+      "customData": [
+        "./vscode.html-custom-data.json"
+      ]
+    }
+  },
   "exports": {
     ".": {
       "types": "./src/index.d.ts",
@@ -92,7 +102,8 @@
     "penpot:generate": "node tools/penpot-to-elementum.js",
     "react:generate": "node tools/generate-react-wrappers.js",
     "mcp:metadata": "node tools/generate-mcp-metadata.js",
-    "docs:styling": "node tools/generate-styling-reference.js"
+    "docs:styling": "node tools/generate-styling-reference.js",
+    "docs:ide": "node tools/generate-ide-and-llms.js"
   },
   "peerDependencies": {
     "react": ">=18.0.0"

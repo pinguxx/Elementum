@@ -116,13 +116,13 @@ test('Security 5: MCP server rejects oversized, malformed, and hostile inputs cl
   assert.ok(maturity.componentCount >= 100);
 });
 
-test('Security 6: MCP server supports ping, readOnly annotations on all 10 tools, and 192x192 server.json icon metadata', () => {
+test('Security 6: MCP server supports ping, readOnly annotations on all 11 tools, and 192x192 server.json icon metadata', () => {
   const pingRes = handleJsonRpcLine(JSON.stringify({ jsonrpc: '2.0', id: 42, method: 'ping' }));
   assert.deepEqual(pingRes, { jsonrpc: '2.0', id: 42, result: {} });
 
   const listRes = handleJsonRpcLine(JSON.stringify({ jsonrpc: '2.0', id: 43, method: 'tools/list' }));
   const tools = listRes?.result?.tools || [];
-  assert.equal(tools.length, 10);
+  assert.equal(tools.length, 11);
   for (const tool of tools) {
     assert.deepEqual(tool.annotations, {
       readOnlyHint: true,

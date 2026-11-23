@@ -170,7 +170,7 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
     },
     {
       name: 'generate_snippet',
-      description: 'Generates valid Elementum Web Component HTML markup matching Figma variants.',
+      description: 'Generates valid Elementum snippet in HTML, React TSX, Vue 3 SFC, or declarative A2UI JSON format.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -179,6 +179,11 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
           size: { type: 'string', description: 'Size variant, e.g. "sm", "md", "lg"' },
           label: { type: 'string', description: 'Content text for the default slot' },
           disabled: { type: 'boolean', description: 'Whether the element is disabled' },
+          format: {
+            type: 'string',
+            enum: ['html', 'react', 'vue', 'a2ui'],
+            description: 'Target snippet format (default: "html").',
+          },
         },
         required: ['tag'],
       },
@@ -245,6 +250,26 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
           markup: { type: 'string', description: 'HTML snippet containing <el-*> components' },
         },
         required: ['markup'],
+      },
+    },
+    {
+      name: 'validate_a2ui_messages',
+      description: 'Validates A2UI JSON messages (createSurface, beginRendering, surfaceUpdate, dataModelUpdate, deleteSurface) against Elementum DEFAULT_A2UI_CATALOG and security rules.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          messages: {
+            type: 'array',
+            items: { type: 'object' },
+            description: 'Array of A2UI JSON message objects to validate.',
+          },
+          allowedTypes: {
+            type: 'array',
+            items: { type: 'string' },
+            description: 'Optional subset of allowed A2UI component types.',
+          },
+        },
+        required: ['messages'],
       },
     },
     {
@@ -327,15 +352,63 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
         return { error: `Invalid custom element tag name: '${tag}'. Expected lowercase kebab-case with hyphen.` };
       }
       const { variant, size, label, disabled } = args;
+      const fmt = typeof args.format === 'string' ? args.format.trim().toLowerCase() : 'html';
       const attrs = [];
       if (variant !== undefined && variant !== '') attrs.push(`variant="${escapeAttr(variant)}"`);
       if (size !== undefined && size !== '') attrs.push(`size="${escapeAttr(size)}"`);
       if (disabled) attrs.push('disabled');
-  
+
       const attrStr = attrs.length > 0 ? ' ' + attrs.join(' ') : '';
       const content = escapeText(label || '');
+      const htmlSnippet = `<${tag}${attrStr}>${content}</${tag}>`;
+
+      if (fmt === 'react') {
+        const pascal = tag
+          .split('-')
+          .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+          .join('');
+        return {
+          format: 'react',
+          snippet: `import '@wcomp/elementum/tokens.css';\nimport { ${pascal} } from '@wcomp/elementum/react';\n\nexport function Example() {\n  return <${pascal}${attrStr}>${content}</${pascal}>;\n}`,
+        };
+      }
+      if (fmt === 'vue') {
+        return {
+          format: 'vue',
+          snippet: `<script setup>\nimport '@wcomp/elementum/tokens.css';\nimport '@wcomp/elementum/components/${tag}.js';\n</script>\n\n<template>\n  ${htmlSnippet}\n</template>`,
+        };
+      }
+      if (fmt === 'a2ui') {
+        const a2uiMap = {
+          'el-button': 'Button', 'el-card': 'Card', 'el-input': 'TextField', 'el-textarea': 'TextArea',
+          'el-select': 'Select', 'el-badge': 'Badge', 'el-switch': 'Switch', 'el-checkbox': 'CheckBox',
+          'el-slider': 'Slider', 'el-datepicker': 'DatePicker', 'el-chip': 'ChoiceChip', 'el-tabs': 'Tabs',
+          'el-dialog': 'Dialog', 'el-meter': 'Meter', 'el-progress': 'Progress', 'el-callout': 'Callout',
+          'el-alert': 'Alert', 'el-avatar': 'Avatar', 'el-code-block': 'CodeBlock', 'el-separator': 'Divider',
+          'el-prompt-input': 'PromptInput', 'el-reasoning-card': 'ReasoningCard', 'el-tool-call': 'ToolCall',
+          'el-streaming-text': 'StreamingText', 'el-sources': 'Sources',
+        };
+        const a2uiType = a2uiMap[tag] || tag.replace(/^el-/, '').split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join('');
+        const props = {};
+        if (variant) props.variant = String(variant);
+        if (size) props.size = String(size);
+        if (disabled) props.disabled = true;
+        if (label) props.label = { literalString: String(label) };
+        return {
+          format: 'a2ui',
+          snippet: JSON.stringify(
+            [
+              { surfaceUpdate: { surfaceId: 'main', components: [{ id: 'root', component: { [a2uiType]: props } }] } },
+              { beginRendering: { surfaceId: 'main', root: 'root' } },
+            ],
+            null,
+            2
+          ),
+        };
+      }
       return {
-        snippet: `<${tag}${attrStr}>${content}</${tag}>`,
+        format: 'html',
+        snippet: htmlSnippet,
       };
     }
   
@@ -682,6 +755,92 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
       };
     }
   
+    if (name === 'validate_a2ui_messages') {
+      const messages = Array.isArray(args.messages) ? args.messages : [];
+      const defaultCatalogTypes = new Set([
+        'Column', 'Row', 'List', 'Divider', 'Card', 'Text', 'Badge', 'Callout', 'Alert',
+        'Progress', 'Meter', 'Avatar', 'CodeBlock', 'Button', 'TextField', 'TextArea',
+        'Select', 'Switch', 'CheckBox', 'Slider', 'DatePicker', 'ChoiceChip', 'Tabs',
+        'Dialog', 'PromptInput', 'ReasoningCard', 'ToolCall', 'StreamingText', 'Sources',
+      ]);
+      const allowedSet = Array.isArray(args.allowedTypes) && args.allowedTypes.length > 0
+        ? new Set(args.allowedTypes.filter((t) => defaultCatalogTypes.has(t)))
+        : defaultCatalogTypes;
+
+      const issues = [];
+      let componentCount = 0;
+
+      for (let idx = 0; idx < messages.length; idx++) {
+        const msg = messages[idx];
+        if (!msg || typeof msg !== 'object') {
+          issues.push({ severity: 'error', messageIndex: idx, message: 'Message must be a non-null JSON object.' });
+          continue;
+        }
+        const knownKeys = ['dataModelUpdate', 'surfaceUpdate', 'beginRendering', 'createSurface', 'deleteSurface'];
+        const hasKnown = knownKeys.some((k) => k in msg);
+        if (!hasKnown) {
+          issues.push({
+            severity: 'error',
+            messageIndex: idx,
+            message: `Unknown A2UI message envelope. Expected one of: ${knownKeys.join(', ')}.`,
+          });
+          continue;
+        }
+        if (msg.surfaceUpdate && Array.isArray(msg.surfaceUpdate.components)) {
+          for (const rawNode of msg.surfaceUpdate.components) {
+            componentCount++;
+            if (!rawNode || typeof rawNode.id !== 'string' || !rawNode.id.trim()) {
+              issues.push({ severity: 'error', messageIndex: idx, message: 'Every A2UI component node requires a non-empty string "id".' });
+              continue;
+            }
+            let typeName = typeof rawNode.type === 'string' ? rawNode.type : '';
+            let props = rawNode.props && typeof rawNode.props === 'object' ? rawNode.props : {};
+            if (!typeName && rawNode.component && typeof rawNode.component === 'object') {
+              const keys = Object.keys(rawNode.component);
+              typeName = keys[0] || '';
+              props = (typeName && rawNode.component[typeName]) || {};
+            }
+            if (!allowedSet.has(typeName)) {
+              issues.push({
+                severity: 'error',
+                messageIndex: idx,
+                nodeId: rawNode.id,
+                type: typeName,
+                message: `Disallowed or unregistered A2UI component type "${typeName}" on node "${rawNode.id}". Allowed: ${[...allowedSet].join(', ')}.`,
+              });
+            }
+            for (const [k, v] of Object.entries(props || {})) {
+              if (/^on/i.test(k)) {
+                issues.push({
+                  severity: 'error',
+                  messageIndex: idx,
+                  nodeId: rawNode.id,
+                  attribute: k,
+                  message: `Inline event handler attribute "${k}" is forbidden in A2UI surfaces.`,
+                });
+              }
+              if ((k === 'href' || k === 'src') && typeof v === 'string' && !/^(https?:\/\/|\/|#)/i.test(v.trim())) {
+                issues.push({
+                  severity: 'error',
+                  messageIndex: idx,
+                  nodeId: rawNode.id,
+                  attribute: k,
+                  message: `Unsafe URL scheme in "${k}" on node "${rawNode.id}".`,
+                });
+              }
+            }
+          }
+        }
+      }
+
+      return {
+        valid: issues.filter((i) => i.severity === 'error').length === 0,
+        messageCount: messages.length,
+        componentCount,
+        issues,
+      };
+    }
+
     if (name === 'get_component_maturity') {
       return {
         package: pkg.name,

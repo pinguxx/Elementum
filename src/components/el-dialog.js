@@ -163,6 +163,19 @@ export class ElDialog extends Elementum {
     }
   }
 
+  get open() {
+    return this.isOpen.value;
+  }
+
+  set open(val) {
+    const shouldOpen = Boolean(val) && val !== 'false';
+    if (shouldOpen) {
+      this.showModal();
+    } else {
+      this.close();
+    }
+  }
+
   show() {
     this.showModal();
   }

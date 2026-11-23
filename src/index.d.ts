@@ -189,8 +189,10 @@ export class ElDatepicker extends Elementum {
 }
 
 export class ElDialog extends Elementum {
+  open: boolean;
   isOpen: Signal<boolean>;
   dialogTitle: Signal<string>;
+  show(): void;
   showModal(): void;
   close(returnValue?: string): void;
 }
@@ -1096,6 +1098,7 @@ declare global {
     'el-accordion-item': ElAccordionItem;
     'el-table': ElTable;
     'el-theme-switch': ElThemeSwitch;
+    'el-toast': ElToaster;
     'el-toaster': ElToaster;
     'el-progress': ElProgress;
     'el-spinner': ElSpinner;
@@ -1303,3 +1306,6 @@ declare global {
     }
   }
 }
+
+import './ide-types.d.ts';
+

@@ -15,6 +15,7 @@
 - Theming, Tokens & Tailwind Guide: https://github.com/pinguxx/Elementum/blob/main/docs/theming.md
 - Tailwind CSS 1-Page Guide: https://github.com/pinguxx/Elementum/blob/main/docs/tailwind-guide.md
 - Auto-Generated `::part()` & Token Reference: https://github.com/pinguxx/Elementum/blob/main/docs/styling-reference.md
+- Full Single-File LLM Reference (`/llms-full.txt`): https://elementum-sage.vercel.app/llms-full.txt
 - Drop-in AI Agent Rules (`CLAUDE.md` / `.cursorrules`): https://github.com/pinguxx/Elementum/blob/main/docs/agent-rules-snippet.md
 - 4-Arm AI-Agent UI Benchmark Results: https://github.com/pinguxx/Elementum/blob/main/benchmarks/agent-eval/RESULTS.md
 - Theme Studio (Live Light/Dark + CSS/DTCG Export): https://elementum-sage.vercel.app/examples/registry.html#theme-studio
@@ -26,6 +27,7 @@
 
 ## Quick Install & MCP
 - npm + init CLI: `npm install @wcomp/elementum && npx @wcomp/elementum init`
+- Local Markup & A11y Checker CLI: `npx @wcomp/elementum check [files-or-dirs...]`
 - Zero-Build 2-Line CDN: `<link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />` and `<script type="module" src="https://unpkg.com/@wcomp/elementum"></script>`
 - Local MCP Server (stdio): `npx elementum-mcp`
 - Hosted MCP Server (Streamable HTTP): `https://elementum-sage.vercel.app/mcp`

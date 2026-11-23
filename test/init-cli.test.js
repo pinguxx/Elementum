@@ -8,6 +8,7 @@ import {
   buildMcpConfig,
   buildAgentRulesSnippet,
   runInit,
+  runCheck,
   REMOTE_MCP_URL,
 } from '../bin/elementum.js';
 
@@ -77,4 +78,45 @@ test('runInit writes .mcp.json, .cursor/mcp.json, elementum.rules.md, and elemen
 test('buildAgentRulesSnippet adapts import hint for vanilla vs react', () => {
   assert.ok(buildAgentRulesSnippet('vanilla').includes("import '@wcomp/elementum';"));
   assert.ok(buildAgentRulesSnippet('next').includes("from '@wcomp/elementum/react';"));
+});
+
+test('runCheck scans HTML/TSX files and reports invalid component usage or passes valid markup', async () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'el-check-run-'));
+  try {
+    const validFile = path.join(tmp, 'valid.html');
+    fs.writeFileSync(validFile, '<el-button variant="primary">Save</el-button>');
+    const okReport = await runCheck(['valid.html'], tmp);
+    assert.equal(okReport.valid, true);
+    assert.equal(okReport.filesScanned, 1);
+    assert.equal(okReport.totalTagsChecked, 1);
+    assert.equal(okReport.errorCount, 0);
+
+    const invalidFile = path.join(tmp, 'invalid.html');
+    fs.writeFileSync(invalidFile, '<el-button variant="not-a-variant">Bad</el-button><el-unknown-widget></el-unknown-widget>');
+    const badReport = await runCheck([], tmp);
+    assert.equal(badReport.valid, false);
+    assert.equal(badReport.filesScanned, 2);
+    assert.ok(badReport.errorCount >= 2);
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test('ElDialog supports dialog.open = true / false property assignment as an alias for showModal() and close()', async () => {
+  await import('../test-helpers/setup.js');
+  await import('../src/components/el-dialog.js');
+  const dlg = document.createElement('el-dialog');
+  dlg.setAttribute('title', 'Property Open Test');
+  document.body.appendChild(dlg);
+  try {
+    assert.equal(dlg.open, false);
+    dlg.open = true;
+    assert.equal(dlg.open, true);
+    assert.equal(dlg.getAttribute('data-state'), 'open');
+    dlg.open = false;
+    assert.equal(dlg.open, false);
+    assert.equal(dlg.getAttribute('data-state'), 'closed');
+  } finally {
+    dlg.remove();
+  }
 });
