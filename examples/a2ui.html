@@ -319,11 +319,32 @@
       { createSurface: { surfaceId: 'locked-test', root: 'root' } },
     ];
 
-    document.getElementById('intent-stream').addEventListener('click', () => simulateAgentStream());
-    document.getElementById('intent-flight').addEventListener('click', () => mountIntent(FLIGHT_INTENT));
-    document.getElementById('intent-billing').addEventListener('click', () => mountIntent(BILLING_INTENT));
-    document.getElementById('intent-security').addEventListener('click', () => mountIntent(SECURITY_INTENT));
+    const INTENT_BTN_IDS = ['intent-stream', 'intent-flight', 'intent-billing', 'intent-security'];
+    function setActiveIntentBtn(activeId) {
+      for (const id of INTENT_BTN_IDS) {
+        const btn = document.getElementById(id);
+        if (btn) btn.setAttribute('variant', id === activeId ? 'primary' : 'secondary');
+      }
+    }
 
+    document.getElementById('intent-stream').addEventListener('click', () => {
+      setActiveIntentBtn('intent-stream');
+      simulateAgentStream();
+    });
+    document.getElementById('intent-flight').addEventListener('click', () => {
+      setActiveIntentBtn('intent-flight');
+      mountIntent(FLIGHT_INTENT);
+    });
+    document.getElementById('intent-billing').addEventListener('click', () => {
+      setActiveIntentBtn('intent-billing');
+      mountIntent(BILLING_INTENT);
+    });
+    document.getElementById('intent-security').addEventListener('click', () => {
+      setActiveIntentBtn('intent-security');
+      mountIntent(SECURITY_INTENT);
+    });
+
+    setActiveIntentBtn('intent-flight');
     mountIntent(FLIGHT_INTENT);
   </script>
 </body>

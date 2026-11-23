@@ -273,7 +273,7 @@ export function createA2UiSurface(options = {}) {
       const chipVal = props.value ?? resolveBoundValue(props.label, dataModel.peek());
       if (props.selected && isBoundValue(props.selected) && props.selected.path) {
         const bindPath = props.selected.path;
-        const dispose = effect(() => {
+        const syncChipState = () => {
           const current = getByPath(dataModel.value, bindPath);
           const isSelected = current === chipVal;
           if (isSelected) {
@@ -284,14 +284,24 @@ export function createA2UiSurface(options = {}) {
           if (el.selected && typeof el.selected === 'object' && 'value' in el.selected) {
             el.selected.value = isSelected;
           }
-        });
+        };
+        const dispose = effect(syncChipState);
         activeDisposers.push(dispose);
 
-        const onClick = () => {
+        const selectThisChip = () => {
           dataModel.value = setByPath(dataModel.peek(), bindPath, chipVal);
+          syncChipState();
         };
+        const onChange = () => selectThisChip();
+        const onClick = () => {
+          if (typeof el.toggleSelected !== 'function') selectThisChip();
+        };
+        el.addEventListener('change', onChange);
         el.addEventListener('click', onClick);
-        activeDisposers.push(() => el.removeEventListener('click', onClick));
+        activeDisposers.push(() => {
+          el.removeEventListener('change', onChange);
+          el.removeEventListener('click', onClick);
+        });
       }
     }
 

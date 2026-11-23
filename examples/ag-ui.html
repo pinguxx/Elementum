@@ -788,9 +788,26 @@ await store.connectSSE(res);"
     }
 
     // Wire buttons & prompt input
-    document.getElementById('btn-scenario-deploy').addEventListener('click', () => runDeployAuditScenario());
-    document.getElementById('btn-scenario-refactor').addEventListener('click', () => runRefactorScenario());
-    document.getElementById('btn-scenario-patch').addEventListener('click', () => runPatchBurstScenario());
+    const SCENARIO_BTN_IDS = ['btn-scenario-deploy', 'btn-scenario-refactor', 'btn-scenario-patch'];
+    function setActiveScenarioBtn(activeId) {
+      for (const id of SCENARIO_BTN_IDS) {
+        const btn = document.getElementById(id);
+        if (btn) btn.setAttribute('variant', id === activeId ? 'primary' : 'secondary');
+      }
+    }
+
+    document.getElementById('btn-scenario-deploy').addEventListener('click', () => {
+      setActiveScenarioBtn('btn-scenario-deploy');
+      runDeployAuditScenario();
+    });
+    document.getElementById('btn-scenario-refactor').addEventListener('click', () => {
+      setActiveScenarioBtn('btn-scenario-refactor');
+      runRefactorScenario();
+    });
+    document.getElementById('btn-scenario-patch').addEventListener('click', () => {
+      setActiveScenarioBtn('btn-scenario-patch');
+      runPatchBurstScenario();
+    });
     document.getElementById('btn-reset').addEventListener('click', () => {
       resetDemo();
       toast.info('AG-UI store reset.');
