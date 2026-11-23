@@ -123,6 +123,10 @@ export class ToastManager {
     if (t && t._timer) clearTimeout(t._timer);
     this.toasts.value = this.toasts.value.filter((item) => item.id !== id);
   }
+
+  clear() {
+    this.dismiss();
+  }
 }
 
 function createToastCallable() {
@@ -141,6 +145,7 @@ function createToastCallable() {
   fn.loading = manager.loading.bind(manager);
   fn.promise = manager.promise.bind(manager);
   fn.dismiss = manager.dismiss.bind(manager);
+  fn.clear = manager.clear.bind(manager);
   return fn;
 }
 
@@ -154,9 +159,27 @@ export class ElToaster extends Elementum {
     return ['position', 'expand'];
   }
 
+  static #instances = new Set();
+
   #cards = new Map(); // id -> { el, item, exiting: bool, height: number }
   #isHovered = false;
   #cleanupEffect = null;
+
+  static #getActiveToaster() {
+    let last = null;
+    for (const inst of ElToaster.#instances) {
+      if (inst.isConnected) last = inst;
+    }
+    return last;
+  }
+
+  static #notifyInstances() {
+    for (const inst of ElToaster.#instances) {
+      if (inst.isConnected) {
+        inst.#syncToasts(toast.toasts.value);
+      }
+    }
+  }
 
   static styles = css`
     :host {
@@ -444,6 +467,7 @@ export class ElToaster extends Elementum {
   `;
 
   connected() {
+    ElToaster.#instances.add(this);
     this.shadowRoot.innerHTML = `
       <style>${ElToaster.styles.cssText}</style>
       <div class="toaster-viewport" role="region" aria-label="Notifications">
@@ -459,9 +483,11 @@ export class ElToaster extends Elementum {
       const items = toast.toasts.value;
       this.#syncToasts(items);
     });
+    ElToaster.#notifyInstances();
   }
 
   disconnected() {
+    ElToaster.#instances.delete(this);
     if (this.#cleanupEffect) {
       this.#cleanupEffect();
       this.#cleanupEffect = null;
@@ -470,6 +496,14 @@ export class ElToaster extends Elementum {
     if (viewport) {
       viewport.removeEventListener('mouseenter', this.#onMouseEnter);
       viewport.removeEventListener('mouseleave', this.#onMouseLeave);
+    }
+    this.#cards.clear();
+    ElToaster.#notifyInstances();
+  }
+
+  attributeChanged(name, oldVal, newVal) {
+    if (oldVal !== newVal && this.shadowRoot) {
+      this.#updateLayout();
     }
   }
 
@@ -689,8 +723,17 @@ export class ElToaster extends Elementum {
   }
 
   #syncToasts(items) {
-    const listEl = this.shadowRoot.querySelector('.toast-list');
+    const listEl = this.shadowRoot?.querySelector('.toast-list');
     if (!listEl) return;
+
+    // If multiple <el-toaster> elements exist on the page, only the active (most recently mounted)
+    // instance renders the fixed viewport stack so duplicate decks never overlap.
+    const activeToaster = ElToaster.#getActiveToaster();
+    if (activeToaster && activeToaster !== this) {
+      listEl.replaceChildren();
+      this.#cards.clear();
+      return;
+    }
 
     const currentIds = new Set(items.map(t => t.id));
 
@@ -737,7 +780,7 @@ export class ElToaster extends Elementum {
   #updateLayout() {
     const activeRecords = [];
     const isTop = (this.getAttribute('position') || '').startsWith('top');
-    const isHovered = this.#isHovered;
+    const isExpanded = this.#isHovered || (this.hasAttribute('expand') && this.getAttribute('expand') !== 'false');
 
     for (const item of toast.toasts.value) {
       const rec = this.#cards.get(item.id);
@@ -750,19 +793,20 @@ export class ElToaster extends Elementum {
     let accumulatedOffset = 0;
     const gap = 12;
 
-    for (let i = 0; i < total; i++) {
-      const rec = activeRecords[i];
-      const stackIndex = total - 1 - i; // 0 is newest / front card
+    // Iterate from newest (stackIndex = 0, front card) to oldest (stackIndex = total - 1, back card)
+    // so the newest toast stays anchored at yOffset = 0 in both collapsed and expanded states.
+    for (let stackIndex = 0; stackIndex < total; stackIndex++) {
+      const rec = activeRecords[total - 1 - stackIndex];
       const cardEl = rec.el;
 
-      if (isHovered) {
+      if (isExpanded) {
         const yOffset = isTop ? accumulatedOffset : -accumulatedOffset;
         cardEl.style.transform = `translate3d(0, ${yOffset}px, 0) scale(1)`;
         cardEl.style.zIndex = `${30 - stackIndex}`;
         cardEl.style.opacity = '1';
         cardEl.style.pointerEvents = 'auto';
 
-        const h = rec.height || cardEl.offsetHeight || 60;
+        const h = rec.height || cardEl.offsetHeight || 56;
         accumulatedOffset += h + gap;
       } else {
         if (stackIndex === 0) {

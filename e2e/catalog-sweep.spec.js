@@ -125,8 +125,21 @@ test.describe('Full Catalog Real-Browser Sweep (All 109 Components, Permutations
 
         // 4. Verify all rendered examples in .variation-card have upgraded <el-*> elements and visible preview height
         const exampleCards = Array.from(document.querySelectorAll('.variation-card'));
+        if (exampleCards.length === 0) {
+          failures.push(`${tag}: missing .variation-card examples`);
+        }
         for (const card of exampleCards) {
           totalExamples++;
+          const previewBox = card.querySelector('.variation-preview');
+          const firstChild = previewBox?.firstElementChild;
+          if (!firstChild) {
+            failures.push(`${tag} example: empty .variation-preview`);
+          } else {
+            const pr = previewBox.getBoundingClientRect();
+            if (pr.width === 0 || pr.height === 0) {
+              failures.push(`${tag} example: .variation-preview collapsed to 0x0px`);
+            }
+          }
           const exEls = Array.from(card.querySelectorAll('*')).filter((el) => el.tagName.includes('-'));
           for (const exEl of exEls) {
             const t = exEl.tagName.toLowerCase();
@@ -163,26 +176,29 @@ test.describe('Full Catalog Real-Browser Sweep (All 109 Components, Permutations
     await expect(page.locator('#sidebar-categories .nav-item-btn')).toHaveCount(2);
     await searchBox.fill('');
 
-    // 1. el-toast: clicking "Trigger SUCCESS Toast" must mount a visible .toast-card inside global <el-toaster>
+    // 1. el-toast: clicking "Trigger SUCCESS Toast" must mount a visible .toast-card inside active <el-toaster>
     await page.goto('/examples/index.html#el-toast');
     await page.locator('#live-stage el-button').first().click();
     const toastCount = await page.evaluate(() => {
-      const toaster = document.querySelector('body > el-toaster');
-      return toaster?.shadowRoot?.querySelectorAll('.toast-card').length || 0;
+      const toasters = Array.from(document.querySelectorAll('el-toaster'));
+      return toasters.reduce((sum, t) => sum + (t.shadowRoot?.querySelectorAll('.toast-card').length || 0), 0);
     });
     expect(toastCount).toBeGreaterThan(0);
 
-    // 2. el-toaster: clicking "Dispatch Test Toast" and bottom ".variation-preview el-button" must mount toast cards
+    // 2. el-toaster: clicking "Dispatch Test Toast" and bottom ".variation-preview el-button" must render strictly on 1 active toaster (zero duplicate ghost decks)
     await page.goto('/examples/index.html#el-toaster');
     await page.evaluate(() => window.toast?.clear?.());
     await page.locator('#live-stage el-button').first().click();
     await expect(page.locator('.variation-preview el-button').first()).toBeVisible();
     await page.locator('.variation-preview el-button').first().click();
-    const toasterCards = await page.evaluate(() => {
+    const toasterReport = await page.evaluate(() => {
       const toasters = Array.from(document.querySelectorAll('el-toaster'));
-      return toasters.reduce((sum, t) => sum + (t.shadowRoot?.querySelectorAll('.toast-card').length || 0), 0);
+      const counts = toasters.map((t) => t.shadowRoot?.querySelectorAll('.toast-card:not(.is-exiting)').length || 0);
+      const nonEmptyToasters = counts.filter((c) => c > 0);
+      return { totalToasters: toasters.length, nonEmptyToasters: nonEmptyToasters.length, activeCardCount: nonEmptyToasters[0] || 0 };
     });
-    expect(toasterCards).toBeGreaterThanOrEqual(2);
+    expect(toasterReport.nonEmptyToasters).toBe(1);
+    expect(toasterReport.activeCardCount).toBe(2);
 
     // 3. el-dialog: clicking "Open Dialog" opens #demo-dialog-inst, clicking "Cancel" closes it
     await page.goto('/examples/index.html#el-dialog');

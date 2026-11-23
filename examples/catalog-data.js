@@ -4246,8 +4246,8 @@ export const components = {
     ],
     "examples": [
       {
-        "title": "Tree Item",
-        "code": "<el-tree-item label=\"index.js\" selected></el-tree-item>"
+        "title": "Expandable & Selectable Tree Items",
+        "code": "<el-tree-view style=\"max-width: 280px;\">\n  <el-tree-item label=\"src\" expanded>\n    <el-tree-item label=\"index.js\" selected></el-tree-item>\n    <el-tree-item label=\"signal.js\"></el-tree-item>\n  </el-tree-item>\n</el-tree-view>"
       }
     ]
   },
@@ -4374,7 +4374,7 @@ export const components = {
     "examples": [
       {
         "title": "Keyboard Search Command Item",
-        "code": "<el-command-item value=\"deploy-prod\">🚀 Deploy to Production Cluster</el-command-item>"
+        "code": "<el-command inline placeholder=\"Filter commands...\" style=\"max-width: 420px;\">\n  <el-command-group heading=\"Deployments\">\n    <el-command-item value=\"deploy-prod\" shortcut=\"⌘D\">🚀 Deploy to Production Cluster</el-command-item>\n    <el-command-item value=\"rollback\" shortcut=\"⌘R\">⏪ Rollback Previous Release</el-command-item>\n  </el-command-group>\n</el-command>"
       }
     ]
   },
@@ -4402,7 +4402,7 @@ export const components = {
     "examples": [
       {
         "title": "Grouped Command Items",
-        "code": "<el-command-group heading=\"Quick Actions\">\n  <el-command-item value=\"new-project\">➕ Create New Project</el-command-item>\n  <el-command-item value=\"view-logs\">📋 View Cluster Event Logs</el-command-item>\n</el-command-group>"
+        "code": "<el-command inline placeholder=\"Search quick actions...\" style=\"max-width: 420px;\">\n  <el-command-group heading=\"Quick Actions\">\n    <el-command-item value=\"new-project\" shortcut=\"⌘N\">➕ Create New Project</el-command-item>\n    <el-command-item value=\"view-logs\" shortcut=\"⌘L\">📋 View Cluster Event Logs</el-command-item>\n  </el-command-group>\n</el-command>"
       }
     ]
   },
@@ -4583,8 +4583,8 @@ export const components = {
     "events": [],
     "examples": [
       {
-        "title": "Navigation Menu Item",
-        "code": "<el-navigation-menu-item>\n  <el-navigation-menu-trigger>Documentation</el-navigation-menu-trigger>\n</el-navigation-menu-item>"
+        "title": "Navigation Menu Item with Flyout",
+        "code": "<div style=\"padding-bottom: 90px;\">\n  <el-navigation-menu>\n    <el-navigation-menu-item>\n      <el-navigation-menu-trigger>Documentation</el-navigation-menu-trigger>\n      <el-navigation-menu-content style=\"padding: 12px; min-width: 220px;\">\n        <div style=\"font-weight: 600; margin-bottom: 4px;\">Getting Started</div>\n        <div style=\"font-size: 0.8rem; color: var(--el-text-muted);\">Install &amp; configure in 48 seconds.</div>\n      </el-navigation-menu-content>\n    </el-navigation-menu-item>\n  </el-navigation-menu>\n</div>"
       }
     ]
   },
@@ -4605,7 +4605,7 @@ export const components = {
     "examples": [
       {
         "title": "Navigation Flyout Trigger",
-        "code": "<el-navigation-menu-trigger>Solutions ▾</el-navigation-menu-trigger>"
+        "code": "<div style=\"padding-bottom: 90px;\">\n  <el-navigation-menu>\n    <el-navigation-menu-item>\n      <el-navigation-menu-trigger>Solutions</el-navigation-menu-trigger>\n      <el-navigation-menu-content style=\"padding: 12px; min-width: 220px;\">\n        <div style=\"font-weight: 600; margin-bottom: 4px;\">AI Agent UIs</div>\n        <div style=\"font-size: 0.8rem; color: var(--el-text-muted);\">MCP, AG-UI &amp; A2UI protocols.</div>\n      </el-navigation-menu-content>\n    </el-navigation-menu-item>\n  </el-navigation-menu>\n</div>"
       }
     ]
   },
@@ -4626,7 +4626,7 @@ export const components = {
     "examples": [
       {
         "title": "Navigation Menu Dropdown Content",
-        "code": "<el-navigation-menu-content style=\"padding: 16px; min-width: 240px;\">\n  <div style=\"font-weight: 600; margin-bottom: 4px;\">Developer APIs</div>\n  <p style=\"font-size: 0.8rem; color: var(--el-text-muted); margin: 0;\">Signals, reactivity, and constructable stylesheets documentation.</p>\n</el-navigation-menu-content>"
+        "code": "<div style=\"padding-bottom: 100px;\">\n  <el-navigation-menu>\n    <el-navigation-menu-item open>\n      <el-navigation-menu-trigger>Developer APIs</el-navigation-menu-trigger>\n      <el-navigation-menu-content style=\"padding: 16px; min-width: 240px;\">\n        <div style=\"font-weight: 600; margin-bottom: 4px;\">Developer APIs</div>\n        <p style=\"font-size: 0.8rem; color: var(--el-text-muted); margin: 0;\">Signals, reactivity, and constructable stylesheets documentation.</p>\n      </el-navigation-menu-content>\n    </el-navigation-menu-item>\n  </el-navigation-menu>\n</div>"
       }
     ]
   },
