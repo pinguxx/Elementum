@@ -511,35 +511,44 @@
     <!-- Hero Section -->
     <header class="hero">
       <div class="badge-bar">
-        <el-badge variant="success" count="109 Web Components"></el-badge>
+        <el-badge variant="success" count="AI-Native · MCP + A2UI + AG-UI"></el-badge>
+        <el-badge variant="default" count="WCAG 2.2 AA Verified"></el-badge>
         <el-badge variant="default" count="0 Runtime Deps"></el-badge>
-        <el-badge variant="default" count="Avg 2.19 KB gzip"></el-badge>
-        <el-badge variant="default" count="Headless Behaviors"></el-badge>
-        <el-badge variant="default" count="DSD SSR Ready"></el-badge>
-        <el-badge variant="default" count="MCP + Agent Bridge"></el-badge>
+        <el-badge variant="default" count="React · Vue · Svelte · HTML"></el-badge>
       </div>
 
-      <h1>Pure Native Web Components<br>for Engineers & Autonomous Agents</h1>
+      <h1>The Verifiable UI Platform<br>for Engineers &amp; AI Agents</h1>
       <p class="subtitle">
         An AI-native, framework-independent UI engineering platform that connects design systems, zero-dependency Web Components, and AI agents through a shared, verifiable component contract.
       </p>
 
       <div class="hero-actions">
         <el-button variant="primary" onclick="window.location.href='./examples/index.html'">
-          Explore 109 Components 🚀
+          Explore Component Catalog
+        </el-button>
+        <el-button variant="secondary" onclick="window.location.href='./examples/a2ui.html'">
+          Try A2UI Playground
+        </el-button>
+        <el-button variant="secondary" onclick="document.getElementById('mcp-connect')?.scrollIntoView({ behavior: 'smooth' })">
+          Connect MCP (10s)
         </el-button>
         <el-button variant="secondary" onclick="window.location.href='./docs.html'">
-          Read Documentation 📖
-        </el-button>
-        <el-button variant="secondary" onclick="window.open('https://design.penpot.app/?screen=viewer&file-id=42288968-6e5e-808d-8008-f77162b618ca&page-id=d8ded059-05ee-80c0-8008-f774c97dd053&section=interactions&index=0&share-id=8218fc5e-f68d-4bab-8fd7-283dd92586e8', '_blank', 'noopener,noreferrer')">
-          View in Penpot 🎨
+          Read Documentation
         </el-button>
       </div>
 
-      <el-code-block id="hero-install-code" copyable language="html" compact code="npm install @wcomp/elementum" style="margin: 0 auto;"></el-code-block>
+      <el-code-block id="hero-install-code" copyable language="bash" compact code="npm install @wcomp/elementum && npx @wcomp/elementum init" style="margin: 0 auto;"></el-code-block>
       <br>
-      <el-code-block id="hero-unpkg-code" copyable compact language="html" code='<link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />
-<script type="module" src="https://unpkg.com/@wcomp/elementum"></script>' style="margin: 0 auto;"></el-code-block>
+      <el-code-block id="hero-unpkg-code" copyable compact language="html" code='<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@wcomp/elementum@0.8.0/src/tokens.css" />
+<script type="module" src="https://esm.sh/@wcomp/elementum@0.8.0"></script>' style="margin: 0 auto;"></el-code-block>
+
+      <p style="margin: 18px auto 0; font-size: 0.85rem; color: var(--el-text-secondary, #475569); display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 14px;">
+        <span>100/100 Edge MCP (<code>mcptry.com</code>)</span>
+        <span aria-hidden="true">&middot;</span>
+        <a href="https://github.com/pinguxx/Elementum/blob/main/AUDITS.md" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;min-height:24px;color:var(--el-color-primary,#2563eb);font-weight:600;text-decoration:none;">100% WCAG 2.2 AA Audited ↗</a>
+        <span aria-hidden="true">&middot;</span>
+        <a href="https://github.com/pinguxx/Elementum/blob/main/benchmarks/agent-eval/RESULTS.md" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;min-height:24px;color:var(--el-color-primary,#2563eb);font-weight:600;text-decoration:none;">4-Arm AI Benchmark Results ↗</a>
+      </p>
     </header>
 
     <!-- The 4 Core Architectural Pillars -->
