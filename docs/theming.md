@@ -213,3 +213,51 @@ el-input.search-bar::part(base) {
   outline-offset: 3px;
 }
 ```
+
+---
+
+## Using Elementum with Tailwind CSS
+
+Shadow DOM isolates internal markup from global utility classes by design, so Elementum provides **three clean escape hatches** for Tailwind CSS teams:
+
+### 1. Style Shadow Internals with Tailwind `part` Variants
+Tailwind's arbitrary selector syntax (`[&::part(...)]:`) targets any documented `::part()` directly from your class list:
+
+```html
+<el-button
+  variant="primary"
+  class="[&::part(button)]:rounded-full [&::part(button)]:px-6 [&::part(button)]:shadow-md"
+>
+  Deploy Now
+</el-button>
+
+<el-input
+  placeholder="Search components..."
+  class="[&::part(wrapper)]:rounded-xl [&::part(input)]:text-sm"
+></el-input>
+```
+
+### 2. Map Tailwind Theme Variables to `--el-*` Tokens
+Sync Elementum with your Tailwind palette once in your global stylesheet:
+
+```css
+:root {
+  --el-color-primary: var(--color-indigo-600, #4f46e5);
+  --el-color-primary-hover: var(--color-indigo-700, #4338ca);
+  --el-radius-md: 0.75rem;
+  --el-font-sans: var(--font-sans, system-ui, sans-serif);
+}
+```
+
+### 3. Full Headless Control with `unstyled`
+Add the boolean `unstyled` attribute to any Elementum component to skip adopting its built-in stylesheet while keeping 100% of its state, keyboard navigation, ARIA attributes, and `ElementInternals` form participation intact:
+
+```html
+<el-button
+  unstyled
+  class="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+>
+  Headless Tailwind Button
+</el-button>
+```
+

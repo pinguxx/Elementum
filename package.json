@@ -4,6 +4,10 @@
   "mcpName": "io.github.pinguxx/elementum",
   "description": "Ultra-lightweight, signal-driven, frameworkless Web Components for modern design systems",
   "type": "module",
+  "sideEffects": [
+    "./src/components/*.js",
+    "./src/tokens.css"
+  ],
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "bin": {
