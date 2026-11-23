@@ -42,22 +42,52 @@ Once `1.0.0` is tagged, **breaking changes require a major version bump (`2.0.0`
 
 ---
 
-## 4. `0.6.x` → `1.0.0` Release Gate Checklist
+## 4. `0.8.x` → `1.0.0` Release Gate Checklist
 
-Elementum will move from `0.x` to `1.0.0` once every gate below is checked off:
+Elementum will move from `0.8.x` to `1.0.0` only when we can confidently promise API stability, compatibility, and dependable integration across supported agent and framework ecosystems:
 
 - [x] Zero runtime dependencies enforced by external consumer tarball install (`npm run verify:consumer`)
-- [x] >= 95% automated line coverage, strict TypeScript checking (`npm run typecheck`), and per-entrypoint gzip budgets (`npm run check:size`)
-- [x] Cross-browser E2E + WCAG 2.2 AA `axe-core` checks (`npm run test:e2e`) including 50+ component zero-CLS DSD hydration and React/Vue/FACE framework interop (`e2e/framework-and-dsd-stress.spec.js`)
-- [x] Official React wrapper entrypoint (`@wcomp/elementum/react`) auto-generated from `custom-elements.json`
-- [x] Public migration guide (`docs/migration-guide.md`) and live showcase apps (`showcase.html`)
+- [x] ≥ 95% automated line coverage, strict TypeScript checking (`npm run typecheck`), and per-entrypoint gzip budgets (`npm run check:size`)
+- [x] Cross-browser E2E + WCAG 2.2 AA `axe-core` checks (`npm run test:e2e`) across Chromium, Firefox, and WebKit including 50+ component zero-CLS DSD hydration, React/Vue/FACE interop (`e2e/framework-and-dsd-stress.spec.js`), and Hard-8 stress tests (`e2e/hard-8-stress.spec.js`)
+- [x] Official React wrapper entrypoint (`@wcomp/elementum/react`) verified against real React 18 & 19 consumers (`npm run verify:react`)
+- [x] Public migration guides (`docs/migration-guide.md`, `docs/tailwind-guide.md`), auto-generated `::part()` reference (`docs/styling-reference.md`), and connected platform showcase (`showcase.html`)
 - [x] Full Playwright E2E + `axe-core` audit coverage across all `109 / 109` components in [`QUALITY.md`](../QUALITY.md)
-- [ ] Complete manual screen-reader (NVDA / VoiceOver) sign-off in [`docs/accessibility-audit.md`](./accessibility-audit.md)
-- [ ] Published `1.0.0-rc.1` candidate reviewed for any breaking attribute, event, or `::part()` cleanup prior to freezing `1.0.0`
+- [ ] **External developer validation**: First-attempt integration feedback from independent teams using `npm install @wcomp/elementum && npx @wcomp/elementum init`
+- [ ] **Independent multi-model AI benchmark runs**: External runs recorded in [`benchmarks/agent-eval/RESULTS.md`](../benchmarks/agent-eval/RESULTS.md)
+- [ ] **Manual screen-reader sign-off** (NVDA / VoiceOver) in [`docs/accessibility-audit.md`](./accessibility-audit.md)
+- [ ] **Published `1.0.0-rc.1`** reviewed for any final attribute, event, or `::part()` cleanup prior to freezing `1.0.0`
 
 ---
 
-## 5. Browser Compatibility Matrix
+## 5. 5-Minute `0.8.0` Architecture & Release-Readiness Evaluation
+
+Independent reviewers can reproduce every architectural, type-safety, performance, and accessibility claim locally without trusting pre-generated reports:
+
+```bash
+# 1. Verify zero-dep tarball packaging, ESM subpath exports & strict TypeScript consumer
+npm run verify:consumer
+
+# 2. Verify React 18 & 19 SSR, StrictMode, prop removal & excess-prop rejection
+npm run verify:react
+
+# 3. Verify all framework starters build & typecheck cleanly
+npm run verify:starters
+
+# 4. Run Hard-8 complex widget stress tests (1,200-row table, nested modals, RTL mobile, axe-core)
+npx playwright test e2e/hard-8-stress.spec.js
+
+# 5. Re-score any arm of the 4-arm AI-agent UI benchmark in headless Chromium
+node benchmarks/agent-eval/score.js benchmarks/agent-eval/submissions/arm-1-elementum-mcp/index.html --arm="Arm 1: Elementum + MCP"
+```
+
+### Known Trade-Offs (Honest Caveats at `0.8.0`)
+- **Surface area vs. depth**: 109 components is a wide catalog; while all 109 pass unit + Playwright + `axe-core` gates, complex widgets (`el-table`, `el-datepicker`, `el-autocomplete`, `el-command`, `el-tree-view`) are our highest priority for real-world edge-case hardening before `1.0.0`.
+- **Shadow DOM & Tailwind**: Global utility classes do not pierce Shadow DOM; teams use `--el-*` tokens, `[&::part(...)]:` variants ([`docs/tailwind-guide.md`](./tailwind-guide.md)), or `unstyled` mode + `@wcomp/elementum/behaviors`.
+- **Protocol maturity**: `@wcomp/elementum/a2ui`, `@wcomp/elementum/ag-ui`, and `@wcomp/elementum/agent` remain `Beta` / `Experimental` while upstream agent UI protocols continue to evolve.
+
+---
+
+## 6. Browser Compatibility Matrix
 
 Elementum relies exclusively on baseline modern web standards (zero polyfills required in supported browsers):
 

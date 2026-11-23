@@ -27,12 +27,143 @@ Use any `<el-*>` component with the `unstyled` attribute to strip default Shadow
 | `createHistory` | Signal-backed undo/redo state history (`push`, `undo`, `redo`, `canUndo`, `canRedo`, `limit`) |
 | `isRTL` / `formatLocaleNumber` / `formatLocaleDate` | Provider-free RTL detection and native `Intl` formatting |
 
+### Practical Behavior Recipes
+
+Every behavior primitive is **framework-free**, **zero-dependency**, and accepts an optional `{ signal }` (`AbortSignal`) or returns a `cleanup()` / `destroy()` function so listeners tear down automatically when an element disconnects.
+
+#### Recipe A: Headless Accessible Menu / Popover
+Combine `createDisclosureBehavior`, `createPopupPositioner`, `createDismissableLayer`, and `createRovingFocus` to build a WAI-ARIA menu with collision flipping, Escape/outside-click dismiss, and RTL-aware arrow navigation:
+
 ```js
-import { createFocusRecovery, createShortcuts, createPresenceBehavior } from '@wcomp/elementum/behaviors';
+import {
+  createDisclosureBehavior,
+  createPopupPositioner,
+  createDismissableLayer,
+  createRovingFocus,
+} from '@wcomp/elementum/behaviors';
+
+const trigger = document.getElementById('menu-btn');
+const menu = document.getElementById('menu-panel');
+
+const positioner = createPopupPositioner(trigger, menu, {
+  placement: 'bottom-start',
+  offset: 6,
+  flip: true,
+});
+
+const disclosure = createDisclosureBehavior(trigger, menu, {
+  onOpenChange: (isOpen) => {
+    if (isOpen) positioner.update();
+  },
+});
+
+const dismiss = createDismissableLayer(menu, {
+  isOpen: () => disclosure.open.value,
+  onDismiss: () => disclosure.close(),
+  ignoreElements: [trigger],
+});
+
+const roving = createRovingFocus(menu, {
+  selector: '[role="menuitem"]',
+  orientation: 'vertical',
+  loop: true,
+  typeahead: true,
+});
+
+// On teardown:
+// disclosure.destroy(); positioner.destroy(); dismiss.destroy(); roving.destroy();
+```
+
+#### Recipe B: Multi-Select + Keyboard Reorderable List
+Combine `createSelectionBehavior`, `createReorderBehavior`, and `announce` for accessible list management with Shift-range selection and screen-reader feedback:
+
+```js
+import {
+  createSelectionBehavior,
+  createReorderBehavior,
+  announce,
+} from '@wcomp/elementum/behaviors';
+
+const selection = createSelectionBehavior({
+  mode: 'multiple',
+  items: () => ['task-1', 'task-2', 'task-3'],
+  onSelectionChange: (keys) => console.log('Selected:', [...keys]),
+});
+
+const reorder = createReorderBehavior(listContainer, {
+  itemSelector: '[data-item-id]',
+  onReorder: ({ fromIndex, toIndex }) => {
+    announce(`Moved item from position ${fromIndex + 1} to ${toIndex + 1}`);
+  },
+});
+```
+
+#### Recipe C: Animated Enter/Exit + Focus Recovery + Reduced Motion
+Use `createPresenceBehavior` to wait for real CSS transitions (`Element.getAnimations()`) before unmounting, `prefersReducedMotion` to respect OS motion settings, and `createFocusRecovery` so focus never drops to `document.body` if a focused item is deleted:
+
+```js
+import {
+  createPresenceBehavior,
+  createFocusRecovery,
+  prefersReducedMotion,
+} from '@wcomp/elementum/behaviors';
+
+const reduced = prefersReducedMotion();
+const presence = createPresenceBehavior(drawerEl, {
+  present: false,
+  reducedMotion: () => reduced.value,
+});
+
+const stopRecovery = createFocusRecovery(drawerEl, {
+  fallback: () => triggerBtn,
+});
+
+// Trigger open/close transitions:
+presence.setPresent(true);
+```
+
+#### Recipe D: Cross-Platform Shortcuts, Undo/Redo History & Search Highlighting
+```js
+import {
+  createShortcuts,
+  createHistory,
+  splitMatchSegments,
+} from '@wcomp/elementum/behaviors';
+
+const history = createHistory({ title: 'Untitled' }, { limit: 50 });
 
 const stopShortcuts = createShortcuts(window, {
   'Mod+K': () => document.querySelector('el-command')?.open(),
+  'Mod+Z': () => history.undo(),
+  'Mod+Shift+Z': () => history.redo(),
 });
+
+// XSS-safe highlighted search segments (no innerHTML required):
+const segments = splitMatchSegments('Elementum Behaviors', 'behav');
+// [{ text: 'Elementum ', match: false }, { text: 'Behav', match: true }, { text: 'iors', match: false }]
+```
+
+#### Recipe E: Zero-Leak Integration Inside an `Elementum` Component
+Pass `this.signal` (Elementum's built-in lifecycle `AbortSignal`) or register cleanup in `disconnected()` so behaviors are guaranteed to clean up when the custom element is removed from the DOM:
+
+```js
+import { Elementum, html } from '@wcomp/elementum';
+import { createPressBehavior, setHostState } from '@wcomp/elementum/behaviors';
+
+class MyHeadlessButton extends Elementum {
+  connected() {
+    this.#stopPress = createPressBehavior(this.root.querySelector('button'), {
+      onPress: () => this.emit('press'),
+      onPressChange: (pressed) => setHostState(this, 'pressed', pressed),
+    });
+  }
+  disconnected() {
+    this.#stopPress?.();
+  }
+  render() {
+    return html`<button type="button" part="button"><slot></slot></button>`;
+  }
+}
 ```
 
 ---
