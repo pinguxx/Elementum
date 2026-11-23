@@ -7,7 +7,7 @@
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 [![M8ven Score](https://m8ven.ai/badge/mcp/pinguxx-elementum-yeg3a6?v=f862621d58ec4975d1943f2ea62028c7)](https://m8ven.ai/mcp/pinguxx-elementum-yeg3a6?s=readme)
 
-> **Elementum** (*Latin*: /e.leˈmen.tum/) — **An AI-native, framework-independent UI engineering platform** built on standard Custom Elements, fine-grained micro-signals, W3C DTCG tokens, Declarative Shadow DOM SSR, and MCP/AG-UI tooling.
+> **Elementum** (*Latin*: /e.leˈmen.tum/) — **An AI-native, framework-independent UI engineering platform** that connects design systems, Web Components, and AI agents through a shared, verifiable component contract.
 
 | Component Count | Dependencies | Avg Gzip | Accessibility | License | 
 | ----- | ----- | ----- | ----- | ----- | 
