@@ -38,6 +38,7 @@ export class ElSwitch extends Elementum {
     .track {
       position: relative;
       display: inline-flex;
+      flex-shrink: 0;
       align-items: center;
       background: var(--el-surface-border, #d1d5db);
       border-radius: 9999px;
