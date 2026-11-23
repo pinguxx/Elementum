@@ -23,7 +23,7 @@
       padding: 40px 24px 72px;
       display: flex;
       flex-direction: column;
-      gap: 44px;
+      gap: 48px;
     }
     .hero {
       display: flex;
@@ -32,16 +32,19 @@
       padding-bottom: 24px;
       border-bottom: 1px solid var(--el-surface-border, #e2e8f0);
     }
-    .badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+    .hero-eyebrow {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--el-color-primary, #2563eb);
     }
     h1 {
       margin: 0;
-      font-size: clamp(1.9rem, 4vw, 2.65rem);
+      font-size: clamp(1.9rem, 4vw, 2.7rem);
       letter-spacing: -0.03em;
-      line-height: 1.15;
+      line-height: 1.14;
+      max-width: 24ch;
     }
     .lead {
       margin: 0;
@@ -53,7 +56,7 @@
     .chapter {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 18px;
     }
     .chapter-kicker {
       font-size: 0.75rem;
@@ -73,6 +76,26 @@
       font-size: 0.95rem;
       line-height: 1.6;
       max-width: 72ch;
+    }
+    .spotlight-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      gap: 24px;
+      align-items: center;
+    }
+    @media (max-width: 860px) {
+      .spotlight-grid { grid-template-columns: minmax(0, 1fr); }
+    }
+    .spotlight-frame {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      background: var(--el-surface-muted, #f8fafc);
+    }
+    .spotlight-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
     }
     .grid {
       display: grid;
@@ -104,8 +127,40 @@
     .two-col {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
+      gap: 24px;
       align-items: start;
+    }
+    .evidence-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .evidence-list li {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--el-surface-border, #e2e8f0);
+    }
+    .evidence-list li:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .evidence-list a {
+      font-weight: 600;
+      font-size: 0.93rem;
+      color: var(--el-color-primary, #2563eb);
+      text-decoration: none;
+    }
+    .evidence-list a:hover {
+      text-decoration: underline;
+    }
+    .evidence-list span {
+      font-size: 0.84rem;
+      color: var(--el-text-secondary, #475569);
     }
   </style>
 </head>
@@ -124,60 +179,45 @@
 
   <main class="shell">
     <header class="hero">
-      <div class="badges">
-        <el-badge variant="success" count="4-Chapter Platform Story"></el-badge>
-        <el-badge variant="primary" count="Design → Frameworks → AI Agents → Proof"></el-badge>
-        <el-badge variant="info" count="WCAG 2.2 AA Audited"></el-badge>
-      </div>
-      <h1>One Component Contract, End to End</h1>
+      <div class="hero-eyebrow">One Component Contract, End to End</div>
+      <h1>Build Interfaces for Developers &amp; AI Agents with One Component System</h1>
       <p class="lead">
-        Instead of isolated widget demos, explore how Elementum connects design tokens, multi-framework apps, Declarative Shadow DOM SSR, and runtime AI agent protocols (MCP, AG-UI, A2UI) from a single zero-dependency foundation.
+        A shared UI foundation that works for design systems, multi-framework apps, Declarative Shadow DOM SSR, and runtime AI agent protocols (MCP, AG-UI, A2UI) with zero runtime dependencies.
       </p>
     </header>
 
-    <!-- Chapter 1: Design -> Code -->
+    <!-- Chapter 1: Featured Spotlight + Design Systems -> Live Code -->
     <section class="chapter" aria-labelledby="ch1-heading">
       <div>
-        <div class="chapter-kicker">Chapter 1 · Design Systems → Live Code</div>
-        <h2 id="ch1-heading" class="section-title">From W3C DTCG Tokens &amp; Penpot Directly to Components</h2>
-        <p class="muted-note">Define colors, typography, and spacing once in Penpot/Figma or Theme Studio, then compile and theme native Shadow DOM components with zero manual CSS drift.</p>
+        <div class="chapter-kicker">Chapter 1 · Featured Demonstration &amp; Design Systems</div>
+        <h2 id="ch1-heading" class="section-title">From Penpot &amp; W3C DTCG Tokens Directly to Live Code</h2>
+        <p class="muted-note">Define colors, typography, and spacing once in Penpot or Theme Studio, then compile and theme native Shadow DOM components with zero manual CSS drift.</p>
       </div>
 
-      <div class="grid">
-        <el-card hoverable bordered>
-          <el-card-header><el-card-title>LedgerFlow (Penpot → Code)</el-card-title></el-card-header>
-          <el-card-content>
+      <!-- Visual Priority Spotlight -->
+      <el-card bordered>
+        <el-card-content>
+          <div class="spotlight-grid">
+            <div class="spotlight-frame">
+              <img src="./docs/assets/ledgerflow-penpot.png" alt="LedgerFlow live treasury dashboard compiled from Penpot via MCP into Elementum Web Components" loading="eager" />
+            </div>
             <div class="card-body">
-              <p class="card-desc">Treasury dashboard compiled directly from Penpot layers via MCP codegen into animated counters, budget meters, live SVG charts, row drawers, and a FACE modal.</p>
               <div class="tag-row">
-                <el-badge variant="success" count="Penpot MCP"></el-badge>
-                <el-badge variant="default" count="el-chart"></el-badge>
-                <el-badge variant="default" count="el-meter"></el-badge>
+                <el-badge variant="success" count="Featured Live App"></el-badge>
+                <el-badge variant="primary" count="Penpot MCP"></el-badge>
               </div>
+              <h3 style="margin: 0; font-size: 1.35rem; letter-spacing: -0.02em;">LedgerFlow Treasury Dashboard</h3>
+              <p class="card-desc">
+                What you are seeing: 15 validated Elementum Web Components compiled directly from Penpot design layers via MCP codegen—including live SVG area charts, semantic budget meters, animated counters, row inspection drawers, and a native Form-Associated expense modal.
+              </p>
               <div class="actions">
                 <el-button variant="primary" onclick="window.location.href='./examples/ledgerflow.html'">Launch LedgerFlow</el-button>
+                <el-button variant="secondary" onclick="window.location.href='./examples/registry.html#theme-studio'">Open Theme Studio</el-button>
               </div>
             </div>
-          </el-card-content>
-        </el-card>
-
-        <el-card hoverable bordered>
-          <el-card-header><el-card-title>Interactive Theme Studio &amp; Registry</el-card-title></el-card-header>
-          <el-card-content>
-            <div class="card-body">
-              <p class="card-desc">Tune primary color, radius, typographic flow, and font family with live side-by-side Light/Dark previews, then export <code>tokens.css</code> or W3C DTCG JSON.</p>
-              <div class="tag-row">
-                <el-badge variant="primary" count="W3C DTCG"></el-badge>
-                <el-badge variant="default" count="tokens.css"></el-badge>
-                <el-badge variant="default" count="Light / Dark"></el-badge>
-              </div>
-              <div class="actions">
-                <el-button variant="primary" onclick="window.location.href='./examples/registry.html#theme-studio'">Open Theme Studio</el-button>
-              </div>
-            </div>
-          </el-card-content>
-        </el-card>
-      </div>
+          </div>
+        </el-card-content>
+      </el-card>
     </section>
 
     <!-- Chapter 2: One Contract, Any Framework + SSR -->
@@ -193,11 +233,11 @@
           <el-card-header><el-card-title>3-Way Framework Comparison (Live)</el-card-title></el-card-header>
           <el-card-content>
             <div class="card-body">
-              <p class="card-desc">Identical searchable, sortable Team Directory + Invite modal built with React 19 (<code>@wcomp/elementum/react</code>), Vue 3, and zero-build Vanilla HTML.</p>
+              <p class="card-desc">Identical searchable, sortable Team Directory + Invite modal built with React 19, Vue 3, and zero-build Vanilla HTML using one component contract.</p>
               <div class="tag-row">
                 <el-badge variant="primary" count="React 19"></el-badge>
                 <el-badge variant="success" count="Vue 3"></el-badge>
-                <el-badge variant="default" count="Vanilla ESM"></el-badge>
+                <el-badge variant="default" count="Vanilla HTML"></el-badge>
               </div>
               <div class="actions">
                 <el-button variant="primary" size="sm" onclick="window.open('https://elementum-comparison-react.vercel.app', '_blank', 'noopener,noreferrer')">React Demo ↗</el-button>
@@ -212,11 +252,10 @@
           <el-card-header><el-card-title>Next.js App Router + DSD SSR</el-card-title></el-card-header>
           <el-card-content>
             <div class="card-body">
-              <p class="card-desc">Pre-rendered Declarative Shadow DOM (<code>&lt;template shadowrootmode="open"&gt;</code>) proving styled first paint with zero FOUC and zero CLS on hydration.</p>
+              <p class="card-desc">Pre-rendered Declarative Shadow DOM proving instant styled first paint with zero FOUC and zero layout shift on client hydration.</p>
               <div class="tag-row">
-                <el-badge variant="success" count="0-JS DSD"></el-badge>
-                <el-badge variant="default" count="Next.js 16"></el-badge>
-                <el-badge variant="default" count="0 CLS"></el-badge>
+                <el-badge variant="success" count="Next.js 16"></el-badge>
+                <el-badge variant="default" count="DSD SSR"></el-badge>
               </div>
               <div class="actions">
                 <el-button variant="primary" size="sm" onclick="window.open('https://elementum-next-dsd.vercel.app', '_blank', 'noopener,noreferrer')">Next.js DSD ↗</el-button>
@@ -243,8 +282,7 @@
             <div class="card-body">
               <p class="card-desc">Stream A2UI JSONL chunks into locked Elementum Web Components with two-way micro-signal bindings, action dispatch, and automatic blocking of unregistered tags.</p>
               <div class="tag-row">
-                <el-badge variant="primary" count="@wcomp/elementum/a2ui"></el-badge>
-                <el-badge variant="success" count="Locked Catalog"></el-badge>
+                <el-badge variant="primary" count="A2UI"></el-badge>
               </div>
               <div class="actions">
                 <el-button variant="primary" onclick="window.location.href='./examples/a2ui.html'">Launch A2UI Playground</el-button>
@@ -259,9 +297,7 @@
             <div class="card-body">
               <p class="card-desc">Live Server-Sent Events and RFC 6902 JSON Patch deltas driving reasoning cards, streaming tokens, HITL tool-call approvals, and source citations.</p>
               <div class="tag-row">
-                <el-badge variant="info" count="@wcomp/elementum/ag-ui"></el-badge>
-                <el-badge variant="default" count="el-tool-call"></el-badge>
-                <el-badge variant="default" count="el-diff-viewer"></el-badge>
+                <el-badge variant="info" count="AG-UI"></el-badge>
               </div>
               <div class="actions">
                 <el-button variant="primary" onclick="window.location.href='./examples/ag-ui.html'">Launch AG-UI Demo</el-button>
@@ -274,11 +310,9 @@
           <el-card-header><el-card-title>AI Agent Studio</el-card-title></el-card-header>
           <el-card-content>
             <div class="card-body">
-              <p class="card-desc">Full AI command center combining <code>&lt;el-command&gt;</code> (⌘K), <code>&lt;el-prompt-input&gt;</code>, <code>&lt;el-reasoning-card&gt;</code>, token odometers, and OTP approval.</p>
+              <p class="card-desc">Interactive AI command center combining command palettes (⌘K), auto-expanding prompt composers, collapsible reasoning cards, token odometers, and OTP approval.</p>
               <div class="tag-row">
-                <el-badge variant="default" count="el-command"></el-badge>
-                <el-badge variant="default" count="el-prompt-input"></el-badge>
-                <el-badge variant="default" count="el-otp-input"></el-badge>
+                <el-badge variant="success" count="AI Studio"></el-badge>
               </div>
               <div class="actions">
                 <el-button variant="primary" onclick="window.location.href='./examples/agent-studio.html'">Launch AI Studio</el-button>
@@ -292,9 +326,9 @@
     <!-- Chapter 4: Production Proof & Verification -->
     <section class="chapter" aria-labelledby="ch4-heading">
       <div>
-        <div class="chapter-kicker">Chapter 4 · Production Reference Apps &amp; Audits</div>
+        <div class="chapter-kicker">Chapter 4 · Production Reference Apps &amp; Inspectable Evidence</div>
         <h2 id="ch4-heading" class="section-title">Full-Scale Applications &amp; Independent Verification</h2>
-        <p class="muted-note">Inspect full multi-view apps, strict React TypeScript ergonomics, and reproducible quality/benchmark evidence before adopting in production.</p>
+        <p class="muted-note">Inspect full multi-view apps, try typed React wrappers in seconds, and independently verify coverage, browser test matrices, and known trade-offs.</p>
       </div>
 
       <div class="grid">
@@ -303,11 +337,6 @@
           <el-card-content>
             <div class="card-body">
               <p class="card-desc">Multi-view B2B console verifying public API usage across data tables, invite dialogs, slide-over drawers, mobile breakpoints, and axe-core WCAG 2.2 AA gates.</p>
-              <div class="tag-row">
-                <el-badge variant="primary" count="el-table"></el-badge>
-                <el-badge variant="default" count="el-dialog"></el-badge>
-                <el-badge variant="default" count="el-drawer"></el-badge>
-              </div>
               <div class="actions">
                 <el-button variant="primary" onclick="window.location.href='./examples/saas-admin.html'">Launch SaaS Admin</el-button>
               </div>
@@ -319,12 +348,7 @@
           <el-card-header><el-card-title>Pulse Cloud Dashboard (SPA)</el-card-title></el-card-header>
           <el-card-content>
             <div class="card-body">
-              <p class="card-desc">Signal-routed SPA combining client-side routing (<code>el-router</code>, <code>el-route-link</code>), live telemetry charts, sidebar collapse, and interactive deployment controls.</p>
-              <div class="tag-row">
-                <el-badge variant="primary" count="el-router"></el-badge>
-                <el-badge variant="default" count="el-chart"></el-badge>
-                <el-badge variant="default" count="el-sidebar"></el-badge>
-              </div>
+              <p class="card-desc">Signal-routed SPA combining client-side routing, live telemetry charts, collapsible sidebar navigation, and interactive deployment controls.</p>
               <div class="actions">
                 <el-button variant="primary" onclick="window.location.href='./examples/app.html'">Launch Pulse Cloud</el-button>
               </div>
@@ -334,11 +358,14 @@
       </div>
 
       <div class="two-col" style="margin-top: 8px;">
-        <div>
-          <h3 style="margin: 0 0 8px; font-size: 1.15rem;">First-Class React Wrappers</h3>
-          <p class="muted-note" style="margin-bottom: 12px;">
-            Use <code>@wcomp/elementum/react</code> in React 18 or React 19 with strict TypeScript types, ref forwarding, automatic complex prop binding, and CustomEvent handlers.
-          </p>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div>
+            <h3 style="margin: 0 0 6px; font-size: 1.15rem;">First-Class React Wrappers</h3>
+            <p class="muted-note">
+              Use <code>@wcomp/elementum/react</code> in React 18 or React 19 with strict TypeScript types, ref forwarding, automatic complex prop binding, and CustomEvent handlers.
+            </p>
+          </div>
+          <el-code-block copyable language="bash" compact code="npm install @wcomp/elementum && npx @wcomp/elementum init"></el-code-block>
           <el-code-block copyable language="js" code="import '@wcomp/elementum/tokens.css';
 import { ElButton, ElInput, ElTable } from '@wcomp/elementum/react';
 
@@ -351,23 +378,39 @@ export function OrdersPanel({ rows, onFilter }) {
     </section>
   );
 }"></el-code-block>
+          <div class="actions">
+            <el-button variant="primary" size="sm" onclick="window.open('https://elementum-comparison-react.vercel.app', '_blank', 'noopener,noreferrer')">Open Live React Starter ↗</el-button>
+            <el-button variant="secondary" size="sm" onclick="window.open('https://github.com/pinguxx/Elementum/blob/main/docs/framework-integration.md', '_blank', 'noopener,noreferrer')">Wrapper Docs ↗</el-button>
+          </div>
         </div>
 
         <el-card bordered>
           <el-card-header>
-            <el-card-title>Evaluation &amp; Release-Readiness Evidence</el-card-title>
+            <el-card-title>Inspectable Verification &amp; Release Readiness</el-card-title>
           </el-card-header>
           <el-card-content>
-            <div class="card-body">
-              <p class="card-desc">Review architectural trade-offs, compatibility guarantees, 4-arm AI benchmark scores, and live automated coverage before adopting in production.</p>
-              <div class="actions">
-                <el-button variant="secondary" size="sm" onclick="window.open('https://github.com/pinguxx/Elementum/blob/main/AUDITS.md', '_blank', 'noopener,noreferrer')">Audit &amp; Verification Hub ↗</el-button>
-                <el-button variant="secondary" size="sm" onclick="window.open('https://github.com/pinguxx/Elementum/blob/main/benchmarks/agent-eval/RESULTS.md', '_blank', 'noopener,noreferrer')">4-Arm AI Benchmark ↗</el-button>
-                <el-button variant="secondary" size="sm" onclick="window.open('https://github.com/pinguxx/Elementum/blob/main/docs/stability-and-1.0.md', '_blank', 'noopener,noreferrer')">0.8.0 Readiness &amp; 1.0 Contract ↗</el-button>
-                <el-button variant="secondary" size="sm" onclick="window.open('https://github.com/pinguxx/Elementum/blob/main/docs/migration-guide.md', '_blank', 'noopener,noreferrer')">Migration Guide ↗</el-button>
-                <el-button variant="secondary" size="sm" onclick="window.open('https://github.com/pinguxx/Elementum/blob/main/docs/behaviors-and-agent.md', '_blank', 'noopener,noreferrer')">Headless Behaviors Guide ↗</el-button>
-              </div>
-            </div>
+            <ul class="evidence-list">
+              <li>
+                <a href="https://github.com/pinguxx/Elementum/blob/main/AUDITS.md" target="_blank" rel="noopener noreferrer">Audit &amp; Verification Hub (AUDITS.md) ↗</a>
+                <span>Stamped 0.8.0 snapshot: 96%+ line coverage, Chromium/Firefox/WebKit Playwright results, axe-core WCAG 2.2 AA logs, and gzip budgets.</span>
+              </li>
+              <li>
+                <a href="https://github.com/pinguxx/Elementum/blob/main/docs/stability-and-1.0.md" target="_blank" rel="noopener noreferrer">0.8.0 Evaluator Guide &amp; 1.0.0 Contract ↗</a>
+                <span>5-minute local reproduction commands, subpath stability tiers, browser matrix, and honest known trade-offs before 1.0.</span>
+              </li>
+              <li>
+                <a href="https://github.com/pinguxx/Elementum/blob/main/benchmarks/agent-eval/RESULTS.md" target="_blank" rel="noopener noreferrer">4-Arm AI-Agent UI Benchmark Results ↗</a>
+                <span>Automated Chromium + axe-core + MCP comparison measuring invalid usage, WCAG findings, and responsive overflow.</span>
+              </li>
+              <li>
+                <a href="https://github.com/pinguxx/Elementum/blob/main/docs/behaviors-and-agent.md" target="_blank" rel="noopener noreferrer">Headless Behaviors &amp; Agent Runtime Guide ↗</a>
+                <span>Copy-paste recipes for menus, focus recovery, reorderable lists, shortcuts, and Shadow-DOM agent automation.</span>
+              </li>
+              <li>
+                <a href="https://github.com/pinguxx/Elementum/blob/main/docs/migration-guide.md" target="_blank" rel="noopener noreferrer">Migration Guide (Shoelace / shadcn / Radix / Lit) ↗</a>
+                <span>Side-by-side API mappings plus 1-page Tailwind CSS &amp; ::part() styling integration.</span>
+              </li>
+            </ul>
           </el-card-content>
         </el-card>
       </div>
