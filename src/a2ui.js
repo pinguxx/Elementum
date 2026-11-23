@@ -54,6 +54,19 @@ export const DEFAULT_A2UI_CATALOG = Object.freeze({
 
 const UNSAFE_ATTR_RE = /^on/i;
 const SAFE_URL_RE = /^(https?:\/\/|\/|#)/i;
+const URL_ATTRS = new Set(['href', 'src', 'action', 'formaction', 'poster', 'xlink:href']);
+const DANGEROUS_PROP_KEYS = new Set(['innerhtml', 'outerhtml', 'srcdoc', '__proto__', 'constructor', 'prototype']);
+
+export const A2UI_SECURITY_DEFAULTS = Object.freeze({
+  maxDepth: 32,
+  maxComponents: 500,
+  maxStringLength: 65536,
+});
+
+function clampString(val, maxLen) {
+  const str = String(val ?? '');
+  return str.length > maxLen ? str.slice(0, maxLen) : str;
+}
 
 function normalizePointer(pointer) {
   if (!pointer || pointer === '/') return '';
@@ -153,8 +166,18 @@ function extractChildIds(props) {
  */
 export function createA2UiSurface(options = {}) {
   const catalog = options.catalog ? { ...DEFAULT_A2UI_CATALOG, ...options.catalog } : DEFAULT_A2UI_CATALOG;
-  const allowlist = options.allowlist ? new Set(options.allowlist) : null;
+  const rawAllow = options.allowlist || options.allowedTypes;
+  const allowlist = rawAllow ? new Set(rawAllow) : null;
   const onAction = typeof options.onAction === 'function' ? options.onAction : null;
+  const maxDepth = Number.isInteger(options.maxDepth) && options.maxDepth > 0 ? options.maxDepth : A2UI_SECURITY_DEFAULTS.maxDepth;
+  const maxComponents =
+    Number.isInteger(options.maxComponents) && options.maxComponents > 0
+      ? options.maxComponents
+      : A2UI_SECURITY_DEFAULTS.maxComponents;
+  const maxStringLength =
+    Number.isInteger(options.maxStringLength) && options.maxStringLength > 0
+      ? options.maxStringLength
+      : A2UI_SECURITY_DEFAULTS.maxStringLength;
 
   const surfaceId = signal(options.surfaceId || 'default');
   const rootId = signal(null);
@@ -188,20 +211,22 @@ export function createA2UiSurface(options = {}) {
     const currentData = dataModel.peek();
     if (Array.isArray(rawCtx)) {
       for (const entry of rawCtx) {
-        if (entry && typeof entry.key === 'string') {
+        if (entry && typeof entry.key === 'string' && !DANGEROUS_PROP_KEYS.has(entry.key.toLowerCase())) {
           ctx[entry.key] = resolveBoundValue(entry.value, currentData);
         }
       }
     } else if (rawCtx && typeof rawCtx === 'object') {
       for (const [k, v] of Object.entries(rawCtx)) {
-        ctx[k] = resolveBoundValue(v, currentData);
+        if (!DANGEROUS_PROP_KEYS.has(k.toLowerCase())) {
+          ctx[k] = resolveBoundValue(v, currentData);
+        }
       }
     }
     return ctx;
   }
 
-  function buildNode(id, visited = new Set()) {
-    if (!id || visited.has(id)) return null;
+  function buildNode(id, visited = new Set(), depth = 0) {
+    if (!id || visited.has(id) || depth >= maxDepth) return null;
     const def = components.get(id);
     if (!def) return null;
 
@@ -213,7 +238,8 @@ export function createA2UiSurface(options = {}) {
       return null;
     }
 
-    visited.add(id);
+    const branchVisited = new Set(visited);
+    branchVisited.add(id);
     const spec = catalog[def.type];
     const props = def.props || {};
 
@@ -247,7 +273,7 @@ export function createA2UiSurface(options = {}) {
       if (contentSource !== undefined) {
         const dispose = effect(() => {
           const val = resolveBoundValue(contentSource, dataModel.value);
-          el.textContent = val == null ? '' : String(val);
+          el.textContent = val == null ? '' : clampString(val, maxStringLength);
         });
         activeDisposers.push(dispose);
       }
@@ -261,7 +287,7 @@ export function createA2UiSurface(options = {}) {
       headerEl.style.fontSize = '1.05rem';
       const dispose = effect(() => {
         const val = resolveBoundValue(props.title, dataModel.value);
-        headerEl.textContent = val == null ? '' : String(val);
+        headerEl.textContent = val == null ? '' : clampString(val, maxStringLength);
       });
       activeDisposers.push(dispose);
       el.appendChild(headerEl);
@@ -308,27 +334,37 @@ export function createA2UiSurface(options = {}) {
     // Bind safe attributes & reactive two-way form controls
     const SKIP_KEYS = new Set(['child', 'children', 'action', 'usageHint', 'gap', 'align', 'text', 'label', 'title', 'selected', 'options']);
     for (const [key, rawVal] of Object.entries(props)) {
-      if (SKIP_KEYS.has(key) || UNSAFE_ATTR_RE.test(key)) continue;
+      const lowerKey = key.toLowerCase();
+      if (SKIP_KEYS.has(key) || UNSAFE_ATTR_RE.test(key) || DANGEROUS_PROP_KEYS.has(lowerKey)) continue;
 
-      if (key === 'href' || key === 'src') {
-        const str = String(resolveBoundValue(rawVal, dataModel.peek()) ?? '');
-        if (!SAFE_URL_RE.test(str.trim())) continue;
+      const isUrlAttr = URL_ATTRS.has(lowerKey);
+      if (isUrlAttr) {
+        const initialUrl = String(resolveBoundValue(rawVal, dataModel.peek()) ?? '').trim();
+        if (initialUrl && !SAFE_URL_RE.test(initialUrl)) continue;
       }
 
       const dispose = effect(() => {
         const resolved = resolveBoundValue(rawVal, dataModel.value);
         if (resolved === undefined || resolved === null || resolved === false) {
           el.removeAttribute(key);
+        } else if (isUrlAttr) {
+          const urlStr = clampString(resolved, maxStringLength).trim();
+          if (SAFE_URL_RE.test(urlStr)) {
+            el.setAttribute(key, urlStr);
+          } else {
+            el.removeAttribute(key);
+          }
         } else if (resolved === true) {
           el.setAttribute(key, '');
         } else if (typeof resolved === 'object') {
           if (el[key] && typeof el[key] === 'object' && 'value' in el[key]) {
             el[key].value = resolved;
           } else {
-            el.setAttribute(key, JSON.stringify(resolved));
+            el.setAttribute(key, clampString(JSON.stringify(resolved), maxStringLength));
           }
         } else {
-          el.setAttribute(key, String(resolved));
+          const strVal = clampString(resolved, maxStringLength);
+          el.setAttribute(key, strVal);
           if (el[key] && typeof el[key] === 'object' && 'value' in el[key]) {
             el[key].value = resolved;
           }
@@ -357,8 +393,8 @@ export function createA2UiSurface(options = {}) {
     if (def.type === 'Select' && Array.isArray(props.options)) {
       for (const opt of props.options) {
         const optEl = document.createElement('option');
-        optEl.value = String(opt.value ?? opt);
-        optEl.textContent = String(opt.label ?? opt.value ?? opt);
+        optEl.value = clampString(opt.value ?? opt, maxStringLength);
+        optEl.textContent = clampString(opt.label ?? opt.value ?? opt, maxStringLength);
         el.appendChild(optEl);
       }
     }
@@ -369,11 +405,11 @@ export function createA2UiSurface(options = {}) {
       const onTrigger = (e) => {
         const context = resolveActionContext(props.action);
         if (eventName === 'submit' && e.detail?.value !== undefined) {
-          context.prompt = e.detail.value;
+          context.prompt = clampString(e.detail.value, maxStringLength);
         }
         onAction({
           surfaceId: surfaceId.peek(),
-          actionName: props.action.name || 'action',
+          actionName: clampString(props.action.name || 'action', 256),
           sourceComponentId: def.id,
           context,
         });
@@ -382,9 +418,9 @@ export function createA2UiSurface(options = {}) {
       activeDisposers.push(() => el.removeEventListener(eventName, onTrigger));
     }
 
-    // Render children recursively
+    // Render children recursively with maxDepth guard
     for (const childId of extractChildIds(props)) {
-      const childNode = buildNode(childId, visited);
+      const childNode = buildNode(childId, branchVisited, depth + 1);
       if (childNode) el.appendChild(childNode);
     }
 
@@ -397,7 +433,7 @@ export function createA2UiSurface(options = {}) {
     containerEl.replaceChildren();
     const root = rootId.peek();
     if (!root) return;
-    const tree = buildNode(root, new Set());
+    const tree = buildNode(root, new Set(), 0);
     if (tree) {
       containerEl.appendChild(tree);
     }
@@ -424,6 +460,9 @@ export function createA2UiSurface(options = {}) {
       for (const rawComp of update.components) {
         const norm = normalizeComponentDef(rawComp);
         if (norm && norm.id) {
+          if (!components.has(norm.id) && components.size >= maxComponents) {
+            continue;
+          }
           components.set(norm.id, norm);
         }
       }

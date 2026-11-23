@@ -64,12 +64,18 @@ check(
   `expected "https://elementum-sage.vercel.app/mcp", found "${srv.remotes?.[0]?.url}"`
 );
 
-// 3. CHANGELOG.md
+// 3. CHANGELOG.md (must include ## [version] AND it must be the latest/topmost release entry)
 const changelog = readText('CHANGELOG.md');
+const firstChangelogEntry = /^## \[([^\]]+)\]/m.exec(changelog);
 check(
   'CHANGELOG.md',
   changelog.includes(`## [${version}]`),
   `missing heading section "## [${version}]"`
+);
+check(
+  'CHANGELOG.md (latest entry)',
+  firstChangelogEntry?.[1] === version,
+  `expected topmost changelog section to be "[${version}]", found "[${firstChangelogEntry?.[1] || 'none'}]"`
 );
 
 // 4. README.md
@@ -117,12 +123,17 @@ check(
 // 7. docs/stability-and-1.0.md
 const stability = readText('docs/stability-and-1.0.md');
 check(
-  'docs/stability-and-1.0.md',
+  'docs/stability-and-1.0.md (minor line)',
   stability.includes(`\`${minorLine}\``),
   `missing active minor line reference "\`${minorLine}\`"`
 );
+check(
+  'docs/stability-and-1.0.md (evaluator guide heading)',
+  stability.includes(`\`v${version}\``),
+  `missing current release reference "\`v${version}\`" in evaluator guide`
+);
 
-// 8. HTML navbar badges
+// 8. HTML navbar badges & showcase evidence cards
 for (const htmlFile of ['index.html', 'showcase.html']) {
   const html = readText(htmlFile);
   check(
@@ -131,6 +142,17 @@ for (const htmlFile of ['index.html', 'showcase.html']) {
     `missing navbar badge attribute badge="v${version}"`
   );
 }
+const showcaseHtml = readText('showcase.html');
+check(
+  'showcase.html (audit snapshot card)',
+  showcaseHtml.includes(`Stamped v${version} snapshot`),
+  `missing "Stamped v${version} snapshot" in showcase.html Chapter 4`
+);
+check(
+  'showcase.html (evaluator guide card)',
+  showcaseHtml.includes(`v${version} Evaluator Guide`),
+  `missing "v${version} Evaluator Guide" in showcase.html Chapter 4`
+);
 
 // 9. Penpot MCP client metadata
 for (const toolFile of ['tools/sync-penpot-mcp.js', 'tools/penpot-to-elementum.js']) {

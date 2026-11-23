@@ -4,6 +4,19 @@ All notable changes to `@wcomp/elementum` are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.2] — 2026-11-23 ("A2UI Security Boundaries, Multi-Format MCP Snippets, CLI Linter & IDE Autocomplete")
+
+### Added
+- **Explicit A2UI Security Boundary (`@wcomp/elementum/a2ui`, `docs/a2ui.md`)**: Added configurable `maxDepth` (default `32`), `maxComponents` (default `500`), and `maxStringLength` (default `65,536`) resource caps (`A2UI_SECURITY_DEFAULTS`), reactive URL scheme verification inside signal `effect()`s (`href`, `src`, `action`, `formaction`, `poster`, `xlink:href`), dangerous DOM sink/prototype stripping (`innerHTML`, `outerHTML`, `srcdoc`, `__proto__`), and `allowedTypes` option alias.
+- **MCP `validate_a2ui_messages` & Multi-Format `generate_snippet` (`mcp/core.js`)**: Expanded the MCP server to 11 tools with declarative A2UI v0.8/v0.9 JSON validation (checking catalog allowlists, missing root/child IDs, cycles, and unsafe URLs) and `format: 'html' | 'react' | 'vue' | 'a2ui'` snippet generation.
+- **Local CI / Pre-Commit Linter (`npx @wcomp/elementum check`)**: Added `elementum check [paths...] [--json]` in `bin/elementum.js` to scan `.html`, `.jsx`, `.tsx`, `.vue`, and `.svelte` files against `validate_component_usage` and `lint_accessibility`.
+- **Single-File Context & IDE Autocomplete (`llms-full.txt`, `vscode.html-custom-data.json`, `src/ide-types.d.ts`)**: Added `npm run docs:ide` (`tools/generate-ide-and-llms.js`) generating `llms-full.txt`, VS Code HTML Custom Data (`contributes.html.customData`), and global Vue 3 (`GlobalComponents`) + Svelte (`svelteHTML.IntrinsicElements`) tag declarations.
+- **Declarative `<el-dialog>` Property Setter & Catalog CodePen Launcher**: Added `dialog.open = true | false` getter/setter on `ElDialog` (`src/components/el-dialog.js`) and 1-click **Open in CodePen ↗** to `examples/index.html`.
+- **Benchmark Provenance & Scope Qualifications (`benchmarks/agent-eval/RESULTS.md`)**: Documented tested model ID, temperature, single-pass turn budget, scoring runtime versions, raw output links, and explicit experimental scope limitations.
+
+### Fixed
+- **Release Version Sync Gate (`tools/check-release-sync.js`, `showcase.html`, `docs/stability-and-1.0.md`)**: Extended `npm run check:release` to verify topmost `CHANGELOG.md` entry, `showcase.html` audit/evaluator card version references, and `docs/stability-and-1.0.md` evaluator headings.
+
 ## [0.8.1] — 2026-11-22 ("Vite/Rollup sideEffects Fix, Scoped Dark Mode & Showcase Polish")
 
 ### Fixed

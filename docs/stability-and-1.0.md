@@ -59,7 +59,7 @@ Elementum will move from `0.8.x` to `1.0.0` only when we can confidently promise
 
 ---
 
-## 5. 5-Minute `0.8.0` Architecture & Release-Readiness Evaluation
+## 5. 5-Minute `v0.8.2` Architecture & Release-Readiness Evaluation
 
 Independent reviewers can reproduce every architectural, type-safety, performance, and accessibility claim locally without trusting pre-generated reports:
 
@@ -80,7 +80,7 @@ npx playwright test e2e/hard-8-stress.spec.js
 node benchmarks/agent-eval/score.js benchmarks/agent-eval/submissions/arm-1-elementum-mcp/index.html --arm="Arm 1: Elementum + MCP"
 ```
 
-### Known Trade-Offs (Honest Caveats at `0.8.0`)
+### Known Trade-Offs (Honest Caveats at `v0.8.2`)
 - **Surface area vs. depth**: 109 components is a wide catalog; while all 109 pass unit + Playwright + `axe-core` gates, complex widgets (`el-table`, `el-datepicker`, `el-autocomplete`, `el-command`, `el-tree-view`) are our highest priority for real-world edge-case hardening before `1.0.0`.
 - **Shadow DOM & Tailwind**: Global utility classes do not pierce Shadow DOM; teams use `--el-*` tokens, `[&::part(...)]:` variants ([`docs/tailwind-guide.md`](./tailwind-guide.md)), or `unstyled` mode + `@wcomp/elementum/behaviors`.
 - **Protocol maturity**: `@wcomp/elementum/a2ui`, `@wcomp/elementum/ag-ui`, and `@wcomp/elementum/agent` remain `Beta` / `Experimental` while upstream agent UI protocols continue to evolve.

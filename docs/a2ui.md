@@ -134,20 +134,30 @@ async function streamA2UiResponse(url, surface) {
 
 ---
 
-## 6. Security Model (Zero Executable Code)
+## 6. Explicit A2UI Security Boundary (Untrusted Agent Input)
 
-`@wcomp/elementum/a2ui` enforces defense-in-depth by default:
+Agent-generated structured UI is still **untrusted input**. `@wcomp/elementum/a2ui` enforces a strict, inspectable boundary across six attack surfaces:
 
-1. **Locked Catalog Allowlist**: Only component types present in `DEFAULT_A2UI_CATALOG` (or your custom `catalog` / `allowedTypes` subset) can render. Unregistered types (e.g. `RawScript`, `CustomIframe`) are silently dropped and recorded in `surface.blockedTypes.value`.
-2. **Zero `innerHTML`**: All text and labels are bound via `textContent` and fine-grained signal `effect()`s.
-3. **Inline Event Handler Stripping**: Any attribute matching `/^on/i` (`onclick`, `onerror`, etc.) is rejected.
-4. **URL Scheme Allowlist**: `href` and `src` attributes only allow `https://`, `http://`, `/`, or `#` URLs (`javascript:` and `data:` are blocked).
+| Vector | What the Renderer Accepts | What the Renderer Rejects / Clamps |
+| :--- | :--- | :--- |
+| **1. Unknown Component Types** | Only types present in `DEFAULT_A2UI_CATALOG` (27 Elementum primitives) and, when configured, `options.allowlist` / `options.allowedTypes`. | Unregistered or non-allowlisted types (e.g., `RawScript`, `CustomIframe`, `<script>`) are never instantiated and are appended to `surface.blockedTypes.value`. |
+| **2. Unsupported Properties & DOM Sinks** | Declarative attributes, two-way bound form props (`value`, `checked`, `selected`), and safe layout props (`gap`, `align`, `usageHint`). | Inline event handlers matching `/^on/i` (`onclick`, `onerror`, `onload`), dangerous DOM sinks (`innerHTML`, `outerHTML`, `srcdoc`), and prototype keys (`__proto__`, `constructor`, `prototype`) are stripped on both props and `dataModelUpdate` JSON Pointers. |
+| **3. Invalid or Oversized Messages** | Well-formed object messages up to `maxComponents` (default **`500`** nodes per surface) and string values up to `maxStringLength` (default **`65,536`** chars). | Non-object payloads are ignored; new component insertions past `maxComponents` are dropped; oversized strings and `actionName` (>256 chars) are clamped to prevent browser tab DoS. |
+| **4. Nested Structures & Maximum Depth** | Acyclic component trees up to `maxDepth` (default **`32`** levels). | Circular `child` / `children` references are broken per branch (`visited` set), and subtrees deeper than `maxDepth` are pruned to prevent stack overflow. |
+| **5. URL-Bearing Properties** | `href`, `src`, `action`, `formaction`, `poster`, and `xlink:href` matching `/^(https?:\/\/|\/|#)/i`. | `javascript:`, `data:`, `vbscript:`, and `file:` URLs are stripped **both** on initial `surfaceUpdate` and reactively inside `effect()` whenever a bound `dataModelUpdate` mutates a path. |
+| **6. Event / Action Trust Boundary** | User interactions on `Button` (`click`) or `PromptInput` (`submit`) with a declarative `action` descriptor emit a plain `{ surfaceId, actionName, sourceComponentId, context }` object to `onAction`. | No dynamic code evaluation (`eval`, `new Function`) ever occurs. **Host responsibility:** Treat `event.actionName` and `event.context` as untrusted intent—validate and authorize every action on the host/server before mutating application state or invoking privileged tools. |
 
 ```js
-// Restrict an untrusted agent to a minimal 4-component subset
+// Lock an untrusted agent to a 4-component allowlist with tighter resource budgets
 const restrictedSurface = createA2UiSurface({
-  allowedTypes: ['Card', 'Column', 'Text', 'Button'],
-  onAction: (ev) => handleSafeAction(ev),
+  allowlist: ['Card', 'Column', 'Text', 'Button'],
+  maxDepth: 12,
+  maxComponents: 100,
+  maxStringLength: 4096,
+  onAction: (ev) => {
+    // Always validate actionName & context on the host before executing mutations
+    if (ev.actionName === 'confirm_rebooking') handleSafeRebooking(ev.context);
+  },
 });
 ```
 
@@ -159,6 +169,7 @@ const restrictedSurface = createA2UiSurface({
 import {
   createA2UiSurface,
   DEFAULT_A2UI_CATALOG,
+  A2UI_SECURITY_DEFAULTS,
   type A2UiSurfaceOptions,
   type A2UiSurface,
   type A2UiActionEvent,

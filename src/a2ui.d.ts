@@ -27,8 +27,18 @@ export interface A2UiSurfaceOptions {
   surfaceId?: string;
   catalog?: Record<string, A2UiCatalogEntry>;
   allowlist?: string[] | Set<string>;
+  allowedTypes?: string[] | Set<string>;
   onAction?: (event: A2UiActionEvent) => void;
   initialData?: Record<string, any>;
+  maxDepth?: number;
+  maxComponents?: number;
+  maxStringLength?: number;
+}
+
+export interface A2UiSecurityDefaults {
+  readonly maxDepth: number;
+  readonly maxComponents: number;
+  readonly maxStringLength: number;
 }
 
 export interface A2UiSurfaceController {
@@ -42,6 +52,9 @@ export interface A2UiSurfaceController {
   destroy(): void;
 }
 
+export type A2UiSurface = A2UiSurfaceController;
+
 export declare const DEFAULT_A2UI_CATALOG: Readonly<Record<string, A2UiCatalogEntry>>;
+export declare const A2UI_SECURITY_DEFAULTS: A2UiSecurityDefaults;
 
 export declare function createA2UiSurface(options?: A2UiSurfaceOptions): A2UiSurfaceController;

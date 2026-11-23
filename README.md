@@ -15,9 +15,10 @@
 
 [**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (109 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**A2UI Demo**](https://elementum-sage.vercel.app/examples/a2ui.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr) · [**Deep Dive (Dev.to)**](https://dev.to/pinguxx/elementum-an-ai-native-ui-platform-with-built-in-mcp-agent-runtime-109-zero-dep-web-components-9oi)
 
-## 🧪 Verification & Browser Matrix (Beta — `v0.8.1`)
+## 🧪 Verification & Browser Matrix (Beta — `v0.8.2`)
 
-One command verifies everything end-to-end: `npm run verify:all` (see [QUALITY.md](https://github.com/pinguxx/Elementum/blob/main/QUALITY.md) for the per-component matrix and [AUDITS.md](https://github.com/pinguxx/Elementum/blob/main/AUDITS.md) for the stamped audit snapshot, tool versions, findings log, and reproduction commands).
+- **Core Release Gate (`npm run verify:all`)**: Runs `catalog:diff`, `check:release`, `typecheck`, `check:size`, `test` (unit + fuzz + ≥95% line coverage), `verify:consumer` (packed `.tgz` tarball), `verify:react` (React 18 & 19 SSR/StrictMode), and `test:e2e` (3-browser Playwright + `axe-core`).
+- **Companion Verification Workflows**: `npm run verify:starters` (builds & typechecks all framework starters), `npm run test:visual` (light/dark screenshot regression), `npm run bench:frameworks` (React/Vue/Vanilla parity measurement), and `npm run audits:report` / `npm run quality:report` (regenerates [AUDITS.md](https://github.com/pinguxx/Elementum/blob/main/AUDITS.md) and [QUALITY.md](https://github.com/pinguxx/Elementum/blob/main/QUALITY.md)).
 
 Every architectural claim in Elementum is backed by automated verification in CI:
 
@@ -37,7 +38,7 @@ Every architectural claim in Elementum is backed by automated verification in CI
 
 ### Option A: Zero-Build 2-Line CDN (HTML, CodePen, Claude Artifacts)
 
-Paste two lines into any HTML file or CodePen—no build step, bundler, or `npm install` required *(for production, pin a version like `@wcomp/elementum@0.8.1`)*:
+Paste two lines into any HTML file or CodePen—no build step, bundler, or `npm install` required *(for production, pin a version like `@wcomp/elementum@0.8.2`)*:
 
 ```html
 <link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />
@@ -388,7 +389,7 @@ npx elementum-mcp
 
 ```
 
-Exposed tools:
+Exposed tools (11 read-only tools):
 
 * `list_components`: Lists all 109 components in Elementum
 
@@ -398,11 +399,15 @@ Exposed tools:
 
 * `suggest_component`: Recommends components for a given UI goal
 
-* `validate_component_usage`: Checks HTML markup against declared attributes and slots
+* `validate_component_usage`: Checks HTML markup against declared attributes, closed enums, and parent/child slot rules
+
+* `validate_a2ui_messages`: Validates declarative A2UI v0.8/v0.9 JSON message arrays against `DEFAULT_A2UI_CATALOG`, checking missing root/child IDs, cycles, and unsafe URLs
 
 * `list_tokens`: Queries design tokens by category (color, spacing, radius)
 
-* `generate_snippet`: Generates valid HTML markup matching variants
+* `get_theme_tokens`: Returns light & dark CSS custom property token values
+
+* `generate_snippet`: Generates valid markup in `html`, `react` (`@wcomp/elementum/react`), `vue`, or `a2ui` JSON formats
 
 * `scaffold_component`: Scaffolds standard boilerplate code for new components
 

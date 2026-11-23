@@ -151,3 +151,82 @@ test('A2UI Renderer: enforces locked catalog allowlist, blocks unregistered/unsa
   surface.destroy();
   host.remove();
 });
+
+test('A2UI Renderer: enforces maxDepth, maxComponents, maxStringLength, reactive URL scheme checks, and dangerous prop stripping', () => {
+  const host = document.createElement('div');
+  document.body.appendChild(host);
+
+  const actions = [];
+  const surface = createA2UiSurface({
+    allowedTypes: ['Column', 'Text', 'Button'],
+    maxDepth: 2,
+    maxComponents: 4,
+    maxStringLength: 12,
+    initialData: { link: 'https://elementum-sage.vercel.app' },
+    onAction: (ev) => actions.push(ev),
+  });
+  surface.mount(host);
+
+  surface.processMessages([
+    {
+      surfaceUpdate: {
+        surfaceId: 'sec',
+        components: [
+          { id: 'c1', type: 'Column', children: ['c2', 'btn1'] },
+          { id: 'c2', type: 'Column', children: ['tooDeep'] },
+          { id: 'tooDeep', type: 'Text', props: { text: 'Depth 2 should be pruned' } },
+          {
+            id: 'btn1',
+            type: 'Button',
+            props: {
+              label: '0123456789ABCDEF',
+              href: { path: '/link' },
+              innerHTML: '<script>alert(1)</script>',
+              srcdoc: '<script>alert(1)</script>',
+              action: {
+                name: 'test_action',
+                context: [
+                  { key: 'safeKey', value: { literalString: 'ok' } },
+                  { key: '__proto__', value: { literalString: 'bad' } },
+                ],
+              },
+            },
+          },
+          // 5th component exceeds maxComponents=4 and should be dropped
+          { id: 'overCap', type: 'Text', props: { text: 'Dropped' } },
+        ],
+      },
+    },
+    { beginRendering: { surfaceId: 'sec', root: 'c1' } },
+  ]);
+
+  // Depth 0 (c1) and Depth 1 (c2, btn1) render; Depth 2 (tooDeep) is pruned by maxDepth=2
+  assert.ok(host.querySelector('[data-a2ui-id="c1"]'));
+  assert.ok(host.querySelector('[data-a2ui-id="c2"]'));
+  assert.equal(host.querySelector('[data-a2ui-id="tooDeep"]'), null);
+
+  const btn1 = host.querySelector('[data-a2ui-id="btn1"]');
+  // Clamped to maxStringLength=12
+  assert.equal(btn1.textContent, '0123456789AB');
+  // Safe initial URL is allowed (clamped to 12 chars)
+  assert.equal(btn1.getAttribute('href'), 'https://elem');
+  // Dangerous DOM sink attributes never set
+  assert.equal(btn1.hasAttribute('innerHTML'), false);
+  assert.equal(btn1.hasAttribute('srcdoc'), false);
+
+  // Reactive dataModelUpdate attempting to smuggle javascript: URL into bound href is stripped
+  surface.processMessage({
+    dataModelUpdate: { path: '/link', value: 'javascript:alert(1)' },
+  });
+  assert.equal(btn1.hasAttribute('href'), false);
+
+  // Action context strips __proto__
+  btn1.click();
+  assert.equal(actions.length, 1);
+  assert.equal(actions[0].context.safeKey, 'ok');
+  assert.equal(Object.prototype.hasOwnProperty.call(actions[0].context, '__proto__'), false);
+
+  surface.destroy();
+  host.remove();
+});
+
