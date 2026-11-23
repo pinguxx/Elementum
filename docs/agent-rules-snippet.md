@@ -24,8 +24,8 @@ Copy the block below into your project's `CLAUDE.md`, `.cursorrules`, `.github/c
      ```
    - Zero-build CDN (import map):
      ```html
-     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@wcomp/elementum@0.8.0/src/tokens.css" />
-     <script type="module" src="https://esm.sh/@wcomp/elementum@0.8.0"></script>
+     <link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum@0.8.0/src/tokens.css" />
+     <script type="module" src="https://unpkg.com/@wcomp/elementum@0.8.0/src/index.js"></script>
      ```
 
 3. **Exact Component Conventions**:

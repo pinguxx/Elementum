@@ -40,8 +40,8 @@ Every architectural claim in Elementum is backed by automated verification in CI
 Paste two pinned lines into any HTML file—no build step, bundler, or `npm install` required:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@wcomp/elementum@0.8.0/src/tokens.css" />
-<script type="module" src="https://esm.sh/@wcomp/elementum@0.8.0"></script>
+<link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum@0.8.0/src/tokens.css" />
+<script type="module" src="https://unpkg.com/@wcomp/elementum@0.8.0/src/index.js"></script>
 ```
 
 Or import individual tree-shakeable components with an ES import map:
@@ -50,8 +50,8 @@ Or import individual tree-shakeable components with an ES import map:
 <script type="importmap">
   {
     "imports": {
-      "@wcomp/elementum": "https://esm.sh/@wcomp/elementum@0.8.0",
-      "@wcomp/elementum/": "https://esm.sh/@wcomp/elementum@0.8.0/"
+      "@wcomp/elementum": "https://unpkg.com/@wcomp/elementum@0.8.0/src/index.js",
+      "@wcomp/elementum/": "https://unpkg.com/@wcomp/elementum@0.8.0/src/"
     }
   }
 </script>

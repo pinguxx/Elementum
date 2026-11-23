@@ -1,4 +1,4 @@
-import { signal } from 'https://unpkg.com/@wcomp/elementum/src/signal.js';
+import { signal } from 'https://unpkg.com/@wcomp/elementum@0.8.0/src/signal.js';
 
 const promptInput = document.getElementById('prompt-input');
 const responseCard = document.getElementById('response-card');
