@@ -253,7 +253,13 @@ test.describe('Hard-8 Complex Component Stress Tests (1000+ rows, Nested Modals,
     expect(cmdState.opened).toBe(true);
     expect(cmdState.closed).toBe(true);
 
-    // 8. WCAG 2.2 AA audit in RTL mobile layout
+    // 8. Let open transitions settle before WCAG 2.2 AA audit in RTL mobile layout
+    await page.evaluate(() => {
+      const dd = document.getElementById('dd');
+      if (dd && typeof dd.close === 'function') dd.close();
+    });
+    await page.waitForTimeout(250);
+
     const axe = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
       .analyze();

@@ -2893,7 +2893,7 @@ ${optionsHtml}
         return `import '@wcomp/elementum/tokens.css';\nimport { ${pascal} } from '@wcomp/elementum/react';\n\nexport function Example() {\n  return (\n    ${jsx.replace(/\n/g, '\n    ')}\n  );\n}`;
       }
       if (fmt === 'vue') {
-        return `<script setup>\nimport '@wcomp/elementum/tokens.css';\nimport '@wcomp/elementum/components/${comp.tag}.js';\n</script>\n\n<template>\n  ${cleanMarkup.replace(/\n/g, '\n  ')}\n</template>`;
+        return `<script setup>\nimport '@wcomp/elementum/tokens.css';\nimport '@wcomp/elementum/components/${comp.tag}.js';\n<\/script>\n\n<template>\n  ${cleanMarkup.replace(/\n/g, '\n  ')}\n</template>`;
       }
       // A2UI JSON representation
       const a2uiTypeMap = {
