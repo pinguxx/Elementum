@@ -15,7 +15,7 @@
 
 [**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (109 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**A2UI Demo**](https://elementum-sage.vercel.app/examples/a2ui.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr) · [**Deep Dive (Dev.to)**](https://dev.to/pinguxx/elementum-an-ai-native-ui-platform-with-built-in-mcp-agent-runtime-109-zero-dep-web-components-9oi)
 
-## 🧪 Verification & Browser Matrix (Beta — `v0.8.2`)
+## 🧪 Verification & Browser Matrix (Beta — `v0.8.3`)
 
 - **Core Release Gate (`npm run verify:all`)**: Runs `catalog:diff`, `check:release`, `typecheck`, `check:size`, `test` (unit + fuzz + ≥95% line coverage), `verify:consumer` (packed `.tgz` tarball), `verify:react` (React 18 & 19 SSR/StrictMode), and `test:e2e` (3-browser Playwright + `axe-core`).
 - **Companion Verification Workflows**: `npm run verify:starters` (builds & typechecks all framework starters), `npm run test:visual` (light/dark screenshot regression), `npm run bench:frameworks` (React/Vue/Vanilla parity measurement), and `npm run audits:report` / `npm run quality:report` (regenerates [AUDITS.md](https://github.com/pinguxx/Elementum/blob/main/AUDITS.md) and [QUALITY.md](https://github.com/pinguxx/Elementum/blob/main/QUALITY.md)).
@@ -38,7 +38,7 @@ Every architectural claim in Elementum is backed by automated verification in CI
 
 ### Option A: Zero-Build 2-Line CDN (HTML, CodePen, Claude Artifacts)
 
-Paste two lines into any HTML file or CodePen—no build step, bundler, or `npm install` required *(for production, pin a version like `@wcomp/elementum@0.8.2`)*:
+Paste two lines into any HTML file or CodePen—no build step, bundler, or `npm install` required *(for production, pin a version like `@wcomp/elementum@0.8.3`)*:
 
 ```html
 <link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />

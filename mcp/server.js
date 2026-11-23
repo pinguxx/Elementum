@@ -26,10 +26,19 @@ export const { TOOLS, handleToolCall, handleJsonRpcLine } = createMcpHandler({
 });
 
 // Start JSON-RPC stdio loop only when executed directly as CLI
-const isDirectRun =
-  process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));
+function isDirectCliRun(metaUrl, argv1 = process.argv[1]) {
+  if (!argv1) return false;
+  const selfPath = path.resolve(fileURLToPath(metaUrl));
+  const argPath = path.resolve(argv1);
+  if (argPath === selfPath) return true;
+  try {
+    return fs.realpathSync(argPath) === fs.realpathSync(selfPath);
+  } catch {
+    return false;
+  }
+}
 
-if (isDirectRun) {
+if (isDirectCliRun(import.meta.url)) {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,

@@ -9,6 +9,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 export const REMOTE_MCP_URL = 'https://elementum-sage.vercel.app/mcp';
 
@@ -48,14 +49,14 @@ export function buildAgentRulesSnippet(framework) {
   return `# Elementum UI Engineering Rules (${framework})
 
 1. **Always verify component APIs via Elementum MCP** (\`${REMOTE_MCP_URL}\`) before writing markup:
-   - Call \`get_component_schema\` to verify exact tag names, attributes, events, and slots.
+   - Call \`get_component_doc\` to verify exact tag names, attributes, events, and slots.
    - Call \`validate_component_usage\` and \`lint_accessibility\` on generated HTML before finishing.
 2. **Import tokens & components**:
    \`\`\`js
    ${importHint}
    \`\`\`
 3. **Key API conventions**:
-   - \`<el-dialog>\`: open/close via \`dialog.showModal()\` and \`dialog.close()\` (do not assign \`dialog.open = true\`).
+   - \`<el-dialog>\`: open/close via \`dialog.showModal()\` / \`dialog.close()\` or \`dialog.open = true / false\`.
    - \`<el-input>\` / \`<el-textarea>\`: read \`e.detail?.value ?? e.target.value\` on \`input\` / \`change\`.
    - \`<el-table>\`: assign \`.columns\` and \`.data\` as JS properties (arrays).
    - Styling: override \`--el-*\` design tokens or target \`::part(...)\` selectors (see \`docs/styling-reference.md\`).
@@ -70,9 +71,108 @@ export function buildStarterTokensCss() {
   --el-radius-md: 10px;
 }
 
+[data-theme="dark"],
 :root[data-theme="dark"] {
   --el-accent-primary: #60a5fa;
 }
+`;
+}
+
+export function buildStarterIndexHtml() {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elementum Starter App</title>
+  <link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />
+  <link rel="stylesheet" href="./elementum-tokens.css" />
+  <script type="module" src="https://unpkg.com/@wcomp/elementum"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: var(--el-font-sans, system-ui, sans-serif);
+      background: var(--el-bg-primary, #f8fafc);
+      color: var(--el-text-primary, #0f172a);
+    }
+    main {
+      max-width: 960px;
+      margin: 32px auto;
+      padding: 0 20px;
+      display: grid;
+      gap: 20px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+  </style>
+</head>
+<body>
+  <el-navbar sticky brand="⚡ Elementum App" badge="Ready" badge-variant="success">
+    <a href="#" active>Overview</a>
+    <a href="https://elementum-sage.vercel.app/examples/index.html" target="_blank" rel="noopener">Catalog (109)</a>
+    <div slot="actions" style="display:flex;align-items:center;gap:10px;">
+      <el-theme-switch></el-theme-switch>
+      <el-button id="open-modal" variant="primary" size="sm">New Item</el-button>
+    </div>
+  </el-navbar>
+
+  <main>
+    <el-card bordered>
+      <h2 slot="header" style="margin:0;font-size:1.15rem;">Welcome to @wcomp/elementum</h2>
+      <p style="margin:0 0 14px;color:var(--el-text-secondary);">
+        Your project is configured with 109 zero-dependency Web Components, W3C design tokens, and the Elementum MCP server (<code>.mcp.json</code>).
+      </p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <el-input id="quick-input" placeholder="Type a message..." aria-label="Quick message"></el-input>
+        <el-button id="toast-btn" variant="secondary">Trigger Toast</el-button>
+      </div>
+    </el-card>
+
+    <div class="grid">
+      <el-card bordered>
+        <div style="font-size:0.8rem;color:var(--el-text-secondary);">COMPONENTS READY</div>
+        <div style="font-size:1.8rem;font-weight:700;margin:6px 0;">109</div>
+        <el-badge variant="success">WCAG 2.2 AA Verified</el-badge>
+      </el-card>
+      <el-card bordered>
+        <div style="font-size:0.8rem;color:var(--el-text-secondary);">RUNTIME DEPENDENCIES</div>
+        <div style="font-size:1.8rem;font-weight:700;margin:6px 0;">0</div>
+        <el-progress value="100" max="100" aria-label="Setup completion"></el-progress>
+      </el-card>
+    </div>
+  </main>
+
+  <el-dialog id="demo-dialog" title="Create New Item">
+    <div style="display:grid;gap:12px;min-width:280px;">
+      <el-input id="item-name" aria-label="Item Name" placeholder="e.g. Production API Key" required></el-input>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px;">
+        <el-button id="close-modal" variant="secondary">Cancel</el-button>
+        <el-button id="save-modal" variant="primary">Create</el-button>
+      </div>
+    </div>
+  </el-dialog>
+
+  <el-toaster id="toaster"></el-toaster>
+
+  <script type="module">
+    const dialog = document.getElementById('demo-dialog');
+    const toaster = document.getElementById('toaster');
+    document.getElementById('open-modal').addEventListener('click', () => dialog.showModal());
+    document.getElementById('close-modal').addEventListener('click', () => dialog.close());
+    document.getElementById('save-modal').addEventListener('click', () => {
+      dialog.close();
+      toaster.show?.({ title: 'Created', description: 'New item saved.', variant: 'success' });
+    });
+    document.getElementById('toast-btn').addEventListener('click', () => {
+      const val = document.getElementById('quick-input').value || 'Hello from Elementum!';
+      toaster.show?.({ title: 'Notification', description: val, variant: 'info' });
+    });
+  </script>
+</body>
+</html>
 `;
 }
 
@@ -131,6 +231,16 @@ export function runInit(argv = process.argv.slice(2), cwd = process.cwd()) {
         fs.writeFileSync(tokensFile, buildStarterTokensCss(), 'utf8');
       }
       written.push('elementum-tokens.css');
+    }
+
+    if (framework === 'vanilla') {
+      const indexHtmlFile = path.join(targetDir, 'index.html');
+      if (!fs.existsSync(indexHtmlFile)) {
+        if (!dryRun) {
+          fs.writeFileSync(indexHtmlFile, buildStarterIndexHtml(), 'utf8');
+        }
+        written.push('index.html');
+      }
     }
   }
 
@@ -213,8 +323,19 @@ export async function runCheck(argv = [], cwd = process.cwd()) {
   };
 }
 
-const isMain = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(new URL(import.meta.url).pathname);
-if (isMain) {
+export function isCliEntry(metaUrl, argv1 = process.argv[1]) {
+  if (!argv1) return false;
+  const selfPath = path.resolve(fileURLToPath(metaUrl));
+  const argPath = path.resolve(argv1);
+  if (argPath === selfPath) return true;
+  try {
+    return fs.realpathSync(argPath) === fs.realpathSync(selfPath);
+  } catch {
+    return path.basename(argPath).replace(/\.(js|mjs|cjs|cmd|ps1)$/i, '') === 'elementum';
+  }
+}
+
+if (isCliEntry(import.meta.url)) {
   const args = process.argv.slice(2);
   if (args.includes('--help') || args.includes('-h')) {
     console.log(

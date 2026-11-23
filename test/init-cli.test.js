@@ -3,12 +3,14 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import {
   detectFramework,
   buildMcpConfig,
   buildAgentRulesSnippet,
   runInit,
   runCheck,
+  isCliEntry,
   REMOTE_MCP_URL,
 } from '../bin/elementum.js';
 
@@ -70,6 +72,40 @@ test('runInit writes .mcp.json, .cursor/mcp.json, elementum.rules.md, and elemen
     // Second run with --mcp-only skips rules & tokens
     const mcpOnlyRes = runInit(['--mcp-only'], tmp);
     assert.deepEqual(mcpOnlyRes.written, ['.mcp.json', '.cursor/mcp.json']);
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test('runInit in a vanilla project creates a working starter index.html and works when invoked via symlinked bin', async () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'el-init-vanilla-'));
+  try {
+    fs.writeFileSync(path.join(tmp, 'package.json'), JSON.stringify({ dependencies: { '@wcomp/elementum': '^0.8.2' } }));
+    const binDir = path.join(tmp, 'node_modules', '.bin');
+    fs.mkdirSync(binDir, { recursive: true });
+    const symlinkBin = path.join(binDir, 'elementum');
+    const realBin = path.resolve('bin/elementum.js');
+    fs.symlinkSync(realBin, symlinkBin);
+
+    assert.equal(isCliEntry(new URL(`file://${realBin}`).href, symlinkBin), true);
+
+    const stdout = execFileSync(process.execPath, [symlinkBin, 'init'], {
+      cwd: tmp,
+      encoding: 'utf8',
+    });
+    assert.ok(stdout.includes('Initialized Elementum (detected: vanilla)'));
+    assert.ok(fs.existsSync(path.join(tmp, '.mcp.json')));
+    assert.ok(fs.existsSync(path.join(tmp, '.cursor', 'mcp.json')));
+    assert.ok(fs.existsSync(path.join(tmp, 'elementum.rules.md')));
+    assert.ok(fs.existsSync(path.join(tmp, 'elementum-tokens.css')));
+    assert.ok(fs.existsSync(path.join(tmp, 'index.html')));
+
+    // Verify generated starter index.html passes `elementum check` with 0 errors and 0 warnings
+    const checkReport = await runCheck(['index.html'], tmp);
+    assert.equal(checkReport.valid, true);
+    assert.equal(checkReport.errorCount, 0);
+    assert.equal(checkReport.warningCount, 0);
+    assert.ok(checkReport.totalTagsChecked >= 8);
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }

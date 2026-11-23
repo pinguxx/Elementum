@@ -4,6 +4,12 @@ All notable changes to `@wcomp/elementum` are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.3] — 2026-11-23 ("Windows PowerShell & Symlink CLI Fix + Starter index.html for Vanilla Projects")
+
+### Fixed
+- **Windows & Symlink `npx @wcomp/elementum init` / `check` Execution (`bin/elementum.js`, `mcp/server.js`)**: Replaced `new URL(import.meta.url).pathname` (which prefixes `/C:/` on Windows and fails `path.resolve` comparison against `process.argv[1]`) with `fileURLToPath(import.meta.url)` + `fs.realpathSync` symlink resolution so `npx @wcomp/elementum init` and `npx @wcomp/elementum check` execute reliably on Windows PowerShell/CMD, macOS, and Linux.
+- **Vanilla Project Starter `index.html` (`bin/elementum.js`)**: When `npx @wcomp/elementum init` detects a `vanilla` project without an existing `index.html`, it now generates a ready-to-open `index.html` starter app alongside `.mcp.json`, `.cursor/mcp.json`, `elementum.rules.md`, and `elementum-tokens.css`.
+
 ## [0.8.2] — 2026-11-23 ("A2UI Security Boundaries, Multi-Format MCP Snippets, CLI Linter & IDE Autocomplete")
 
 ### Added
