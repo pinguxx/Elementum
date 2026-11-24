@@ -9,9 +9,9 @@
 
 > **Elementum** (*Latin*: /e.leˈmen.tum/) is a framework-independent UI component library and MCP contract server built on 109 zero-dependency Web Components.
 
-| Component count | Dependencies | Avg gzip | Accessibility | License |
+| Component count | Dependencies | Bundle (min+gzip) | Accessibility | License |
 | :--- | :---: | :---: | :---: | :---: |
-| **109 custom elements** | **0 runtime deps** | **2.27 KB** | **WCAG 2.2 AA** (`@axe-core/playwright`) | **MIT** |
+| **109 custom elements** | **0 runtime deps** | **4.77 KB core** · **104.1 KB all 109** | **WCAG 2.2 AA** (`@axe-core/playwright`) | **MIT** |
 
 [**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (109 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**A2UI Demo**](https://elementum-sage.vercel.app/examples/a2ui.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr) · [**Docs**](https://elementum-sage.vercel.app/docs.html)
 
@@ -25,7 +25,7 @@
 | **Formal invariant verifier** | `npm run verify:formal` | 6 invariants (6,162 states/topologies): 1,440 4-node reactive DAGs, `batch()` fault isolation, `AsyncSignal` self-subscription/races, A2UI cyclic/URL bounds, `ElToaster` active-deck exclusivity, AG-UI `runId`/path isolation |
 | **API surface & catalog sync** | `npm run audit:api`, `npm run catalog:diff` | 109 components, 17 FACE controls, canonical variant/size/event naming, source-vs-catalog parity |
 | **Unit, fuzz & security suite** | `node:test` + `happy-dom` (Node 20/22/24; Linux, Windows, macOS) | 235+ tests, >= 95% line coverage enforced in CI, 1,000-graph signal fuzzer, XSS/ReDoS/prototype-pollution checks, CodeQL |
-| **Gzipped size budgets** | `npm run check:size` (`size-budget.json`) | 86 entrypoints gated in CI (`core + behaviors + agent + ssr`: 35.8 KB, avg component: 2.27 KB gzip) |
+| **Gzipped size budgets** | `npm run check:size` (`size-budget.json`) | 86 entrypoints gated in CI (`4.77 KB` min+gzip core, `104.1 KB` min+gzip all 109 components, `2.27 KB` avg unminified component gzip, `35.8 KB` core + behaviors + agent + ssr) |
 | **External consumer & React 18/19** | `npm run verify:consumer`, `npm run verify:react` | Real packed `.tgz` install, strict `tsc --noEmit --strict`, React 18 & 19 SSR, StrictMode, and TSX checks |
 | **Real browser E2E & WCAG 2.2 AA** | Playwright (Chromium, Firefox, WebKit) + `@axe-core/playwright` | All 109 catalog components, 0/109 dark-mode contrast violations, 10-widget WAI-ARIA APG keyboard suite, zero-JS DSD SSR, AG-UI SSE, A2UI |
 

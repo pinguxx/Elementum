@@ -9,7 +9,7 @@ This guide compares `@wcomp/elementum` with **Shoelace / Web Awesome**, **Radix 
 | Capability | `@wcomp/elementum` | Shoelace / Web Awesome | Radix UI + React Aria | Lit |
 | :--- | :--- | :--- | :--- | :--- |
 | **Runtime dependencies** | **0** (core + behaviors + SSR + MCP) | Floating UI / Lit runtime | React + Radix / Aria packages | `lit` (`@lit/reactive-element`, `lit-html`) |
-| **Core bundle (gzip)** | **18.82 KB** transitive (`elementum + signal + template`) | ~14–40 KB+ depending on kit | React runtime + per-primitive packages | ~6–16 KB+ base runtime |
+| **Core bundle (gzip)** | **4.77 KB** min+gzip (`19.23 KB` unminified transitive: `elementum + signal + template`; `104.1 KB` min+gzip for all 109 components) | ~14–40 KB+ depending on kit | React runtime + per-primitive packages | ~6–16 KB+ base runtime |
 | **Reactivity model** | Fine-grained `signal()` / `computed()` / `effect()` | Lit reactive properties | React hooks + virtual DOM re-renders | Dirty-checking `requestUpdate()` cycle |
 | **Form participation** | Native **FACE** (`ElementInternals`) | Custom form controller | Controlled React state or form libraries | Manual or community controllers |
 | **Declarative Shadow DOM SSR** | Built-in (`@wcomp/elementum/ssr`) | Requires `@lit-labs/ssr` | React SSR (no Shadow DOM encapsulation) | Requires `@lit-labs/ssr` |
