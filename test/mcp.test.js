@@ -269,3 +269,178 @@ test('MCP separated component schema (variants, states, props, constraints vs ex
   assert.equal(invalidA2uiCheck.valid, false);
   assert.ok(invalidA2uiCheck.issues.length >= 3);
 });
+
+test('MCP Edge & Core security hardening: headers, Origin DNS-rebinding guard, Content-Type 415, batch limits, and pure-JS runtime', async () => {
+  const fs = await import('node:fs');
+  const { handleJsonRpcLine, handleToolCall } = await import('../mcp/server.js');
+  const { createEdgeMcpHandler, SECURITY_HEADERS, isAllowedOrigin } = await import('../mcp/edge.js');
+
+  const coreSrc = fs.readFileSync(new URL('../mcp/core.js', import.meta.url), 'utf8');
+  const edgeSrc = fs.readFileSync(new URL('../mcp/edge.js', import.meta.url), 'utf8');
+  for (const [label, src] of [['mcp/core.js', coreSrc], ['mcp/edge.js', edgeSrc]]) {
+    assert.equal(/(?:from|import\s*\()\s*['"]node:/.test(src), false, `${label} must use zero Node built-ins`);
+    assert.equal(/\bBuffer\b/.test(src), false, `${label} must not reference Node Buffer`);
+    assert.equal(/\bprocess\./.test(src), false, `${label} must not reference Node process`);
+  }
+
+  const manifest = JSON.parse(fs.readFileSync(new URL('../custom-elements.json', import.meta.url), 'utf8'));
+  const tokens = JSON.parse(fs.readFileSync(new URL('../tokens/figma-tokens.json', import.meta.url), 'utf8'));
+  const pkg = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+  const metadata = JSON.parse(fs.readFileSync(new URL('../mcp/component-metadata.json', import.meta.url), 'utf8'));
+
+  // 1. Public edge handler checks headers across all status codes + Origin & Content-Type guards
+  const edgeHandler = createEdgeMcpHandler({ manifest, tokens, pkg, metadata });
+  const assertSecurityHeaders = (res) => {
+    for (const [k, v] of Object.entries(SECURITY_HEADERS)) {
+      assert.equal(res.headers.get(k), v, `Missing/mismatched security header ${k}`);
+    }
+  };
+
+  const optionsRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/mcp', {
+    method: 'OPTIONS',
+    headers: { origin: 'https://claude.ai' },
+  }));
+  assert.equal(optionsRes.status, 204);
+  assertSecurityHeaders(optionsRes);
+  assert.equal(optionsRes.headers.get('access-control-allow-origin'), '*');
+
+  const getRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/mcp', { method: 'GET' }));
+  assert.equal(getRes.status, 405);
+  assert.equal(getRes.headers.get('allow'), 'POST, DELETE, OPTIONS');
+  assertSecurityHeaders(getRes);
+
+  // Blocked origins (DNS rebinding / opaque null / non-HTTPS remote)
+  for (const badOrigin of ['null', 'not-a-valid-url', 'http://evil.example.com', 'file:///etc/passwd', '']) {
+    const res403 = await edgeHandler(new Request('https://elementum-sage.vercel.app/mcp', {
+      method: 'POST',
+      headers: { origin: badOrigin, 'content-type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'ping' }),
+    }));
+    assert.equal(res403.status, 403, `Expected 403 for Origin: "${badOrigin}"`);
+    assertSecurityHeaders(res403);
+  }
+  assert.equal(isAllowedOrigin('https://app.example.com').allowed, true);
+  assert.equal(isAllowedOrigin('http://localhost:3000').allowed, true);
+  assert.equal(isAllowedOrigin('http://127.0.0.1:8080').allowed, true);
+  assert.equal(isAllowedOrigin('http://[::1]:5173').allowed, true);
+  assert.equal(isAllowedOrigin(null).allowed, false);
+
+  // Allowed loopback origin over POST JSON
+  const loopbackOk = await edgeHandler(new Request('https://elementum-sage.vercel.app/mcp', {
+    method: 'POST',
+    headers: { origin: 'http://localhost:3000', 'content-type': 'application/json; charset=utf-8' },
+    body: JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'ping' }),
+  }));
+  assert.equal(loopbackOk.status, 200);
+  assertSecurityHeaders(loopbackOk);
+
+  // 415 CSRF Content-Type guard (form types & cross-origin non-JSON)
+  for (const badType of ['text/plain', 'application/x-www-form-urlencoded', 'multipart/form-data', 'text/html']) {
+    const res415 = await edgeHandler(new Request('https://elementum-sage.vercel.app/mcp', {
+      method: 'POST',
+      headers: { 'content-type': badType },
+      body: '{}',
+    }));
+    assert.equal(res415.status, 415, `Expected 415 for Content-Type: ${badType}`);
+    assertSecurityHeaders(res415);
+  }
+  const crossOriginXml = await edgeHandler(new Request('https://elementum-sage.vercel.app/mcp', {
+    method: 'POST',
+    headers: { origin: 'https://claude.ai', 'content-type': 'application/xml' },
+    body: '<ping/>',
+  }));
+  assert.equal(crossOriginXml.status, 415);
+
+  // 413 Payload limit via declared content-length and actual body size
+  const largeHeaderRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/mcp', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'content-length': String(200 * 1024) },
+    body: '{}',
+  }));
+  assert.equal(largeHeaderRes.status, 413);
+  assertSecurityHeaders(largeHeaderRes);
+
+  const largeBodyRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/mcp', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ jsonrpc: '2.0', id: 1, pad: 'x'.repeat(130 * 1024) }),
+  }));
+  assert.equal(largeBodyRes.status, 413);
+
+  // 2. Explicit allowlist mode + Vary: Origin
+  const restrictedHandler = createEdgeMcpHandler({
+    manifest,
+    tokens,
+    pkg,
+    metadata,
+    allowedOrigins: new Set(['https://trusted.example.com']),
+  });
+  const allowedOriginRes = await restrictedHandler(new Request('https://elementum-sage.vercel.app/mcp', {
+    method: 'POST',
+    headers: { origin: 'https://trusted.example.com', 'content-type': 'application/json' },
+    body: JSON.stringify({ jsonrpc: '2.0', id: 3, method: 'ping' }),
+  }));
+  assert.equal(allowedOriginRes.status, 200);
+  assert.equal(allowedOriginRes.headers.get('access-control-allow-origin'), 'https://trusted.example.com');
+  assert.equal(allowedOriginRes.headers.get('vary'), 'Origin');
+
+  const blockedAllowlistRes = await restrictedHandler(new Request('https://elementum-sage.vercel.app/mcp', {
+    method: 'POST',
+    headers: { origin: 'https://other.example.com', 'content-type': 'application/json' },
+    body: JSON.stringify({ jsonrpc: '2.0', id: 4, method: 'ping' }),
+  }));
+  assert.equal(blockedAllowlistRes.status, 403);
+
+  const noOriginAllowlistRes = await restrictedHandler(new Request('https://elementum-sage.vercel.app/mcp', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ jsonrpc: '2.0', id: 5, method: 'ping' }),
+  }));
+  assert.equal(noOriginAllowlistRes.status, 200);
+  assert.equal(noOriginAllowlistRes.headers.get('access-control-allow-origin'), null);
+  assert.equal(noOriginAllowlistRes.headers.get('vary'), 'Origin');
+
+  // 3. Core MCP batch limit & suggest_component term cap & A2UI prototype-key rejection
+  const oversizeBatch = Array.from({ length: 21 }, (_, idx) => ({ jsonrpc: '2.0', id: idx + 1, method: 'ping' }));
+  const batchErr = handleJsonRpcLine(JSON.stringify(oversizeBatch));
+  assert.equal(batchErr.error.code, -32600);
+  assert.match(batchErr.error.message, /Batch size exceeds maximum/);
+
+  const longQuery = handleToolCall('suggest_component', {
+    query: Array.from({ length: 30 }, (_, i) => (i === 25 ? 'button' : `kw${i}`)).join(' '),
+  });
+  assert.ok(Array.isArray(longQuery.suggestions));
+
+  const protoProps = JSON.parse('{"__proto__":{"polluted":true},"constructor":{},"prototype":{}}');
+  const a2uiProtoRes = handleToolCall('validate_a2ui_messages', {
+    messages: [
+      {
+        surfaceUpdate: {
+          surfaceId: 's1',
+          components: [{ id: 'p1', type: 'Button', props: protoProps }],
+        },
+      },
+    ],
+  });
+  assert.equal(a2uiProtoRes.valid, false);
+  assert.equal(
+    a2uiProtoRes.issues.filter((i) => i.message.includes('Forbidden prototype key')).length,
+    3
+  );
+
+  // Fallback getResolvedMetadata (no precomputed metadata), list_components & list_tokens
+  const { createMcpHandler } = await import('../mcp/core.js');
+  const bareMcp = createMcpHandler({ manifest, tokens, pkg });
+  const compList = bareMcp.handleToolCall('list_components', {});
+  assert.equal(compList.count, 109);
+  const allTokens = bareMcp.handleToolCall('list_tokens', {});
+  assert.ok(allTokens && typeof allTokens === 'object');
+  const colorTokens = bareMcp.handleToolCall('list_tokens', { category: 'color' });
+  assert.ok(colorTokens && !colorTokens.error);
+  const missingTokens = bareMcp.handleToolCall('list_tokens', { category: 'nonexistent-category' });
+  assert.ok(typeof missingTokens.error === 'string');
+  const bareBtnDoc = bareMcp.handleToolCall('get_component_doc', { tag: 'el-button' });
+  assert.ok(bareBtnDoc.variants.some((v) => v.name === 'variant'));
+  assert.ok(bareBtnDoc.states.some((s) => s.name === 'disabled'));
+  assert.ok(Array.isArray(bareBtnDoc.props));
+});

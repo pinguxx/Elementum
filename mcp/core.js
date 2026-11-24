@@ -8,9 +8,11 @@ const SUPPORTED_PROTOCOL_VERSIONS = ['2025-06-18', '2025-03-26', '2024-11-05'];
 
 export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
   const MAX_PAYLOAD_BYTES = 128 * 1024;
+  const MAX_BATCH_SIZE = 20;
   const SAFE_TAG_RE = /^[a-z][a-z0-9]*-[a-z0-9-]+$/;
   const SAFE_CLASS_RE = /^[A-Z][A-Za-z0-9_]*$/;
   const SAFE_ATTR_RE = /^[a-z][a-z0-9-]*$/;
+  const FORBIDDEN_PROTO_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
   const GLOBAL_HTML_ATTRS = new Set([
     'id', 'class', 'style', 'slot', 'part', 'title', 'lang', 'dir', 'hidden',
     'tabindex', 'role', 'draggable', 'contenteditable', 'spellcheck', 'translate',
@@ -614,7 +616,7 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
       const query = typeof args.query === 'string' ? args.query.trim().toLowerCase() : '';
       if (!query) return { suggestions: [] };
       const limit = Math.max(1, Math.min(20, Number(args.limit) || 5));
-      const terms = query.split(/\s+/).filter(Boolean);
+      const terms = query.split(/\s+/).filter(Boolean).slice(0, 20);
   
       const scored = allDeclarations
         .map((d) => {
@@ -810,6 +812,16 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
               });
             }
             for (const [k, v] of Object.entries(props || {})) {
+              if (FORBIDDEN_PROTO_KEYS.has(k)) {
+                issues.push({
+                  severity: 'error',
+                  messageIndex: idx,
+                  nodeId: rawNode.id,
+                  attribute: k,
+                  message: `Forbidden prototype key "${k}" in A2UI component props.`,
+                });
+                continue;
+              }
               if (/^on/i.test(k)) {
                 issues.push({
                   severity: 'error',
@@ -968,6 +980,9 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
     if (Array.isArray(parsed)) {
       if (parsed.length === 0) {
         return { jsonrpc: '2.0', id: null, error: { code: -32600, message: 'Invalid empty batch.' } };
+      }
+      if (parsed.length > MAX_BATCH_SIZE) {
+        return { jsonrpc: '2.0', id: null, error: { code: -32600, message: `Batch size exceeds maximum of ${MAX_BATCH_SIZE} requests.` } };
       }
       const responses = parsed.map(handleSingleRequest).filter((r) => r !== null);
       return responses.length > 0 ? responses : null;

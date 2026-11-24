@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 /**
- * Zero-dependency Elementum setup CLI (`npx @wcomp/elementum init`).
+ * Zero-dependency Elementum CLI (`npx @wcomp/elementum init` / `check` / `mcp`).
  *
  * Detects the host project (Next.js, React, Vue, Svelte, Vite, Vanilla),
  * writes MCP configuration (.mcp.json & .cursor/mcp.json), drops in
- * elementum.rules.md for AI coding agents, and optionally creates a starter
- * elementum-tokens.css override file.
+ * elementum.rules.md for AI coding agents, and optionally creates starter files.
+ * When invoked with no arguments on piped stdio (e.g. `npx -y @wcomp/elementum`)
+ * or via `mcp`, starts the read-only JSON-RPC stdio MCP server with zero disk writes.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -456,13 +457,16 @@ export function isCliEntry(metaUrl, argv1 = process.argv[1]) {
 
 if (isCliEntry(import.meta.url)) {
   const args = process.argv.slice(2);
-  if (args.includes('--help') || args.includes('-h')) {
-    console.log(
-      `Usage:\n  npx @wcomp/elementum init [--dir=<path>] [--example] [--mcp-only] [--dry-run]\n  npx @wcomp/elementum check [files-or-dirs...] [--json]`
-    );
+  const usageText =
+    `Usage:\n  npx @wcomp/elementum init [--dir=<path>] [--example] [--mcp-only] [--dry-run]\n  npx @wcomp/elementum check [files-or-dirs...] [--json]\n  npx @wcomp/elementum mcp`;
+
+  if (args[0] === 'mcp' || (args.length === 0 && !process.stdin.isTTY)) {
+    const { startStdioServer } = await import('../mcp/server.js');
+    startStdioServer();
+  } else if (args.includes('--help') || args.includes('-h') || (args.length === 0 && process.stdin.isTTY)) {
+    console.log(usageText);
     process.exit(0);
-  }
-  if (args[0] === 'check') {
+  } else if (args[0] === 'check') {
     const checkArgs = args.slice(1);
     const report = await runCheck(checkArgs);
     if (checkArgs.includes('--json')) {
@@ -479,24 +483,28 @@ if (isCliEntry(import.meta.url)) {
       }
     }
     process.exit(report.valid ? 0 : 1);
-  }
-  const cmd = args[0] === 'init' ? args.slice(1) : args;
-  const result = runInit(cmd);
-  const prefix = result.dryRun ? '[dry-run] Would write' : 'Initialized Elementum';
-  console.log(`${prefix} (detected: ${result.framework}) in ${result.targetDir}:`);
-  for (const f of result.written) {
-    console.log(`  - ${f}`);
-  }
-  if (!result.dryRun) {
-    if (result.framework === 'vanilla' && result.written.includes('index.html')) {
-      const openCmd = process.platform === 'win32' ? 'start index.html' : process.platform === 'darwin' ? 'open index.html' : 'xdg-open index.html';
-      console.log(`\nNext steps:\n  1. Open your starter page: ${openCmd}\n  2. Validate markup & accessibility anytime: npx @wcomp/elementum check`);
-    } else {
-      const importLine =
-        result.framework === 'react' || result.framework === 'next'
-          ? `import '@wcomp/elementum/tokens.css';\n     import { ElButton, ElCard, ElDialog } from '@wcomp/elementum/react';`
-          : `import '@wcomp/elementum/tokens.css';\n     import '@wcomp/elementum';`;
-      console.log(`\nNext steps:\n  1. Import in your app entry:\n     ${importLine}\n  2. Validate markup & accessibility anytime: npx @wcomp/elementum check`);
+  } else if (args[0] === 'init' || args[0]?.startsWith('--')) {
+    const cmd = args[0] === 'init' ? args.slice(1) : args;
+    const result = runInit(cmd);
+    const prefix = result.dryRun ? '[dry-run] Would write' : 'Initialized Elementum';
+    console.log(`${prefix} (detected: ${result.framework}) in ${result.targetDir}:`);
+    for (const f of result.written) {
+      console.log(`  - ${f}`);
     }
+    if (!result.dryRun) {
+      if (result.framework === 'vanilla' && result.written.includes('index.html')) {
+        const openCmd = process.platform === 'win32' ? 'start index.html' : process.platform === 'darwin' ? 'open index.html' : 'xdg-open index.html';
+        console.log(`\nNext steps:\n  1. Open your starter page: ${openCmd}\n  2. Validate markup & accessibility anytime: npx @wcomp/elementum check`);
+      } else {
+        const importLine =
+          result.framework === 'react' || result.framework === 'next'
+            ? `import '@wcomp/elementum/tokens.css';\n     import { ElButton, ElCard, ElDialog } from '@wcomp/elementum/react';`
+            : `import '@wcomp/elementum/tokens.css';\n     import '@wcomp/elementum';`;
+        console.log(`\nNext steps:\n  1. Import in your app entry:\n     ${importLine}\n  2. Validate markup & accessibility anytime: npx @wcomp/elementum check`);
+      }
+    }
+  } else {
+    console.error(`Unknown command: ${args[0]}\n\n${usageText}`);
+    process.exit(1);
   }
 }

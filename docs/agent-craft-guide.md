@@ -232,7 +232,7 @@ Avoid common Web Component mistakes by using the exact Elementum APIs:
 
 Before finishing a UI task, coding agents should run this 3-step verification loop:
 
-1. **Inspect before writing (MCP)**: Call `get_component_doc` and `list_tokens` on `npx elementum-mcp` (or `https://elementum-sage.vercel.app/api/mcp`) instead of guessing attributes, slots, or token names.
+1. **Inspect before writing (MCP)**: Call `get_component_doc` and `list_tokens` on `npx elementum-mcp` (or `https://elementum-sage.vercel.app/mcp`) instead of guessing attributes, slots, or token names.
 2. **Audit accessibility statically (MCP)**: Pass generated HTML through the MCP `lint_accessibility` tool to catch missing labels, invalid ARIA roles, or form issues immediately.
 3. **Verify live interactions (`@wcomp/elementum/agent`)**: Use `snapshot(root)` and `act(root, command)` to confirm the rendered Shadow DOM components are reachable by role/name and respond to semantic actions (`click`, `type`, `toggle`, `open`, `close`):
    ```js

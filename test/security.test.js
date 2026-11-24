@@ -163,3 +163,60 @@ test('Security 6: MCP server supports ping, readOnly annotations on all 11 tools
   const textChildBtn = handleToolCall('lint_accessibility', { markup: '<el-button><span>Save</span></el-button>' });
   assert.equal(textChildBtn.valid, true);
 });
+
+test('Security 7: Vercel SSR handler restricts methods, adds security headers, and governance/package manifests are complete', async () => {
+  const { default: vercelSsrHandler, SSR_SECURITY_HEADERS } = await import('../api/ssr.js');
+
+  const callSsr = (req) => {
+    const headers = {};
+    let body = '';
+    const res = {
+      statusCode: 0,
+      setHeader(k, v) { headers[k.toLowerCase()] = String(v); },
+      end(chunk) { body = chunk === undefined ? '' : String(chunk); },
+    };
+    vercelSsrHandler(req, res);
+    return { statusCode: res.statusCode, headers, body };
+  };
+
+  const getRes = callSsr({ method: 'GET', url: '/ssr?hydrate=0' });
+  assert.equal(getRes.statusCode, 200);
+  for (const [k, v] of Object.entries(SSR_SECURITY_HEADERS)) {
+    assert.equal(getRes.headers[k.toLowerCase()], v, `Missing/mismatched SSR header ${k}`);
+  }
+  assert.ok(getRes.body.includes('<html lang="en" data-dsd>'));
+
+  const headRes = callSsr({ method: 'HEAD', url: '/ssr' });
+  assert.equal(headRes.statusCode, 200);
+  assert.equal(headRes.body, '');
+  assert.equal(headRes.headers['x-frame-options'], 'DENY');
+
+  const postRes = callSsr({ method: 'POST', url: '/ssr' });
+  assert.equal(postRes.statusCode, 405);
+  assert.equal(postRes.headers.allow, 'GET, HEAD');
+  assert.equal(postRes.headers['x-content-type-options'], 'nosniff');
+
+  // Verify package.json has zero runtime deps and ships server.json + SECURITY.md
+  const pkg = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+  assert.equal('dependencies' in pkg, false);
+  assert.ok(Array.isArray(pkg.files) && pkg.files.includes('server.json'));
+  assert.ok(pkg.files.includes('SECURITY.md'));
+
+  // Verify governance & security disclosure templates + Vercel header config
+  const coc = fs.readFileSync(new URL('../CODE_OF_CONDUCT.md', import.meta.url), 'utf8');
+  assert.ok(coc.includes('SECURITY.md') && coc.includes('security/advisories/new'));
+
+  const issueCfg = fs.readFileSync(new URL('../.github/ISSUE_TEMPLATE/config.yml', import.meta.url), 'utf8');
+  assert.ok(issueCfg.includes('blank_issues_enabled: false'));
+  assert.ok(issueCfg.includes('security/advisories/new'));
+
+  assert.equal(fs.existsSync(new URL('../.github/ISSUE_TEMPLATE/bug_report.yml', import.meta.url)), true);
+  assert.equal(fs.existsSync(new URL('../.github/PULL_REQUEST_TEMPLATE.md', import.meta.url)), true);
+
+  const vercelCfg = JSON.parse(fs.readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'));
+  const headerSources = new Set((vercelCfg.headers || []).map((h) => h.source));
+  assert.ok(headerSources.has('/(.*)'));
+  assert.ok(headerSources.has('/mcp'));
+  assert.ok(headerSources.has('/api/mcp'));
+  assert.ok(headerSources.has('/.well-known/mcp-verification.json'));
+});

@@ -38,7 +38,7 @@ function isDirectCliRun(metaUrl, argv1 = process.argv[1]) {
   }
 }
 
-if (isDirectCliRun(import.meta.url)) {
+export function startStdioServer() {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -51,4 +51,10 @@ if (isDirectCliRun(import.meta.url)) {
       process.stdout.write(JSON.stringify(response) + '\n');
     }
   });
+
+  return rl;
+}
+
+if (isDirectCliRun(import.meta.url)) {
+  startStdioServer();
 }

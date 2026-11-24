@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import {
   detectFramework,
   buildMcpConfig,
@@ -167,5 +167,105 @@ test('ElDialog supports dialog.open = true / false property assignment as an ali
     assert.equal(dlg.getAttribute('data-state'), 'closed');
   } finally {
     dlg.remove();
+  }
+});
+
+test('bin/elementum.js routes piped zero-arg invocations and `mcp` to read-only stdio MCP without writing files', async () => {
+  const realBin = path.resolve('bin/elementum.js');
+  const emptyDir = fs.mkdtempSync(path.join(os.tmpdir(), 'el-bin-mcp-'));
+
+  const runStdioRoundTrip = (args) =>
+    new Promise((resolve, reject) => {
+      const proc = spawn(process.execPath, [realBin, ...args], {
+        cwd: emptyDir,
+        stdio: ['pipe', 'pipe', 'pipe'],
+      });
+      const responses = [];
+      let stdoutBuf = '';
+      let stderrBuf = '';
+      const timer = setTimeout(() => {
+        proc.kill();
+        reject(new Error(`Timed out waiting for stdio MCP response (${args.join(' ')}): ${stderrBuf}`));
+      }, 5000);
+
+      proc.stderr.on('data', (chunk) => {
+        stderrBuf += chunk.toString();
+      });
+      proc.stdout.on('data', (chunk) => {
+        stdoutBuf += chunk.toString();
+        const lines = stdoutBuf.split('\n');
+        stdoutBuf = lines.pop();
+        for (const line of lines) {
+          if (line.trim()) responses.push(JSON.parse(line));
+        }
+        if (responses.length >= 2) {
+          clearTimeout(timer);
+          proc.kill();
+          resolve(responses);
+        }
+      });
+      proc.on('error', (err) => {
+        clearTimeout(timer);
+        reject(err);
+      });
+
+      proc.stdin.write(JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'ping' }) + '\n');
+      proc.stdin.write(JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/list' }) + '\n');
+    });
+
+  try {
+    // Zero-arg piped stdio invocation (e.g. npx -y @wcomp/elementum) must NOT run init or write files
+    const bareResponses = await runStdioRoundTrip([]);
+    assert.deepEqual(bareResponses[0], { jsonrpc: '2.0', id: 1, result: {} });
+    assert.equal(bareResponses[1].result.tools.length, 11);
+    assert.deepEqual(fs.readdirSync(emptyDir), []);
+
+    // Explicit `mcp` subcommand behaves identically with zero disk writes
+    const mcpResponses = await runStdioRoundTrip(['mcp']);
+    assert.deepEqual(mcpResponses[0], { jsonrpc: '2.0', id: 1, result: {} });
+    assert.equal(mcpResponses[1].result.tools.length, 11);
+    assert.deepEqual(fs.readdirSync(emptyDir), []);
+
+    // --help includes init, check, and mcp
+    const helpOut = execFileSync(process.execPath, [realBin, '--help'], { cwd: emptyDir, encoding: 'utf8' });
+    assert.ok(helpOut.includes('npx @wcomp/elementum init'));
+    assert.ok(helpOut.includes('npx @wcomp/elementum check'));
+    assert.ok(helpOut.includes('npx @wcomp/elementum mcp'));
+
+    // Unknown subcommand exits non-zero cleanly
+    assert.throws(
+      () => execFileSync(process.execPath, [realBin, 'unknown-subcommand'], { cwd: emptyDir, stdio: 'pipe' }),
+      (err) => err.status === 1 && err.stderr.toString().includes('Unknown command: unknown-subcommand')
+    );
+
+    // Verify in-process starter & example generation across Vanilla, React, Vue, and Svelte
+    const starterRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'el-init-starters-'));
+    try {
+      const vanillaDir = path.join(starterRoot, 'vanilla');
+      fs.mkdirSync(vanillaDir, { recursive: true });
+      const vRes = runInit([], vanillaDir);
+      assert.equal(vRes.framework, 'vanilla');
+      assert.ok(vRes.written.includes('index.html'));
+      const html = fs.readFileSync(path.join(vanillaDir, 'index.html'), 'utf8');
+      assert.ok(html.includes('el-navbar') && html.includes('el-dialog'));
+
+      for (const [fw, dep, file] of [
+        ['react', { react: '^19.0.0' }, 'ElementumDemo.tsx'],
+        ['vue', { vue: '^3.5.0' }, 'ElementumDemo.vue'],
+        ['svelte', { svelte: '^5.0.0' }, 'ElementumDemo.svelte'],
+      ]) {
+        const fwDir = path.join(starterRoot, fw);
+        fs.mkdirSync(fwDir, { recursive: true });
+        fs.writeFileSync(path.join(fwDir, 'package.json'), JSON.stringify({ dependencies: dep }));
+        const fwRes = runInit(['--example'], fwDir);
+        assert.equal(fwRes.framework, fw);
+        assert.ok(fwRes.written.includes(file));
+        assert.ok(fs.existsSync(path.join(fwDir, file)));
+      }
+    } finally {
+      fs.rmSync(starterRoot, { recursive: true, force: true });
+    }
+  } finally {
+    fs.rmSync(emptyDir, { recursive: true, force: true });
   }
 });

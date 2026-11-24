@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security Vulnerability (Private Disclosure)
+    url: https://github.com/pinguxx/Elementum/security/advisories/new
+    about: Do not report security vulnerabilities in public issues. Submit privately via GitHub Security Advisories (see SECURITY.md).
+  - name: Component Catalog & Documentation
+    url: https://elementum-sage.vercel.app/
+    about: Browse live component examples, accessibility status, and framework guides.

@@ -40,9 +40,9 @@ Exports: `signal`, `computed`, `effect`, `batch`, `asyncSignal`, `isSignal`, `is
 
 ## 4. MCP Server Internals (`mcp/` & `api/mcp.js`)
 
-- **`mcp/core.js` & `mcp/edge.js`:** Pure JavaScript with **zero Node built-ins** (no `node:fs`, `Buffer`, `readline`) so the same 10 read-only tools run locally over stdio (`mcp/server.js`) and remotely on Vercel Edge (`api/mcp.js`).
+- **`mcp/core.js` & `mcp/edge.js`:** Pure JavaScript with **zero Node built-ins** (no `node:fs`, `Buffer`, `readline`) so the same 11 read-only tools run locally over stdio (`mcp/server.js`) and remotely on Vercel Edge (`api/mcp.js`).
 - **No ES2025 import attributes in `api/mcp.js`:** Do not use `with { type: 'json' }` (Vercel Edge esbuild rejects it).
-- **10 read-only tools:** `list_components`, `get_component_info`, `search_components`, `get_design_tokens`, `get_styling_guide`, `get_migration_guide`, `validate_component_usage`, `lint_accessibility`, `get_component_examples`, `get_framework_guide`.
+- **11 read-only tools:** `list_components`, `get_component_doc`, `list_tokens`, `generate_snippet`, `scaffold_component`, `lint_accessibility`, `validate_accessibility`, `suggest_component`, `validate_component_usage`, `validate_a2ui_messages`, `get_component_maturity`.
 - After editing component attributes, events, or slots, regenerate metadata:
   ```bash
   npm run react:generate && npm run mcp:metadata && npm run docs:styling && npm run docs:ide

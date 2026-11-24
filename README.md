@@ -64,13 +64,13 @@ import '@wcomp/elementum';
 
 ## Agent MCP server
 
-Connect Claude Code, Cursor, VS Code, or Windsurf to the hosted Vercel Edge MCP endpoint (0 Node built-ins, 10 read-only tools):
+Connect Claude Code, Cursor, VS Code, or Windsurf to the hosted Vercel Edge MCP endpoint (0 Node built-ins, 11 read-only tools):
 
 ```bash
 claude mcp add --transport http elementum https://elementum-sage.vercel.app/mcp
 ```
 
-Or run locally over stdio:
+Or run locally over stdio (piped `npx -y @wcomp/elementum` runs the read-only stdio MCP server with zero disk writes, or target `elementum-mcp` / `mcp`):
 
 ```json
 {
@@ -119,4 +119,4 @@ Copy-paste starter projects verified in CI (`npm run verify:starters`):
 
 ## Contributing and license
 
-See [`CONTRIBUTING.md`](./CONTRIBUTING.md), [`AGENTS.md`](./AGENTS.md), and [`SECURITY.md`](./SECURITY.md). Released under the [MIT License](./LICENSE).
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md), [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md), [`AGENTS.md`](./AGENTS.md), and [`SECURITY.md`](./SECURITY.md). Released under the [MIT License](./LICENSE).

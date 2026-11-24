@@ -29,7 +29,7 @@
 - npm + init CLI: `npm install @wcomp/elementum && npx @wcomp/elementum init`
 - Local Markup & A11y Checker CLI: `npx @wcomp/elementum check [files-or-dirs...]`
 - Zero-Build 2-Line CDN: `<link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />` and `<script type="module" src="https://unpkg.com/@wcomp/elementum"></script>`
-- Local MCP Server (stdio): `npx elementum-mcp`
+- Local MCP Server (stdio): `npx -y @wcomp/elementum` (piped stdio) or `npx -y -p @wcomp/elementum elementum-mcp`
 - Hosted MCP Server (Streamable HTTP): `https://elementum-sage.vercel.app/mcp`
 - Installable Agent Skills: `npx skills@latest add pinguxx/Elementum --skill elementum`
 

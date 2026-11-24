@@ -780,8 +780,8 @@ const html = renderComponentToDSD('el-button', ElButton, { variant: 'primary' },
           AI agents typically hallucinate nonexistent props or default to generic styling. Elementum MCP provides programmatic tool access so agents query live element schemas before writing UI code.
         </el-callout>
 
-        <h2>Connecting to Google Antigravity &amp; Claude Code</h2>
-        <p>Add the following configuration to your MCP settings file (e.g., <code>~/.gemini/antigravity/mcp_config.json</code> or <code>claude_desktop_config.json</code>):</p>
+        <h2>Connecting to Google Antigravity, Claude Code &amp; Cursor</h2>
+        <p>Connect directly to the hosted Streamable HTTP endpoint (<code>https://elementum-sage.vercel.app/mcp</code>), or add local stdio transport to your MCP settings file (e.g., <code>~/.gemini/antigravity/mcp_config.json</code> or <code>claude_desktop_config.json</code>):</p>
 
         <el-code-block copyable language="json">{
   "mcpServers": {
@@ -792,23 +792,23 @@ const html = renderComponentToDSD('el-button', ElButton, { variant: 'primary' },
   }
 }</el-code-block>
 
-        <h2>Available MCP Tools (10 Read-Only Tools)</h2>
+        <h2>Available MCP Tools (11 Read-Only Tools)</h2>
         <div class="pill-grid">
           <el-card>
-            <el-card-header><el-card-title style="font-size: 0.95rem;">list_components &amp; search_components</el-card-title></el-card-header>
-            <el-card-content><p class="pill-desc">Lists or searches all 109 Web Components with descriptions and categories.</p></el-card-content>
+            <el-card-header><el-card-title style="font-size: 0.95rem;">list_components &amp; suggest_component</el-card-title></el-card-header>
+            <el-card-content><p class="pill-desc">Lists all 109 Web Components or ranks best-matching tags for natural-language UI requirements.</p></el-card-content>
           </el-card>
           <el-card>
-            <el-card-header><el-card-title style="font-size: 0.95rem;">get_component_info</el-card-title></el-card-header>
-            <el-card-content><p class="pill-desc">Returns exact attributes, slots, events, and CSS shadow parts for any tag.</p></el-card-content>
+            <el-card-header><el-card-title style="font-size: 0.95rem;">get_component_doc &amp; get_component_maturity</el-card-title></el-card-header>
+            <el-card-content><p class="pill-desc">Returns separated variants, boolean states, props, composition constraints, slots, events, examples, and maturity metadata.</p></el-card-content>
           </el-card>
           <el-card>
-            <el-card-header><el-card-title style="font-size: 0.95rem;">get_design_tokens &amp; get_styling_guide</el-card-title></el-card-header>
-            <el-card-content><p class="pill-desc">Exposes all design tokens (colors, radii, spacing, elevations) and <code>::part()</code> hooks.</p></el-card-content>
+            <el-card-header><el-card-title style="font-size: 0.95rem;">list_tokens, generate_snippet &amp; scaffold_component</el-card-title></el-card-header>
+            <el-card-content><p class="pill-desc">Exposes W3C DTCG design tokens, generates HTML/React/Vue/A2UI snippets, and scaffolds valid Custom Element modules.</p></el-card-content>
           </el-card>
           <el-card>
-            <el-card-header><el-card-title style="font-size: 0.95rem;">validate_component_usage &amp; lint_accessibility</el-card-title></el-card-header>
-            <el-card-content><p class="pill-desc">Validates generated HTML against the CEM contract and WCAG 2.2 AA accessibility rules.</p></el-card-content>
+            <el-card-header><el-card-title style="font-size: 0.95rem;">validate_component_usage, lint_accessibility &amp; validate_a2ui_messages</el-card-title></el-card-header>
+            <el-card-content><p class="pill-desc">Validates HTML usage, static WCAG 2.2 accessibility (<code>lint_accessibility</code> / <code>validate_accessibility</code>), and A2UI catalogs.</p></el-card-content>
           </el-card>
         </div>
 

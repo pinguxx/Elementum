@@ -1,0 +1,23 @@
+name: Feature Request
+description: Propose a focused enhancement to an existing component, behavior, SSR helper, or MCP tool
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Elementum enforces zero runtime dependencies, >= 95% line coverage, and strict gzipped size budgets (`size-budget.json`). Promoting existing components or closing accessibility gaps is prioritized over new bloat.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What workflow, accessibility requirement, or API gap does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+      description: Describe the expected HTML/JS/CSS API, attributes, events, or MCP output.
+    validations:
+      required: true

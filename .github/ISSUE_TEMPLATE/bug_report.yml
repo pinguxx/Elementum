@@ -1,0 +1,30 @@
+name: Bug Report
+description: Report a rendering, accessibility, TypeScript, SSR, or MCP bug in @wcomp/elementum
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing a bug report. For security vulnerabilities, please use [GitHub Private Vulnerability Reporting](https://github.com/pinguxx/Elementum/security/advisories/new) instead of opening a public issue.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Clear description of the unexpected behavior and affected component/entrypoint (e.g., el-dialog, @wcomp/elementum/ssr, MCP).
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal Reproduction
+      description: Minimal HTML, TSX, Vue, Svelte, or Node snippet showing how to reproduce the issue.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Package Version & Environment
+      placeholder: "@wcomp/elementum@0.8.6 · Node 22 · Chrome 131"
+    validations:
+      required: true
