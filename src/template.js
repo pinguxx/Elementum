@@ -258,7 +258,7 @@ class NodePart {
       render(val, fragment, this.#createChildSignal());
       this.nodes = Array.from(fragment.childNodes);
       parent.insertBefore(fragment, this.endNode);
-    } else if (typeof Node !== 'undefined' && val instanceof Node) {
+    } else if (val && typeof val === 'object' && typeof val.nodeType === 'number') {
       this.nodes = val.nodeType === 11 ? Array.from(val.childNodes) : [val];
       parent.insertBefore(val, this.endNode);
     } else if (Array.isArray(val)) {

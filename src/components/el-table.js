@@ -8,11 +8,13 @@ import { html, css } from '../template.js';
 import { signal, computed } from '../signal.js';
 
 export class ElTable extends Elementum {
-  static observedAttributes = ['selectable', 'data', 'columns', 'hover', 'striped'];
+  static observedAttributes = ['selectable', 'data', 'columns', 'hover', 'striped', 'filter', 'highlight-only'];
 
   selectable = signal(false);
   hover = signal(false);
   striped = signal(false);
+  filter = signal('');
+  highlightOnly = signal(false);
   selected = signal([]); // Array of selected row indices/keys
   sortKey = signal('');
   sortDirection = signal(''); // 'asc' | 'desc' | ''
@@ -97,7 +99,16 @@ export class ElTable extends Elementum {
 
   sortedData = computed(() => {
     const raw = this.#dataSignal.value;
-    const list = Array.isArray(raw) ? [...raw] : [];
+    let list = Array.isArray(raw) ? [...raw] : [];
+    const q = String(this.filter.value || '').trim().toLowerCase();
+    if (q && !this.highlightOnly.value) {
+      const cols = Array.isArray(this.#columnsSignal.value) ? this.#columnsSignal.value : [];
+      list = list.filter((row) => {
+        if (!row || typeof row !== 'object') return false;
+        const vals = cols.length > 0 ? cols.map((c) => row[c.key]) : Object.values(row);
+        return vals.some((v) => v != null && String(v).toLowerCase().includes(q));
+      });
+    }
     const key = this.sortKey.value;
     const dir = this.sortDirection.value;
 
@@ -206,12 +217,28 @@ export class ElTable extends Elementum {
       height: 16px;
       accent-color: var(--el-color-primary, #2563eb);
     }
+
+    mark.match-highlight {
+      background: color-mix(in srgb, var(--el-color-primary, #2563eb) 22%, transparent);
+      color: var(--el-color-primary-text, #1d4ed8);
+      font-weight: 600;
+      padding: 0 2px;
+      border-radius: 3px;
+    }
+
+    .empty-row td {
+      text-align: center;
+      padding: 24px 16px;
+      color: var(--el-text-muted, #64748b);
+    }
   `;
 
   connected() {
     this.selectable.value = this.hasAttribute('selectable');
     this.hover.value = this.hasAttribute('hover');
     this.striped.value = this.hasAttribute('striped');
+    this.filter.value = this.getAttribute('filter') || '';
+    this.highlightOnly.value = this.hasAttribute('highlight-only') && this.getAttribute('highlight-only') !== 'false';
     if (this.hasAttribute('columns')) {
       this.#applyColumns(this.getAttribute('columns'));
     }
@@ -254,6 +281,12 @@ export class ElTable extends Elementum {
     } else if (name === 'striped') {
       this.striped.value = newValue !== null && newValue !== 'false';
       return true;
+    } else if (name === 'filter') {
+      this.filter.value = newValue ?? '';
+      return true;
+    } else if (name === 'highlight-only') {
+      this.highlightOnly.value = newValue !== null && newValue !== 'false';
+      return true;
     } else if (name === 'data') {
       this.#applyData(newValue);
       return true;
@@ -261,6 +294,31 @@ export class ElTable extends Elementum {
       this.#applyColumns(newValue);
       return true;
     }
+  }
+
+  #appendCellText(td, text, queryLower) {
+    if (!queryLower) {
+      td.textContent = text;
+      return;
+    }
+    const lower = text.toLowerCase();
+    let pos = 0;
+    let idx = lower.indexOf(queryLower, pos);
+    if (idx === -1) {
+      td.textContent = text;
+      return;
+    }
+    while (idx !== -1) {
+      if (idx > pos) td.appendChild(document.createTextNode(text.slice(pos, idx)));
+      const mark = document.createElement('mark');
+      mark.className = 'match-highlight';
+      mark.setAttribute('part', 'highlight');
+      mark.textContent = text.slice(idx, idx + queryLower.length);
+      td.appendChild(mark);
+      pos = idx + queryLower.length;
+      idx = lower.indexOf(queryLower, pos);
+    }
+    if (pos < text.length) td.appendChild(document.createTextNode(text.slice(pos)));
   }
 
   sortBy(key) {
@@ -321,8 +379,8 @@ export class ElTable extends Elementum {
                         type="checkbox"
                         aria-label="Select all rows"
                         .checked=${() =>
-                          this.data.value.length > 0 &&
-                          this.selected.value.length === this.data.value.length}
+                          this.sortedData.value.length > 0 &&
+                          this.selected.value.length === this.sortedData.value.length}
                         @change=${() => this.toggleSelectAll()}
                       />
                     </th>
@@ -366,8 +424,20 @@ export class ElTable extends Elementum {
             const cols = Array.isArray(this.columns.value) ? this.columns.value : [];
             const isSelectable = this.selectable.value;
             const selectedSet = new Set(this.selected.value);
+            const queryLower = String(this.filter.value || '').trim().toLowerCase();
             if (typeof document !== 'undefined') {
               const frag = document.createDocumentFragment();
+              if (rows.length === 0 && queryLower) {
+                const tr = document.createElement('tr');
+                tr.className = 'empty-row';
+                const td = document.createElement('td');
+                td.colSpan = Math.max(1, cols.length + (isSelectable ? 1 : 0));
+                td.setAttribute('part', 'empty');
+                td.textContent = 'No matching rows';
+                tr.appendChild(td);
+                frag.appendChild(tr);
+                return frag;
+              }
               for (let idx = 0; idx < rows.length; idx++) {
                 const row = rows[idx];
                 const tr = document.createElement('tr');
@@ -387,7 +457,7 @@ export class ElTable extends Elementum {
                 for (let c = 0; c < cols.length; c++) {
                   const td = document.createElement('td');
                   const val = row[cols[c].key];
-                  td.textContent = val == null ? '' : String(val);
+                  this.#appendCellText(td, val == null ? '' : String(val), queryLower);
                   tr.appendChild(td);
                 }
                 frag.appendChild(tr);

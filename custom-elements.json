@@ -3093,6 +3093,22 @@
                 "text": "boolean"
               },
               "default": "false"
+            },
+            {
+              "name": "filter",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"\"",
+              "description": "Case-insensitive search query that filters rows and highlights matching substrings in <mark part=\"highlight\">."
+            },
+            {
+              "name": "highlight-only",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Highlight matches for filter without removing non-matching rows (for server-side filtered data)."
             }
           ],
           "events": [

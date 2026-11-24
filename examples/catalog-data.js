@@ -837,6 +837,18 @@ export const components = {
         "description": "Alternates row background colors."
       },
       {
+        "name": "filter",
+        "type": "text",
+        "default": "",
+        "description": "Search query that filters rows and highlights matched substrings."
+      },
+      {
+        "name": "highlight-only",
+        "type": "boolean",
+        "default": false,
+        "description": "Highlight matched substrings without hiding non-matching rows."
+      },
+      {
         "name": "selectable",
         "type": "boolean",
         "default": true,

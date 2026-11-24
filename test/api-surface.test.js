@@ -130,3 +130,41 @@ test('ElForm parity: form, elements, toFormData, getFormData, checkValidity, req
 
   elForm.remove();
 });
+
+test('ElTable filter: filters rows, highlights matched substrings with <mark part="highlight">, supports highlight-only and empty state', () => {
+  const table = document.createElement('el-table');
+  table.columns = [
+    { key: 'name', label: 'Name', sortable: true },
+    { key: 'role', label: 'Role', sortable: true },
+  ];
+  table.data = [
+    { name: 'Ada Lovelace', role: 'Architect' },
+    { name: 'Grace Hopper', role: 'Compiler Engineer' },
+    { name: 'Alan Turing', role: 'Mathematician' },
+  ];
+  document.body.appendChild(table);
+
+  assert.equal(table.shadowRoot.querySelectorAll('tbody tr').length, 3);
+
+  // Filter rows and highlight matches
+  table.setAttribute('filter', 'ada');
+  const filteredRows = table.shadowRoot.querySelectorAll('tbody tr');
+  assert.equal(filteredRows.length, 1);
+  const marks = table.shadowRoot.querySelectorAll('mark[part="highlight"]');
+  assert.equal(marks.length, 1);
+  assert.equal(marks[0].textContent, 'Ada');
+
+  // highlight-only keeps all rows while still highlighting matches
+  table.setAttribute('highlight-only', '');
+  assert.equal(table.shadowRoot.querySelectorAll('tbody tr').length, 3);
+  assert.equal(table.shadowRoot.querySelectorAll('mark[part="highlight"]').length, 1);
+
+  // Empty state when 0 rows match
+  table.removeAttribute('highlight-only');
+  table.filter.value = 'zzzz-no-match';
+  const emptyCell = table.shadowRoot.querySelector('td[part="empty"]');
+  assert.ok(emptyCell);
+  assert.equal(emptyCell.textContent, 'No matching rows');
+
+  table.remove();
+});

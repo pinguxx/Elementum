@@ -77,7 +77,7 @@ import '@wcomp/elementum/tokens.css';
 import '@wcomp/elementum';
 ```
 
-> Using Tailwind CSS or migrating from shadcn/Radix? See [**Tailwind CSS 1-Page Guide**](docs/tailwind-guide.md), [**Auto-Generated `::part()` & Token Reference**](docs/styling-reference.md), [**Migration Guide**](docs/migration-guide.md), and [**Theme Studio**](https://elementum-sage.vercel.app/examples/registry.html#theme-studio).
+> Using Tailwind CSS, handling custom events, or migrating from shadcn/Radix? See [**Events Guide**](docs/events.md), [**Tailwind CSS 1-Page Guide**](docs/tailwind-guide.md), [**Auto-Generated `::part()` & Token Reference**](docs/styling-reference.md), [**Migration Guide**](docs/migration-guide.md), and [**Theme Studio**](https://elementum-sage.vercel.app/examples/registry.html#theme-studio).
 
 ## Core principles
 

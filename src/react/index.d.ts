@@ -709,6 +709,8 @@ export declare const ElSwitch: ElementumReactComponent<ElSwitchProps>;
 
 export type ElTableProps = ElementumComponentProps<ElementFor<'el-table'>, {
   selectable?: boolean;
+  filter?: string;
+  'highlight-only'?: boolean;
 }, {
   onSort?: (event: CustomEvent<any> & Event) => void;
   onSelectionChange?: (event: CustomEvent<any> & Event) => void;

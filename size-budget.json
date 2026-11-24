@@ -72,7 +72,7 @@
   "@wcomp/elementum/components/el-spinner": 1856,
   "@wcomp/elementum/components/el-streaming-text": 2368,
   "@wcomp/elementum/components/el-switch": 2304,
-  "@wcomp/elementum/components/el-table": 3840,
+  "@wcomp/elementum/components/el-table": 4300,
   "@wcomp/elementum/components/el-tabs": 2624,
   "@wcomp/elementum/components/el-task-list": 2816,
   "@wcomp/elementum/components/el-textarea": 2240,
