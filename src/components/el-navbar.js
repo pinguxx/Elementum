@@ -122,7 +122,7 @@ export class ElNavbar extends Elementum {
     ::slotted(a[active]),
     ::slotted(el-route-link:hover),
     ::slotted(el-route-link[active]) {
-      color: var(--el-color-primary, #2563eb);
+      color: var(--el-color-primary-text, #1d4ed8);
       background: var(--el-surface-muted, #f1f5f9);
       font-weight: 600;
     }

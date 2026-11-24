@@ -10,7 +10,10 @@ test.describe('Dark-Mode Catalog Contrast & Shadow DOM Audit', () => {
     await page.evaluate(() => {
       document.documentElement.setAttribute('data-theme', 'dark');
     });
-    await page.locator('#btn-toggle-canvas-theme').click();
+    const toggleBtn = page.locator('#btn-toggle-canvas-theme');
+    await expect(toggleBtn).toBeVisible();
+    await toggleBtn.click();
+    await expect(page.locator('#live-stage')).toHaveClass(/dark-canvas/);
     await page.waitForTimeout(100);
 
     const tags = await page.evaluate(async () => {

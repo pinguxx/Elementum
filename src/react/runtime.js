@@ -82,6 +82,7 @@ export function createElementumReactComponent(React, tagName, eventMap = {}) {
 
     const customListeners = [];
     const objectProps = [];
+    const booleanProps = [];
 
     for (const [key, val] of Object.entries(rest)) {
       if (val === undefined || val === null) continue;
@@ -100,7 +101,8 @@ export function createElementumReactComponent(React, tagName, eventMap = {}) {
       }
 
       if (typeof val === 'boolean') {
-        if (val) elementProps[key] = '';
+        booleanProps.push([key, val]);
+        if (val && typeof window === 'undefined') elementProps[key] = '';
         continue;
       }
 
@@ -117,11 +119,16 @@ export function createElementumReactComponent(React, tagName, eventMap = {}) {
       assignRef(forwardedRef, node);
     };
 
-    // Apply object/array/function properties synchronously before paint (useLayoutEffect in browser,
-    // useEffect in SSR) and cleanly reset any previously applied keys that were removed from props.
+    // Apply object/array/function properties and boolean attributes synchronously before paint
+    // and cleanly reset any previously applied keys that were removed from props.
     useIsomorphicLayoutEffect(() => {
       const el = innerRef.current;
       if (!el) return;
+
+      for (const [key, val] of booleanProps) {
+        if (val) el.setAttribute(key, '');
+        else el.removeAttribute(key);
+      }
 
       const appliedKeys = appliedObjectKeysRef.current;
       const initialDefaults = initialDefaultsRef.current;

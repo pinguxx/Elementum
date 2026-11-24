@@ -1729,6 +1729,8 @@
         const selectable = p.selectable ? ' selectable' : '';
         const hover = p.hover ? ' hover' : '';
         const striped = p.striped ? ' striped' : '';
+        const filter = p.filter ? ` filter="${p.filter}"` : '';
+        const highlightOnly = p['highlight-only'] ? ' highlight-only' : '';
         const tableData = p.data ? (typeof p.data === 'string' ? p.data : JSON.stringify(p.data)) : JSON.stringify([
           { region: 'us-east-1', status: 'Active', latency: '24ms', throughput: '14.2k req/s' },
           { region: 'eu-west-1', status: 'Active', latency: '18ms', throughput: '11.8k req/s' },
@@ -1742,7 +1744,7 @@
           { key: 'throughput', label: 'Throughput', sortable: true }
         ]);
         return `<div style="width: 100%; overflow-x: auto;">
-  <el-table${selectable}${hover}${striped} data='${tableData}' columns='${columns}'></el-table>
+  <el-table${selectable}${hover}${striped}${filter}${highlightOnly} data='${tableData}' columns='${columns}'></el-table>
 </div>`;
       }
 
