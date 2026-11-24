@@ -43,15 +43,35 @@ export function getByPointer(obj, pointer) {
   return cur;
 }
 
+function normalizePrefix(p) {
+  const s = String(p || '');
+  if (!s) return '';
+  const withSlash = s.startsWith('/') ? s : `/${s}`;
+  return withSlash.length > 1 && withSlash.endsWith('/') ? withSlash.slice(0, -1) : withSlash;
+}
+
+function isPathAllowed(pointer, allowedPrefixes) {
+  if (!allowedPrefixes || allowedPrefixes.length === 0) return true;
+  const norm = normalizePrefix(pointer);
+  return allowedPrefixes.some((prefix) => norm === prefix || norm.startsWith(`${prefix}/`));
+}
+
 /**
  * Apply an array of RFC 6902 JSON Patch operations immutably to a target object.
  */
-export function applyJsonPatch(target, patch = []) {
+export function applyJsonPatch(target, patch = [], options = {}) {
   let root = cloneValue(target ?? {});
   if (!Array.isArray(patch) || patch.length === 0) return root;
+  const allowedPrefixes = Array.isArray(options.allowedPaths)
+    ? options.allowedPaths.map(normalizePrefix).filter(Boolean)
+    : null;
 
   for (const operation of patch) {
     if (!operation || !operation.op) continue;
+    if (allowedPrefixes && !isPathAllowed(operation.path, allowedPrefixes)) {
+      if (typeof options.onReject === 'function') options.onReject(operation);
+      continue;
+    }
     const tokens = parsePointer(operation.path);
     if (tokens.length === 0) {
       if (operation.op === 'replace' || operation.op === 'add') {
@@ -142,11 +162,24 @@ function setElementProp(el, prop, value) {
 
 /**
  * Create a reactive Elementum signal store for an AG-UI session.
+ *
+ * @param {Object} [initialState={}]
+ * @param {Object} [options={}]
+ * @param {string} [options.surfaceId] - Lock this store to a specific surface identity
+ * @param {boolean} [options.strictRunId=false] - Reject non-RUN_STARTED events that omit runId once a run is active
+ * @param {string[]} [options.allowedPaths] - Optional allowlist of RFC 6901 JSON Pointer prefixes permitted in STATE_DELTA
+ * @param {(rejection: { reason: string, event: Object, operation?: Object }) => void} [options.onReject]
  */
-export function createAgUiStore(initialState = {}) {
+export function createAgUiStore(initialState = {}, options = {}) {
+  const lockedSurfaceId = typeof options.surfaceId === 'string' && options.surfaceId ? options.surfaceId : '';
+  const strictRunId = Boolean(options.strictRunId);
+  const allowedPaths = Array.isArray(options.allowedPaths) ? options.allowedPaths : null;
+  const onReject = typeof options.onReject === 'function' ? options.onReject : null;
+
   const state = signal(cloneValue(initialState));
   const status = signal('idle');
   const runId = signal('');
+  const surfaceId = signal(lockedSurfaceId);
   const stepName = signal('');
   const thinking = signal(false);
   const thinkingText = signal('');
@@ -155,8 +188,15 @@ export function createAgUiStore(initialState = {}) {
   const toolCalls = signal([]);
   const error = signal(null);
   const events = signal([]);
+  const rejectedEvents = signal([]);
 
   const listeners = new Set();
+
+  function recordRejection(reason, event, operation) {
+    const entry = operation ? { reason, event, operation } : { reason, event };
+    rejectedEvents.value = [...rejectedEvents.peek(), entry];
+    if (onReject) onReject(entry);
+  }
 
   function upsertToolCall(callId, updater) {
     const list = [...toolCalls.peek()];
@@ -171,12 +211,34 @@ export function createAgUiStore(initialState = {}) {
 
   function dispatch(event) {
     if (!event || !event.type) return;
+
+    const activeSurface = surfaceId.peek();
+    if (event.surfaceId && activeSurface && event.surfaceId !== activeSurface) {
+      recordRejection('surface-mismatch', event);
+      return;
+    }
+
+    const activeRun = runId.peek();
+    if (event.type !== 'RUN_STARTED') {
+      if (event.runId && activeRun && event.runId !== activeRun) {
+        recordRejection('stale-run-id', event);
+        return;
+      }
+      if (strictRunId && activeRun && !event.runId) {
+        recordRejection('missing-run-id', event);
+        return;
+      }
+    }
+
     events.value = [...events.peek(), event];
 
     switch (event.type) {
       case 'RUN_STARTED':
         status.value = 'running';
         runId.value = event.runId || '';
+        if (!lockedSurfaceId && event.surfaceId) {
+          surfaceId.value = event.surfaceId;
+        }
         error.value = null;
         break;
 
@@ -287,7 +349,10 @@ export function createAgUiStore(initialState = {}) {
         break;
 
       case 'STATE_DELTA':
-        state.value = applyJsonPatch(state.peek(), event.delta || []);
+        state.value = applyJsonPatch(state.peek(), event.delta || [], {
+          allowedPaths,
+          onReject: (op) => recordRejection('disallowed-path', event, op),
+        });
         break;
 
       case 'MESSAGES_SNAPSHOT':
@@ -464,10 +529,21 @@ export function createAgUiStore(initialState = {}) {
     }
   }
 
+  function setSurface(nextSurfaceId) {
+    surfaceId.value = nextSurfaceId ? String(nextSurfaceId) : '';
+  }
+
+  function resetRun(nextRunId = '') {
+    runId.value = nextRunId ? String(nextRunId) : '';
+    status.value = 'idle';
+    thinking.value = false;
+  }
+
   return {
     state,
     status,
     runId,
+    surfaceId,
     stepName,
     thinking,
     thinkingText,
@@ -476,7 +552,10 @@ export function createAgUiStore(initialState = {}) {
     toolCalls,
     error,
     events,
+    rejectedEvents,
     dispatch,
+    setSurface,
+    resetRun,
     pathSignal,
     onEvent,
     bindComponents,

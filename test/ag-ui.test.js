@@ -205,3 +205,82 @@ test('examples/ag-ui.html live demo wires createAgUiStore, bindComponents, conne
   assert.ok(!html.includes('setSources('), 'should mutate sources.value signal instead of non-existent setSources()');
   assert.ok(!html.includes('setDiff('), 'should mutate before/after signals instead of non-existent setDiff()');
 });
+
+test('createAgUiStore rejects late STATE_DELTA from old runId, mismatched surfaceId, missing runId (strictRunId), and disallowed paths', () => {
+  const rejected = [];
+  const store = createAgUiStore(
+    { progress: 0, billing: { role: 'viewer' } },
+    {
+      surfaceId: 'surface-a',
+      strictRunId: true,
+      allowedPaths: ['/progress', '/plan'],
+      onReject: (entry) => rejected.push(entry.reason),
+    }
+  );
+
+  // Start run-1 on surface-a and apply an allowed delta
+  store.dispatch({ type: 'RUN_STARTED', runId: 'run-1', surfaceId: 'surface-a' });
+  store.dispatch({
+    type: 'STATE_DELTA',
+    runId: 'run-1',
+    surfaceId: 'surface-a',
+    delta: [
+      { op: 'replace', path: '/progress', value: 40 },
+      { op: 'replace', path: '/billing/role', value: 'admin' }, // disallowed path!
+    ],
+  });
+  assert.equal(store.state.value.progress, 40);
+  assert.equal(store.state.value.billing.role, 'viewer', 'disallowed path must not mutate state');
+  assert.equal(rejected.at(-1), 'disallowed-path');
+
+  // User starts run-2; a late STATE_DELTA from run-1 arrives out of order
+  store.dispatch({ type: 'RUN_STARTED', runId: 'run-2', surfaceId: 'surface-a' });
+  store.dispatch({
+    type: 'STATE_DELTA',
+    runId: 'run-1',
+    surfaceId: 'surface-a',
+    delta: [{ op: 'replace', path: '/progress', value: 99 }],
+  });
+  assert.equal(store.state.value.progress, 40, 'late STATE_DELTA from old run-1 must be dropped');
+  assert.equal(rejected.at(-1), 'stale-run-id');
+
+  // Event missing runId under strictRunId: true must be rejected
+  store.dispatch({
+    type: 'STATE_DELTA',
+    surfaceId: 'surface-a',
+    delta: [{ op: 'replace', path: '/progress', value: 88 }],
+  });
+  assert.equal(store.state.value.progress, 40);
+  assert.equal(rejected.at(-1), 'missing-run-id');
+
+  // Event targeting another surface must be rejected
+  store.dispatch({
+    type: 'STATE_DELTA',
+    runId: 'run-2',
+    surfaceId: 'surface-b',
+    delta: [{ op: 'replace', path: '/progress', value: 77 }],
+  });
+  assert.equal(store.state.value.progress, 40);
+  assert.equal(rejected.at(-1), 'surface-mismatch');
+
+  // Valid delta for active run-2 and surface-a succeeds
+  store.dispatch({
+    type: 'STATE_DELTA',
+    runId: 'run-2',
+    surfaceId: 'surface-a',
+    delta: [{ op: 'replace', path: '/progress', value: 65 }],
+  });
+  assert.equal(store.state.value.progress, 65);
+
+  // Switching surface or resetting run isolates subsequent late deltas
+  store.setSurface('surface-b');
+  store.resetRun('run-3');
+  store.dispatch({
+    type: 'STATE_DELTA',
+    runId: 'run-2',
+    surfaceId: 'surface-a',
+    delta: [{ op: 'replace', path: '/progress', value: 1 }],
+  });
+  assert.equal(store.state.value.progress, 65);
+  assert.equal(store.rejectedEvents.value.length, rejected.length);
+});

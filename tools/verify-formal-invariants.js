@@ -16,6 +16,7 @@
 import assert from 'node:assert/strict';
 import { signal, computed, effect, batch, asyncSignal } from '../src/signal.js';
 import { createA2UiSurface } from '../src/a2ui.js';
+import { createAgUiStore } from '../src/ag-ui.js';
 import { toast } from '../src/components/el-toast.js';
 
 const results = [];
@@ -528,7 +529,70 @@ function recordPass(id, title, statesChecked) {
   recordPass('INV-5', 'ElToaster Multi-Instance Active-Deck & Anchor State Machine', checked);
 }
 
-console.log('✔ Formal Invariant Verification PASSED across all 5 state machines:');
+// ============================================================================
+// Invariant 6: AG-UI Multi-Run Late STATE_DELTA Isolation & Path Allowlist
+// ============================================================================
+{
+  let checked = 0;
+  const disallowedPaths = ['/admin/role', '/__proto__/polluted', '/constructor/x', '/secret', '/progress_extra'];
+  const staleSequences = [
+    ['run-1', 'run-2', 'run-1'],
+    ['run-1', 'run-2', 'run-3', 'run-1'],
+    ['run-1', 'run-2', 'run-3', 'run-2'],
+  ];
+
+  for (const seq of staleSequences) {
+    for (const badPath of disallowedPaths) {
+      checked++;
+      const store = createAgUiStore(
+        { progress: 0, admin: { role: 'viewer' } },
+        { surfaceId: 'surf-1', strictRunId: true, allowedPaths: ['/progress'] }
+      );
+
+      // Start runs in order (all except last entry which is a stale runId)
+      const activeRun = seq[seq.length - 2];
+      const staleRun = seq[seq.length - 1];
+      for (let i = 0; i < seq.length - 1; i++) {
+        store.dispatch({ type: 'RUN_STARTED', runId: seq[i], surfaceId: 'surf-1' });
+      }
+
+      // Active run writes valid /progress = 50 and attempts disallowed path
+      store.dispatch({
+        type: 'STATE_DELTA',
+        runId: activeRun,
+        surfaceId: 'surf-1',
+        delta: [
+          { op: 'replace', path: '/progress', value: 50 },
+          { op: 'add', path: badPath, value: 'pwn' },
+        ],
+      });
+
+      // Late stale delta from old run attempts to overwrite /progress = 999
+      store.dispatch({
+        type: 'STATE_DELTA',
+        runId: staleRun,
+        surfaceId: 'surf-1',
+        delta: [{ op: 'replace', path: '/progress', value: 999 }],
+      });
+
+      // Cross-surface delta attempts to overwrite /progress = 888
+      store.dispatch({
+        type: 'STATE_DELTA',
+        runId: activeRun,
+        surfaceId: 'surf-2',
+        delta: [{ op: 'replace', path: '/progress', value: 888 }],
+      });
+
+      assert.equal(store.state.value.progress, 50, `Stale run ${staleRun} or cross-surface delta overwrote active run ${activeRun}`);
+      assert.equal(store.state.value.admin.role, 'viewer', `Disallowed path ${badPath} mutated protected state`);
+      assert.equal(store.state.value.progress_extra, undefined, `Prefix confusion allowed ${badPath}`);
+    }
+  }
+
+  recordPass('INV-6', 'AG-UI Multi-Run Late STATE_DELTA Isolation & Path Allowlist', checked);
+}
+
+console.log(`✔ Formal Invariant Verification PASSED across all ${results.length} state machines:`);
 for (const r of results) {
   console.log(`  [${r.status}] ${r.id}: ${r.title} (${r.statesChecked} states/topologies verified)`);
 }
