@@ -38,7 +38,7 @@ export class ElToolbar extends Elementum {
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
-    :root[data-theme="dark"] .toolbar {
+    :host-context([data-theme="dark"]) .toolbar {
       background: #1e293b;
       border-color: #334155;
     }

@@ -48,7 +48,7 @@ export class ElPreviewCard extends Elementum {
       transition: opacity 180ms cubic-bezier(0.16, 1, 0.3, 1), transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    :root[data-theme="dark"] .card {
+    :host-context([data-theme="dark"]) .card {
       background: var(--el-surface-card, #111827);
       border-color: #334155;
       color: #f8fafc;

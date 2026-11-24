@@ -128,8 +128,8 @@ export class ElSources extends Elementum {
     }
 
     .pill:hover {
-      border-color: var(--el-color-primary, #2563eb);
-      color: var(--el-color-primary, #2563eb);
+      border-color: var(--el-color-primary-text, #1d4ed8);
+      color: var(--el-color-primary-text, #1d4ed8);
     }
 
     .pill:active {
@@ -171,7 +171,7 @@ export class ElSources extends Elementum {
     }
 
     .source-card:hover {
-      border-color: var(--el-color-primary, #2563eb);
+      border-color: var(--el-color-primary-text, #1d4ed8);
       box-shadow: var(--el-shadow-subtle, 0 2px 6px rgba(15, 23, 42, 0.06));
     }
 
@@ -183,7 +183,7 @@ export class ElSources extends Elementum {
 
     .source-domain {
       font-size: 0.72rem;
-      color: var(--el-color-primary, #2563eb);
+      color: var(--el-color-primary-text, #1d4ed8);
     }
 
     .source-snippet {
@@ -193,17 +193,17 @@ export class ElSources extends Elementum {
       line-height: 1.45;
     }
 
-    :root[data-theme="dark"] .toggle-btn,
-    :root[data-theme="dark"] .pill,
-    :root[data-theme="dark"] .source-card {
+    :host-context([data-theme="dark"]) .toggle-btn,
+    :host-context([data-theme="dark"]) .pill,
+    :host-context([data-theme="dark"]) .source-card {
       background: #1e293b;
       border-color: #334155;
       color: #e2e8f0;
     }
-    :root[data-theme="dark"] .source-title {
+    :host-context([data-theme="dark"]) .source-title {
       color: #f8fafc;
     }
-    :root[data-theme="dark"] .source-snippet {
+    :host-context([data-theme="dark"]) .source-snippet {
       color: #94a3b8;
     }
 

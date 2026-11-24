@@ -32,7 +32,7 @@ export class ElEmptyState extends Elementum {
       width: 100%;
     }
 
-    :root[data-theme="dark"] :host {
+    :host-context([data-theme="dark"]) {
       background: #1e293b;
       border-color: #334155;
     }
@@ -49,7 +49,7 @@ export class ElEmptyState extends Elementum {
       color: var(--el-text-muted, #64748b);
     }
 
-    :root[data-theme="dark"] .icon-container {
+    :host-context([data-theme="dark"]) .icon-container {
       background: #0f172a;
       color: #94a3b8;
     }
@@ -62,7 +62,7 @@ export class ElEmptyState extends Elementum {
       letter-spacing: -0.02em;
     }
 
-    :root[data-theme="dark"] .title {
+    :host-context([data-theme="dark"]) .title {
       color: #f8fafc;
     }
 
@@ -74,7 +74,7 @@ export class ElEmptyState extends Elementum {
       margin: 0 0 20px 0;
     }
 
-    :root[data-theme="dark"] .description {
+    :host-context([data-theme="dark"]) .description {
       color: #94a3b8;
     }
 

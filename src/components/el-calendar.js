@@ -113,7 +113,7 @@ export class ElCalendar extends Elementum {
       font-weight: 500;
     }
 
-    :root[data-theme="dark"] .header-select option {
+    :host-context([data-theme="dark"]) .header-select option {
       background: #1e293b;
       color: #f8fafc;
     }
@@ -174,13 +174,18 @@ export class ElCalendar extends Elementum {
       outline: none;
     }
 
+    .day:focus-visible {
+      outline: 2px solid var(--el-color-primary, #2563eb);
+      outline-offset: -2px;
+    }
+
     .day:hover:not(.disabled) {
       background: var(--el-surface-muted, #f3f4f6);
     }
 
     .day.other-month {
-      color: var(--el-text-muted, #9ca3af);
-      opacity: 0.5;
+      color: var(--el-text-muted, #64748b);
+      opacity: 0.78;
     }
 
     .day.today {
@@ -190,7 +195,7 @@ export class ElCalendar extends Elementum {
 
     .day.selected {
       background: var(--el-color-primary, #2563eb) !important;
-      color: var(--el-text-inverse, #ffffff) !important;
+      color: #ffffff !important;
       font-weight: 600;
     }
   `;
@@ -360,6 +365,35 @@ export class ElCalendar extends Elementum {
     return cells;
   }
 
+  #onGridKeyDown = (e) => {
+    const key = e.key;
+    if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown'].includes(key)) {
+      return;
+    }
+    const buttons = Array.from(this.shadowRoot?.querySelectorAll('.grid .day') || []);
+    const active = this.shadowRoot?.activeElement;
+    const idx = buttons.indexOf(active);
+    if (idx === -1) return;
+
+    e.preventDefault();
+    if (key === 'PageUp') {
+      this.prevMonth();
+      return;
+    }
+    if (key === 'PageDown') {
+      this.nextMonth();
+      return;
+    }
+    let nextIdx = idx;
+    if (key === 'ArrowLeft') nextIdx = Math.max(0, idx - 1);
+    else if (key === 'ArrowRight') nextIdx = Math.min(buttons.length - 1, idx + 1);
+    else if (key === 'ArrowUp') nextIdx = Math.max(0, idx - 7);
+    else if (key === 'ArrowDown') nextIdx = Math.min(buttons.length - 1, idx + 7);
+    else if (key === 'Home') nextIdx = idx - (idx % 7);
+    else if (key === 'End') nextIdx = Math.min(buttons.length - 1, idx + (6 - (idx % 7)));
+    buttons[nextIdx]?.focus();
+  };
+
   render() {
     return html`
       <div class="calendar" part="calendar">
@@ -408,7 +442,7 @@ export class ElCalendar extends Elementum {
           ${() => getLocalizedWeekdays(this.locale.value).map((w) => html`<div>${w}</div>`)}
         </div>
 
-        <div class="grid" role="grid">
+        <div class="grid" role="grid" @keydown=${this.#onGridKeyDown}>
           ${() =>
             this.#generateDays().map(
               (cell) => html`

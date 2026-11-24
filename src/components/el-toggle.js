@@ -104,18 +104,18 @@ export class ElToggle extends Elementum {
       opacity: 0.5;
     }
 
-    :root[data-theme="dark"] button {
+    :host-context([data-theme="dark"]) button {
       background: var(--el-surface-elevated, #1e293b);
       border-color: #334155;
       color: #94a3b8;
     }
 
-    :root[data-theme="dark"] button:hover:not(:disabled) {
+    :host-context([data-theme="dark"]) button:hover:not(:disabled) {
       background: #334155;
       color: #f8fafc;
     }
 
-    :root[data-theme="dark"] button.pressed {
+    :host-context([data-theme="dark"]) button.pressed {
       background: var(--el-color-primary, #2563eb);
       color: #ffffff;
       border-color: var(--el-color-primary, #2563eb);
@@ -274,7 +274,7 @@ export class ElToggleGroup extends Elementum {
       box-sizing: border-box;
     }
 
-    :root[data-theme="dark"] :host {
+    :host-context([data-theme="dark"]) {
       background: #0f172a;
       border: 1px solid #1e293b;
     }

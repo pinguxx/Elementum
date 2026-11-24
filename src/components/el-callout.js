@@ -44,11 +44,11 @@ export class ElCallout extends Elementum {
     :host, :host([variant="info"]), :host([variant="primary"]) {
       background-color: rgba(37, 99, 235, 0.08);
       border-color: rgba(37, 99, 235, 0.2);
-      color: #1e40af;
+      color: var(--el-color-primary-text, #1e40af);
     }
-    :host-context([data-theme="dark"]), :host-context([data-theme="dark"])[variant="info"], :host-context([data-theme="dark"])[variant="primary"] {
-      background-color: rgba(59, 130, 246, 0.12);
-      border-color: rgba(59, 130, 246, 0.25);
+    :host-context([data-theme="dark"]) {
+      background-color: rgba(59, 130, 246, 0.14);
+      border-color: rgba(59, 130, 246, 0.3);
       color: #93c5fd;
     }
 
@@ -58,46 +58,26 @@ export class ElCallout extends Elementum {
       border-color: var(--el-surface-border, #e2e8f0);
       color: var(--el-text-secondary, #475569);
     }
-    :host-context([data-theme="dark"])[variant="secondary"] {
-      background-color: rgba(30, 41, 59, 0.7);
-      border-color: #334155;
-      color: #cbd5e1;
-    }
 
     /* Success */
     :host([variant="success"]) {
-      background-color: rgba(16, 185, 129, 0.08);
-      border-color: rgba(16, 185, 129, 0.25);
-      color: #065f46;
-    }
-    :host-context([data-theme="dark"])[variant="success"] {
-      background-color: rgba(16, 185, 129, 0.12);
-      border-color: rgba(16, 185, 129, 0.25);
-      color: #6ee7b7;
+      background-color: rgba(16, 185, 129, 0.1);
+      border-color: rgba(16, 185, 129, 0.28);
+      color: var(--el-color-success-text, #065f46);
     }
 
     /* Warning */
     :host([variant="warning"]) {
-      background-color: rgba(245, 158, 11, 0.08);
-      border-color: rgba(245, 158, 11, 0.25);
-      color: #92400e;
-    }
-    :host-context([data-theme="dark"])[variant="warning"] {
-      background-color: rgba(245, 158, 11, 0.12);
-      border-color: rgba(245, 158, 11, 0.25);
-      color: #fcd34d;
+      background-color: rgba(245, 158, 11, 0.1);
+      border-color: rgba(245, 158, 11, 0.28);
+      color: var(--el-color-warning-text, #92400e);
     }
 
     /* Danger */
     :host([variant="danger"]) {
-      background-color: rgba(239, 68, 68, 0.08);
-      border-color: rgba(239, 68, 68, 0.25);
-      color: #991b1b;
-    }
-    :host-context([data-theme="dark"])[variant="danger"] {
-      background-color: rgba(239, 68, 68, 0.12);
-      border-color: rgba(239, 68, 68, 0.25);
-      color: #fca5a5;
+      background-color: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.28);
+      color: var(--el-color-danger-text, #991b1b);
     }
 
     .icon-wrapper {

@@ -242,7 +242,7 @@ export class ElToolCall extends Elementum {
 
     .reject-btn {
       background: var(--el-surface-card, #ffffff);
-      color: var(--el-color-danger, #dc2626);
+      color: var(--el-color-danger-text, #b91c1c);
       border-color: rgba(220, 38, 38, 0.35);
     }
 

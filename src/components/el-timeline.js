@@ -72,7 +72,7 @@ export class ElTimelineItem extends Elementum {
       color: #ffffff;
     }
 
-    :root[data-theme="dark"] .node {
+    :host-context([data-theme="dark"]) .node {
       background: #1e293b;
       border-color: #475569;
     }
@@ -85,7 +85,7 @@ export class ElTimelineItem extends Elementum {
       margin-bottom: -4px;
     }
 
-    :root[data-theme="dark"] .line {
+    :host-context([data-theme="dark"]) .line {
       background: #334155;
     }
 
@@ -113,7 +113,7 @@ export class ElTimelineItem extends Elementum {
       margin: 0;
     }
 
-    :root[data-theme="dark"] .title {
+    :host-context([data-theme="dark"]) .title {
       color: #f8fafc;
     }
 
@@ -129,7 +129,7 @@ export class ElTimelineItem extends Elementum {
       line-height: 1.45;
     }
 
-    :root[data-theme="dark"] .description {
+    :host-context([data-theme="dark"]) .description {
       color: #94a3b8;
     }
 

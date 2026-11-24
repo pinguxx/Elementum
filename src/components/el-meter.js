@@ -97,7 +97,7 @@ export class ElMeter extends Elementum {
       height: 12px;
     }
 
-    :root[data-theme="dark"] .track {
+    :host-context([data-theme="dark"]) .track {
       background: #334155;
     }
 

@@ -172,20 +172,20 @@ export class ElTaskList extends Elementum {
       font-variant-numeric: tabular-nums;
     }
 
-    :root[data-theme="dark"] .task-card {
+    :host-context([data-theme="dark"]) .task-card {
       background: #0f172a;
       border-color: #334155;
     }
-    :root[data-theme="dark"] .task-header {
+    :host-context([data-theme="dark"]) .task-header {
       background: #1e293b;
       border-color: #334155;
     }
-    :root[data-theme="dark"] .title,
-    :root[data-theme="dark"] .row-label {
+    :host-context([data-theme="dark"]) .title,
+    :host-context([data-theme="dark"]) .row-label {
       color: #f8fafc;
     }
-    :root[data-theme="dark"] .counter,
-    :root[data-theme="dark"] .row-detail {
+    :host-context([data-theme="dark"]) .counter,
+    :host-context([data-theme="dark"]) .row-detail {
       color: #94a3b8;
     }
 

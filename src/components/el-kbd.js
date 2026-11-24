@@ -41,7 +41,7 @@ export class ElKbd extends Elementum {
       box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
     }
 
-    :root[data-theme="dark"] .keycap {
+    :host-context([data-theme="dark"]) .keycap {
       background: #1e293b;
       border-color: #475569;
       border-bottom-color: #64748b;

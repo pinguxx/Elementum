@@ -29,7 +29,7 @@ export class ElCardTitle extends Elementum {
     :host([size="lg"]) { font-size: 1.5rem; }
     :host([align="center"]) { text-align: center; }
     :host([align="right"]) { text-align: right; }
-    :root[data-theme="dark"] :host {
+    :host-context([data-theme="dark"]) {
       color: #f8fafc;
     }
   `;
@@ -59,7 +59,7 @@ export class ElCardDescription extends Elementum {
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    :root[data-theme="dark"] :host {
+    :host-context([data-theme="dark"]) {
       color: #94a3b8;
     }
   `;
@@ -187,7 +187,7 @@ export class ElCard extends Elementum {
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
     }
 
-    :root[data-theme="dark"] :host {
+    :host-context([data-theme="dark"]) {
       background: #1e293b;
       border-color: #334155;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
@@ -206,7 +206,7 @@ export class ElCard extends Elementum {
       box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
     }
 
-    :root[data-theme="dark"] :host([glass]) {
+    :host-context([data-theme="dark"]):host([glass]) {
       background: rgba(30, 41, 59, 0.68);
       border-color: rgba(148, 163, 184, 0.25);
     }
@@ -229,7 +229,7 @@ export class ElCard extends Elementum {
       color: var(--el-text-primary, #0f172a);
     }
 
-    :root[data-theme="dark"] .card-auto-header {
+    :host-context([data-theme="dark"]) .card-auto-header {
       color: #f8fafc;
     }
 

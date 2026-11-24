@@ -75,12 +75,12 @@ export class ElRadio extends Elementum {
       transform: scale(1);
     }
 
-    :root[data-theme="dark"] .circle {
+    :host-context([data-theme="dark"]) .circle {
       background: var(--el-surface-card, #111827);
       border-color: #475569;
     }
 
-    :root[data-theme="dark"] .circle.checked {
+    :host-context([data-theme="dark"]) .circle.checked {
       border-color: var(--el-color-primary, #2563eb);
     }
   `;

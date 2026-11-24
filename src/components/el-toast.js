@@ -290,7 +290,7 @@ export class ElToaster extends Elementum {
       transform: translateX(-50%);
     }
 
-    :root[data-theme="dark"] .toast-card {
+    :host-context([data-theme="dark"]) .toast-card {
       background: #1e293b;
       border-color: #334155;
       color: #f8fafc;
@@ -389,7 +389,7 @@ export class ElToaster extends Elementum {
       word-break: break-word;
     }
 
-    :root[data-theme="dark"] .toast-desc {
+    :host-context([data-theme="dark"]) .toast-desc {
       color: #94a3b8;
     }
 
@@ -428,7 +428,7 @@ export class ElToaster extends Elementum {
       border-color: var(--el-surface-border, #e2e8f0);
     }
 
-    :root[data-theme="dark"] .toast-btn.cancel {
+    :host-context([data-theme="dark"]) .toast-btn.cancel {
       background: #334155;
       color: #f8fafc;
       border-color: #475569;
@@ -453,7 +453,7 @@ export class ElToaster extends Elementum {
       background: var(--el-surface-muted, rgba(0, 0, 0, 0.05));
     }
 
-    :root[data-theme="dark"] .toast-close:hover {
+    :host-context([data-theme="dark"]) .toast-close:hover {
       color: #f8fafc;
       background: rgba(255, 255, 255, 0.1);
     }

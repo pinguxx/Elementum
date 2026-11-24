@@ -221,7 +221,7 @@ export class ElSegmentedControl extends Elementum {
 
     .segment-btn.active {
       background: var(--el-surface-card, #ffffff);
-      color: var(--el-color-primary, #2563eb);
+      color: var(--el-color-primary-text, #1d4ed8);
       font-weight: 600;
       box-shadow: var(--el-shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.05));
     }

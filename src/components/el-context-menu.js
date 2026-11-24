@@ -76,7 +76,7 @@ export class ElContextMenu extends Elementum {
       }
     }
 
-    :root[data-theme="dark"] .menu {
+    :host-context([data-theme="dark"]) .menu {
       background: #1e293b;
       border-color: #334155;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
@@ -123,9 +123,9 @@ export class ElContextMenu extends Elementum {
       color: var(--el-color-primary, #2563eb);
     }
 
-    :root[data-theme="dark"] ::slotted([role="menuitem"]:hover),
-    :root[data-theme="dark"] ::slotted(button:hover),
-    :root[data-theme="dark"] ::slotted(.menu-item:hover) {
+    :host-context([data-theme="dark"]) ::slotted([role="menuitem"]:hover),
+    :host-context([data-theme="dark"]) ::slotted(button:hover),
+    :host-context([data-theme="dark"]) ::slotted(.menu-item:hover) {
       background: #334155;
       color: #93c5fd;
     }

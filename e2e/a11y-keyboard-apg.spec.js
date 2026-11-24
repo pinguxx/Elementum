@@ -136,9 +136,15 @@ test.describe('WAI-ARIA APG Keyboard-Only State Machine Suite (10 Complex Compos
     const autoVal = await page.evaluate(() => document.getElementById('k-auto').value?.value || document.getElementById('k-auto').getAttribute('value'));
     expect(autoVal).toBe('ts');
 
-    // 7. <el-calendar>: keyboard day navigation works cleanly
-    const calHasGrid = await page.evaluate(() => Boolean(document.getElementById('k-cal').shadowRoot?.querySelector('[role="grid"], .calendar-grid, button')));
-    expect(calHasGrid).toBe(true);
+    // 7. <el-calendar>: keyboard ArrowRight moves focus to the next day cell
+    const calMoved = await page.evaluate(() => {
+      const cal = document.getElementById('k-cal');
+      const days = Array.from(cal.shadowRoot.querySelectorAll('.grid .day'));
+      days[10].focus();
+      days[10].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, composed: true }));
+      return cal.shadowRoot.activeElement === days[11];
+    });
+    expect(calMoved).toBe(true);
 
     // 8. <el-table>: clicking sortable header sorts rows (Alpha before Beta)
     await page.locator('#k-table th').nth(1).click();
@@ -148,8 +154,13 @@ test.describe('WAI-ARIA APG Keyboard-Only State Machine Suite (10 Complex Compos
     });
     expect(firstRowText).toBe('Alpha');
 
-    // 9. <el-tree-view>: clicking branch expands it (`expanded` attribute)
-    await page.locator('#tree-root').click();
+    // 9. <el-tree-view>: keyboard ArrowRight expands branch, ArrowDown focuses child, ArrowLeft collapses
+    await page.locator('#tree-root .item-row').first().focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(page.locator('#tree-root')).toHaveAttribute('expanded', '');
+    await page.keyboard.press('ArrowLeft');
+    await expect(page.locator('#tree-root')).not.toHaveAttribute('expanded', '');
+    await page.keyboard.press('ArrowRight');
     await expect(page.locator('#tree-root')).toHaveAttribute('expanded', '');
 
     // 10. <el-navigation-menu>: keyboard Enter on trigger opens item, Escape closes it

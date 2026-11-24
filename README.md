@@ -7,38 +7,39 @@
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 [![M8ven Score](https://m8ven.ai/badge/mcp/pinguxx-elementum-yeg3a6?v=f862621d58ec4975d1943f2ea62028c7)](https://m8ven.ai/mcp/pinguxx-elementum-yeg3a6?s=readme)
 
-> **Elementum** (*Latin*: /e.leˈmen.tum/) — **An AI-native, framework-independent UI engineering platform** that connects design systems, Web Components, and AI agents through a shared, verifiable component contract.
+> **Elementum** (*Latin*: /e.leˈmen.tum/) is a framework-independent UI component library and MCP contract server built on 109 zero-dependency Web Components.
 
-| Component Count | Dependencies | Avg Gzip | Accessibility | License | 
-| ----- | ----- | ----- | ----- | ----- | 
-| **109 Custom Elements** | **0 Runtime Deps** | **2.19 KB** | **WCAG 2.2 AA** (@axe-core/playwright) | **MIT** | 
+| Component count | Dependencies | Avg gzip | Accessibility | License |
+| ----- | ----- | ----- | ----- | ----- |
+| **109 custom elements** | **0 runtime deps** | **2.25 KB** | **WCAG 2.2 AA** (`@axe-core/playwright`) | **MIT** |
 
 [**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (109 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**A2UI Demo**](https://elementum-sage.vercel.app/examples/a2ui.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr) · [**Deep Dive (Dev.to)**](https://dev.to/pinguxx/elementum-an-ai-native-ui-platform-with-built-in-mcp-agent-runtime-109-zero-dep-web-components-9oi)
 
-## 🧪 Verification & Browser Matrix (Beta — `v0.8.5`)
+## Verification and browser matrix (`v0.8.5`)
 
-- **Core Release Gate (`npm run verify:all`)**: Runs `catalog:diff`, `check:release`, `typecheck`, `check:size`, `test` (unit + fuzz + ≥95% line coverage), `verify:consumer` (packed `.tgz` tarball), `verify:react` (React 18 & 19 SSR/StrictMode), and `test:e2e` (3-browser Playwright + `axe-core`).
-- **Companion Verification Workflows**: `npm run verify:starters` (builds & typechecks all framework starters), `npm run test:visual` (light/dark screenshot regression), `npm run bench:frameworks` (React/Vue/Vanilla parity measurement), and `npm run audits:report` / `npm run quality:report` (regenerates [AUDITS.md](https://github.com/pinguxx/Elementum/blob/main/AUDITS.md) and [QUALITY.md](https://github.com/pinguxx/Elementum/blob/main/QUALITY.md)).
+- **Core release gate (`npm run verify:all`).** Runs `catalog:diff`, `check:release`, `typecheck`, `check:size`, `verify:formal` (6,147 states/topologies), `test` (unit, fuzz, and >= 95% line coverage), `verify:consumer` (packed `.tgz` tarball), `verify:react` (React 18 and 19 SSR/StrictMode), and `test:e2e` (3-browser Playwright and `axe-core`).
+- **Companion workflows.** `npm run verify:starters` builds and typechecks all framework starters, `npm run test:visual` checks light and dark screenshots, `npm run bench:frameworks` measures React/Vue/Vanilla parity, `npm run bench:agents` scores AI-agent submissions in headless Chromium, and `npm run audits:report` / `npm run quality:report` regenerate [AUDITS.md](https://github.com/pinguxx/Elementum/blob/main/AUDITS.md) and [QUALITY.md](https://github.com/pinguxx/Elementum/blob/main/QUALITY.md).
 
-Every architectural claim in Elementum is backed by automated verification in CI:
+Every check below runs in CI:
 
-| Verification Layer | Tooling | Scope | 
-| ----- | ----- | ----- | 
-| **Core Signals & Fuzzing** | `node:test` (`test/signal-torture.test.js`) | Cycle detection, stale-dep cleanup, AbortSignal disposal, **1,000-graph multi-seed DAG fuzzer** + **500-step dynamic topology fuzzer** | 
-| **Unit, Behavior & Contract Suite** | `node:test` + `happy-dom` (Node 20/22/24, Ubuntu, Windows & macOS) | **226+ tests**, **≥ 95% line coverage** enforced in CI, WAI-ARIA/RTL/SSR contract checks (`@wcomp/elementum/testing`), Source-vs-Catalog Diff (`npm run catalog:diff`) | 
-| **Gzipped Size Budgets** | `npm run check:size` (`size-budget.json`) | **86 entrypoints** gated in CI (`core + behaviors + agent + ssr`: **29.1 KB**, avg component: **2.19 KB gzip**) | 
-| **External Consumer Tarball** | `npm run verify:consumer` (`tools/verify-consumer.js`) | Packs real `.tgz`, installs into isolated temp app, verifies all ESM subpaths & strict `tsc --noEmit --strict` | 
-| **Real Browser E2E** | Playwright (`npm run test:e2e`) — Chromium, Firefox, WebKit | **17 E2E tests**: `<dialog>` focus restoration, `ElementInternals` `<form>` submit/reset, live CSS transitions (`getAnimations()`), Shadow-DOM agent `snapshot`/`act`, AG-UI SSE | 
-| **Declarative Shadow DOM SSR** | Playwright (`/?hydrate=0` Zero-JS & `/?hydrate=1` Hydrated) | Native `<template shadowrootmode="open">` attachment with JS disabled + clean client hydration | 
-| **Accessibility** | `@axe-core/playwright` (WCAG 2.2 AA ruleset) + `@wcomp/elementum/testing` | Automated real-browser `axe-core` audits + WAI-ARIA APG pattern validators + static MCP `lint_accessibility` | 
-| **Security & MCP Hardening** | `test/security.test.js` + GitHub CodeQL | XSS escaping in `template.js` & `ssr.js`, URL scheme allowlist, prototype-pollution guards, ReDoS-safe parsers, 128 KB MCP payload cap | 
-| **Performance Benchmarks** | `npm run bench` ([BENCHMARKS.md](https://github.com/pinguxx/Elementum/blob/main/BENCHMARKS.md)) | Reproducible median & p95 suite with CPU/OS/Node metadata (`node tools/benchmark.js --write`) | 
+| Verification layer | Tooling | Scope |
+| ----- | ----- | ----- |
+| **Formal invariant verifier** | `npm run verify:formal` (`tools/verify-formal-invariants.js`) | Exhaustive check of 1,440 4-node reactive DAGs, `batch()` fault isolation, `AsyncSignal` self-subscription and race permutations, A2UI cyclic/URL security bounds, and 4,681 `ElToaster` state paths |
+| **Core signals and fuzzing** | `node:test` (`test/signal-torture.test.js`) | Cycle detection, stale-dep cleanup, `AbortSignal` disposal, 1,000-graph multi-seed DAG fuzzer, and 500-step dynamic topology fuzzer |
+| **Unit, behavior, and contract suite** | `node:test` + `happy-dom` (Node 20/22/24, Ubuntu, Windows, macOS) | 226+ tests, >= 95% line coverage enforced in CI, WAI-ARIA/RTL/SSR contract checks (`@wcomp/elementum/testing`), source-vs-catalog diff (`npm run catalog:diff`) |
+| **Gzipped size budgets** | `npm run check:size` (`size-budget.json`) | 86 entrypoints gated in CI (`core + behaviors + agent + ssr`: 34.9 KB, avg component: 2.25 KB gzip) |
+| **External consumer tarball** | `npm run verify:consumer` (`tools/verify-consumer.js`) | Packs real `.tgz`, installs into an isolated temp app, verifies all ESM subpaths and `tsc --noEmit --strict` |
+| **Real browser E2E** | Playwright (`npm run test:e2e`) in Chromium, Firefox, WebKit | 30+ E2E tests across 10 specs: all 109 catalog components, 10-widget WAI-ARIA APG keyboard state machines, `<dialog>` focus restoration, `ElementInternals` `<form>` submit/reset, live CSS transitions, AG-UI SSE, and A2UI |
+| **Declarative Shadow DOM SSR** | Playwright (`/?hydrate=0` zero-JS and `/?hydrate=1` hydrated) | Native `<template shadowrootmode="open">` attachment with JS disabled plus client hydration |
+| **Accessibility** | `@axe-core/playwright` (WCAG 2.2 AA) + `@wcomp/elementum/testing` | Real-browser `axe-core` audits in light and dark mode, WAI-ARIA APG validators, and static MCP `lint_accessibility` |
+| **Security and MCP hardening** | `test/security.test.js` + GitHub CodeQL | XSS escaping in `template.js` and `ssr.js`, URL scheme allowlist, prototype-pollution guards, ReDoS-safe parsers, 128 KB MCP payload cap |
+| **Performance benchmarks** | `npm run bench` ([BENCHMARKS.md](https://github.com/pinguxx/Elementum/blob/main/BENCHMARKS.md)) | Median and p95 suite with CPU, OS, and Node metadata (`node tools/benchmark.js --write`) |
 
-## ⚡ Quick Start
+## Quick start
 
-### Option A: Zero-Build 2-Line CDN (HTML, CodePen, Claude Artifacts)
+### Option A: Zero-build 2-line CDN (HTML, CodePen, Claude Artifacts)
 
-Paste two lines into any HTML file or CodePen—no build step, bundler, or `npm install` required *(for production, pin a version like `@wcomp/elementum@0.8.5`)*:
+Paste two lines into any HTML file or CodePen with no build step, bundler, or `npm install` required (for production, pin a version such as `@wcomp/elementum@0.8.5`):
 
 ```html
 <link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />
@@ -62,7 +63,7 @@ Or import individual tree-shakeable components with an ES import map:
 </script>
 ```
 
-### Option B: npm Install + One-Command Project Setup
+### Option B: npm install and one-command setup
 
 ```bash
 npm install @wcomp/elementum
@@ -78,33 +79,24 @@ import '@wcomp/elementum';
 
 > Using Tailwind CSS or migrating from shadcn/Radix? See [**Tailwind CSS 1-Page Guide**](docs/tailwind-guide.md), [**Auto-Generated `::part()` & Token Reference**](docs/styling-reference.md), [**Migration Guide**](docs/migration-guide.md), and [**Theme Studio**](https://elementum-sage.vercel.app/examples/registry.html#theme-studio).
 
-## 💡 Core Principles
+## Core principles
 
-`Elementum` is inspired by minimalist libraries like `uce`, modernizing the developer experience with standard browser primitives:
+Elementum uses standard browser APIs with zero runtime dependencies:
 
-* **Shadow DOM by default** with automatic Constructable Stylesheet adoption (`new CSSStyleSheet()`).
+* **Shadow DOM by default.** Each component adopts Constructable Stylesheets (`new CSSStyleSheet()`) automatically.
+* **Fine-grained and async signals.** `signal`, `computed`, `effect`, `batch`, `asyncSignal`, `isPending`, and `NotReadyError` update only the bound DOM text or attribute node. `asyncSignal` cancels superseded requests with `AbortSignal`, keeps stale-while-revalidate `.value`, and exposes structured `.error` details.
+* **Form-Associated Custom Elements (FACE).** `static formAssociated = true` enables native `<form>` submission, reset, and validation through `ElementInternals`.
+* **Zero build requirement.** Plain ES modules (`<script type="module">`) run directly in browsers and Node.js SSR without a compiler.
+* **Light and dark mode.** CSS custom property tokens support `prefers-color-scheme` and `<el-theme-switch>`.
+* **Leak-free lifecycle.** Each component tracks and tears down event listeners and signal subscriptions through `this.signal` (`AbortSignal`).
+* **WCAG 2.2 AA compliance.** Components include 24x24px minimum targets, `:focus-visible` outlines, dialog focus restoration, and `ElementInternals.setValidity`.
+* **Figma 1:1 parity.** Component attributes and CSS custom properties map directly to Figma Component Variants and Figma Variables.
+* **Built-in MCP server.** Ships W3C `custom-elements.json` plus a local stdio and hosted Streamable HTTP MCP server for coding agents.
+* **CI and provenance.** GitHub Actions tests Node 20, 22, and 24 across Linux, Windows, and macOS, and publishes to npm with OIDC provenance.
 
-* **Fine-grained & Async-First Signals** (`signal`, `computed`, `effect`, `batch`, `asyncSignal`, `isPending`, `NotReadyError`): state updates mutate **only the exact bound DOM text or attribute node**, while `asyncSignal` adds `AbortSignal` race-condition cancellation, stale-while-revalidate `.value`, and structured `.error` details.
+## Component catalog
 
-* **Form-Associated Custom Elements (FACE)**: `static formAssociated = true` enables native `<form>` submission, reset, and validation via `ElementInternals`.
-
-* **Zero build requirement**: Plain ES modules (`<script type="module">`), no Babel, decorators, or compile step needed. Runs in SSR / Node.js cleanly.
-
-* **Light & Dark Mode**: Built-in CSS custom property theme tokens with automatic `prefers-color-scheme` and `<el-theme-switch>`.
-
-* **Leak-free lifecycle**: Automatically tracks and tears down event listeners and signal subscriptions via `this.signal` (`AbortSignal`).
-
-* **WCAG 2.2 AA Compliant**: Built-in 24x24px minimum target sizes, high-contrast `:focus-visible` rings, dialog focus preservation, and HTML5 Constraint Validation API (`ElementInternals.setValidity`).
-
-* **Figma 1:1 Parity**: Direct mapping to Figma Component Variants and Figma Variables.
-
-* **AI Agent & MCP Ready**: Generates standard W3C `custom-elements.json` and includes a built-in MCP server (local stdio and hosted Streamable HTTP) for coding agents.
-
-* **CI/CD & Automation**: GitHub Actions multi-OS / multi-Node matrix test runner, OIDC npm Trusted Publishing with provenance, and Dependabot automated dependency updates.
-
-## Component Catalog
-
-Selected highlights below — browse all **109 elements** interactively in the [**Component Catalog**](https://elementum-sage.vercel.app/examples/index.html).
+Selected components below. Browse all 109 elements interactively in the [**Component Catalog**](https://elementum-sage.vercel.app/examples/index.html).
 
 | Component | Tag Name | Description | 
 | ----- | ----- | ----- | 

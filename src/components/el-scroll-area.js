@@ -36,7 +36,7 @@ export class ElScrollArea extends Elementum {
       -webkit-overflow-scrolling: touch;
     }
 
-    :root[data-theme="dark"] .viewport {
+    :host-context([data-theme="dark"]) .viewport {
       scrollbar-color: #475569 transparent;
     }
 
@@ -60,11 +60,11 @@ export class ElScrollArea extends Elementum {
       background: var(--el-text-muted, #94a3b8);
     }
 
-    :root[data-theme="dark"] .viewport::-webkit-scrollbar-thumb {
+    :host-context([data-theme="dark"]) .viewport::-webkit-scrollbar-thumb {
       background: #475569;
     }
 
-    :root[data-theme="dark"] .viewport::-webkit-scrollbar-thumb:hover {
+    :host-context([data-theme="dark"]) .viewport::-webkit-scrollbar-thumb:hover {
       background: #64748b;
     }
 

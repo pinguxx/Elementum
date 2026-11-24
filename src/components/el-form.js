@@ -34,7 +34,7 @@ export class ElFieldset extends Elementum {
       background: var(--el-surface-base, #ffffff);
     }
 
-    :root[data-theme="dark"] fieldset {
+    :host-context([data-theme="dark"]) fieldset {
       border-color: #334155;
       background: #1e293b;
     }
@@ -46,7 +46,7 @@ export class ElFieldset extends Elementum {
       color: var(--el-text-primary, #0f172a);
     }
 
-    :root[data-theme="dark"] legend {
+    :host-context([data-theme="dark"]) legend {
       color: #f8fafc;
     }
 

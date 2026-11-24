@@ -38,7 +38,7 @@ export class ElSidebarTrigger extends Elementum {
       transition: background-color 0.15s ease, transform 0.15s ease;
     }
 
-    :root[data-theme="dark"] button {
+    :host-context([data-theme="dark"]) button {
       background: #1e293b;
       border-color: #334155;
       color: #f8fafc;
@@ -49,7 +49,7 @@ export class ElSidebarTrigger extends Elementum {
       transform: scale(1.05);
     }
 
-    :root[data-theme="dark"] button:hover {
+    :host-context([data-theme="dark"]) button:hover {
       background: #334155;
     }
   `;
@@ -258,7 +258,7 @@ export class ElSidebar extends Elementum {
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
     }
 
-    :root[data-theme="dark"] :host([variant="floating"]) {
+    :host-context([data-theme="dark"]):host([variant="floating"]) {
       border-color: #334155 !important;
     }
 
@@ -268,7 +268,7 @@ export class ElSidebar extends Elementum {
       border-right: 1px dashed var(--el-surface-border, #cbd5e1) !important;
     }
 
-    :root[data-theme="dark"] :host([variant="inset"]) {
+    :host-context([data-theme="dark"]):host([variant="inset"]) {
       background: #0f172a;
       border-right-color: #334155 !important;
     }
@@ -300,13 +300,13 @@ export class ElSidebar extends Elementum {
       color: var(--el-text-primary, #0f172a);
     }
 
-    :root[data-theme="dark"] ::slotted(a),
-    :root[data-theme="dark"] ::slotted(button) {
+    :host-context([data-theme="dark"]) ::slotted(a),
+    :host-context([data-theme="dark"]) ::slotted(button) {
       color: #94a3b8;
     }
 
-    :root[data-theme="dark"] ::slotted(a:hover),
-    :root[data-theme="dark"] ::slotted(button:hover) {
+    :host-context([data-theme="dark"]) ::slotted(a:hover),
+    :host-context([data-theme="dark"]) ::slotted(button:hover) {
       background: #1e293b;
       color: #f8fafc;
     }

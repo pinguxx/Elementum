@@ -37,7 +37,7 @@ export class ElMenubar extends Elementum {
       box-sizing: border-box;
     }
 
-    :root[data-theme="dark"] .menubar {
+    :host-context([data-theme="dark"]) .menubar {
       background: #1e293b;
       border-color: #334155;
     }
@@ -75,9 +75,9 @@ export class ElMenubar extends Elementum {
       color: var(--el-color-primary, #2563eb);
     }
 
-    :root[data-theme="dark"] ::slotted([role="menuitem"]:hover),
-    :root[data-theme="dark"] ::slotted(.menubar-item:hover),
-    :root[data-theme="dark"] ::slotted(button:hover) {
+    :host-context([data-theme="dark"]) ::slotted([role="menuitem"]:hover),
+    :host-context([data-theme="dark"]) ::slotted(.menubar-item:hover),
+    :host-context([data-theme="dark"]) ::slotted(button:hover) {
       background: #334155;
       color: #93c5fd;
     }

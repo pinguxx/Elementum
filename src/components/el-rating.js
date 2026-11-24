@@ -43,7 +43,7 @@ export class ElRating extends Elementum {
       border-radius: var(--el-radius-sm, 4px);
     }
 
-    :root[data-theme="dark"] .star-btn {
+    :host-context([data-theme="dark"]) .star-btn {
       color: #475569;
     }
 

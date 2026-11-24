@@ -266,7 +266,7 @@ export class ElNavigationMenuTrigger extends Elementum {
 
     button:hover, :host-context([open]) button {
       background-color: var(--el-surface-muted, #f1f5f9);
-      color: var(--el-primary, #2563eb);
+      color: var(--el-color-primary-text, #1d4ed8);
     }
 
     :host-context([data-theme="dark"]) button {

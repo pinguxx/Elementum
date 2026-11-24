@@ -315,32 +315,32 @@ export class ElDiffViewer extends Elementum {
 
     .btn-reject {
       background: var(--el-surface-base, #ffffff);
-      color: var(--el-color-danger, #dc2626);
+      color: var(--el-color-danger-text, #b91c1c);
       border-color: rgba(220, 38, 38, 0.35);
     }
 
-    :root[data-theme="dark"] .diff-shell {
+    :host-context([data-theme="dark"]) .diff-shell {
       background: #0f172a;
       border-color: #334155;
     }
-    :root[data-theme="dark"] .diff-header,
-    :root[data-theme="dark"] .diff-footer {
+    :host-context([data-theme="dark"]) .diff-header,
+    :host-context([data-theme="dark"]) .diff-footer {
       background: #1e293b;
       border-color: #334155;
     }
-    :root[data-theme="dark"] .filename,
-    :root[data-theme="dark"] .code-cell {
+    :host-context([data-theme="dark"]) .filename,
+    :host-context([data-theme="dark"]) .code-cell {
       color: #f8fafc;
     }
-    :root[data-theme="dark"] .mode-switch {
+    :host-context([data-theme="dark"]) .mode-switch {
       background: #0f172a;
       border-color: #334155;
     }
-    :root[data-theme="dark"] .stat-add {
+    :host-context([data-theme="dark"]) .stat-add {
       background: rgba(16, 185, 129, 0.2);
       color: #6ee7b7;
     }
-    :root[data-theme="dark"] .stat-del {
+    :host-context([data-theme="dark"]) .stat-del {
       background: rgba(239, 68, 68, 0.2);
       color: #fca5a5;
     }

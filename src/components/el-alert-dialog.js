@@ -59,7 +59,7 @@ export class ElAlertDialog extends Elementum {
       transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease;
     }
 
-    :root[data-theme="dark"] .dialog-window {
+    :host-context([data-theme="dark"]) .dialog-window {
       background: var(--el-surface-elevated, #1e293b);
       border-color: #334155;
       color: #f8fafc;
@@ -91,7 +91,7 @@ export class ElAlertDialog extends Elementum {
       color: var(--el-text-primary, #0f172a);
     }
 
-    :root[data-theme="dark"] .dialog-title {
+    :host-context([data-theme="dark"]) .dialog-title {
       color: #f8fafc;
     }
   `;

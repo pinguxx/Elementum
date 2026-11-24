@@ -525,7 +525,7 @@ export class ElDrawer extends Elementum {
       will-change: transform;
     }
 
-    :root[data-theme="dark"] .drawer-panel {
+    :host-context([data-theme="dark"]) .drawer-panel {
       background: var(--el-surface-elevated, #1e293b);
       color: #f8fafc;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.65);
@@ -575,7 +575,7 @@ export class ElDrawer extends Elementum {
       border-radius: var(--el-radius-xl, 16px) var(--el-radius-xl, 16px) 0 0;
     }
 
-    :root[data-theme="dark"] .placement-bottom {
+    :host-context([data-theme="dark"]) .placement-bottom {
       border-top-color: #334155;
     }
 
@@ -624,7 +624,7 @@ export class ElDrawer extends Elementum {
       cursor: grab;
     }
 
-    :root[data-theme="dark"] .drawer-header {
+    :host-context([data-theme="dark"]) .drawer-header {
       border-bottom-color: #334155;
     }
 
@@ -656,7 +656,7 @@ export class ElDrawer extends Elementum {
       color: var(--el-text-primary, #0f172a);
     }
 
-    :root[data-theme="dark"] .close-btn:hover {
+    :host-context([data-theme="dark"]) .close-btn:hover {
       background: #334155;
       color: #f8fafc;
     }
@@ -684,7 +684,7 @@ export class ElDrawer extends Elementum {
       background: var(--el-surface-muted, #f8fafc);
     }
 
-    :root[data-theme="dark"] .drawer-footer {
+    :host-context([data-theme="dark"]) .drawer-footer {
       background: #111827;
       border-top-color: #334155;
     }

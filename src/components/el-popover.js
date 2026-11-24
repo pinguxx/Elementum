@@ -53,7 +53,7 @@ export class ElPopover extends Elementum {
       transition: opacity 160ms cubic-bezier(0.16, 1, 0.3, 1), transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    :root[data-theme="dark"] .popup {
+    :host-context([data-theme="dark"]) .popup {
       background: var(--el-surface-card, #111827);
       border-color: #334155;
       color: #f8fafc;
@@ -129,7 +129,7 @@ export class ElPopover extends Elementum {
       pointer-events: none;
     }
 
-    :root[data-theme="dark"] .arrow {
+    :host-context([data-theme="dark"]) .arrow {
       background: var(--el-surface-card, #111827);
       border-color: #334155;
     }

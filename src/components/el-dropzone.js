@@ -43,7 +43,7 @@ export class ElDropzone extends Elementum {
       box-sizing: border-box;
     }
 
-    :root[data-theme="dark"] .dropzone-box {
+    :host-context([data-theme="dark"]) .dropzone-box {
       background: #1e293b;
       border-color: #334155;
     }
@@ -54,8 +54,8 @@ export class ElDropzone extends Elementum {
       background: rgba(37, 99, 235, 0.03);
     }
 
-    :root[data-theme="dark"] .dropzone-box:hover:not(.disabled),
-    :root[data-theme="dark"] .dropzone-box.dragover {
+    :host-context([data-theme="dark"]) .dropzone-box:hover:not(.disabled),
+    :host-context([data-theme="dark"]) .dropzone-box.dragover {
       background: rgba(59, 130, 246, 0.1);
       border-color: #3b82f6;
     }
@@ -78,7 +78,7 @@ export class ElDropzone extends Elementum {
       color: var(--el-color-primary, #2563eb);
     }
 
-    :root[data-theme="dark"] .icon {
+    :host-context([data-theme="dark"]) .icon {
       background: #0f172a;
       color: #60a5fa;
     }
@@ -90,7 +90,7 @@ export class ElDropzone extends Elementum {
       margin: 0 0 4px 0;
     }
 
-    :root[data-theme="dark"] .headline {
+    :host-context([data-theme="dark"]) .headline {
       color: #f8fafc;
     }
 
@@ -123,7 +123,7 @@ export class ElDropzone extends Elementum {
       color: var(--el-text-secondary, #334155);
     }
 
-    :root[data-theme="dark"] .file-item {
+    :host-context([data-theme="dark"]) .file-item {
       background: #0f172a;
       color: #94a3b8;
     }

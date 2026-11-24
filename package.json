@@ -89,7 +89,7 @@
     "check:size": "node tools/check-size.js",
     "check:size:update": "node tools/check-size.js --update",
     "verify:formal": "node tools/verify-formal-invariants.js",
-    "verify:all": "npm run catalog:diff && npm run check:release && npm run typecheck && npm run check:size && npm test && npm run verify:consumer && npm run verify:react && npm run test:e2e",
+    "verify:all": "npm run catalog:diff && npm run check:release && npm run typecheck && npm run check:size && npm run verify:formal && npm test && npm run verify:consumer && npm run verify:react && npm run test:e2e",
     "bench": "node tools/benchmark.js",
     "serve": "node tools/serve.js",
     "serve:proxy": "node tools/serve.js --proxy",

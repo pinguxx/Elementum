@@ -525,11 +525,11 @@
     }
 
     .canvas-stage.dark-canvas {
-      --el-color-primary: #3b82f6;
-      --el-color-primary-hover: #60a5fa;
+      --el-color-primary: #2563eb;
+      --el-color-primary-hover: #1d4ed8;
       --el-color-secondary: #9ca3af;
-      --el-color-danger: #ef4444;
-      --el-color-success: #22c55e;
+      --el-color-danger: #dc2626;
+      --el-color-success: #15803d;
       --el-surface-base: #0b0f19;
       --el-surface-card: #111827;
       --el-surface-elevated: #1e293b;
@@ -538,9 +538,13 @@
       --el-border-translucent: rgba(255, 255, 255, 0.08);
       --el-text-base: #f9fafb;
       --el-text-primary: #f8fafc;
-      --el-text-secondary: #94a3b8;
-      --el-text-muted: #64748b;
+      --el-text-secondary: #cbd5e1;
+      --el-text-muted: #94a3b8;
       --el-text-inverse: #0f172a;
+      --el-color-primary-text: #93c5fd;
+      --el-color-success-text: #6ee7b7;
+      --el-color-warning-text: #fcd34d;
+      --el-color-danger-text: #fca5a5;
       --el-step-1: #090d16;
       --el-step-2: #0f172a;
       --el-step-3: #1e293b;
@@ -549,8 +553,8 @@
       --el-step-6: #1e293b;
       --el-step-7: #334155;
       --el-step-8: #64748b;
-      --el-step-9: #3b82f6;
-      --el-step-10: #2563eb;
+      --el-step-9: #2563eb;
+      --el-step-10: #1d4ed8;
       --el-step-11: #94a3b8;
       --el-step-12: #f8fafc;
       --el-tooltip-bg: #1e293b;
@@ -2494,7 +2498,7 @@ ${optionsHtml}
         const openAttr = p.open ? ' open' : '';
         return `<div style="padding: 56px 0;">
   <el-preview-card placement="${placement}"${delay}${openDelay}${closeDelay}${openAttr}>
-    <span slot="trigger" style="text-decoration: underline; cursor: pointer; color: var(--el-color-primary); font-weight: 600;">@antigravity</span>
+    <span slot="trigger" style="text-decoration: underline; cursor: pointer; color: var(--el-color-primary-text, var(--el-color-primary)); font-weight: 600;">@antigravity</span>
     <div slot="preview" style="width: 240px;">
       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
         <span style="font-size: 1.25rem;">⚡</span>

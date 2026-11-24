@@ -82,13 +82,13 @@ export class ElCheckbox extends Elementum {
       stroke-linejoin: round;
     }
 
-    :root[data-theme="dark"] .checkbox-box {
+    :host-context([data-theme="dark"]) .checkbox-box {
       background: var(--el-surface-card, #111827);
       border-color: #475569;
     }
 
-    :root[data-theme="dark"] .checkbox-box.checked,
-    :root[data-theme="dark"] .checkbox-box.indeterminate {
+    :host-context([data-theme="dark"]) .checkbox-box.checked,
+    :host-context([data-theme="dark"]) .checkbox-box.indeterminate {
       background: var(--el-color-primary, #2563eb);
       border-color: var(--el-color-primary, #2563eb);
     }

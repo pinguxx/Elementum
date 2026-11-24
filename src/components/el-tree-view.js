@@ -40,27 +40,26 @@ export class ElTreeItem extends Elementum {
       outline: none;
     }
 
+    .item-row:focus-visible {
+      box-shadow: inset 0 0 0 2px var(--el-color-primary, #2563eb);
+    }
+
     .item-row:hover {
       background: var(--el-surface-muted, #f1f5f9);
     }
 
-    :root[data-theme="dark"] .item-row {
+    :host-context([data-theme="dark"]) .item-row {
       color: #f8fafc;
     }
 
-    :root[data-theme="dark"] .item-row:hover {
+    :host-context([data-theme="dark"]) .item-row:hover {
       background: #1e293b;
     }
 
     :host([selected]) .item-row {
       background: var(--el-surface-border, #e2e8f0);
       font-weight: 600;
-      color: var(--el-color-primary, #2563eb);
-    }
-
-    :root[data-theme="dark"] :host([selected]) .item-row {
-      background: #334155;
-      color: #93c5fd;
+      color: var(--el-color-primary-text, #1d4ed8);
     }
 
     .chevron {
@@ -113,7 +112,7 @@ export class ElTreeItem extends Elementum {
       background: var(--el-surface-border, #e2e8f0);
     }
 
-    :root[data-theme="dark"] .sub-tree::before {
+    :host-context([data-theme="dark"]) .sub-tree::before {
       background: #334155;
     }
 
@@ -151,6 +150,67 @@ export class ElTreeItem extends Elementum {
     const childItems = this.querySelectorAll('el-tree-item');
     this.hasChildren.value = childItems.length > 0;
   }
+
+  #getVisibleTreeItems() {
+    const tree = this.closest('el-tree-view');
+    if (!tree) return [this];
+    const all = Array.from(tree.querySelectorAll('el-tree-item'));
+    return all.filter((item) => {
+      let ancestor = item.parentElement?.closest('el-tree-item');
+      while (ancestor) {
+        if (!ancestor.hasAttribute('expanded')) return false;
+        ancestor = ancestor.parentElement?.closest('el-tree-item');
+      }
+      return true;
+    });
+  }
+
+  #focusRow(targetItem) {
+    targetItem?.shadowRoot?.querySelector('.item-row')?.focus();
+  }
+
+  #onKeyDown = (e) => {
+    if (this.disabled.value) return;
+    const key = e.key;
+    if (!['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft', 'Home', 'End', 'Enter', ' '].includes(key)) {
+      return;
+    }
+    e.preventDefault();
+    e.stopPropagation();
+
+    const visible = this.#getVisibleTreeItems();
+    const idx = visible.indexOf(this);
+
+    if (key === 'ArrowDown') {
+      if (idx >= 0 && idx < visible.length - 1) this.#focusRow(visible[idx + 1]);
+    } else if (key === 'ArrowUp') {
+      if (idx > 0) this.#focusRow(visible[idx - 1]);
+    } else if (key === 'Home') {
+      this.#focusRow(visible[0]);
+    } else if (key === 'End') {
+      this.#focusRow(visible[visible.length - 1]);
+    } else if (key === 'ArrowRight') {
+      if (this.hasChildren.value && !this.expanded.value) {
+        this.expanded.value = true;
+        this.setAttribute('expanded', '');
+        this.emit('expand', { item: this });
+      } else if (this.hasChildren.value && this.expanded.value) {
+        const firstChild = this.querySelector(':scope > el-tree-item');
+        if (firstChild) this.#focusRow(firstChild);
+      }
+    } else if (key === 'ArrowLeft') {
+      if (this.hasChildren.value && this.expanded.value) {
+        this.expanded.value = false;
+        this.removeAttribute('expanded');
+        this.emit('collapse', { item: this });
+      } else {
+        const parentItem = this.parentElement?.closest('el-tree-item');
+        if (parentItem) this.#focusRow(parentItem);
+      }
+    } else if (key === 'Enter' || key === ' ') {
+      this.toggle(e);
+    }
+  };
 
   toggle = (e) => {
     e?.stopPropagation();
@@ -197,6 +257,7 @@ export class ElTreeItem extends Elementum {
         aria-selected=${() => String(this.selected.value)}
         tabindex="0"
         onclick=${this.toggle}
+        onkeydown=${this.#onKeyDown}
       >
         <span class=${() => `chevron ${!this.hasChildren.value ? 'hidden' : ''} ${this.expanded.value ? 'open' : ''}`}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>

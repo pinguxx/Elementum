@@ -3310,7 +3310,7 @@ export const components = {
     "examples": [
       {
         "title": "Profile Hover Card",
-        "code": "<el-preview-card delay=\"200\">\n  <a slot=\"trigger\" href=\"#profile\" onclick=\"event.preventDefault()\" style=\"color: var(--el-color-primary); font-weight: 600;\">@elementum_ui</a>\n  <div slot=\"preview\" style=\"width: 240px;\">\n    <div style=\"font-weight: 700; margin-bottom: 4px;\">Elementum UI</div>\n    <div style=\"color: var(--el-text-muted); font-size: 0.85rem; line-height: 1.4;\">Zero-dependency, signal-driven Web Components with Figma parity.</div>\n  </div>\n</el-preview-card>"
+        "code": "<el-preview-card delay=\"200\">\n  <a slot=\"trigger\" href=\"#profile\" onclick=\"event.preventDefault()\" style=\"color: var(--el-color-primary-text, var(--el-color-primary)); font-weight: 600;\">@elementum_ui</a>\n  <div slot=\"preview\" style=\"width: 240px;\">\n    <div style=\"font-weight: 700; margin-bottom: 4px;\">Elementum UI</div>\n    <div style=\"color: var(--el-text-muted); font-size: 0.85rem; line-height: 1.4;\">Zero-dependency, signal-driven Web Components with Figma parity.</div>\n  </div>\n</el-preview-card>"
       }
     ]
   },

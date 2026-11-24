@@ -90,8 +90,8 @@ export class ElTabs extends Elementum {
     }
 
     .tab-btn.active {
-      color: var(--el-color-primary, #2563eb);
-      border-bottom-color: var(--el-color-primary, #2563eb);
+      color: var(--el-color-primary-text, #1d4ed8);
+      border-bottom-color: var(--el-color-primary-text, #1d4ed8);
       font-weight: 600;
     }
 

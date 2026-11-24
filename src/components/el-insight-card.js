@@ -188,22 +188,22 @@ export class ElInsightCard extends Elementum {
       color: #1d4ed8;
     }
 
-    :root[data-theme="dark"] .card {
+    :host-context([data-theme="dark"]) .card {
       background: #0f172a;
       border-color: #334155;
     }
-    :root[data-theme="dark"] .heading,
-    :root[data-theme="dark"] .metric-val {
+    :host-context([data-theme="dark"]) .heading,
+    :host-context([data-theme="dark"]) .metric-val {
       color: #f8fafc;
     }
-    :root[data-theme="dark"] .summary,
-    :root[data-theme="dark"] .metric-delta {
+    :host-context([data-theme="dark"]) .summary,
+    :host-context([data-theme="dark"]) .metric-delta {
       color: #94a3b8;
     }
-    :root[data-theme="dark"] .footer {
+    :host-context([data-theme="dark"]) .footer {
       border-top-color: #1e293b;
     }
-    :root[data-theme="dark"] .vote-btn {
+    :host-context([data-theme="dark"]) .vote-btn {
       background: #1e293b;
       border-color: #334155;
       color: #cbd5e1;

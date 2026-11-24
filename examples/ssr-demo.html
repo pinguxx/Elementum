@@ -119,16 +119,17 @@
   color-scheme: light;
 }
 
+[data-theme="dark"],
 :root[data-theme="dark"] {
-  /* Brand Colors */
-  --el-color-primary: #3b82f6;
-  --el-color-primary-hover: #60a5fa;
+  /* Brand Colors (WCAG AA >= 4.5:1 with white text) */
+  --el-color-primary: #2563eb;
+  --el-color-primary-hover: #1d4ed8;
   --el-color-secondary: #9ca3af;
-  --el-color-danger: #ef4444;
-  --el-color-success: #22c55e;
-  --el-color-warning: #f59e0b;
-  --el-color-info: #38bdf8;
-  --el-color-accent: #a78bfa;
+  --el-color-danger: #dc2626;
+  --el-color-success: #15803d;
+  --el-color-warning: #d97706;
+  --el-color-info: #0284c7;
+  --el-color-accent: #7c3aed;
 
   /* Surfaces (Dark Mode) */
   --el-surface-base: #0b0f19;
@@ -144,12 +145,16 @@
   --el-shadow-popover: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
   --el-shadow-glow: 0 0 25px -5px rgba(59, 130, 246, 0.35);
 
-  /* Typography Colors (Dark Mode) */
+  /* Typography Colors (Dark Mode, WCAG AA >= 4.5:1 on #1e293b) */
   --el-text-base: #f9fafb;
   --el-text-primary: #f8fafc;
-  --el-text-secondary: #94a3b8;
-  --el-text-muted: #64748b;
+  --el-text-secondary: #cbd5e1;
+  --el-text-muted: #94a3b8;
   --el-text-inverse: #0f172a;
+  --el-color-primary-text: #93c5fd;
+  --el-color-success-text: #6ee7b7;
+  --el-color-warning-text: #fcd34d;
+  --el-color-danger-text: #fca5a5;
 
   /* Chart Colors (Dark Mode) */
   --el-chart-1: #3b82f6;
@@ -167,8 +172,8 @@
   --el-step-6: #1e293b;  /* Subtle borders / dividers */
   --el-step-7: #334155;  /* Interactive borders */
   --el-step-8: #64748b;  /* Focus rings & hover borders */
-  --el-step-9: #3b82f6;  /* Solid primary accent */
-  --el-step-10: #2563eb; /* Hovered solid primary */
+  --el-step-9: #2563eb;  /* Solid primary accent */
+  --el-step-10: #1d4ed8; /* Hovered solid primary */
   --el-step-11: #94a3b8; /* Secondary/muted text */
   --el-step-12: #f8fafc; /* High-contrast primary text */
 
@@ -184,14 +189,14 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):not([data-theme="dark"]) {
-    --el-color-primary: #3b82f6;
-    --el-color-primary-hover: #60a5fa;
+    --el-color-primary: #2563eb;
+    --el-color-primary-hover: #1d4ed8;
     --el-color-secondary: #9ca3af;
-    --el-color-danger: #ef4444;
-    --el-color-success: #22c55e;
-    --el-color-warning: #f59e0b;
-    --el-color-info: #38bdf8;
-    --el-color-accent: #a78bfa;
+    --el-color-danger: #dc2626;
+    --el-color-success: #15803d;
+    --el-color-warning: #d97706;
+    --el-color-info: #0284c7;
+    --el-color-accent: #7c3aed;
 
     --el-surface-base: #0b0f19;
     --el-surface-card: #111827;
@@ -208,9 +213,13 @@
 
     --el-text-base: #f9fafb;
     --el-text-primary: #f8fafc;
-    --el-text-secondary: #94a3b8;
-    --el-text-muted: #64748b;
+    --el-text-secondary: #cbd5e1;
+    --el-text-muted: #94a3b8;
     --el-text-inverse: #0f172a;
+    --el-color-primary-text: #93c5fd;
+    --el-color-success-text: #6ee7b7;
+    --el-color-warning-text: #fcd34d;
+    --el-color-danger-text: #fca5a5;
 
     --el-chart-1: #3b82f6;
     --el-chart-2: #34d399;
@@ -809,8 +818,8 @@ el-sidebar[collapsed] el-sidebar-content div {
 
     :host([variant="success"]) span {
       background: #dcfce7;
-      color: #15803d;
-      border: 1px solid rgba(21, 128, 61, 0.25);
+      color: #166534;
+      border: 1px solid rgba(22, 101, 52, 0.25);
     }
 
     :host([variant="danger"]) span {
@@ -893,8 +902,8 @@ el-sidebar[collapsed] el-sidebar-content div {
 
     :host([variant="success"]) span {
       background: #dcfce7;
-      color: #15803d;
-      border: 1px solid rgba(21, 128, 61, 0.25);
+      color: #166534;
+      border: 1px solid rgba(22, 101, 52, 0.25);
     }
 
     :host([variant="danger"]) span {
@@ -977,8 +986,8 @@ el-sidebar[collapsed] el-sidebar-content div {
 
     :host([variant="success"]) span {
       background: #dcfce7;
-      color: #15803d;
-      border: 1px solid rgba(21, 128, 61, 0.25);
+      color: #166534;
+      border: 1px solid rgba(22, 101, 52, 0.25);
     }
 
     :host([variant="danger"]) span {
@@ -1059,11 +1068,11 @@ el-sidebar[collapsed] el-sidebar-content div {
     :host, :host([variant="info"]), :host([variant="primary"]) {
       background-color: rgba(37, 99, 235, 0.08);
       border-color: rgba(37, 99, 235, 0.2);
-      color: #1e40af;
+      color: var(--el-color-primary-text, #1e40af);
     }
-    :host-context([data-theme="dark"]), :host-context([data-theme="dark"])[variant="info"], :host-context([data-theme="dark"])[variant="primary"] {
-      background-color: rgba(59, 130, 246, 0.12);
-      border-color: rgba(59, 130, 246, 0.25);
+    :host-context([data-theme="dark"]) {
+      background-color: rgba(59, 130, 246, 0.14);
+      border-color: rgba(59, 130, 246, 0.3);
       color: #93c5fd;
     }
 
@@ -1073,46 +1082,26 @@ el-sidebar[collapsed] el-sidebar-content div {
       border-color: var(--el-surface-border, #e2e8f0);
       color: var(--el-text-secondary, #475569);
     }
-    :host-context([data-theme="dark"])[variant="secondary"] {
-      background-color: rgba(30, 41, 59, 0.7);
-      border-color: #334155;
-      color: #cbd5e1;
-    }
 
     /* Success */
     :host([variant="success"]) {
-      background-color: rgba(16, 185, 129, 0.08);
-      border-color: rgba(16, 185, 129, 0.25);
-      color: #065f46;
-    }
-    :host-context([data-theme="dark"])[variant="success"] {
-      background-color: rgba(16, 185, 129, 0.12);
-      border-color: rgba(16, 185, 129, 0.25);
-      color: #6ee7b7;
+      background-color: rgba(16, 185, 129, 0.1);
+      border-color: rgba(16, 185, 129, 0.28);
+      color: var(--el-color-success-text, #065f46);
     }
 
     /* Warning */
     :host([variant="warning"]) {
-      background-color: rgba(245, 158, 11, 0.08);
-      border-color: rgba(245, 158, 11, 0.25);
-      color: #92400e;
-    }
-    :host-context([data-theme="dark"])[variant="warning"] {
-      background-color: rgba(245, 158, 11, 0.12);
-      border-color: rgba(245, 158, 11, 0.25);
-      color: #fcd34d;
+      background-color: rgba(245, 158, 11, 0.1);
+      border-color: rgba(245, 158, 11, 0.28);
+      color: var(--el-color-warning-text, #92400e);
     }
 
     /* Danger */
     :host([variant="danger"]) {
-      background-color: rgba(239, 68, 68, 0.08);
-      border-color: rgba(239, 68, 68, 0.25);
-      color: #991b1b;
-    }
-    :host-context([data-theme="dark"])[variant="danger"] {
-      background-color: rgba(239, 68, 68, 0.12);
-      border-color: rgba(239, 68, 68, 0.25);
-      color: #fca5a5;
+      background-color: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.28);
+      color: var(--el-color-danger-text, #991b1b);
     }
 
     .icon-wrapper {
@@ -1143,7 +1132,7 @@ el-sidebar[collapsed] el-sidebar-content div {
         <slot name="title"></slot>
         <slot></slot>
       </div>
-    </template><span slot="title">Rendered on the Server at 2026-11-21T14:29:31.956Z</span>
+    </template><span slot="title">Rendered on the Server at 2026-11-24T01:26:34.352Z</span>
      Every component below was serialized in pure Node.js via <code>renderComponentToDSD()</code> into standard
      <code>&lt;template shadowrootmode="open"&gt;</code>. Even with JavaScript disabled (<code>?hydrate=0</code>),
      Shadow DOM styles and slots paint immediately with zero FOUC or layout shift.</el-callout>
@@ -1164,7 +1153,7 @@ el-sidebar[collapsed] el-sidebar-content div {
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
     }
 
-    :root[data-theme="dark"] :host {
+    :host-context([data-theme="dark"]) {
       background: #1e293b;
       border-color: #334155;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
@@ -1183,7 +1172,7 @@ el-sidebar[collapsed] el-sidebar-content div {
       box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
     }
 
-    :root[data-theme="dark"] :host([glass]) {
+    :host-context([data-theme="dark"]):host([glass]) {
       background: rgba(30, 41, 59, 0.68);
       border-color: rgba(148, 163, 184, 0.25);
     }
@@ -1206,7 +1195,7 @@ el-sidebar[collapsed] el-sidebar-content div {
       color: var(--el-text-primary, #0f172a);
     }
 
-    :root[data-theme="dark"] .card-auto-header {
+    :host-context([data-theme="dark"]) .card-auto-header {
       color: #f8fafc;
     }
 
@@ -1289,10 +1278,10 @@ el-sidebar[collapsed] el-sidebar-content div {
       filter: grayscale(0.2);
     }
 
-    :root[data-theme="dark"] button[disabled],
-    :root[data-theme="dark"] button:disabled,
-    :root[data-theme="dark"] :host([disabled]) button,
-    :root[data-theme="dark"] :host([aria-disabled="true"]) button {
+    :host-context([data-theme="dark"]) button[disabled],
+    :host-context([data-theme="dark"]) button:disabled,
+    :host-context([data-theme="dark"]):host([disabled]) button,
+    :host-context([data-theme="dark"]):host([aria-disabled="true"]) button {
       opacity: 0.38;
       filter: grayscale(0.3);
     }
@@ -1301,17 +1290,23 @@ el-sidebar[collapsed] el-sidebar-content div {
     :host([size="sm"]) button {
       padding: var(--el-spacing-xs, 4px) var(--el-spacing-sm, 8px);
       font-size: 0.8125rem;
+      line-height: 1.2;
+      min-height: 32px;
     }
 
     :host([size="md"]) button,
     :host(:not([size])) button {
       padding: var(--el-spacing-sm, 8px) var(--el-spacing-md, 16px);
       font-size: 0.9375rem;
+      line-height: 1.2;
+      min-height: 38px;
     }
 
     :host([size="lg"]) button {
       padding: var(--el-spacing-md, 16px) var(--el-spacing-lg, 24px);
       font-size: 1.0625rem;
+      line-height: 1.2;
+      min-height: 46px;
     }
 
     /* Color Variants (from Figma tokens) */
@@ -1435,10 +1430,10 @@ el-sidebar[collapsed] el-sidebar-content div {
       filter: grayscale(0.2);
     }
 
-    :root[data-theme="dark"] button[disabled],
-    :root[data-theme="dark"] button:disabled,
-    :root[data-theme="dark"] :host([disabled]) button,
-    :root[data-theme="dark"] :host([aria-disabled="true"]) button {
+    :host-context([data-theme="dark"]) button[disabled],
+    :host-context([data-theme="dark"]) button:disabled,
+    :host-context([data-theme="dark"]):host([disabled]) button,
+    :host-context([data-theme="dark"]):host([aria-disabled="true"]) button {
       opacity: 0.38;
       filter: grayscale(0.3);
     }
@@ -1447,17 +1442,23 @@ el-sidebar[collapsed] el-sidebar-content div {
     :host([size="sm"]) button {
       padding: var(--el-spacing-xs, 4px) var(--el-spacing-sm, 8px);
       font-size: 0.8125rem;
+      line-height: 1.2;
+      min-height: 32px;
     }
 
     :host([size="md"]) button,
     :host(:not([size])) button {
       padding: var(--el-spacing-sm, 8px) var(--el-spacing-md, 16px);
       font-size: 0.9375rem;
+      line-height: 1.2;
+      min-height: 38px;
     }
 
     :host([size="lg"]) button {
       padding: var(--el-spacing-md, 16px) var(--el-spacing-lg, 24px);
       font-size: 1.0625rem;
+      line-height: 1.2;
+      min-height: 46px;
     }
 
     /* Color Variants (from Figma tokens) */
@@ -1581,10 +1582,10 @@ el-sidebar[collapsed] el-sidebar-content div {
       filter: grayscale(0.2);
     }
 
-    :root[data-theme="dark"] button[disabled],
-    :root[data-theme="dark"] button:disabled,
-    :root[data-theme="dark"] :host([disabled]) button,
-    :root[data-theme="dark"] :host([aria-disabled="true"]) button {
+    :host-context([data-theme="dark"]) button[disabled],
+    :host-context([data-theme="dark"]) button:disabled,
+    :host-context([data-theme="dark"]):host([disabled]) button,
+    :host-context([data-theme="dark"]):host([aria-disabled="true"]) button {
       opacity: 0.38;
       filter: grayscale(0.3);
     }
@@ -1593,17 +1594,23 @@ el-sidebar[collapsed] el-sidebar-content div {
     :host([size="sm"]) button {
       padding: var(--el-spacing-xs, 4px) var(--el-spacing-sm, 8px);
       font-size: 0.8125rem;
+      line-height: 1.2;
+      min-height: 32px;
     }
 
     :host([size="md"]) button,
     :host(:not([size])) button {
       padding: var(--el-spacing-sm, 8px) var(--el-spacing-md, 16px);
       font-size: 0.9375rem;
+      line-height: 1.2;
+      min-height: 38px;
     }
 
     :host([size="lg"]) button {
       padding: var(--el-spacing-md, 16px) var(--el-spacing-lg, 24px);
       font-size: 1.0625rem;
+      line-height: 1.2;
+      min-height: 46px;
     }
 
     /* Color Variants (from Figma tokens) */
@@ -1684,7 +1691,7 @@ el-sidebar[collapsed] el-sidebar-content div {
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
     }
 
-    :root[data-theme="dark"] :host {
+    :host-context([data-theme="dark"]) {
       background: #1e293b;
       border-color: #334155;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
@@ -1703,7 +1710,7 @@ el-sidebar[collapsed] el-sidebar-content div {
       box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
     }
 
-    :root[data-theme="dark"] :host([glass]) {
+    :host-context([data-theme="dark"]):host([glass]) {
       background: rgba(30, 41, 59, 0.68);
       border-color: rgba(148, 163, 184, 0.25);
     }
@@ -1726,7 +1733,7 @@ el-sidebar[collapsed] el-sidebar-content div {
       color: var(--el-text-primary, #0f172a);
     }
 
-    :root[data-theme="dark"] .card-auto-header {
+    :host-context([data-theme="dark"]) .card-auto-header {
       color: #f8fafc;
     }
 
@@ -2038,7 +2045,7 @@ el-sidebar[collapsed] el-sidebar-content div {
       height: 12px;
     }
 
-    :root[data-theme="dark"] .track {
+    :host-context([data-theme="dark"]) .track {
       background: #334155;
     }
 
@@ -2314,7 +2321,7 @@ el-sidebar[collapsed] el-sidebar-content div {
       color: var(--el-text-secondary, #475569);
     }
 
-    :root[data-theme="dark"] .description {
+    :host-context([data-theme="dark"]) .description {
       color: #94a3b8;
     }
 
@@ -2337,7 +2344,7 @@ el-sidebar[collapsed] el-sidebar-content div {
       background: rgba(0, 0, 0, 0.05);
     }
 
-    :root[data-theme="dark"] .dismiss-btn:hover {
+    :host-context([data-theme="dark"]) .dismiss-btn:hover {
       color: #f8fafc;
       background: rgba(255, 255, 255, 0.1);
     }
@@ -2351,13 +2358,13 @@ el-sidebar[collapsed] el-sidebar-content div {
     :host([variant="info"]) .title { color: #1e3a8a; }
     :host([variant="info"]) .description { color: #1e40af; }
 
-    :root[data-theme="dark"] :host([variant="info"]) .alert {
+    :host-context([data-theme="dark"]):host([variant="info"]) .alert {
       background: rgba(30, 58, 138, 0.25);
       border-color: #1e3a8a;
       color: #bfdbfe;
     }
-    :root[data-theme="dark"] :host([variant="info"]) .title { color: #93c5fd; }
-    :root[data-theme="dark"] :host([variant="info"]) .description { color: #bfdbfe; }
+    :host-context([data-theme="dark"]):host([variant="info"]) .title { color: #93c5fd; }
+    :host-context([data-theme="dark"]):host([variant="info"]) .description { color: #bfdbfe; }
 
     :host([variant="success"]) .alert {
       background: #f0fdf4;
@@ -2367,13 +2374,13 @@ el-sidebar[collapsed] el-sidebar-content div {
     :host([variant="success"]) .title { color: #14532d; }
     :host([variant="success"]) .description { color: #166534; }
 
-    :root[data-theme="dark"] :host([variant="success"]) .alert {
+    :host-context([data-theme="dark"]):host([variant="success"]) .alert {
       background: rgba(20, 83, 45, 0.25);
       border-color: #166534;
       color: #bbf7d0;
     }
-    :root[data-theme="dark"] :host([variant="success"]) .title { color: #86efac; }
-    :root[data-theme="dark"] :host([variant="success"]) .description { color: #bbf7d0; }
+    :host-context([data-theme="dark"]):host([variant="success"]) .title { color: #86efac; }
+    :host-context([data-theme="dark"]):host([variant="success"]) .description { color: #bbf7d0; }
 
     :host([variant="warning"]) .alert {
       background: #fffbeb;
@@ -2383,13 +2390,13 @@ el-sidebar[collapsed] el-sidebar-content div {
     :host([variant="warning"]) .title { color: #78350f; }
     :host([variant="warning"]) .description { color: #92400e; }
 
-    :root[data-theme="dark"] :host([variant="warning"]) .alert {
+    :host-context([data-theme="dark"]):host([variant="warning"]) .alert {
       background: rgba(120, 53, 15, 0.25);
       border-color: #92400e;
       color: #fde68a;
     }
-    :root[data-theme="dark"] :host([variant="warning"]) .title { color: #fcd34d; }
-    :root[data-theme="dark"] :host([variant="warning"]) .description { color: #fde68a; }
+    :host-context([data-theme="dark"]):host([variant="warning"]) .title { color: #fcd34d; }
+    :host-context([data-theme="dark"]):host([variant="warning"]) .description { color: #fde68a; }
 
     :host([variant="destructive"]) .alert,
     :host([variant="danger"]) .alert,
@@ -2405,19 +2412,19 @@ el-sidebar[collapsed] el-sidebar-content div {
     :host([variant="danger"]) .description,
     :host([variant="error"]) .description { color: #991b1b; }
 
-    :root[data-theme="dark"] :host([variant="destructive"]) .alert,
-    :root[data-theme="dark"] :host([variant="danger"]) .alert,
-    :root[data-theme="dark"] :host([variant="error"]) .alert {
+    :host-context([data-theme="dark"]):host([variant="destructive"]) .alert,
+    :host-context([data-theme="dark"]):host([variant="danger"]) .alert,
+    :host-context([data-theme="dark"]):host([variant="error"]) .alert {
       background: rgba(127, 29, 29, 0.25);
       border-color: #991b1b;
       color: #fecaca;
     }
-    :root[data-theme="dark"] :host([variant="destructive"]) .title,
-    :root[data-theme="dark"] :host([variant="danger"]) .title,
-    :root[data-theme="dark"] :host([variant="error"]) .title { color: #fca5a5; }
-    :root[data-theme="dark"] :host([variant="destructive"]) .description,
-    :root[data-theme="dark"] :host([variant="danger"]) .description,
-    :root[data-theme="dark"] :host([variant="error"]) .description { color: #fecaca; }
+    :host-context([data-theme="dark"]):host([variant="destructive"]) .title,
+    :host-context([data-theme="dark"]):host([variant="danger"]) .title,
+    :host-context([data-theme="dark"]):host([variant="error"]) .title { color: #fca5a5; }
+    :host-context([data-theme="dark"]):host([variant="destructive"]) .description,
+    :host-context([data-theme="dark"]):host([variant="danger"]) .description,
+    :host-context([data-theme="dark"]):host([variant="error"]) .description { color: #fecaca; }
   </style>
       <div class="alert" part="alert" role="status">
         <div class="icon-area" part="icon">

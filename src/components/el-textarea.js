@@ -64,13 +64,13 @@ export class ElTextarea extends Elementum {
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     }
 
-    :root[data-theme="dark"] textarea {
+    :host-context([data-theme="dark"]) textarea {
       background: #1e293b;
       border-color: #334155;
       color: #f8fafc;
     }
 
-    :root[data-theme="dark"] textarea:focus {
+    :host-context([data-theme="dark"]) textarea:focus {
       border-color: #3b82f6;
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
     }
