@@ -1010,7 +1010,7 @@ button.textContent = 'Submit Order';</code></pre>
           style="flex: 1; min-width: 260px; max-width: 420px; padding: 8px 14px; border: 1px solid var(--el-surface-border, #cbd5e1); border-radius: 8px; font-size: 14px; background: var(--el-surface-base, #ffffff); color: var(--el-text-primary, #0f172a); outline: none;"
           oninput="searchRegistry(this.value)"
         />
-        <span id="registry-count-badge" style="font-size: 13px; font-weight: 600; color: var(--el-text-muted, #64748b);">71 Primitives</span>
+        <span id="registry-count-badge" style="font-size: 13px; font-weight: 600; color: var(--el-text-secondary, #475569);">75 Primitives</span>
       </div>
 
       <!-- Filter Categories -->
@@ -3241,6 +3241,102 @@ import './components/el-router.js';</code></pre>
           </div>
         </div>
 
+        <!-- 69. el-shimmer-text -->
+        <div class="component-card" data-cat="ai">
+          <div class="card-top">
+            <span class="card-name">&lt;el-shimmer-text&gt;</span>
+            <div class="card-tabs">
+              <button class="card-tab-btn active" onclick="switchCardTab(this, 'preview')">Preview</button>
+              <button class="card-tab-btn" onclick="switchCardTab(this, 'html')">HTML</button>
+              <button class="card-tab-btn" onclick="switchCardTab(this, 'import')">Import</button>
+            </div>
+          </div>
+          <div class="card-panel panel-preview active" style="width: 100%;">
+            <el-shimmer-text variant="accent">Synthesizing accessible tokens &amp; shadow parts...</el-shimmer-text>
+          </div>
+          <div class="card-panel panel-html">
+            <button class="copy-code-btn" onclick="copySnippet('<el-shimmer-text variant=\x22accent\x22>Thinking...</el-shimmer-text>')">Copy</button>
+            <pre><code>&lt;el-shimmer-text variant="accent"&gt;
+  Thinking...
+&lt;/el-shimmer-text&gt;</code></pre>
+          </div>
+          <div class="card-panel panel-import">
+            <button class="copy-code-btn" onclick="copySnippet('import \'@wcomp/elementum/components/el-shimmer-text.js\';')">Copy</button>
+            <pre><code>import '@wcomp/elementum/components/el-shimmer-text.js';</code></pre>
+          </div>
+        </div>
+
+        <!-- 70. el-hold-button -->
+        <div class="component-card" data-cat="forms">
+          <div class="card-top">
+            <span class="card-name">&lt;el-hold-button&gt;</span>
+            <div class="card-tabs">
+              <button class="card-tab-btn active" onclick="switchCardTab(this, 'preview')">Preview</button>
+              <button class="card-tab-btn" onclick="switchCardTab(this, 'html')">HTML</button>
+              <button class="card-tab-btn" onclick="switchCardTab(this, 'import')">Import</button>
+            </div>
+          </div>
+          <div class="card-panel panel-preview active" style="width: 100%;">
+            <el-hold-button duration="900" confirmed-label="Confirmed">Hold to Confirm</el-hold-button>
+          </div>
+          <div class="card-panel panel-html">
+            <button class="copy-code-btn" onclick="copySnippet('<el-hold-button duration=\x22900\x22 confirmed-label=\x22Confirmed\x22>Hold to Confirm</el-hold-button>')">Copy</button>
+            <pre><code>&lt;el-hold-button duration="900" confirmed-label="Confirmed"&gt;
+  Hold to Confirm
+&lt;/el-hold-button&gt;</code></pre>
+          </div>
+          <div class="card-panel panel-import">
+            <button class="copy-code-btn" onclick="copySnippet('import \'@wcomp/elementum/components/el-hold-button.js\';')">Copy</button>
+            <pre><code>import '@wcomp/elementum/components/el-hold-button.js';</code></pre>
+          </div>
+        </div>
+
+        <!-- 71. el-usage-ring -->
+        <div class="component-card" data-cat="data">
+          <div class="card-top">
+            <span class="card-name">&lt;el-usage-ring&gt;</span>
+            <div class="card-tabs">
+              <button class="card-tab-btn active" onclick="switchCardTab(this, 'preview')">Preview</button>
+              <button class="card-tab-btn" onclick="switchCardTab(this, 'html')">HTML</button>
+              <button class="card-tab-btn" onclick="switchCardTab(this, 'import')">Import</button>
+            </div>
+          </div>
+          <div class="card-panel panel-preview active" style="width: 100%;">
+            <el-usage-ring value="74" max="100" segments="24" label="API Quota" sublabel="used"></el-usage-ring>
+          </div>
+          <div class="card-panel panel-html">
+            <button class="copy-code-btn" onclick="copySnippet('<el-usage-ring value=\x2274\x22 max=\x22100\x22 segments=\x2224\x22 label=\x22API Quota\x22 sublabel=\x22used\x22></el-usage-ring>')">Copy</button>
+            <pre><code>&lt;el-usage-ring value="74" max="100" segments="24" label="API Quota" sublabel="used"&gt;&lt;/el-usage-ring&gt;</code></pre>
+          </div>
+          <div class="card-panel panel-import">
+            <button class="copy-code-btn" onclick="copySnippet('import \'@wcomp/elementum/components/el-usage-ring.js\';')">Copy</button>
+            <pre><code>import '@wcomp/elementum/components/el-usage-ring.js';</code></pre>
+          </div>
+        </div>
+
+        <!-- 72. el-activity-grid -->
+        <div class="component-card" data-cat="data">
+          <div class="card-top">
+            <span class="card-name">&lt;el-activity-grid&gt;</span>
+            <div class="card-tabs">
+              <button class="card-tab-btn active" onclick="switchCardTab(this, 'preview')">Preview</button>
+              <button class="card-tab-btn" onclick="switchCardTab(this, 'html')">HTML</button>
+              <button class="card-tab-btn" onclick="switchCardTab(this, 'import')">Import</button>
+            </div>
+          </div>
+          <div class="card-panel panel-preview active" style="width: 100%;">
+            <el-activity-grid id="registry-activity-preview" weeks="8" variant="success" label="Deploy Activity" show-legend></el-activity-grid>
+          </div>
+          <div class="card-panel panel-html">
+            <button class="copy-code-btn" onclick="copySnippet('<el-activity-grid weeks=\x228\x22 variant=\x22success\x22 label=\x22Deploy Activity\x22 show-legend></el-activity-grid>')">Copy</button>
+            <pre><code>&lt;el-activity-grid weeks="8" variant="success" label="Deploy Activity" show-legend&gt;&lt;/el-activity-grid&gt;</code></pre>
+          </div>
+          <div class="card-panel panel-import">
+            <button class="copy-code-btn" onclick="copySnippet('import \'@wcomp/elementum/components/el-activity-grid.js\';')">Copy</button>
+            <pre><code>import '@wcomp/elementum/components/el-activity-grid.js';</code></pre>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -3330,6 +3426,73 @@ import './components/el-router.js';</code></pre>
       </div>
     </section>
 
+    <!-- Motion Behaviors & Gliding Indicators -->
+    <section id="motion-behaviors-demo" class="section-block" style="margin-top: 56px;">
+      <div class="section-header" style="margin-bottom: 24px;">
+        <span class="badge-tag" style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--el-color-primary, #2563eb); letter-spacing: 0.05em;">Zero-Dependency Motion</span>
+        <h2 style="margin: 6px 0 8px; font-size: 1.65rem; letter-spacing: -0.02em;">Motion Behaviors &amp; Gliding Indicators</h2>
+        <p style="margin: 0; color: var(--el-text-secondary, #475569); max-width: 68ch;">
+          Built-in gliding pills on <code>&lt;el-tabs variant="pill"&gt;</code> and <code>&lt;el-segmented-control&gt;</code>, paired with headless <code>createSpringEasing</code>, <code>createFlipBehavior</code>, <code>createInViewBehavior</code>, and <code>createPointerTracker</code> primitives.
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px;">
+        <el-card>
+          <el-card-header>
+            <el-card-title>Gliding Indicators + Spring Presets</el-card-title>
+            <el-card-description>CSS indicator gliding paired with linear() spring presets.</el-card-description>
+          </el-card-header>
+          <el-card-content style="display: flex; flex-direction: column; gap: 16px;">
+            <el-tabs variant="pill" value="spring">
+              <el-tab value="overview" label="Overview">Zero-dependency CSS indicator glide.</el-tab>
+              <el-tab value="spring" label="Spring">Computed damped harmonic linear() curve.</el-tab>
+              <el-tab value="flip" label="FLIP">WAAPI First-Last-Invert-Play reorder.</el-tab>
+            </el-tabs>
+
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px;">
+              <el-segmented-control id="motion-preset-seg" value="snappy" size="sm">
+                <option value="snappy">snappy</option>
+                <option value="gentle">gentle</option>
+                <option value="bouncy">bouncy</option>
+                <option value="stiff">stiff</option>
+              </el-segmented-control>
+              <el-button id="motion-spring-btn" type="button" variant="primary" size="sm">Pulse Spring</el-button>
+            </div>
+            <div id="motion-spring-readout" style="font-family: var(--el-font-mono, monospace); font-size: 12px; color: var(--el-text-secondary, #475569);">
+              Preset: snappy
+            </div>
+          </el-card-content>
+        </el-card>
+
+        <el-card>
+          <el-card-header>
+            <el-card-title>Pointer Tracker + FLIP + InView</el-card-title>
+            <el-card-description>Move cursor over the card, shuffle FLIP pills, or scroll into view.</el-card-description>
+          </el-card-header>
+          <el-card-content style="display: flex; flex-direction: column; gap: 14px;">
+            <div
+              id="motion-pointer-card"
+              style="padding: 16px; border-radius: 10px; border: 1px solid var(--el-surface-border, #e2e8f0); background: radial-gradient(240px circle at var(--el-pointer-x, 50%) var(--el-pointer-y, 50%), rgba(37, 99, 235, 0.14), transparent 70%); transform: perspective(700px) rotateX(var(--el-tilt-x, 0deg)) rotateY(var(--el-tilt-y, 0deg)); transition: transform 160ms ease;"
+            >
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px;">
+                <strong style="font-size: 0.9rem;">Interactive Surface</strong>
+                <span id="motion-inview-badge" style="font-size: 12px; font-weight: 600; color: var(--el-color-primary-text, #1d4ed8);">InView: pending</span>
+              </div>
+              <div id="motion-flip-grid" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <span data-flip-id="1" style="padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--el-surface-muted, #f1f5f9);">Spring</span>
+                <span data-flip-id="2" style="padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--el-surface-muted, #f1f5f9);">FLIP</span>
+                <span data-flip-id="3" style="padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--el-surface-muted, #f1f5f9);">InView</span>
+                <span data-flip-id="4" style="padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--el-surface-muted, #f1f5f9);">Pointer</span>
+              </div>
+            </div>
+            <div>
+              <el-button id="motion-flip-btn" type="button" variant="secondary" size="sm">Shuffle with FLIP</el-button>
+            </div>
+          </el-card-content>
+        </el-card>
+      </div>
+    </section>
+
   </main>
 
   <!-- Full Theme Code Modal -->
@@ -3375,7 +3538,75 @@ import './components/el-router.js';</code></pre>
   <!-- Script Wiring -->
   <script type="module">
     import { toast } from '../src/index.js';
+    import {
+      createSpringEasing,
+      createFlipBehavior,
+      createInViewBehavior,
+      createPointerTracker,
+    } from '../src/behaviors/index.js';
     window.toast = toast;
+
+    const regGrid = document.getElementById('registry-activity-preview');
+    if (regGrid && regGrid.data) {
+      regGrid.data.value = Array.from({ length: 56 }, (_, i) => ({
+        date: `Day ${i + 1}`,
+        count: (i * 3) % 10,
+        level: i % 5,
+      }));
+    }
+
+    const motionSec = document.getElementById('motion-behaviors-demo');
+    const inViewBadge = document.getElementById('motion-inview-badge');
+    if (motionSec && inViewBadge) {
+      createInViewBehavior(motionSec, {
+        once: false,
+        onEnter: () => { inViewBadge.textContent = 'InView: visible'; },
+        onLeave: () => { inViewBadge.textContent = 'InView: offscreen'; },
+      });
+    }
+
+    const pointerCard = document.getElementById('motion-pointer-card');
+    if (pointerCard) {
+      createPointerTracker(pointerCard, { maxTilt: 4, maxShift: 6 });
+    }
+
+    const flipGrid = document.getElementById('motion-flip-grid');
+    const flipBtn = document.getElementById('motion-flip-btn');
+    if (flipGrid && flipBtn) {
+      const flip = createFlipBehavior(flipGrid, { duration: 300 });
+      flipBtn.addEventListener('click', () => {
+        const items = Array.from(flipGrid.children);
+        flip.capture(items);
+        flipGrid.appendChild(items[0]);
+        flip.play(items);
+      });
+    }
+
+    const presetSeg = document.getElementById('motion-preset-seg');
+    const springBtn = document.getElementById('motion-spring-btn');
+    const springReadout = document.getElementById('motion-spring-readout');
+    let currentPreset = 'snappy';
+    const updateSpring = (preset) => {
+      currentPreset = preset;
+      const spring = createSpringEasing({ preset });
+      if (springReadout) {
+        springReadout.textContent = `Preset: ${preset} (${spring.duration}ms, ${spring.points.length} linear stops)`;
+      }
+      if (springBtn && typeof springBtn.animate === 'function') {
+        springBtn.animate(
+          [{ transform: 'scale(0.92)' }, { transform: 'scale(1)' }],
+          { duration: spring.duration, easing: spring.easing }
+        );
+      }
+    };
+    if (presetSeg) {
+      presetSeg.addEventListener('change', (e) => {
+        updateSpring(e.detail?.value || presetSeg.getAttribute('value') || 'snappy');
+      });
+    }
+    if (springBtn) {
+      springBtn.addEventListener('click', () => updateSpring(currentPreset));
+    }
 
     // Load sample chart data
     const chart = document.getElementById('dashboard-chart');

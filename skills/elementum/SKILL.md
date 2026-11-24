@@ -5,7 +5,7 @@ description: Build zero-dependency, signal-driven, accessible Web Components and
 
 # Elementum (`@wcomp/elementum`)
 
-Elementum is a zero-runtime-dependency, signal-driven Web Components UI platform with 109 custom elements, standalone headless behaviors, Declarative Shadow DOM SSR, AG-UI streaming, and a Shadow-DOM-aware agent runtime bridge.
+Elementum is a zero-runtime-dependency, signal-driven Web Components UI platform with 113 custom elements, standalone headless behaviors, Declarative Shadow DOM SSR, AG-UI streaming, and a Shadow-DOM-aware agent runtime bridge.
 
 ## Installation & Subpath Exports
 

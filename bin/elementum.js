@@ -113,7 +113,7 @@ export function buildStarterIndexHtml() {
 <body>
   <el-navbar sticky brand="⚡ Elementum App" badge="Ready" badge-variant="success">
     <a href="#" active>Overview</a>
-    <a href="https://elementum-sage.vercel.app/examples/index.html" target="_blank" rel="noopener">Catalog (109)</a>
+    <a href="https://elementum-sage.vercel.app/examples/index.html" target="_blank" rel="noopener">Catalog (113)</a>
     <div slot="actions" style="display:flex;align-items:center;gap:10px;">
       <el-theme-switch></el-theme-switch>
       <el-button id="open-modal" variant="primary" size="sm">New Item</el-button>
@@ -124,7 +124,7 @@ export function buildStarterIndexHtml() {
     <el-card bordered>
       <h2 slot="header" style="margin:0;font-size:1.15rem;">Welcome to @wcomp/elementum</h2>
       <p style="margin:0 0 14px;color:var(--el-text-secondary);">
-        Your project is configured with 109 zero-dependency Web Components, W3C design tokens, and the Elementum MCP server (<code>.mcp.json</code>).
+        Your project is configured with 113 zero-dependency Web Components, W3C design tokens, and the Elementum MCP server (<code>.mcp.json</code>).
       </p>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
         <el-input id="quick-input" placeholder="Type a message..." aria-label="Quick message" style="flex:1;min-width:220px;"></el-input>
@@ -135,7 +135,7 @@ export function buildStarterIndexHtml() {
     <div class="grid">
       <el-card bordered>
         <div style="font-size:0.8rem;color:var(--el-text-secondary);">COMPONENTS READY</div>
-        <div style="font-size:1.8rem;font-weight:700;margin:6px 0;">109</div>
+        <div style="font-size:1.8rem;font-weight:700;margin:6px 0;">113</div>
         <el-badge variant="success">WCAG 2.2 AA Verified</el-badge>
       </el-card>
       <el-card bordered>

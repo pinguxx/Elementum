@@ -49,7 +49,7 @@ promptInput.addEventListener('submit', async (e) => {
 
     // 3. Display response and trigger streaming animation
     responseCard.style.display = 'block';
-    const responseText = `Elementum provides 109 zero-dependency Web Components with fine-grained micro-signals and DSD SSR. In response to your question about "${promptText}", you can compose specialized AI primitives like <el-prompt-input>, <el-reasoning-card>, and <el-tool-call> directly in any framework or vanilla HTML.`;
+    const responseText = `Elementum provides 113 zero-dependency Web Components with fine-grained micro-signals and DSD SSR. In response to your question about "${promptText}", you can compose specialized AI primitives like <el-prompt-input>, <el-reasoning-card>, and <el-tool-call> directly in any framework or vanilla HTML.`;
     
     streamOutput.setAttribute('text', responseText);
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Automated API Surface Consistency Audit across all 109 @wcomp/elementum components.
+ * Automated API Surface Consistency Audit across all 113 @wcomp/elementum components.
  *
  * Enforces cross-component API conventions before 1.0.0:
  *   1. Size tokens use short scale ('sm' | 'md' | 'lg'), never 'small' | 'medium' | 'large'.

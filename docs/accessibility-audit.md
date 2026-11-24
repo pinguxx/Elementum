@@ -4,11 +4,11 @@ Automated checks catch roughly 30–50% of WCAG issues (missing labels, invalid 
 
 ---
 
-## 1. Automated Continuous Verification (`109 / 109` Components)
+## 1. Automated Continuous Verification (`113 / 113` Components)
 
 | Verification Layer | Command | Scope & Coverage |
 | :--- | :--- | :--- |
-| **`@axe-core/playwright` WCAG 2.2 AA** | `npm run test:e2e` | **109 / 109** components verified in live Chromium, Firefox & WebKit (`QUALITY.md`: 109 Production Verified) |
+| **`@axe-core/playwright` WCAG 2.2 AA** | `npm run test:e2e` | **113 / 113** components verified in live Chromium, Firefox & WebKit (`QUALITY.md`: 113 Production Verified) |
 | **WAI-ARIA APG Pattern Validators** | `npm test` (`checkAriaPattern()`) | Automated role, focusability, `aria-*` state, and Shadow DOM structural checks |
 | **Keyboard-Only APG State Machines (10 Complex Widgets)** | `e2e/a11y-keyboard-apg.spec.js`, `e2e/browser-verification.spec.js`, `e2e/framework-and-dsd-stress.spec.js` | Real `Arrow` / `Home` / `End` / `Tab` / `Space` / `Enter` / `Escape` keyboard state machines across all 10 composite widgets + modal `<dialog>` focus restoration |
 | **Mobile Reflow & Touch Target Check** | Playwright `375px` + WCAG 2.5.8 | Verifies `scrollWidth <= innerWidth` and `>= 24x24px` target sizes on interactive controls |

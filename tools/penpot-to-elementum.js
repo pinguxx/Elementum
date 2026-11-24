@@ -360,7 +360,7 @@ function escapeHtml(str) {
 
 /**
  * Recursively compiles any Penpot layer node into clean, escaped Elementum HTML
- * supporting all 109 catalog components, boolean attributes, slots, and structural helpers.
+ * supporting all 113 catalog components, boolean attributes, slots, and structural helpers.
  */
 export function renderElementumNode(node, indent = 2) {
   if (!node) return '';
@@ -436,7 +436,7 @@ export function renderElementumNode(node, indent = 2) {
 
 /**
  * Generates a standalone Elementum HTML document for any arbitrary Penpot page tree
- * across all 109 components.
+ * across all 113 components.
  */
 export function generatePageHtml(penpotTree) {
   const title = penpotTree?.pageName || 'Penpot Design';

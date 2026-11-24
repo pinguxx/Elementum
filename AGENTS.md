@@ -7,13 +7,13 @@
 
 ## 1. Platform Overview & Hard Invariants
 
-**Elementum** is an AI-native, framework-independent UI engineering platform connecting design systems, 109 zero-dependency Web Components, and AI agents through a shared, verifiable component contract.
+**Elementum** is an AI-native, framework-independent UI engineering platform connecting design systems, 113 zero-dependency Web Components, and AI agents through a shared, verifiable component contract.
 
 **Never violate these invariants:**
 1. **Zero Runtime Dependencies**: `package.json` must have **no** `"dependencies"` field. Only optional `peerDependencies: { react: ">=18.0.0" }` and `devDependencies` are allowed.
 2. **Line Coverage ≥ 95%**: CI enforces `node --test --experimental-test-coverage --test-coverage-lines=95`.
-3. **Gzipped Size Budgets**: All 86 entrypoints must stay within [`size-budget.json`](./size-budget.json) (`npm run check:size`).
-4. **109 / 109 Production Verified**: Every registered component in `custom-elements.json` must remain Production Verified in [`QUALITY.md`](./QUALITY.md) (catalog schema + unit instantiation + Playwright real-browser E2E + `@axe-core/playwright` WCAG 2.2 AA).
+3. **Gzipped Size Budgets**: All 90 entrypoints must stay within [`size-budget.json`](./size-budget.json) (`npm run check:size`).
+4. **113 / 113 Production Verified**: Every registered component in `custom-elements.json` must remain Production Verified in [`QUALITY.md`](./QUALITY.md) (catalog schema + unit instantiation + Playwright real-browser E2E + `@axe-core/playwright` WCAG 2.2 AA).
 5. **Vercel Edge Compatibility for MCP**: `mcp/core.js` and `mcp/edge.js` must use **zero Node built-ins** (no `node:fs`, `Buffer`, `readline`), and `api/mcp.js` must **not** use ES2025 `with { type: 'json' }` import attributes (Vercel Edge esbuild rejects them).
 6. **Strict TypeScript**: Both `src/index.d.ts` and `src/react/index.d.ts` (zero `[prop: string]: any;`) must pass `tsc --noEmit --strict` and real React 18 & 19 consumer verification (`npm run verify:react`).
 7. **No Secrets or Private Drafts in Git**: Never commit Penpot `userToken` JWTs, API keys, or private launch/marketing drafts.

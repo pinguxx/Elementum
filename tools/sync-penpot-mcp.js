@@ -6,7 +6,7 @@
  *  - W3C DTCG token sets (`Elementum Core`, `Elementum Light`, `Elementum Dark`) & library colors
  *  - `00 · Foundations` visual palette & spacing/radius showcase page
  *  - 8 dedicated category pages (`01 · Actions & Buttons` .. `08 · AI & Specialist`)
- *  - Recognizable, anatomy-accurate Master Components for all 109 elements + full variant matrices
+ *  - Recognizable, anatomy-accurate Master Components for all 113 elements + full variant matrices
  *    (color/semantic variants, sizes, and interactive states) with generous spacing so Penpot's
  *    component labels never collide.
  *
@@ -682,7 +682,7 @@ function drawPreview(board, item) {
     addRect(board, 'TblR1', px, py + 18, pw, 14, '#FFFFFF', 2, '#E2E8F0');
     addText(board, 'TblT1', 'Elementum UI    Active        96.9%', px + 10, py + 19, pw - 20, 9, '400', '#0F172A');
     addRect(board, 'TblR2', px, py + 34, pw, 14, '#F8FAFC', 2, '#E2E8F0');
-    addText(board, 'TblT2', 'Penpot Sync     Synced        109', px + 10, py + 35, pw - 20, 9, '400', '#0F172A');
+    addText(board, 'TblT2', 'Penpot Sync     Synced        113', px + 10, py + 35, pw - 20, 9, '400', '#0F172A');
     return;
   }
   if (tag === 'el-number-flow') {

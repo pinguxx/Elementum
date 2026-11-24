@@ -1,6 +1,6 @@
 ---
 name: elementum-ui
-description: Compose accessible, zero-dependency user interfaces using @wcomp/elementum's 109 Web Components, micro-signals, and Form-Associated Custom Elements (FACE). Use when building or refactoring UI with Elementum.
+description: Compose accessible, zero-dependency user interfaces using @wcomp/elementum's 113 Web Components, micro-signals, and Form-Associated Custom Elements (FACE). Use when building or refactoring UI with Elementum.
 ---
 
 # Elementum UI Engineering Skill

@@ -4,7 +4,7 @@
  *
  * Diffs live Web Component source & runtime schemas against `examples/catalog-data.js`
  * and `examples/index.html`'s preview generator so you never have to manually inspect
- * all 109 components one by one.
+ * all 113 components one by one.
  *
  * Checks:
  *  1. Observed attributes diff (live Custom Element class vs catalog-data.js props)

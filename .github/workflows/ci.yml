@@ -75,7 +75,7 @@ jobs:
       - name: Run exhaustive formal invariant verifier (6,147 states/topologies)
         run: npm run verify:formal
 
-      - name: Audit API surface consistency across all 109 components
+      - name: Audit API surface consistency across all 113 components
         run: npm run audit:api
 
       - name: External consumer tarball install & import test
