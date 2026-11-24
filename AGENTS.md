@@ -51,7 +51,11 @@ Before tagging and publishing a new version `X.Y.Z`:
    - `docs/stability-and-1.0.md` (`` `X.Y.x` `` minor line if minor changed)
    - `index.html` & `showcase.html` (`badge="vX.Y.Z"`)
    - `tools/sync-penpot-mcp.js` & `tools/penpot-to-elementum.js` (`version: 'X.Y.Z'`)
-3. Regenerate reports:
+3. Sweep the entire repo for any remaining stale version references across all docs, `.md`, `.html`, `llms.txt`, and starter files (excluding historical entries in `CHANGELOG.md` and `benchmarks/agent-eval/RESULTS.md`):
+   ```bash
+   git grep -n "<PREV_X.Y.Z>" -- ':!CHANGELOG.md' ':!package-lock.json' ':!benchmarks/agent-eval/RESULTS.md'
+   ```
+4. Regenerate reports:
    ```bash
    npm run quality:report
    npm run audits:report
