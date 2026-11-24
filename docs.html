@@ -747,12 +747,13 @@ const html = renderComponentToDSD('el-button', ElButton, { variant: 'primary' },
 
         <h2 id="forms-face">Form-Associated Custom Elements (FACE)</h2>
         <p>
-          All input primitives (<code>&lt;el-input&gt;</code>, <code>&lt;el-select&gt;</code>, <code>&lt;el-slider&gt;</code>, <code>&lt;el-checkbox&gt;</code>, <code>&lt;el-radio&gt;</code>) implement the native browser <code>ElementInternals</code> API:
+          All 17 form controls (<code>&lt;el-input&gt;</code>, <code>&lt;el-select&gt;</code>, <code>&lt;el-slider&gt;</code>, <code>&lt;el-checkbox&gt;</code>, <code>&lt;el-radio&gt;</code>, <code>&lt;el-switch&gt;</code>, and more) implement <code>ElementInternals</code>:
         </p>
         <ul>
-          <li>Participate automatically in native <code>&lt;form&gt;</code> submission via <code>FormData</code>.</li>
-          <li>Support native validation reporting with <code>setValidity()</code>.</li>
-          <li>Handle form reset events cleanly via <code>formResetCallback()</code>.</li>
+          <li>Participate automatically in native <code>&lt;form&gt;</code> submission via <code>FormData</code> and expose their owning form via <code>el.form</code>.</li>
+          <li>Support native constraint validation with <code>setValidity()</code>, <code>checkValidity()</code>, and <code>reportValidity()</code>.</li>
+          <li>Handle <code>&lt;button type="reset"&gt;</code> via <code>formResetCallback()</code> and <code>&lt;fieldset disabled&gt;</code> via <code>formDisabledCallback()</code>.</li>
+          <li><code>&lt;el-form&gt;</code> exposes <code>form</code>, <code>elements</code> (native + Elementum controls), <code>toFormData()</code>, <code>getFormData()</code>, <code>checkValidity()</code>, <code>reportValidity()</code>, <code>requestSubmit()</code>, and <code>reset()</code>.</li>
         </ul>
 
         <h2 id="behaviors-agent">Headless Behaviors, Agent Runtime &amp; Testing Contracts</h2>
@@ -791,23 +792,23 @@ const html = renderComponentToDSD('el-button', ElButton, { variant: 'primary' },
   }
 }</el-code-block>
 
-        <h2>Available MCP Tools</h2>
+        <h2>Available MCP Tools (10 Read-Only Tools)</h2>
         <div class="pill-grid">
           <el-card>
-            <el-card-header><el-card-title style="font-size: 0.95rem;">list_components</el-card-title></el-card-header>
-            <el-card-content><p class="pill-desc">Returns all 109 available Web Components with descriptions and categories.</p></el-card-content>
+            <el-card-header><el-card-title style="font-size: 0.95rem;">list_components &amp; search_components</el-card-title></el-card-header>
+            <el-card-content><p class="pill-desc">Lists or searches all 109 Web Components with descriptions and categories.</p></el-card-content>
           </el-card>
           <el-card>
-            <el-card-header><el-card-title style="font-size: 0.95rem;">get_component_doc</el-card-title></el-card-header>
+            <el-card-header><el-card-title style="font-size: 0.95rem;">get_component_info</el-card-title></el-card-header>
             <el-card-content><p class="pill-desc">Returns exact attributes, slots, events, and CSS shadow parts for any tag.</p></el-card-content>
           </el-card>
           <el-card>
-            <el-card-header><el-card-title style="font-size: 0.95rem;">list_tokens</el-card-title></el-card-header>
-            <el-card-content><p class="pill-desc">Exposes all design tokens (colors, radii, spacing, elevations) for consistent styling.</p></el-card-content>
+            <el-card-header><el-card-title style="font-size: 0.95rem;">get_design_tokens &amp; get_styling_guide</el-card-title></el-card-header>
+            <el-card-content><p class="pill-desc">Exposes all design tokens (colors, radii, spacing, elevations) and <code>::part()</code> hooks.</p></el-card-content>
           </el-card>
           <el-card>
-            <el-card-header><el-card-title style="font-size: 0.95rem;">generate_component_markup</el-card-title></el-card-header>
-            <el-card-content><p class="pill-desc">Produces accessible, compliant HTML snippets according to design standards.</p></el-card-content>
+            <el-card-header><el-card-title style="font-size: 0.95rem;">validate_component_usage &amp; lint_accessibility</el-card-title></el-card-header>
+            <el-card-content><p class="pill-desc">Validates generated HTML against the CEM contract and WCAG 2.2 AA accessibility rules.</p></el-card-content>
           </el-card>
         </div>
 
@@ -820,7 +821,7 @@ then construct an audio workstation volume and peak-level panel using Elementum 
       <section id="ag-ui-protocol" class="docs-section">
         <h1>AG-UI Protocol &amp; Agentic Frontends</h1>
         <p>
-          Elementum includes a zero-dependency adapter (<code>createAgUiStore</code>, <code>applyJsonPatch</code>, <code>getByPointer</code>) and the <code>&lt;el-tool-call&gt;</code> Web Component to connect <strong>AG-UI (Agent–User Interaction Protocol)</strong> event streams directly to reactive DOM components.
+          Elementum includes a zero-dependency adapter (<code>createAgUiStore</code>, <code>applyJsonPatch</code>, <code>getByPointer</code>) and the <code>&lt;el-tool-call&gt;</code> Web Component to connect <strong>AG-UI (Agent–User Interaction Protocol)</strong> event streams directly to reactive DOM components. Pass <code>surfaceId</code>, <code>strictRunId: true</code>, and <code>allowedPaths</code> to isolate late <code>STATE_DELTA</code> events from old runs and restrict RFC 6902 patch paths.
         </p>
 
         <el-callout variant="info">
