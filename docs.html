@@ -391,7 +391,7 @@
       <section id="user-guide" class="docs-section">
         <h1>User Guide & Overview</h1>
         <p>
-          <strong>@wcomp/elementum</strong> is an ultra-lightweight, zero-dependency design system of <strong>109 accessible Web Components</strong>.
+          <strong>@wcomp/elementum</strong> is an ultra-lightweight, zero-dependency design system of <strong>113 accessible Web Components</strong>.
           It combines fine-grained signal reactivity with standard W3C Web Component APIs, 1:1 Penpot/Figma design tokens, and built-in MCP &amp; AG-UI protocol support.
         </p>
 
@@ -761,7 +761,7 @@ const html = renderComponentToDSD('el-button', ElButton, { variant: 'primary' },
           Every Elementum component supports opt-in <code>unstyled</code> mode, and its underlying interaction, motion, agent, and WAI-ARIA testing primitives are exported as standalone zero-dependency subpaths:
         </p>
         <ul>
-          <li><strong><code>@wcomp/elementum/behaviors</code></strong> — 16 composable primitives: <code>createPressBehavior</code>, <code>createRovingFocus</code>, <code>createDismissableLayer</code>, <code>createFocusRecovery</code>, <code>createShortcuts</code>, <code>createDisclosureBehavior</code>, <code>createPopupPositioner</code>, <code>createPresenceBehavior</code>, <code>prefersReducedMotion</code>, <code>createSelectionBehavior</code>, <code>createReorderBehavior</code>, <code>createHistory</code>, <code>highlightMatch</code>, <code>announce</code>, <code>setHostState</code>, and <code>isRTL</code>.</li>
+          <li><strong><code>@wcomp/elementum/behaviors</code></strong> — 20 composable primitives: <code>createPressBehavior</code>, <code>createRovingFocus</code>, <code>createDismissableLayer</code>, <code>createFocusRecovery</code>, <code>createShortcuts</code>, <code>createDisclosureBehavior</code>, <code>createPopupPositioner</code>, <code>createPresenceBehavior</code>, <code>prefersReducedMotion</code>, <code>createSelectionBehavior</code>, <code>createReorderBehavior</code>, <code>createHistory</code>, <code>highlightMatch</code>, <code>announce</code>, <code>setHostState</code>, <code>isRTL</code>, <code>createSpringEasing</code>, <code>createFlipBehavior</code>, <code>createInViewBehavior</code>, and <code>createPointerTracker</code>.</li>
           <li><strong><code>@wcomp/elementum/agent</code></strong> — Shadow-DOM-piercing <code>snapshot(root)</code>, <code>act(root, cmd, { guard })</code>, and <code>registerWebMCP(root)</code> for AI agents operating live interfaces.</li>
           <li><strong><code>@wcomp/elementum/testing</code></strong> — Reusable WAI-ARIA APG (<code>checkAriaPattern</code>), provider-free RTL (<code>checkDirection</code>), and DSD SSR (<code>checkServerRender</code>) contract validators.</li>
         </ul>
@@ -792,15 +792,15 @@ const html = renderComponentToDSD('el-button', ElButton, { variant: 'primary' },
   }
 }</el-code-block>
 
-        <h2>Available MCP Tools (11 Read-Only Tools)</h2>
+        <h2>Available MCP Tools (13 Read-Only Tools, Resources, Prompts &amp; Completions)</h2>
         <div class="pill-grid">
           <el-card>
             <el-card-header><el-card-title style="font-size: 0.95rem;">list_components &amp; suggest_component</el-card-title></el-card-header>
-            <el-card-content><p class="pill-desc">Lists all 109 Web Components or ranks best-matching tags for natural-language UI requirements.</p></el-card-content>
+            <el-card-content><p class="pill-desc">Lists all 113 Web Components (filterable by <code>category</code>, <code>formAssociated</code>, and <code>hasMotion</code>) or ranks best-matching tags for natural-language UI requirements.</p></el-card-content>
           </el-card>
           <el-card>
-            <el-card-header><el-card-title style="font-size: 0.95rem;">get_component_doc &amp; get_component_maturity</el-card-title></el-card-header>
-            <el-card-content><p class="pill-desc">Returns separated variants, boolean states, props, composition constraints, slots, events, examples, and maturity metadata.</p></el-card-content>
+            <el-card-header><el-card-title style="font-size: 0.95rem;">get_component_doc, get_setup &amp; get_bundle_plan</el-card-title></el-card-header>
+            <el-card-content><p class="pill-desc">Returns separated variants, states, props, composition constraints, examples, framework setup, and tree-shaken gzipped bundle budgets (plus <code>get_component_maturity</code>, <code>elementum://</code> resources, <code>prompts/get</code>, and <code>completion/complete</code>).</p></el-card-content>
           </el-card>
           <el-card>
             <el-card-header><el-card-title style="font-size: 0.95rem;">list_tokens, generate_snippet &amp; scaffold_component</el-card-title></el-card-header>

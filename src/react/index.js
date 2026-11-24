@@ -1,5 +1,5 @@
 /**
- * Auto-generated React wrappers for all 109 @wcomp/elementum Web Components.
+ * Auto-generated React wrappers for all 113 @wcomp/elementum Web Components.
  * Generated from custom-elements.json via tools/generate-react-wrappers.js.
  */
 
@@ -119,6 +119,10 @@ export const ELEMENTUM_REACT_TAGS = Object.freeze([
   'el-tree-view',
   'el-tree-item',
   'el-visually-hidden',
+  'el-shimmer-text',
+  'el-hold-button',
+  'el-usage-ring',
+  'el-activity-grid',
 ]);
 
 export const ElAccordion = createElementumReactComponent(React, 'el-accordion', { onChange: 'change' });
@@ -230,3 +234,7 @@ export const ElTooltip = createElementumReactComponent(React, 'el-tooltip', {});
 export const ElTreeView = createElementumReactComponent(React, 'el-tree-view', {});
 export const ElTreeItem = createElementumReactComponent(React, 'el-tree-item', { onExpand: 'expand', onCollapse: 'collapse', onSelect: 'select' });
 export const ElVisuallyHidden = createElementumReactComponent(React, 'el-visually-hidden', {});
+export const ElShimmerText = createElementumReactComponent(React, 'el-shimmer-text', {});
+export const ElHoldButton = createElementumReactComponent(React, 'el-hold-button', { onConfirm: 'confirm', onCancel: 'cancel' });
+export const ElUsageRing = createElementumReactComponent(React, 'el-usage-ring', {});
+export const ElActivityGrid = createElementumReactComponent(React, 'el-activity-grid', { onSelect: 'select' });

@@ -217,13 +217,13 @@ test('bin/elementum.js routes piped zero-arg invocations and `mcp` to read-only 
     // Zero-arg piped stdio invocation (e.g. npx -y @wcomp/elementum) must NOT run init or write files
     const bareResponses = await runStdioRoundTrip([]);
     assert.deepEqual(bareResponses[0], { jsonrpc: '2.0', id: 1, result: {} });
-    assert.equal(bareResponses[1].result.tools.length, 11);
+    assert.equal(bareResponses[1].result.tools.length, 13);
     assert.deepEqual(fs.readdirSync(emptyDir), []);
 
     // Explicit `mcp` subcommand behaves identically with zero disk writes
     const mcpResponses = await runStdioRoundTrip(['mcp']);
     assert.deepEqual(mcpResponses[0], { jsonrpc: '2.0', id: 1, result: {} });
-    assert.equal(mcpResponses[1].result.tools.length, 11);
+    assert.equal(mcpResponses[1].result.tools.length, 13);
     assert.deepEqual(fs.readdirSync(emptyDir), []);
 
     // --help includes init, check, and mcp

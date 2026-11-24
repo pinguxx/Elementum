@@ -205,6 +205,8 @@ export class ElTab extends Elementum {
 
 export class ElTabs extends Elementum {
   activeTab: Signal<string>;
+  variant: Signal<'underline' | 'pill'>;
+  syncIndicator(): boolean;
   selectTab(val: string): void;
 }
 
@@ -818,6 +820,41 @@ export class ElSources extends Elementum {}
 export class ElTaskList extends Elementum {}
 export class ElToolCall extends Elementum {}
 export class ElVisuallyHidden extends Elementum {}
+export class ElShimmerText extends Elementum {
+  duration: Signal<number>;
+  spread: Signal<number>;
+  variant: Signal<'muted' | 'primary' | 'accent'>;
+  paused: Signal<boolean>;
+}
+export class ElHoldButton extends Elementum {
+  duration: Signal<number>;
+  variant: Signal<'danger' | 'primary' | 'secondary'>;
+  size: Signal<'sm' | 'md' | 'lg'>;
+  disabled: Signal<boolean>;
+  confirmedLabel: Signal<string>;
+  holding: Signal<boolean>;
+  confirmed: Signal<boolean>;
+  progress: Signal<number>;
+  startHold(): void;
+  cancelHold(): void;
+}
+export class ElUsageRing extends Elementum {
+  value: Signal<number>;
+  max: Signal<number>;
+  segments: Signal<number>;
+  size: Signal<'sm' | 'md' | 'lg'>;
+  variant: Signal<'primary' | 'success' | 'warning' | 'danger'>;
+  label: Signal<string>;
+  sublabel: Signal<string>;
+}
+export class ElActivityGrid extends Elementum {
+  weeks: Signal<number>;
+  variant: Signal<'success' | 'primary' | 'accent'>;
+  label: Signal<string>;
+  showLegend: Signal<boolean>;
+  data: Signal<Array<{ date?: string; count?: number; level?: 0 | 1 | 2 | 3 | 4 }>>;
+  selectedIndex: Signal<number>;
+}
 
 // ==========================================
 // SSR (Declarative Shadow DOM)
@@ -998,6 +1035,38 @@ export function createHistory<T>(
   redo: () => boolean;
   reset: (nextInitial?: T) => void;
 };
+export function createSpringEasing(options?: {
+  preset?: 'snappy' | 'gentle' | 'bouncy' | 'stiff';
+  stiffness?: number;
+  damping?: number;
+  mass?: number;
+  velocity?: number;
+  steps?: number;
+}): { easing: string; duration: number; points: number[] };
+export function createFlipBehavior(
+  container?: HTMLElement | ShadowRoot | null,
+  options?: { duration?: number; easing?: string; respectReducedMotion?: boolean }
+): {
+  capture: (elements: Element[] | ArrayLike<Element> | null | undefined) => void;
+  play: (elements: Element[] | ArrayLike<Element> | null | undefined) => number;
+  glideIndicator: (indicator: HTMLElement | null, target: HTMLElement | null, opts?: { vertical?: boolean }) => boolean;
+};
+export function createInViewBehavior(
+  target: Element | (() => Element | null),
+  options?: {
+    threshold?: number | number[];
+    rootMargin?: string;
+    once?: boolean;
+    respectReducedMotion?: boolean;
+    onEnter?: () => void;
+    onLeave?: () => void;
+    signal?: AbortSignal;
+  }
+): { inView: Signal<boolean>; destroy: () => void };
+export function createPointerTracker(
+  target: HTMLElement,
+  options?: { maxTilt?: number; maxShift?: number; respectReducedMotion?: boolean; signal?: AbortSignal }
+): { active: Signal<boolean>; reset: () => void; destroy: () => void };
 
 // Agent Runtime Bridge (@wcomp/elementum/agent)
 export interface AgentSnapshotNode {
@@ -1199,6 +1268,10 @@ declare global {
     'el-task-list': ElTaskList;
     'el-tool-call': ElToolCall;
     'el-visually-hidden': ElVisuallyHidden;
+    'el-shimmer-text': ElShimmerText;
+    'el-hold-button': ElHoldButton;
+    'el-usage-ring': ElUsageRing;
+    'el-activity-grid': ElActivityGrid;
   }
 
   namespace JSX {
@@ -1311,6 +1384,10 @@ declare global {
       'el-task-list': any;
       'el-tool-call': any;
       'el-visually-hidden': any;
+      'el-shimmer-text': any;
+      'el-hold-button': any;
+      'el-usage-ring': any;
+      'el-activity-grid': any;
     }
   }
 }

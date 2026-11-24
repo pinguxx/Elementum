@@ -1595,7 +1595,8 @@
       // 13. el-tabs & el-tab
       if (tag === 'el-tabs') {
         const val = p.value || 'overview';
-        return `<el-tabs value="${escapeHtml(val)}" style="max-width: 460px; width: 100%;">
+        const variant = p.variant || 'underline';
+        return `<el-tabs value="${escapeHtml(val)}" variant="${escapeHtml(variant)}" style="max-width: 460px; width: 100%;">
   <el-tab value="overview" label="Overview">
     <div style="padding: 14px; background: var(--el-surface-muted); border-radius: 8px; font-size: 0.875rem;">
       <strong>Overview Panel:</strong> 18 active edge nodes running across 4 regions.
@@ -2818,6 +2819,56 @@ ${optionsHtml}
         return `<div style="width: 100%; max-width: 560px;">
   <el-tool-call data-preview-target${attrStr}></el-tool-call>
 </div>`;
+      }
+
+      // 68. el-shimmer-text
+      if (tag === 'el-shimmer-text') {
+        const dur = p.duration !== undefined ? ` duration="${escapeHtml(String(p.duration))}"` : '';
+        const spread = p.spread !== undefined ? ` spread="${escapeHtml(String(p.spread))}"` : '';
+        const variant = p.variant ? ` variant="${escapeHtml(String(p.variant))}"` : '';
+        const paused = p.paused ? ' paused' : '';
+        return `<el-shimmer-text data-preview-target${variant}${dur}${spread}${paused} style="font-size: 1rem;">Synthesizing accessible tokens &amp; shadow parts...</el-shimmer-text>`;
+      }
+
+      // 69. el-hold-button
+      if (tag === 'el-hold-button') {
+        const dur = p.duration !== undefined ? ` duration="${escapeHtml(String(p.duration))}"` : '';
+        const variant = p.variant ? ` variant="${escapeHtml(String(p.variant))}"` : '';
+        const size = p.size ? ` size="${escapeHtml(String(p.size))}"` : '';
+        const dis = p.disabled ? ' disabled' : '';
+        const cl = p['confirmed-label'] ? ` confirmed-label="${escapeHtml(String(p['confirmed-label']))}"` : '';
+        return `<el-hold-button data-preview-target${variant}${size}${dur}${cl}${dis}>Hold to Confirm Action</el-hold-button>`;
+      }
+
+      // 70. el-usage-ring
+      if (tag === 'el-usage-ring') {
+        const val = p.value !== undefined ? ` value="${escapeHtml(String(p.value))}"` : '';
+        const max = p.max !== undefined ? ` max="${escapeHtml(String(p.max))}"` : '';
+        const seg = p.segments !== undefined ? ` segments="${escapeHtml(String(p.segments))}"` : '';
+        const size = p.size ? ` size="${escapeHtml(String(p.size))}"` : '';
+        const variant = p.variant ? ` variant="${escapeHtml(String(p.variant))}"` : '';
+        const label = p.label !== undefined && p.label !== '' ? ` label="${escapeHtml(String(p.label))}"` : '';
+        const sublabel = p.sublabel !== undefined && p.sublabel !== '' ? ` sublabel="${escapeHtml(String(p.sublabel))}"` : '';
+        return `<el-usage-ring data-preview-target${val}${max}${seg}${size}${variant}${label}${sublabel}></el-usage-ring>`;
+      }
+
+      // 71. el-activity-grid
+      if (tag === 'el-activity-grid') {
+        const weeks = p.weeks !== undefined ? ` weeks="${escapeHtml(String(p.weeks))}"` : '';
+        const variant = p.variant ? ` variant="${escapeHtml(String(p.variant))}"` : '';
+        const label = p.label !== undefined && p.label !== '' ? ` label="${escapeHtml(String(p.label))}"` : '';
+        const legend = p['show-legend'] ? ' show-legend' : '';
+        const defaultSample = JSON.stringify(
+          Array.from({ length: 84 }, (_, i) => ({
+            date: `Day ${i + 1}`,
+            count: (i * 3) % 10,
+            level: (i % 5),
+          }))
+        );
+        const gridData = p.data !== undefined && p.data !== ''
+          ? (typeof p.data === 'string' ? p.data : JSON.stringify(p.data))
+          : defaultSample;
+        return `<el-activity-grid data-preview-target${weeks}${variant}${label}${legend} data='${gridData.replace(/'/g, '&#39;')}'></el-activity-grid>`;
       }
 
       // Standard Fallback: separate slot keys (label, text, content, message) from tag attributes

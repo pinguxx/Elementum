@@ -44,21 +44,21 @@ Once `1.0.0` is tagged, **breaking changes require a major version bump (`2.0.0`
 
 ## 4. Pre-1.0 Roadmap (`0.8.x` -> `0.9.x` -> `0.10.x+` -> `1.0.0`)
 
-`1.0.0` is not imminent. Freezing 109 components under SemVer requires multiple `0.x` minor cycles (at least 5 to 6 releases) shaped by real user feedback before tagging `1.0.0-rc.1`.
+`1.0.0` is not imminent. Freezing 113 components under SemVer requires multiple `0.x` minor cycles (at least 5 to 6 releases) shaped by real user feedback before tagging `1.0.0-rc.1`.
 
 ### Completed baseline (`0.8.x`)
 
 - [x] Zero runtime dependencies enforced by external consumer tarball install (`npm run verify:consumer`)
 - [x] >= 95% automated line coverage, strict TypeScript checking (`npm run typecheck`), and per-entrypoint gzip budgets (`npm run check:size`)
 - [x] Exhaustive formal invariant verification (`npm run verify:formal`, 6,147 states/topologies across `signal.js`, `a2ui.js`, and `el-toast.js`) enforced in CI
-- [x] Cross-browser E2E and WCAG 2.2 AA `axe-core` checks (`npm run test:e2e`) across Chromium, Firefox, and WebKit, including dark-mode contrast across all 109 components (`e2e/dark-mode-contrast.spec.js`), 10-widget WAI-ARIA APG keyboard state machines (`e2e/a11y-keyboard-apg.spec.js`), and Hard-8 stress tests (`e2e/hard-8-stress.spec.js`)
+- [x] Cross-browser E2E and WCAG 2.2 AA `axe-core` checks (`npm run test:e2e`) across Chromium, Firefox, and WebKit, including dark-mode contrast across all 113 components (`e2e/dark-mode-contrast.spec.js`), 10-widget WAI-ARIA APG keyboard state machines (`e2e/a11y-keyboard-apg.spec.js`), and Hard-8 stress tests (`e2e/hard-8-stress.spec.js`)
 - [x] Official React wrapper entrypoint (`@wcomp/elementum/react`) verified against React 18 and 19 consumers (`npm run verify:react`)
 - [x] Public migration guides (`docs/migration-guide.md`, `docs/tailwind-guide.md`), auto-generated `::part()` reference (`docs/styling-reference.md`), and connected platform showcase (`showcase.html`)
 
 ### Next minor cycle (`0.9.x` hardening)
 
 - [ ] **Cross-browser dark-mode parity without `:host-context()`**: Migrate remaining `:host-context([data-theme="dark"])` rules in `src/components/*.js` to `--el-*` CSS custom properties so Firefox and Safari dark mode match Chromium 1:1.
-- [ ] **API surface consistency pass**: Audit and normalize attribute, variant, event, and `FormData` naming across all 109 components (for example, `open` vs `expanded` and `danger` vs `destructive`) while breaking changes are still allowed in `0.x`.
+- [ ] **API surface consistency pass**: Audit and normalize attribute, variant, event, and `FormData` naming across all 113 components (for example, `open` vs `expanded` and `danger` vs `destructive`) while breaking changes are still allowed in `0.x`.
 - [ ] **State-transition E2E coverage across all stateful components**: Expand real pointer and keyboard interaction assertions beyond mount and bounding-box checks to every overlay, form control, menu, grid, and picker.
 - [ ] **Complex widget hardening**: Deepen real-world edge-case handling in `el-table` (virtualization, column sizing, empty/loading states), `el-datepicker` / `el-date-range-picker` (locale parsing, min/max clamping), `el-autocomplete` / `el-combobox` (async error/retry states, creatable tags), `el-command` (nested sub-pages), and `el-tree-view`.
 
@@ -93,7 +93,7 @@ node benchmarks/agent-eval/score.js benchmarks/agent-eval/submissions/arm-1-elem
 ```
 
 ### Known Trade-Offs (Honest Caveats at `v0.8.6`)
-- **Surface area vs. depth**: 109 components is a wide catalog; while all 109 pass unit + Playwright + `axe-core` gates, complex widgets (`el-table`, `el-datepicker`, `el-autocomplete`, `el-command`, `el-tree-view`) are our highest priority for real-world edge-case hardening before `1.0.0`.
+- **Surface area vs. depth**: 113 components is a wide catalog; while all 113 pass unit + Playwright + `axe-core` gates, complex widgets (`el-table`, `el-datepicker`, `el-autocomplete`, `el-command`, `el-tree-view`) are our highest priority for real-world edge-case hardening before `1.0.0`.
 - **Shadow DOM & Tailwind**: Global utility classes do not pierce Shadow DOM; teams use `--el-*` tokens, `[&::part(...)]:` variants ([`docs/tailwind-guide.md`](./tailwind-guide.md)), or `unstyled` mode + `@wcomp/elementum/behaviors`.
 - **Protocol maturity**: `@wcomp/elementum/a2ui`, `@wcomp/elementum/ag-ui`, and `@wcomp/elementum/agent` remain `Beta` / `Experimental` while upstream agent UI protocols continue to evolve.
 

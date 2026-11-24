@@ -40,9 +40,9 @@ Exports: `signal`, `computed`, `effect`, `batch`, `asyncSignal`, `isSignal`, `is
 
 ## 4. MCP Server Internals (`mcp/` & `api/mcp.js`)
 
-- **`mcp/core.js` & `mcp/edge.js`:** Pure JavaScript with **zero Node built-ins** (no `node:fs`, `Buffer`, `readline`) so the same 11 read-only tools run locally over stdio (`mcp/server.js`) and remotely on Vercel Edge (`api/mcp.js`).
+- **`mcp/core.js` & `mcp/edge.js`:** Pure JavaScript with **zero Node built-ins** (no `node:fs`, `Buffer`, `readline`) so the same 13 read-only tools plus MCP resources, prompts, and completions run locally over stdio (`mcp/server.js`) and remotely on Vercel Edge (`api/mcp.js`).
 - **No ES2025 import attributes in `api/mcp.js`:** Do not use `with { type: 'json' }` (Vercel Edge esbuild rejects it).
-- **11 read-only tools:** `list_components`, `get_component_doc`, `list_tokens`, `generate_snippet`, `scaffold_component`, `lint_accessibility`, `validate_accessibility`, `suggest_component`, `validate_component_usage`, `validate_a2ui_messages`, `get_component_maturity`.
+- **13 read-only tools:** `list_components`, `get_component_doc`, `list_tokens`, `generate_snippet`, `scaffold_component`, `lint_accessibility`, `validate_accessibility`, `suggest_component`, `validate_component_usage`, `validate_a2ui_messages`, `get_component_maturity`, `get_setup`, `get_bundle_plan` (plus `resources/list`/`read`, `prompts/list`/`get`, `completion/complete`).
 - After editing component attributes, events, or slots, regenerate metadata:
   ```bash
   npm run react:generate && npm run mcp:metadata && npm run docs:styling && npm run docs:ide
@@ -54,9 +54,9 @@ Exports: `signal`, `computed`, `effect`, `batch`, `asyncSignal`, `isSignal`, `is
 
 ```bash
 npm run verify:formal    # 6 formal invariants (6,162 states/topologies across signal, a2ui, ag-ui, el-toast)
-npm run audit:api        # 109-component API surface & 17-FACE consistency audit
+npm run audit:api        # 113-component API surface & 17-FACE consistency audit
 npm run catalog:diff     # Source observedAttributes vs custom-elements.json & catalog-data.js
-npm run check:size       # 86 entrypoints against size-budget.json
+npm run check:size       # 90 entrypoints against size-budget.json
 npm run check:release    # Version sync across lockfile, server.json, docs, HTML badges, Penpot tools
 npm run verify:all       # Full local release gate (tests >= 95% coverage, consumer, React 18/19, E2E)
 ```

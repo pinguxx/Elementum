@@ -234,7 +234,7 @@ test.describe('Core Forms, Navigation, Data Display, AI Suite & LedgerFlow (Play
           Checked strict TypeScript definitions and SSR output.
         </el-reasoning-card>
         <el-tool-call id="e2e-tool" name="run_tests" status="completed" args='{"suite":"react"}' result='{"passed":true}'></el-tool-call>
-        <el-streaming-text id="e2e-stream" text="All 109 custom elements verified." speed="5"></el-streaming-text>
+        <el-streaming-text id="e2e-stream" text="All 113 custom elements verified." speed="5"></el-streaming-text>
         <el-sources id="e2e-sources" sources='[{"title":"Elementum Docs","url":"https://elementum-sage.vercel.app/docs.html"}]'></el-sources>
         <el-diff-viewer id="e2e-diff" before="const x = 1;" after="const x = 2;" filename="app.js"></el-diff-viewer>
         <el-task-list id="e2e-tasks" tasks='[{"label":"Verify React 19","status":"done"},{"label":"Run axe-core","status":"done"}]'></el-task-list>
@@ -451,6 +451,110 @@ test.describe('Core Forms, Navigation, Data Display, AI Suite & LedgerFlow (Play
 
     const results = await new AxeBuilder({ page })
       .include('#e2e-layout-stage')
+      .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
+      .analyze();
+    const serious = results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious');
+    expect(serious).toEqual([]);
+  });
+
+  test('Motion components & gliding indicators render, interact, and pass WCAG 2.2 AA', async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', (err) => errors.push(err.message));
+
+    await page.goto('/index.html');
+    await page.waitForFunction(() =>
+      Boolean(
+        customElements.get('el-shimmer-text') &&
+          customElements.get('el-hold-button') &&
+          customElements.get('el-usage-ring') &&
+          customElements.get('el-activity-grid') &&
+          customElements.get('el-tabs') &&
+          customElements.get('el-segmented-control')
+      )
+    );
+
+    await page.evaluate(() => {
+      document.body.innerHTML = '';
+      document.body.style.margin = '0';
+      const stage = document.createElement('section');
+      stage.id = 'e2e-motion-stage';
+      stage.setAttribute('aria-label', 'Motion Components Stage');
+      stage.style.padding = '24px';
+      stage.style.display = 'grid';
+      stage.style.gap = '16px';
+      stage.style.background = 'var(--el-surface-bg, #ffffff)';
+      stage.innerHTML = `
+        <el-shimmer-text id="e2e-shimmer" variant="accent">Analyzing motion primitives</el-shimmer-text>
+        <el-hold-button id="e2e-hold" duration="250" confirmed-label="Confirmed">Hold to confirm</el-hold-button>
+        <el-usage-ring id="e2e-ring" value="72" max="100" label="API Quota" sublabel="used"></el-usage-ring>
+        <el-activity-grid id="e2e-grid" weeks="6" label="Deploys" show-legend></el-activity-grid>
+        <el-tabs id="e2e-motion-tabs" variant="pill" value="a">
+          <el-tab value="a" label="Overview">Overview panel</el-tab>
+          <el-tab value="b" label="Metrics">Metrics panel</el-tab>
+        </el-tabs>
+        <el-segmented-control id="e2e-motion-seg" value="day">
+          <option value="day">Day</option>
+          <option value="week">Week</option>
+        </el-segmented-control>
+      `;
+      document.body.appendChild(stage);
+
+      window.__e2eMotionEvents = { confirmed: false, selectedIndex: null };
+      document.getElementById('e2e-hold').addEventListener('confirm', () => {
+        window.__e2eMotionEvents.confirmed = true;
+      });
+      document.getElementById('e2e-grid').addEventListener('select', (e) => {
+        window.__e2eMotionEvents.selectedIndex = e.detail?.index ?? null;
+      });
+    });
+
+    await page.waitForTimeout(80);
+
+    // Interact: switch pill tab
+    await page.locator('#e2e-motion-tabs [role="tab"]').nth(1).click();
+    await page.waitForTimeout(40);
+
+    // Interact: switch segmented control
+    await page.locator('#e2e-motion-seg [role="radio"]').nth(1).click();
+    await page.waitForTimeout(40);
+
+    // Interact: click activity grid cell
+    await page.locator('#e2e-grid [data-index="2"]').click();
+
+    // Interact: hold el-hold-button past 250ms duration
+    const holdBox = await page.locator('#e2e-hold button').boundingBox();
+    expect(holdBox && holdBox.width > 0 && holdBox.height > 0).toBe(true);
+    await page.mouse.move(holdBox.x + holdBox.width / 2, holdBox.y + holdBox.height / 2);
+    await page.mouse.down();
+    await page.waitForTimeout(330);
+    await page.mouse.up();
+
+    const state = await page.evaluate(() => {
+      const ids = ['e2e-shimmer', 'e2e-hold', 'e2e-ring', 'e2e-grid', 'e2e-motion-tabs', 'e2e-motion-seg'];
+      const tabs = document.getElementById('e2e-motion-tabs');
+      const seg = document.getElementById('e2e-motion-seg');
+      return {
+        allHydrated: ids.every((id) => Boolean(document.getElementById(id)?.shadowRoot)),
+        tabsValue: tabs.activeTab?.value ?? tabs.getAttribute('value'),
+        tabsReady: tabs.shadowRoot?.querySelector('.tablist')?.getAttribute('data-indicator-ready'),
+        segValue: seg.value?.value ?? seg.getAttribute('value'),
+        segReady: seg.shadowRoot?.querySelector('.segmented-group')?.getAttribute('data-pill-ready'),
+        confirmed: window.__e2eMotionEvents.confirmed,
+        selectedIndex: window.__e2eMotionEvents.selectedIndex,
+      };
+    });
+
+    expect(errors).toEqual([]);
+    expect(state.allHydrated).toBe(true);
+    expect(state.tabsValue).toBe('b');
+    expect(state.tabsReady).toBe('true');
+    expect(state.segValue).toBe('week');
+    expect(state.segReady).toBe('true');
+    expect(state.confirmed).toBe(true);
+    expect(state.selectedIndex).toBe(2);
+
+    const results = await new AxeBuilder({ page })
+      .include('#e2e-motion-stage')
       .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
       .analyze();
     const serious = results.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious');

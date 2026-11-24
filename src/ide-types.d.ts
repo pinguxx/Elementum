@@ -8,6 +8,7 @@ declare module "vue" {
   export interface GlobalComponents {
     'el-accordion': HTMLElementTagNameMap['el-accordion'] & Record<string, any>;
     'el-accordion-item': HTMLElementTagNameMap['el-accordion-item'] & Record<string, any>;
+    'el-activity-grid': HTMLElementTagNameMap['el-activity-grid'] & Record<string, any>;
     'el-alert': HTMLElementTagNameMap['el-alert'] & Record<string, any>;
     'el-alert-dialog': HTMLElementTagNameMap['el-alert-dialog'] & Record<string, any>;
     'el-aspect-ratio': HTMLElementTagNameMap['el-aspect-ratio'] & Record<string, any>;
@@ -51,6 +52,7 @@ declare module "vue" {
     'el-field': HTMLElementTagNameMap['el-field'] & Record<string, any>;
     'el-fieldset': HTMLElementTagNameMap['el-fieldset'] & Record<string, any>;
     'el-form': HTMLElementTagNameMap['el-form'] & Record<string, any>;
+    'el-hold-button': HTMLElementTagNameMap['el-hold-button'] & Record<string, any>;
     'el-input': HTMLElementTagNameMap['el-input'] & Record<string, any>;
     'el-inset': HTMLElementTagNameMap['el-inset'] & Record<string, any>;
     'el-insight-card': HTMLElementTagNameMap['el-insight-card'] & Record<string, any>;
@@ -86,6 +88,7 @@ declare module "vue" {
     'el-segmented-control': HTMLElementTagNameMap['el-segmented-control'] & Record<string, any>;
     'el-select': HTMLElementTagNameMap['el-select'] & Record<string, any>;
     'el-separator': HTMLElementTagNameMap['el-separator'] & Record<string, any>;
+    'el-shimmer-text': HTMLElementTagNameMap['el-shimmer-text'] & Record<string, any>;
     'el-sidebar': HTMLElementTagNameMap['el-sidebar'] & Record<string, any>;
     'el-sidebar-content': HTMLElementTagNameMap['el-sidebar-content'] & Record<string, any>;
     'el-sidebar-footer': HTMLElementTagNameMap['el-sidebar-footer'] & Record<string, any>;
@@ -114,6 +117,7 @@ declare module "vue" {
     'el-tooltip': HTMLElementTagNameMap['el-tooltip'] & Record<string, any>;
     'el-tree-item': HTMLElementTagNameMap['el-tree-item'] & Record<string, any>;
     'el-tree-view': HTMLElementTagNameMap['el-tree-view'] & Record<string, any>;
+    'el-usage-ring': HTMLElementTagNameMap['el-usage-ring'] & Record<string, any>;
     'el-visually-hidden': HTMLElementTagNameMap['el-visually-hidden'] & Record<string, any>;
   }
 }
@@ -122,6 +126,7 @@ declare namespace svelteHTML {
   interface IntrinsicElements {
     'el-accordion': Partial<HTMLElementTagNameMap['el-accordion']> & Record<string, any>;
     'el-accordion-item': Partial<HTMLElementTagNameMap['el-accordion-item']> & Record<string, any>;
+    'el-activity-grid': Partial<HTMLElementTagNameMap['el-activity-grid']> & Record<string, any>;
     'el-alert': Partial<HTMLElementTagNameMap['el-alert']> & Record<string, any>;
     'el-alert-dialog': Partial<HTMLElementTagNameMap['el-alert-dialog']> & Record<string, any>;
     'el-aspect-ratio': Partial<HTMLElementTagNameMap['el-aspect-ratio']> & Record<string, any>;
@@ -165,6 +170,7 @@ declare namespace svelteHTML {
     'el-field': Partial<HTMLElementTagNameMap['el-field']> & Record<string, any>;
     'el-fieldset': Partial<HTMLElementTagNameMap['el-fieldset']> & Record<string, any>;
     'el-form': Partial<HTMLElementTagNameMap['el-form']> & Record<string, any>;
+    'el-hold-button': Partial<HTMLElementTagNameMap['el-hold-button']> & Record<string, any>;
     'el-input': Partial<HTMLElementTagNameMap['el-input']> & Record<string, any>;
     'el-inset': Partial<HTMLElementTagNameMap['el-inset']> & Record<string, any>;
     'el-insight-card': Partial<HTMLElementTagNameMap['el-insight-card']> & Record<string, any>;
@@ -200,6 +206,7 @@ declare namespace svelteHTML {
     'el-segmented-control': Partial<HTMLElementTagNameMap['el-segmented-control']> & Record<string, any>;
     'el-select': Partial<HTMLElementTagNameMap['el-select']> & Record<string, any>;
     'el-separator': Partial<HTMLElementTagNameMap['el-separator']> & Record<string, any>;
+    'el-shimmer-text': Partial<HTMLElementTagNameMap['el-shimmer-text']> & Record<string, any>;
     'el-sidebar': Partial<HTMLElementTagNameMap['el-sidebar']> & Record<string, any>;
     'el-sidebar-content': Partial<HTMLElementTagNameMap['el-sidebar-content']> & Record<string, any>;
     'el-sidebar-footer': Partial<HTMLElementTagNameMap['el-sidebar-footer']> & Record<string, any>;
@@ -228,6 +235,7 @@ declare namespace svelteHTML {
     'el-tooltip': Partial<HTMLElementTagNameMap['el-tooltip']> & Record<string, any>;
     'el-tree-item': Partial<HTMLElementTagNameMap['el-tree-item']> & Record<string, any>;
     'el-tree-view': Partial<HTMLElementTagNameMap['el-tree-view']> & Record<string, any>;
+    'el-usage-ring': Partial<HTMLElementTagNameMap['el-usage-ring']> & Record<string, any>;
     'el-visually-hidden': Partial<HTMLElementTagNameMap['el-visually-hidden']> & Record<string, any>;
   }
 }

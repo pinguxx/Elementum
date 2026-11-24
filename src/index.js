@@ -103,6 +103,10 @@ export { ElDiffViewer, computeLineDiff } from './components/el-diff-viewer.js';
 export { ElSources } from './components/el-sources.js';
 export { ElTaskList } from './components/el-task-list.js';
 export { ElInsightCard } from './components/el-insight-card.js';
+export { ElShimmerText } from './components/el-shimmer-text.js';
+export { ElHoldButton } from './components/el-hold-button.js';
+export { ElUsageRing } from './components/el-usage-ring.js';
+export { ElActivityGrid } from './components/el-activity-grid.js';
 
 // AG-UI Protocol Adapter (Streaming Events, State Deltas, & Signal Bindings)
 export { createAgUiStore, applyJsonPatch, getByPointer } from './ag-ui.js';
@@ -130,5 +134,9 @@ export {
   createDisclosureBehavior,
   createPopupPositioner,
   createHistory,
+  createSpringEasing,
+  createFlipBehavior,
+  createInViewBehavior,
+  createPointerTracker,
 } from './behaviors/index.js';
 export { snapshot, act, registerWebMCP } from './agent/index.js';

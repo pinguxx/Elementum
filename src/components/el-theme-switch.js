@@ -59,8 +59,11 @@ export class ElThemeSwitch extends Elementum {
     // Detect existing or saved theme
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('elementum-theme');
+      const docTheme = typeof document !== 'undefined' ? document.documentElement?.getAttribute('data-theme') : null;
       if (saved === 'dark' || saved === 'light') {
         this.setTheme(saved);
+      } else if (docTheme === 'dark' || docTheme === 'light') {
+        this.theme.value = docTheme;
       } else if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
         this.setTheme('dark');
       } else {

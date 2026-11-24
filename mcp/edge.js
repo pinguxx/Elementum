@@ -76,8 +76,8 @@ function jsonResponse(body, status = 200, corsHeaders = {}, extraHeaders = {}) {
   });
 }
 
-export function createEdgeMcpHandler({ manifest, tokens, pkg, metadata = {}, allowedOrigins = null }) {
-  const { handleJsonRpcLine } = createMcpHandler({ manifest, tokens, pkg, metadata });
+export function createEdgeMcpHandler({ manifest, tokens, pkg, metadata = {}, sizeBudgets = {}, allowedOrigins = null }) {
+  const { handleJsonRpcLine } = createMcpHandler({ manifest, tokens, pkg, metadata, sizeBudgets });
   const hasExplicitAllowlist = allowedOrigins !== null && allowedOrigins !== undefined;
 
   return async function handler(request) {

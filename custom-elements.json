@@ -3144,6 +3144,14 @@
                 "text": "string"
               },
               "description": "Active tab value"
+            },
+            {
+              "name": "variant",
+              "type": {
+                "text": "'underline' | 'pill'"
+              },
+              "default": "'underline'",
+              "description": "Active indicator visual mode"
             }
           ],
           "events": [
@@ -3630,6 +3638,127 @@
             "name": "Elementum",
             "module": "src/index.js"
           }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-shimmer-text.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElShimmerText",
+          "tagName": "el-shimmer-text",
+          "description": "Animated light-sweep sheen across status or AI thinking text with solid WCAG contrast.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            { "name": "duration", "type": { "text": "number" }, "default": "2.2", "description": "Sweep loop duration in seconds" },
+            { "name": "spread", "type": { "text": "number" }, "default": "35", "description": "Luminous band width percentage" },
+            { "name": "variant", "type": { "text": "'muted' | 'primary' | 'accent'" }, "default": "'muted'", "description": "Foreground color tone" },
+            { "name": "paused", "type": { "text": "boolean" }, "default": "false", "description": "Pause shimmer animation" }
+          ],
+          "slots": [{ "name": "default", "description": "Text content to shimmer" }],
+          "cssParts": [{ "name": "text", "description": "Shimmering text wrapper" }]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-hold-button.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElHoldButton",
+          "tagName": "el-hold-button",
+          "description": "Press-and-hold confirmation button for deliberate actions with pointer and keyboard fill progress.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            { "name": "duration", "type": { "text": "number" }, "default": "1200", "description": "Hold duration in milliseconds" },
+            { "name": "variant", "type": { "text": "'danger' | 'primary' | 'secondary'" }, "default": "'danger'", "description": "Visual button variant" },
+            { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'", "description": "Button size" },
+            { "name": "disabled", "type": { "text": "boolean" }, "default": "false", "description": "Disable interactions" },
+            { "name": "confirmed-label", "type": { "text": "string" }, "default": "'Confirmed'", "description": "Temporary confirmed label" }
+          ],
+          "events": [
+            { "name": "confirm", "description": "Fired when hold finishes: detail: { duration }" },
+            { "name": "cancel", "description": "Fired when released early: detail: { progress }" }
+          ],
+          "slots": [{ "name": "default", "description": "Action label text" }],
+          "cssParts": [
+            { "name": "button", "description": "Interactive button host" },
+            { "name": "progress", "description": "Horizontal hold progress fill" },
+            { "name": "label", "description": "Text label wrapper" }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-usage-ring.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElUsageRing",
+          "tagName": "el-usage-ring",
+          "description": "Segmented SVG radial quota meter with tabular numerals and accessible progressbar semantics.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            { "name": "value", "type": { "text": "number" }, "default": "68", "description": "Current usage value" },
+            { "name": "max", "type": { "text": "number" }, "default": "100", "description": "Maximum quota capacity" },
+            { "name": "segments", "type": { "text": "number" }, "default": "24", "description": "Radial segment tick count" },
+            { "name": "size", "type": { "text": "'sm' | 'md' | 'lg'" }, "default": "'md'", "description": "Ring diameter preset" },
+            { "name": "variant", "type": { "text": "'primary' | 'success' | 'warning' | 'danger'" }, "default": "'primary'", "description": "Semantic status color" },
+            { "name": "label", "type": { "text": "string" }, "default": "'Quota'", "description": "Accessible metric caption" },
+            { "name": "sublabel", "type": { "text": "string" }, "default": "'used'", "description": "Subtext inside center readout" }
+          ],
+          "cssParts": [
+            { "name": "ring", "description": "Outer progressbar wrapper" },
+            { "name": "svg", "description": "Radial SVG element" },
+            { "name": "value", "description": "Percentage readout" },
+            { "name": "label", "description": "Metric label caption" },
+            { "name": "sublabel", "description": "Center sublabel" }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/el-activity-grid.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "ElActivityGrid",
+          "tagName": "el-activity-grid",
+          "description": "7-row activity heatmap matrix with keyboard arrow navigation and semantic intensity levels.",
+          "superclass": {
+            "name": "Elementum",
+            "module": "src/index.js"
+          },
+          "attributes": [
+            { "name": "weeks", "type": { "text": "number" }, "default": "12", "description": "Number of 7-day columns (4..52)" },
+            { "name": "variant", "type": { "text": "'success' | 'primary' | 'accent'" }, "default": "'success'", "description": "Heatmap intensity palette" },
+            { "name": "label", "type": { "text": "string" }, "default": "'Activity'", "description": "Grid heading and ARIA label" },
+            { "name": "show-legend", "type": { "text": "boolean" }, "default": "false", "description": "Display Less/More scale legend" },
+            { "name": "data", "type": { "text": "string" }, "description": "Optional JSON array of { date, count, level } entries" }
+          ],
+          "events": [
+            { "name": "select", "description": "Fired when a cell is clicked: detail: { index, date, count, level }" }
+          ],
+          "cssParts": [
+            { "name": "container", "description": "Outer card wrapper" },
+            { "name": "grid", "description": "Grid matrix container" },
+            { "name": "cell", "description": "Individual day gridcell button" },
+            { "name": "legend", "description": "Optional Less/More legend" }
+          ]
         }
       ]
     }

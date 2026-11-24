@@ -57,7 +57,7 @@ Please include:
 
 The Elementum Design System MCP server exposes component schemas, design tokens, snippet generation, and static HTML accessibility linting over JSON-RPC 2.0 (`stdio` and Streamable HTTP):
 
-- **Read-Only Tool Execution (`readOnlyHint: true`)**: All 11 tools annotate `readOnlyHint: true`, `destructiveHint: false`, `idempotentHint: true`, `openWorldHint: false`. No tool writes files, spawns child processes, executes shell commands, modifies environment state, or makes outbound network calls.
+- **Read-Only Tool Execution (`readOnlyHint: true`)**: All 13 tools annotate `readOnlyHint: true`, `destructiveHint: false`, `idempotentHint: true`, `openWorldHint: false`. No tool writes files, spawns child processes, executes shell commands, modifies environment state, or makes outbound network calls.
 - **Safe CLI / Stdio Dispatch ([`bin/elementum.js`](./bin/elementum.js))**: Invoking `npx -y @wcomp/elementum` over piped stdio (no arguments and `!process.stdin.isTTY`) or via `npx @wcomp/elementum mcp` starts the read-only stdio MCP server with zero filesystem writes; setup/scaffolding writes occur only when explicitly running `init` or `--*` flags.
 - **Input, Batch & Payload Bounds ([`mcp/core.js`](./mcp/core.js))**:
   - `MAX_PAYLOAD_BYTES = 128 * 1024` (128 KB) on both stdio and HTTP (`HTTP 413` on oversized bodies), plus `MAX_BATCH_SIZE = 20` requests per JSON-RPC batch (`-32600` if exceeded) and a 20-term cap on `suggest_component` queries.

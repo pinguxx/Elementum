@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Auto-generates:
- *   1. llms-full.txt — Complete single-file reference for AI agents (all 109 component schemas,
+ *   1. llms-full.txt — Complete single-file reference for AI agents (all 113 component schemas,
  *      exact API rules, A2UI catalog, and --el-* design tokens).
  *   2. vscode.html-custom-data.json — VS Code HTML Custom Data v1.1 for native HTML attribute
- *      and enum autocomplete across all 109 <el-*> custom elements.
+ *      and enum autocomplete across all 113 <el-*> custom elements.
  *   3. src/ide-types.d.ts — Vue 3 (GlobalComponents) & Svelte (svelteHTML.IntrinsicElements)
  *      type declarations for full IDE autocomplete across frameworks.
  */
@@ -109,7 +109,7 @@ const fullLines = [
   '',
   '---',
   '',
-  '# Complete 109-Component Schema Contract (`custom-elements.json`)',
+  '# Complete 113-Component Schema Contract (`custom-elements.json`)',
   '',
   '| Tag | Class | Attributes | Events | Slots | Summary |',
   '| :--- | :--- | :--- | :--- | :--- | :--- |',

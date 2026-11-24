@@ -6,7 +6,7 @@
 const textEncoder = new TextEncoder();
 const SUPPORTED_PROTOCOL_VERSIONS = ['2025-06-18', '2025-03-26', '2024-11-05'];
 
-export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
+export function createMcpHandler({ manifest, tokens, pkg, metadata = {}, sizeBudgets = {} }) {
   const MAX_PAYLOAD_BYTES = 128 * 1024;
   const MAX_BATCH_SIZE = 20;
   const SAFE_TAG_RE = /^[a-z][a-z0-9]*-[a-z0-9-]+$/;
@@ -103,6 +103,8 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
       }
     }
     return {
+      category: 'general',
+      hasMotion: false,
       variants,
       states,
       props,
@@ -125,18 +127,77 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
     idempotentHint: true,
     openWorldHint: false,
   };
+
+  const toPascalCase = (tag) =>
+    String(tag || '')
+      .split('-')
+      .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+      .join('');
+
+  const SETUP_GUIDES = {
+    cdn: {
+      install: 'No build step required',
+      imports: [
+        '<link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />',
+        '<script type="module" src="https://unpkg.com/@wcomp/elementum"></script>',
+      ],
+    },
+    vanilla: {
+      install: 'npm install @wcomp/elementum',
+      imports: ["import '@wcomp/elementum/tokens.css';", "import '@wcomp/elementum';"],
+    },
+    react: {
+      install: 'npm install @wcomp/elementum',
+      imports: [
+        "import '@wcomp/elementum/tokens.css';",
+        "import { ElButton, ElCard, ElTabs } from '@wcomp/elementum/react';",
+      ],
+    },
+    next: {
+      install: 'npm install @wcomp/elementum',
+      imports: [
+        "import '@wcomp/elementum/tokens.css';",
+        "import { renderComponentToDSD } from '@wcomp/elementum/ssr';",
+        "import { ElButton } from '@wcomp/elementum/react';",
+      ],
+    },
+    vue: {
+      install: 'npm install @wcomp/elementum',
+      imports: ["import '@wcomp/elementum/tokens.css';", "import '@wcomp/elementum';"],
+    },
+    svelte: {
+      install: 'npm install @wcomp/elementum',
+      imports: ["import '@wcomp/elementum/tokens.css';", "import '@wcomp/elementum';"],
+    },
+  };
   
   const TOOLS = [
     {
       name: 'list_components',
-      description: 'Lists all available Web Components in the Elementum Design System.',
+      title: 'List components',
+      description: 'Lists available Web Components in the Elementum Design System with optional filtering by category, form association, or motion support.',
       inputSchema: {
         type: 'object',
-        properties: {},
+        properties: {
+          category: {
+            type: 'string',
+            maxLength: 32,
+            description: 'Optional category filter (e.g. "actions", "forms", "data", "feedback", "overlays", "navigation", "layout", "ai").',
+          },
+          formAssociated: {
+            type: 'boolean',
+            description: 'Filter to Form-Associated Custom Elements (FACE) when true, or non-FACE when false.',
+          },
+          hasMotion: {
+            type: 'boolean',
+            description: 'Filter to components with CSS/WAAPI motion or reduced-motion rules.',
+          },
+        },
       },
     },
     {
       name: 'get_component_doc',
+      title: 'Get component documentation',
       description:
         'Retrieves structured component API metadata (separated closed variants, boolean states, props, composition/JS constraints, events, slots, CSS parts, and standalone usage examples) for an Elementum component.',
       inputSchema: {
@@ -144,6 +205,8 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
         properties: {
           tag: {
             type: 'string',
+            minLength: 3,
+            maxLength: 64,
             description: 'The custom element tag name, e.g. "el-button" or "el-badge"',
           },
           section: {
@@ -158,7 +221,8 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
     },
     {
       name: 'list_tokens',
-      description: 'Lists Figma design tokens (colors, spacing, radii) for the design system.',
+      title: 'List design tokens',
+      description: 'Lists Figma/Penpot W3C DTCG design tokens (colors, spacing, radii) for the design system.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -172,14 +236,15 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
     },
     {
       name: 'generate_snippet',
+      title: 'Generate component snippet',
       description: 'Generates valid Elementum snippet in HTML, React TSX, Vue 3 SFC, or declarative A2UI JSON format.',
       inputSchema: {
         type: 'object',
         properties: {
-          tag: { type: 'string', description: 'Component tag, e.g. "el-button"' },
-          variant: { type: 'string', description: 'Visual variant, e.g. "primary", "secondary", "danger"' },
-          size: { type: 'string', description: 'Size variant, e.g. "sm", "md", "lg"' },
-          label: { type: 'string', description: 'Content text for the default slot' },
+          tag: { type: 'string', minLength: 3, maxLength: 64, description: 'Component tag, e.g. "el-button"' },
+          variant: { type: 'string', maxLength: 48, description: 'Visual variant, e.g. "primary", "secondary", "danger"' },
+          size: { type: 'string', maxLength: 16, description: 'Size variant, e.g. "sm", "md", "lg"' },
+          label: { type: 'string', maxLength: 500, description: 'Content text for the default slot' },
           disabled: { type: 'boolean', description: 'Whether the element is disabled' },
           format: {
             type: 'string',
@@ -192,17 +257,19 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
     },
     {
       name: 'scaffold_component',
+      title: 'Scaffold custom component',
       description: 'Scaffolds standard boilerplate JavaScript code for a new Elementum Web Component adhering to design system standards.',
       inputSchema: {
         type: 'object',
         properties: {
-          tag: { type: 'string', description: 'Component tag, e.g. "el-card"' },
-          name: { type: 'string', description: 'Component class name, e.g. "ElCard"' },
-          description: { type: 'string', description: 'Component description' },
+          tag: { type: 'string', minLength: 3, maxLength: 64, description: 'Component tag, e.g. "el-card"' },
+          name: { type: 'string', maxLength: 64, description: 'Component class name, e.g. "ElCard"' },
+          description: { type: 'string', maxLength: 500, description: 'Component description' },
           formAssociated: { type: 'boolean', description: 'Whether the component associates with forms' },
           attributes: {
             type: 'array',
-            items: { type: 'string' },
+            maxItems: 30,
+            items: { type: 'string', maxLength: 48 },
             description: 'Observed attributes, e.g. ["variant", "disabled"]',
           },
         },
@@ -211,63 +278,71 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
     },
     {
       name: 'lint_accessibility',
+      title: 'Lint HTML accessibility',
       description: 'Static HTML accessibility linter for common WCAG 2.2 labeling and attribute issues (not a substitute for real-browser axe-core auditing).',
       inputSchema: {
         type: 'object',
         properties: {
-          markup: { type: 'string', description: 'HTML markup snippet to inspect' },
+          markup: { type: 'string', minLength: 1, maxLength: 65536, description: 'HTML markup snippet to inspect' },
         },
         required: ['markup'],
       },
     },
     {
       name: 'validate_accessibility',
+      title: 'Validate HTML accessibility',
       description: 'Alias for lint_accessibility: static HTML accessibility linter for common WCAG 2.2 labeling issues.',
       inputSchema: {
         type: 'object',
         properties: {
-          markup: { type: 'string', description: 'HTML markup snippet to inspect' },
+          markup: { type: 'string', minLength: 1, maxLength: 65536, description: 'HTML markup snippet to inspect' },
         },
         required: ['markup'],
       },
     },
     {
       name: 'suggest_component',
+      title: 'Suggest matching components',
       description: 'Recommends Elementum Web Components that best match a UI requirement or natural-language query.',
       inputSchema: {
         type: 'object',
         properties: {
-          query: { type: 'string', description: 'UI requirement, e.g. "date picker", "code diff", "command palette"' },
-          limit: { type: 'number', description: 'Maximum results to return (default 5)' },
+          query: { type: 'string', minLength: 1, maxLength: 200, description: 'UI requirement, e.g. "date picker", "code diff", "command palette"' },
+          limit: { type: 'integer', minimum: 1, maximum: 20, default: 5, description: 'Maximum results to return (default 5)' },
         },
         required: ['query'],
       },
     },
     {
       name: 'validate_component_usage',
+      title: 'Validate component markup',
       description: 'Validates <el-*> tags and attributes in an HTML snippet against the live Custom Elements Manifest to catch hallucinated tags or props.',
       inputSchema: {
         type: 'object',
         properties: {
-          markup: { type: 'string', description: 'HTML snippet containing <el-*> components' },
+          markup: { type: 'string', minLength: 1, maxLength: 65536, description: 'HTML snippet containing <el-*> components' },
         },
         required: ['markup'],
       },
     },
     {
       name: 'validate_a2ui_messages',
+      title: 'Validate A2UI messages',
       description: 'Validates A2UI JSON messages (createSurface, beginRendering, surfaceUpdate, dataModelUpdate, deleteSurface) against Elementum DEFAULT_A2UI_CATALOG and security rules.',
       inputSchema: {
         type: 'object',
         properties: {
           messages: {
             type: 'array',
+            minItems: 1,
+            maxItems: 100,
             items: { type: 'object' },
             description: 'Array of A2UI JSON message objects to validate.',
           },
           allowedTypes: {
             type: 'array',
-            items: { type: 'string' },
+            maxItems: 50,
+            items: { type: 'string', maxLength: 48 },
             description: 'Optional subset of allowed A2UI component types.',
           },
         },
@@ -276,24 +351,88 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
     },
     {
       name: 'get_component_maturity',
+      title: 'Get package maturity & metrics',
       description: 'Returns machine-readable package version, component count, stability tier, and browser/testing verification metadata.',
       inputSchema: {
         type: 'object',
         properties: {},
       },
     },
-  ].map((tool) => ({ ...tool, annotations: READ_ONLY_ANNOTATIONS }));
+    {
+      name: 'get_setup',
+      title: 'Get project setup',
+      description: 'Returns zero-dependency installation commands, framework imports, dark-mode theme attribute setup, and reduced-motion notes.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          framework: {
+            type: 'string',
+            enum: ['vanilla', 'react', 'next', 'vue', 'svelte', 'cdn'],
+            description: 'Target framework or CDN workflow (optional; omits to return all).',
+          },
+        },
+      },
+    },
+    {
+      name: 'get_bundle_plan',
+      title: 'Plan tree-shaken bundle',
+      description: 'Plans tree-shaken imports and computes per-component and total gzipped byte budgets from size-budget.json for a list of tags.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          tags: {
+            type: 'array',
+            minItems: 1,
+            maxItems: 50,
+            items: { type: 'string', minLength: 3, maxLength: 64 },
+            description: 'Array of Elementum custom element tags, e.g. ["el-button", "el-hold-button"].',
+          },
+          framework: {
+            type: 'string',
+            enum: ['html', 'react', 'vue', 'svelte'],
+            description: 'Target framework for import code (default: "html").',
+          },
+        },
+        required: ['tags'],
+      },
+    },
+  ].map((tool) => ({ ...tool, annotations: READ_ONLY_ANNOTATIONS, execution: { taskSupport: 'forbidden' } }));
   
   function handleToolCall(name, rawArgs) {
     const args = rawArgs && typeof rawArgs === 'object' && !Array.isArray(rawArgs) ? rawArgs : {};
   
     if (name === 'list_components') {
-      const list = allDeclarations.map((d) => ({
-        tag: d.tagName,
-        name: d.name,
-        description: d.description,
-      }));
-      return { count: list.length, components: list };
+      const catFilter = typeof args.category === 'string' && args.category.trim() ? args.category.trim().toLowerCase() : null;
+      const hasFaceFilter = typeof args.formAssociated === 'boolean';
+      const hasMotionFilter = typeof args.hasMotion === 'boolean';
+
+      const list = [];
+      for (const d of allDeclarations) {
+        const meta = getResolvedMetadata(d);
+        const category = String(meta.category || 'general');
+        const formAssociated = Boolean(meta.constraints?.formAssociated);
+        const hasMotion = Boolean(meta.hasMotion);
+        if (catFilter && category.toLowerCase() !== catFilter) continue;
+        if (hasFaceFilter && formAssociated !== args.formAssociated) continue;
+        if (hasMotionFilter && hasMotion !== args.hasMotion) continue;
+        list.push({
+          tag: d.tagName,
+          name: d.name,
+          description: d.description,
+          category,
+          formAssociated,
+          hasMotion,
+        });
+      }
+      return {
+        count: list.length,
+        filtersApplied: {
+          ...(catFilter ? { category: catFilter } : {}),
+          ...(hasFaceFilter ? { formAssociated: args.formAssociated } : {}),
+          ...(hasMotionFilter ? { hasMotion: args.hasMotion } : {}),
+        },
+        components: list,
+      };
     }
   
     if (name === 'get_component_doc') {
@@ -867,8 +1006,440 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
         subpathExports: Object.keys(pkg.exports || {}),
       };
     }
+
+    if (name === 'get_setup') {
+      const fw = typeof args.framework === 'string' ? args.framework.trim().toLowerCase() : '';
+      if (fw && !Object.hasOwn(SETUP_GUIDES, fw)) {
+        return {
+          error: `Unsupported framework '${fw}'. Expected one of: ${Object.keys(SETUP_GUIDES).join(', ')}.`,
+        };
+      }
+      const shared = {
+        package: pkg.name,
+        version: pkg.version,
+        zeroRuntimeDependencies: !pkg.dependencies || Object.keys(pkg.dependencies).length === 0,
+        themeContract: {
+          darkModeAttribute: 'data-theme="dark"',
+          targetElement: '<html> / :root (document.documentElement.setAttribute("data-theme", "dark"))',
+          tokensStylesheet: '@wcomp/elementum/tokens.css',
+        },
+        reducedMotionContract:
+          'Honors @media (prefers-reduced-motion: reduce) across CSS animations/transitions and spring, FLIP, InView, and pointer behaviors.',
+      };
+      if (fw) {
+        return { framework: fw, ...SETUP_GUIDES[fw], ...shared };
+      }
+      return { frameworks: SETUP_GUIDES, ...shared };
+    }
+
+    if (name === 'get_bundle_plan') {
+      if (!Array.isArray(args.tags) || args.tags.length === 0) {
+        return { error: 'tags must be a non-empty array of Elementum custom element tag names.' };
+      }
+      if (args.tags.length > 50) {
+        return { error: 'tags cannot exceed 50 items.' };
+      }
+      const fw = typeof args.framework === 'string' && args.framework.trim()
+        ? args.framework.trim().toLowerCase()
+        : 'html';
+      if (!['html', 'react', 'vue', 'svelte'].includes(fw)) {
+        return { error: `Unsupported framework '${fw}'. Expected html, react, vue, or svelte.` };
+      }
+
+      const uniqueTags = [];
+      const seen = new Set();
+      const invalidTags = [];
+      const unknownTags = [];
+      for (const rawTag of args.tags) {
+        const tag = typeof rawTag === 'string' ? rawTag.trim().toLowerCase() : '';
+        if (!SAFE_TAG_RE.test(tag)) {
+          invalidTags.push(String(rawTag));
+          continue;
+        }
+        if (seen.has(tag)) continue;
+        seen.add(tag);
+        if (!declByTag.has(tag)) {
+          unknownTags.push(tag);
+          continue;
+        }
+        uniqueTags.push(tag);
+      }
+
+      if (invalidTags.length > 0 || unknownTags.length > 0) {
+        const parts = [];
+        if (invalidTags.length > 0) parts.push(`Invalid tag(s): ${invalidTags.join(', ')}`);
+        if (unknownTags.length > 0) parts.push(`Unknown component tag(s): ${unknownTags.join(', ')}`);
+        return { error: parts.join('; ') };
+      }
+
+      const sharedCoreKeys = [
+        '@wcomp/elementum/signal',
+        '@wcomp/elementum/template',
+        '@wcomp/elementum/elementum',
+      ];
+      let sharedCoreBudgetBytes = 0;
+      for (const k of sharedCoreKeys) {
+        if (Object.hasOwn(sizeBudgets, k) && typeof sizeBudgets[k] === 'number') {
+          sharedCoreBudgetBytes += sizeBudgets[k];
+        }
+      }
+
+      let componentBudgetBytes = 0;
+      const components = uniqueTags.map((tag) => {
+        const subpath = `@wcomp/elementum/components/${tag}`;
+        const budgetBytes =
+          Object.hasOwn(sizeBudgets, subpath) && typeof sizeBudgets[subpath] === 'number'
+            ? sizeBudgets[subpath]
+            : null;
+        if (budgetBytes !== null) componentBudgetBytes += budgetBytes;
+        return {
+          tag,
+          pascalName: toPascalCase(tag),
+          subpath,
+          budgetGzipBytes: budgetBytes,
+        };
+      });
+
+      const imports =
+        fw === 'react'
+          ? [
+              "import '@wcomp/elementum/tokens.css';",
+              `import { ${uniqueTags.map(toPascalCase).join(', ')} } from '@wcomp/elementum/react';`,
+            ]
+          : [
+              "import '@wcomp/elementum/tokens.css';",
+              ...uniqueTags.map((tag) => `import '@wcomp/elementum/components/${tag}.js';`),
+            ];
+
+      const totalEstimatedGzipBytes = sharedCoreBudgetBytes + componentBudgetBytes;
+      return {
+        framework: fw,
+        tags: uniqueTags,
+        componentCount: uniqueTags.length,
+        imports,
+        components,
+        sharedCoreBudgetBytes,
+        componentBudgetBytes,
+        totalEstimatedGzipBytes,
+        totalEstimatedGzipKb: Number((totalEstimatedGzipBytes / 1024).toFixed(2)),
+      };
+    }
   
     throw new Error(`Unknown tool: ${name}`);
+  }
+
+  const RESOURCES = [
+    {
+      uri: 'elementum://catalog',
+      name: 'Elementum Component Catalog',
+      description: 'Complete Markdown index of registered Elementum Web Components grouped by category.',
+      mimeType: 'text/markdown',
+    },
+    {
+      uri: 'elementum://setup',
+      name: 'Elementum Setup & Theme Guide',
+      description: 'Installation commands, tree-shaken framework imports, dark-mode theme setup, and reduced-motion contract.',
+      mimeType: 'text/markdown',
+    },
+    {
+      uri: 'elementum://tokens',
+      name: 'Elementum Design Tokens (W3C DTCG)',
+      description: 'Semantic design tokens for colors, spacing, radii, typography, elevation, and motion.',
+      mimeType: 'text/markdown',
+    },
+  ];
+
+  const RESOURCE_TEMPLATES = [
+    {
+      uriTemplate: 'elementum://components/{tag}',
+      name: 'Elementum Component Reference',
+      description: 'Schema, variants, attributes, events, slots, constraints, and examples for a specific <el-*> tag.',
+      mimeType: 'text/markdown',
+    },
+  ];
+
+  const PROMPTS = [
+    {
+      name: 'add_component',
+      title: 'Add Elementum component',
+      description: 'Inspect schema, accessibility rules, and tree-shaken setup for an Elementum component.',
+      arguments: [
+        {
+          name: 'tag',
+          description: 'Custom element tag name (e.g. el-hold-button, el-tabs).',
+          required: true,
+        },
+        {
+          name: 'framework',
+          description: 'Target framework: html, react, vue, or svelte.',
+          required: false,
+        },
+      ],
+    },
+    {
+      name: 'build_screen',
+      title: 'Compose UI screen',
+      description: 'Select Elementum components, tokens, and a tree-shaken bundle plan for a screen.',
+      arguments: [
+        {
+          name: 'goal',
+          description: 'Short description of the UI screen or workflow to build.',
+          required: true,
+        },
+        {
+          name: 'framework',
+          description: 'Target framework: html, react, vue, or svelte.',
+          required: false,
+        },
+      ],
+    },
+    {
+      name: 'audit_markup',
+      title: 'Audit Elementum markup',
+      description: 'Audit Elementum HTML/JSX markup for WCAG 2.2 AA accessibility and component contract errors.',
+      arguments: [
+        {
+          name: 'html',
+          description: 'Markup snippet containing Elementum custom elements.',
+          required: true,
+        },
+      ],
+    },
+  ];
+
+  function collectTokenRows(node, prefix, rows, limit = 200) {
+    if (!node || typeof node !== 'object' || rows.length >= limit) return;
+    if (Object.hasOwn(node, '$value') || Object.hasOwn(node, 'value')) {
+      const val = Object.hasOwn(node, '$value') ? node.$value : node.value;
+      const type = node.$type || node.type || '';
+      rows.push({
+        name: prefix,
+        type: String(type),
+        value: typeof val === 'object' ? JSON.stringify(val) : String(val),
+      });
+      return;
+    }
+    for (const [k, v] of Object.entries(node)) {
+      if (k.startsWith('$') || rows.length >= limit) continue;
+      collectTokenRows(v, prefix ? `${prefix}.${k}` : k, rows, limit);
+    }
+  }
+
+  function buildCatalogMarkdown() {
+    const byCategory = new Map();
+    for (const d of allDeclarations) {
+      const meta = getResolvedMetadata(d);
+      const cat = String(meta.category || 'general');
+      if (!byCategory.has(cat)) byCategory.set(cat, []);
+      byCategory.get(cat).push({ decl: d, meta });
+    }
+    const lines = [
+      `# Elementum Component Catalog (v${pkg.version})`,
+      '',
+      `Total components: **${allDeclarations.length}** | Zero runtime dependencies | WCAG 2.2 AA`,
+      '',
+    ];
+    for (const cat of [...byCategory.keys()].sort()) {
+      lines.push(`## ${cat} (${byCategory.get(cat).length})`, '');
+      for (const { decl, meta } of byCategory.get(cat)) {
+        const flags = [];
+        if (meta.hasMotion) flags.push('motion');
+        if (meta.constraints?.formAssociated) flags.push('FACE');
+        const suffix = flags.length ? ` _[${flags.join(', ')}]_` : '';
+        lines.push(`- \`<${decl.tagName}>\` — ${decl.description || ''}${suffix}`);
+      }
+      lines.push('');
+    }
+    return lines.join('\n');
+  }
+
+  function buildSetupMarkdown() {
+    const lines = [
+      `# Elementum Setup & Integration Guide (${pkg.name} v${pkg.version})`,
+      '',
+      'Zero runtime dependencies. Works with plain HTML, React 18/19, Next.js SSR (DSD), Vue 3, and Svelte.',
+      '',
+    ];
+    for (const [fw, guide] of Object.entries(SETUP_GUIDES)) {
+      lines.push(`## ${fw}`, '', `Install: \`${guide.install}\``, '', '```js', ...guide.imports, '```', '');
+    }
+    lines.push(
+      '## Dark Mode & Reduced Motion',
+      '',
+      '- Dark theme activates via `[data-theme="dark"]` on `<html>` / `:root` after loading `@wcomp/elementum/tokens.css`.',
+      '- All CSS animations and JS motion behaviors (`createSpringEasing`, `createFlipBehavior`, `createInViewBehavior`, `createPointerTracker`) honor `@media (prefers-reduced-motion: reduce)`.',
+      '',
+    );
+    return lines.join('\n');
+  }
+
+  function buildTokensMarkdown() {
+    const lines = [`# Elementum Design Tokens (${pkg.name} v${pkg.version})`, ''];
+    for (const [category, group] of Object.entries(tokens || {})) {
+      if (category.startsWith('$')) continue;
+      const rows = [];
+      collectTokenRows(group, category, rows, 80);
+      lines.push(`## ${category} (${rows.length})`, '');
+      for (const row of rows) {
+        lines.push(`- \`${row.name}\`${row.type ? ` (${row.type})` : ''}: \`${row.value}\``);
+      }
+      lines.push('');
+    }
+    return lines.join('\n');
+  }
+
+  function buildComponentMarkdown(decl) {
+    const meta = getResolvedMetadata(decl);
+    const lines = [
+      `# \`<${decl.tagName}>\` (${decl.name || toPascalCase(decl.tagName)})`,
+      '',
+      decl.description || '',
+      '',
+      `- **Category:** ${meta.category || 'general'}`,
+      `- **Motion:** ${Boolean(meta.hasMotion)}`,
+      `- **Form-associated (FACE):** ${Boolean(meta.constraints?.formAssociated)}`,
+      `- **Import:** \`import '@wcomp/elementum/components/${decl.tagName}.js';\``,
+      '',
+    ];
+    const attrs = Array.isArray(decl.attributes) ? decl.attributes : [];
+    if (attrs.length > 0) {
+      lines.push('## Attributes', '');
+      for (const attr of attrs) {
+        lines.push(`- \`${attr.name}\` (${attr.type?.text || 'string'}): ${attr.description || ''}`);
+      }
+      lines.push('');
+    }
+    if (Array.isArray(meta.variants) && meta.variants.length > 0) {
+      lines.push('## Variants', '');
+      for (const v of meta.variants) {
+        lines.push(`- \`${v.name || v.attribute}\`: ${(v.allowedValues || []).join(', ')}`);
+      }
+      lines.push('');
+    }
+    const events = Array.isArray(decl.events) ? decl.events : [];
+    if (events.length > 0) {
+      lines.push('## Events', '');
+      for (const ev of events) {
+        lines.push(`- \`${ev.name}\`: ${ev.description || ''}`);
+      }
+      lines.push('');
+    }
+    const slots = Array.isArray(decl.slots) ? decl.slots : [];
+    if (slots.length > 0) {
+      lines.push('## Slots', '');
+      for (const slot of slots) {
+        lines.push(`- \`${slot.name || '(default)'}\`: ${slot.description || ''}`);
+      }
+      lines.push('');
+    }
+    if (Array.isArray(meta.examples) && meta.examples.length > 0) {
+      lines.push('## Examples', '');
+      for (const ex of meta.examples) {
+        lines.push(`### ${ex.title || 'Example'}`, '', '```html', ex.code || '', '```', '');
+      }
+    }
+    return lines.join('\n');
+  }
+
+  function buildPromptResult(prompt, args) {
+    if (prompt.name === 'add_component') {
+      const tag = String(args.tag).trim().toLowerCase();
+      const fw = typeof args.framework === 'string' && args.framework.trim()
+        ? args.framework.trim().toLowerCase()
+        : 'html';
+      const decl = declByTag.get(tag);
+      const summary = decl
+        ? `Manifest summary: <${decl.tagName}> (${decl.description || ''}).`
+        : `Note: Inspect get_component_doc for "${tag}".`;
+      return {
+        description: prompt.description,
+        messages: [
+          {
+            role: 'user',
+            content: {
+              type: 'text',
+              text: [
+                `Add Elementum component <${tag}> for framework "${fw}".`,
+                summary,
+                `1. Call get_setup (framework: "${fw}") and get_component_doc (tag: "${tag}").`,
+                `2. Call get_bundle_plan (tags: ["${tag}"], framework: "${fw}") for tree-shaken imports.`,
+                `3. Call generate_snippet and validate final markup with lint_accessibility and validate_component_usage.`,
+              ].join('\n'),
+            },
+          },
+        ],
+      };
+    }
+
+    if (prompt.name === 'build_screen') {
+      const goal = String(args.goal).trim();
+      const fw = typeof args.framework === 'string' && args.framework.trim()
+        ? args.framework.trim().toLowerCase()
+        : 'html';
+      return {
+        description: prompt.description,
+        messages: [
+          {
+            role: 'user',
+            content: {
+              type: 'text',
+              text: [
+                `Design and assemble an Elementum UI screen (${fw}) for: ${goal}`,
+                '1. Read elementum://setup and call list_components (using category/hasMotion/formAssociated filters) to pick minimal components.',
+                '2. Inspect design tokens via elementum://tokens or list_tokens and plan imports with get_bundle_plan.',
+                '3. Verify the resulting markup using validate_component_usage and lint_accessibility.',
+              ].join('\n'),
+            },
+          },
+        ],
+      };
+    }
+
+    const html = String(args.html).trim();
+    return {
+      description: prompt.description,
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: [
+              'Audit the following Elementum markup for WCAG 2.2 AA compliance and valid component attributes:',
+              '1. Run lint_accessibility on the markup.',
+              '2. Run validate_component_usage on the markup.',
+              '3. Summarize errors/warnings and suggest minimal fixes.',
+              '',
+              '```html',
+              html,
+              '```',
+            ].join('\n'),
+          },
+        },
+      ],
+    };
+  }
+
+  function getCompletionValues(argName, value) {
+    const prefix = typeof value === 'string' ? value.trim().toLowerCase() : '';
+    let candidates = [];
+    if (argName === 'tag') {
+      candidates = allDeclarations.map((d) => d.tagName);
+    } else if (argName === 'framework') {
+      candidates = ['html', 'react', 'vue', 'svelte', 'vanilla', 'next', 'cdn'];
+    } else if (argName === 'category') {
+      const cats = new Set();
+      for (const d of allDeclarations) {
+        cats.add(String(getResolvedMetadata(d).category || 'general'));
+      }
+      candidates = [...cats].sort();
+    }
+    const matches = candidates.filter((item) => item.toLowerCase().startsWith(prefix));
+    const values = matches.slice(0, 100);
+    return {
+      values,
+      total: matches.length,
+      hasMore: matches.length > values.length,
+    };
   }
 
   function handleSingleRequest(request) {
@@ -919,6 +1490,154 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
       }
     }
 
+    if (request.method === 'resources/list') {
+      return {
+        jsonrpc: '2.0',
+        id: request.id,
+        result: { resources: RESOURCES },
+      };
+    }
+
+    if (request.method === 'resources/templates/list') {
+      return {
+        jsonrpc: '2.0',
+        id: request.id,
+        result: { resourceTemplates: RESOURCE_TEMPLATES },
+      };
+    }
+
+    if (request.method === 'resources/read') {
+      const params = request.params && typeof request.params === 'object' && !Array.isArray(request.params)
+        ? request.params
+        : {};
+      const uri = typeof params.uri === 'string' ? params.uri.trim() : '';
+      if (!uri) {
+        return {
+          jsonrpc: '2.0',
+          id: request.id,
+          error: { code: -32602, message: 'Invalid params: uri is required.' },
+        };
+      }
+      if (uri === 'elementum://catalog') {
+        return {
+          jsonrpc: '2.0',
+          id: request.id,
+          result: { contents: [{ uri, mimeType: 'text/markdown', text: buildCatalogMarkdown() }] },
+        };
+      }
+      if (uri === 'elementum://setup') {
+        return {
+          jsonrpc: '2.0',
+          id: request.id,
+          result: { contents: [{ uri, mimeType: 'text/markdown', text: buildSetupMarkdown() }] },
+        };
+      }
+      if (uri === 'elementum://tokens') {
+        return {
+          jsonrpc: '2.0',
+          id: request.id,
+          result: { contents: [{ uri, mimeType: 'text/markdown', text: buildTokensMarkdown() }] },
+        };
+      }
+      if (uri.startsWith('elementum://components/')) {
+        const tag = uri.slice('elementum://components/'.length).trim().toLowerCase();
+        const decl = SAFE_TAG_RE.test(tag) ? declByTag.get(tag) : null;
+        if (!decl) {
+          return {
+            jsonrpc: '2.0',
+            id: request.id,
+            error: { code: -32602, message: `Unknown component resource URI: ${uri}` },
+          };
+        }
+        return {
+          jsonrpc: '2.0',
+          id: request.id,
+          result: { contents: [{ uri, mimeType: 'text/markdown', text: buildComponentMarkdown(decl) }] },
+        };
+      }
+      return {
+        jsonrpc: '2.0',
+        id: request.id,
+        error: { code: -32602, message: `Unknown resource URI: ${uri}` },
+      };
+    }
+
+    if (request.method === 'prompts/list') {
+      return {
+        jsonrpc: '2.0',
+        id: request.id,
+        result: { prompts: PROMPTS },
+      };
+    }
+
+    if (request.method === 'prompts/get') {
+      const params = request.params && typeof request.params === 'object' && !Array.isArray(request.params)
+        ? request.params
+        : {};
+      const name = typeof params.name === 'string' ? params.name.trim() : '';
+      const prompt = PROMPTS.find((p) => p.name === name);
+      if (!prompt) {
+        return {
+          jsonrpc: '2.0',
+          id: request.id,
+          error: { code: -32602, message: `Unknown prompt: ${name || '(empty)'}` },
+        };
+      }
+      const rawArgs = params.arguments && typeof params.arguments === 'object' && !Array.isArray(params.arguments)
+        ? params.arguments
+        : {};
+      for (const k of Object.keys(rawArgs)) {
+        if (FORBIDDEN_PROTO_KEYS.has(k)) {
+          return {
+            jsonrpc: '2.0',
+            id: request.id,
+            error: { code: -32602, message: `Invalid argument key: ${k}` },
+          };
+        }
+      }
+      for (const spec of prompt.arguments || []) {
+        if (spec.required) {
+          const val = Object.hasOwn(rawArgs, spec.name) ? rawArgs[spec.name] : undefined;
+          if (typeof val !== 'string' || !val.trim()) {
+            return {
+              jsonrpc: '2.0',
+              id: request.id,
+              error: { code: -32602, message: `Missing required prompt argument: ${spec.name}` },
+            };
+          }
+        }
+      }
+      return {
+        jsonrpc: '2.0',
+        id: request.id,
+        result: buildPromptResult(prompt, rawArgs),
+      };
+    }
+
+    if (request.method === 'completion/complete') {
+      const params = request.params && typeof request.params === 'object' && !Array.isArray(request.params)
+        ? request.params
+        : {};
+      const arg = params.argument && typeof params.argument === 'object' && !Array.isArray(params.argument)
+        ? params.argument
+        : null;
+      const argName = arg && typeof arg.name === 'string' ? arg.name.trim() : '';
+      if (!argName) {
+        return {
+          jsonrpc: '2.0',
+          id: request.id,
+          error: { code: -32602, message: 'Invalid params: argument.name is required.' },
+        };
+      }
+      return {
+        jsonrpc: '2.0',
+        id: request.id,
+        result: {
+          completion: getCompletionValues(argName, arg.value),
+        },
+      };
+    }
+
     if (request.method === 'ping') {
       return {
         jsonrpc: '2.0',
@@ -937,14 +1656,33 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
         id: request.id,
         result: {
           protocolVersion,
-          capabilities: { tools: {} },
+          capabilities: {
+            tools: {},
+            resources: {},
+            prompts: {},
+            completions: {},
+          },
           serverInfo: {
             name: 'elementum-design-system-mcp',
             title: 'Elementum Design System MCP',
             version: pkg.version,
+            websiteUrl: 'https://elementum-sage.vercel.app/',
+            icons: [
+              {
+                src: 'https://elementum-sage.vercel.app/icon.png',
+                mimeType: 'image/png',
+                sizes: ['192x192'],
+              },
+            ],
           },
-          instructions:
-            'Query Elementum Web Components schemas, W3C DTCG design tokens, snippet generation, and WCAG 2.2 AA accessibility lint checks.',
+          instructions: [
+            'Elementum Design System MCP (zero-dependency Web Components & W3C DTCG tokens). Recommended workflow:',
+            '1. Call get_setup or read elementum://setup for zero-dep install commands, dark mode ([data-theme="dark"]), and prefers-reduced-motion setup.',
+            '2. Call list_components (filter by category, formAssociated, or hasMotion) or read elementum://catalog to discover components.',
+            '3. Inspect component APIs via get_component_doc (or elementum://components/<tag>) and tokens via list_tokens (or elementum://tokens).',
+            '4. Plan tree-shaken imports & gzipped budgets with get_bundle_plan and generate markup via generate_snippet.',
+            '5. Audit generated markup before shipping with lint_accessibility, validate_component_usage, or validate_a2ui_messages.',
+          ].join('\n'),
         },
       };
     }
@@ -991,5 +1729,5 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {} }) {
     return handleSingleRequest(parsed);
   }
 
-  return { TOOLS, handleToolCall, handleJsonRpcLine };
+  return { TOOLS, RESOURCES, PROMPTS, handleToolCall, handleJsonRpcLine };
 }

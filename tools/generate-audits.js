@@ -82,7 +82,7 @@ const md = `# Elementum Audit & Verification Hub
 | Audit Area | Dedicated Report / Artifact | Automated Gate |
 | :--- | :--- | :--- |
 | **Per-Component Maturity Matrix** | [QUALITY.md](./QUALITY.md) | \`npm run quality:report\` & \`npm run catalog:diff\` |
-| **Manual Assistive-Technology Audit** | [docs/accessibility-audit.md](./docs/accessibility-audit.md) | Automated WCAG 2.2 AA \`109 / 109\` + pre-\`1.0.0\` NVDA / VoiceOver sign-off log |
+| **Manual Assistive-Technology Audit** | [docs/accessibility-audit.md](./docs/accessibility-audit.md) | Automated WCAG 2.2 AA \`113 / 113\` + pre-\`1.0.0\` NVDA / VoiceOver sign-off log |
 | **Security & MCP Threat Model** | [SECURITY.md](./SECURITY.md) & [test/security.test.js](./test/security.test.js) | GitHub CodeQL (0 alerts) + \`npm test\` |
 | **Performance Benchmarks** | [BENCHMARKS.md](./BENCHMARKS.md) | \`npm run bench\` |
 | **3-Way Framework Parity Benchmark** | [starters/framework-comparison/README.md](./starters/framework-comparison/README.md) | \`npm run bench:frameworks\` (React vs. Vue 3 vs. Vanilla) |

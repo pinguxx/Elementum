@@ -142,11 +142,11 @@ test('Penpot Codegen: parsePenpotLayerName parses boolean flags and Penpot libra
   });
 });
 
-test('Penpot Codegen: renderElementumNode & generatePageHtml compile all 109 components, structural helpers, and escape XSS', () => {
+test('Penpot Codegen: renderElementumNode & generatePageHtml compile all 113 components, structural helpers, and escape XSS', () => {
   const catalogList = Array.isArray(catalogComponents)
     ? catalogComponents
     : Object.values(catalogComponents);
-  assert.equal(catalogList.length, 109);
+  assert.equal(catalogList.length, 113);
 
   for (const comp of catalogList) {
     const parsed = parsePenpotLayerName(comp.tag);

@@ -1,6 +1,6 @@
 import { Elementum } from '../elementum.js';
 import { html, css } from '../template.js';
-import { signal } from '../signal.js';
+import { signal, effect } from '../signal.js';
 
 export class ElSegmentedControl extends Elementum {
   static formAssociated = true;
@@ -21,17 +21,55 @@ export class ElSegmentedControl extends Elementum {
 
     const observer = new MutationObserver(() => this.#scanOptions());
     observer.observe(this, { childList: true, subtree: true, characterData: true });
-    this.signal?.addEventListener('abort', () => observer.disconnect());
 
     const initial = this.getAttribute('value') || this.#options.value[0]?.value || '';
     this.value.value = initial;
     this.setFormValue(initial);
 
     this.addEventListener('keydown', this.#onKeyDown);
+
+    const stopEffect = effect(() => {
+      void this.value.value;
+      void this.size.value;
+      void this.#options.value;
+      this.#schedulePillSync();
+    });
+    let ro = null;
+    if (typeof ResizeObserver === 'function') {
+      ro = new ResizeObserver(() => this.syncPill());
+      const group = this.root?.querySelector('.segmented-group');
+      if (group) ro.observe(group);
+    }
+    this.signal?.addEventListener('abort', () => {
+      observer.disconnect();
+      stopEffect();
+      ro?.disconnect();
+    });
   }
 
   disconnected() {
     this.removeEventListener('keydown', this.#onKeyDown);
+  }
+
+  #schedulePillSync() {
+    queueMicrotask(() => this.syncPill());
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => this.syncPill());
+    }
+  }
+
+  syncPill() {
+    const group = this.root?.querySelector('.segmented-group');
+    const pill = this.root?.querySelector('.active-pill');
+    const activeBtn = this.root?.querySelector('.segment-btn.active');
+    if (!group || !pill || !activeBtn || !(activeBtn.offsetWidth > 0)) {
+      group?.removeAttribute('data-pill-ready');
+      return false;
+    }
+    pill.style.width = `${activeBtn.offsetWidth}px`;
+    pill.style.transform = `translateX(${activeBtn.offsetLeft}px)`;
+    group.setAttribute('data-pill-ready', 'true');
+    return true;
   }
 
   attributeChanged(name, oldValue, newValue) {
@@ -150,6 +188,7 @@ export class ElSegmentedControl extends Elementum {
     }
 
     .segmented-group {
+      position: relative;
       display: inline-flex;
       max-width: 100%;
       overflow-x: auto;
@@ -163,13 +202,34 @@ export class ElSegmentedControl extends Elementum {
       font-family: var(--el-font-sans, system-ui, sans-serif);
     }
 
+    .active-pill {
+      position: absolute;
+      left: 0;
+      top: 3px;
+      bottom: 3px;
+      border-radius: calc(var(--el-radius-md, 8px) - 2px);
+      background: var(--el-surface-card, #ffffff);
+      box-shadow: var(--el-shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        transform 0.26s var(--el-ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1)),
+        width 0.26s var(--el-ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
+    }
+
+    .segmented-group[data-pill-ready='true'] .active-pill {
+      opacity: 1;
+    }
+
     .segment-btn {
+      position: relative;
+      z-index: 1;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       border: none;
       background: transparent;
-      color: var(--el-text-muted, #64748b);
+      color: var(--el-text-secondary, #475569);
       font-weight: 500;
       cursor: pointer;
       touch-action: manipulation;
@@ -184,6 +244,7 @@ export class ElSegmentedControl extends Elementum {
     }
 
     @media (prefers-reduced-motion: reduce) {
+      .active-pill,
       .segment-btn {
         transition: none;
       }
@@ -226,6 +287,11 @@ export class ElSegmentedControl extends Elementum {
       box-shadow: var(--el-shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.05));
     }
 
+    .segmented-group[data-pill-ready='true'] .segment-btn.active {
+      background: transparent;
+      box-shadow: none;
+    }
+
     .segment-btn:focus-visible {
       outline: 2px solid var(--el-color-primary, #2563eb);
       outline-offset: -1px;
@@ -253,6 +319,7 @@ export class ElSegmentedControl extends Elementum {
         role="radiogroup"
         aria-label=${() => this.getAttribute('aria-label') || 'Options'}
       >
+        <span class="active-pill" part="indicator" aria-hidden="true"></span>
         ${() =>
           this.#options.value.map((opt) => {
             const isChecked = this.value.value === opt.value;

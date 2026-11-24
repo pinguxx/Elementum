@@ -2,19 +2,20 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 test.describe('Dark-Mode Catalog Contrast & Shadow DOM Audit', () => {
-  test('all 109 components render cleanly in dark mode without zero-contrast text or broken :root selectors', async ({ page, browserName }) => {
+  test('all 113 components render cleanly in dark mode without zero-contrast text or broken :root selectors', async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'Computed WCAG 2.2 AA dark-mode contrast sweep runs in Chromium');
     test.setTimeout(150_000);
     await page.goto('/examples/index.html');
     await page.waitForLoadState('networkidle');
     await page.evaluate(() => {
       document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.setAttribute('data-dsd', '');
     });
     const toggleBtn = page.locator('#btn-toggle-canvas-theme');
     await expect(toggleBtn).toBeVisible();
     await toggleBtn.click();
     await expect(page.locator('#live-stage')).toHaveClass(/dark-canvas/);
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(250);
 
     const tags = await page.evaluate(async () => {
       const { components } = await import('/examples/catalog-data.js');
@@ -26,7 +27,33 @@ test.describe('Dark-Mode Catalog Contrast & Shadow DOM Audit', () => {
       await page.evaluate((t) => {
         window.location.hash = '#' + t;
       }, tag);
-      await page.waitForTimeout(10);
+      await page.evaluate(
+        () =>
+          new Promise((resolve) =>
+            requestAnimationFrame(() =>
+              requestAnimationFrame(() => {
+                const finishTree = (root) => {
+                  if (typeof root.getAnimations === 'function') {
+                    for (const anim of root.getAnimations()) {
+                      if (anim.effect?.getComputedTiming?.().iterations !== Infinity) {
+                        try {
+                          anim.finish();
+                        } catch {
+                          // Ignore non-finishable animations
+                        }
+                      }
+                    }
+                  }
+                  for (const el of root.querySelectorAll('*')) {
+                    if (el.shadowRoot) finishTree(el.shadowRoot);
+                  }
+                };
+                finishTree(document);
+                resolve();
+              })
+            )
+          )
+      );
 
       const axe = await new AxeBuilder({ page })
         .include('#live-stage')

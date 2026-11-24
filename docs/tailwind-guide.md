@@ -26,7 +26,7 @@ Tailwind utility classes (`flex`, `grid`, `gap-4`, `p-6`, `w-full`, `max-w-md`, 
 
 ## 2. Style Shadow Internals via Tailwind `[&::part(...)]:` Variants
 
-Tailwind v3.2+ and v4 support CSS Shadow Parts directly via arbitrary variants. Consult the auto-generated [**Styling Reference (`docs/styling-reference.md`)**](./styling-reference.md) for every exposed `::part()` selector across all 109 components:
+Tailwind v3.2+ and v4 support CSS Shadow Parts directly via arbitrary variants. Consult the auto-generated [**Styling Reference (`docs/styling-reference.md`)**](./styling-reference.md) for every exposed `::part()` selector across all 113 components:
 
 ```html
 <el-button

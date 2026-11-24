@@ -12,8 +12,8 @@ const NON_BOX_DEFAULT_TAGS = new Set([
   'el-border-beam',
 ]);
 
-test.describe('Full Catalog Real-Browser Sweep (All 109 Components, Permutations & Examples)', () => {
-  test('all 109 components render visibly with upgraded Shadow DOM across every select/boolean permutation and example', async ({ page }) => {
+test.describe('Full Catalog Real-Browser Sweep (All 113 Components, Permutations & Examples)', () => {
+  test('all 113 components render visibly with upgraded Shadow DOM across every select/boolean permutation and example', async ({ page }) => {
     test.setTimeout(90_000);
 
     const pageErrors = [];
@@ -156,7 +156,7 @@ test.describe('Full Catalog Real-Browser Sweep (All 109 Components, Permutations
 
     expect(pageErrors, `Uncaught page errors during catalog sweep:\n${pageErrors.join('\n')}`).toEqual([]);
     expect(consoleErrors, `Console errors during catalog sweep:\n${consoleErrors.join('\n')}`).toEqual([]);
-    expect(report.checkedCount).toBeGreaterThanOrEqual(109);
+    expect(report.checkedCount).toBeGreaterThanOrEqual(113);
     expect(report.failures, `Catalog sweep failures (${report.failures.length}):\n${report.failures.join('\n')}`).toEqual([]);
   });
 

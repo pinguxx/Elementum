@@ -1,5 +1,5 @@
 /**
- * Auto-generated strict TypeScript definitions for @wcomp/elementum/react (109 components).
+ * Auto-generated strict TypeScript definitions for @wcomp/elementum/react (113 components).
  * Self-contained React-compatible types (no @types/react dependency required).
  */
 
@@ -719,6 +719,7 @@ export declare const ElTable: ElementumReactComponent<ElTableProps>;
 
 export type ElTabsProps = ElementumComponentProps<ElementFor<'el-tabs'>, {
   value?: string;
+  variant?: 'underline' | 'pill';
 }, {
   onTabChange?: (event: CustomEvent<any> & Event) => void;
 }>;
@@ -820,3 +821,45 @@ export declare const ElTreeItem: ElementumReactComponent<ElTreeItemProps>;
 
 export type ElVisuallyHiddenProps = ElementumComponentProps<ElementFor<'el-visually-hidden'>, {}, {}>;
 export declare const ElVisuallyHidden: ElementumReactComponent<ElVisuallyHiddenProps>;
+
+export type ElShimmerTextProps = ElementumComponentProps<ElementFor<'el-shimmer-text'>, {
+  duration?: number;
+  spread?: number;
+  variant?: 'muted' | 'primary' | 'accent';
+  paused?: boolean;
+}, {}>;
+export declare const ElShimmerText: ElementumReactComponent<ElShimmerTextProps>;
+
+export type ElHoldButtonProps = ElementumComponentProps<ElementFor<'el-hold-button'>, {
+  duration?: number;
+  variant?: 'danger' | 'primary' | 'secondary';
+  size?: 'sm' | 'md' | 'lg';
+  disabled?: boolean;
+  'confirmed-label'?: string;
+}, {
+  onConfirm?: (event: CustomEvent<any> & Event) => void;
+  onCancel?: (event: CustomEvent<any> & Event) => void;
+}>;
+export declare const ElHoldButton: ElementumReactComponent<ElHoldButtonProps>;
+
+export type ElUsageRingProps = ElementumComponentProps<ElementFor<'el-usage-ring'>, {
+  value?: number;
+  max?: number;
+  segments?: number;
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'primary' | 'success' | 'warning' | 'danger';
+  label?: string;
+  sublabel?: string;
+}, {}>;
+export declare const ElUsageRing: ElementumReactComponent<ElUsageRingProps>;
+
+export type ElActivityGridProps = ElementumComponentProps<ElementFor<'el-activity-grid'>, {
+  weeks?: number;
+  variant?: 'success' | 'primary' | 'accent';
+  label?: string;
+  'show-legend'?: boolean;
+  data?: string;
+}, {
+  onSelect?: (event: CustomEvent<any> & Event) => void;
+}>;
+export declare const ElActivityGrid: ElementumReactComponent<ElActivityGridProps>;

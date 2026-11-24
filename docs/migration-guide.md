@@ -9,12 +9,12 @@ This guide compares `@wcomp/elementum` with **Shoelace / Web Awesome**, **Radix 
 | Capability | `@wcomp/elementum` | Shoelace / Web Awesome | Radix UI + React Aria | Lit |
 | :--- | :--- | :--- | :--- | :--- |
 | **Runtime dependencies** | **0** (core + behaviors + SSR + MCP) | Floating UI / Lit runtime | React + Radix / Aria packages | `lit` (`@lit/reactive-element`, `lit-html`) |
-| **Core bundle (gzip)** | **4.77 KB** min+gzip (`19.23 KB` unminified transitive: `elementum + signal + template`; `104.1 KB` min+gzip for all 109 components) | ~14–40 KB+ depending on kit | React runtime + per-primitive packages | ~6–16 KB+ base runtime |
+| **Core bundle (gzip)** | **4.77 KB** min+gzip (`19.23 KB` unminified transitive: `elementum + signal + template`; `110.7 KB` min+gzip for all 113 components) | ~14–40 KB+ depending on kit | React runtime + per-primitive packages | ~6–16 KB+ base runtime |
 | **Reactivity model** | Fine-grained `signal()` / `computed()` / `effect()` | Lit reactive properties | React hooks + virtual DOM re-renders | Dirty-checking `requestUpdate()` cycle |
 | **Form participation** | Native **FACE** (`ElementInternals`) | Custom form controller | Controlled React state or form libraries | Manual or community controllers |
 | **Declarative Shadow DOM SSR** | Built-in (`@wcomp/elementum/ssr`) | Requires `@lit-labs/ssr` | React SSR (no Shadow DOM encapsulation) | Requires `@lit-labs/ssr` |
 | **Headless / unstyled mode** | Built-in `unstyled` attribute + `@wcomp/elementum/behaviors` | Limited CSS parts | Unstyled by default | Bring your own styling |
-| **React ergonomics** | Native in React 19 + `@wcomp/elementum/react` (109 typed wrappers) | `@shoelace-style/shoelace/dist/react` | Native React JSX | `@lit/react` manual wrappers |
+| **React ergonomics** | Native in React 19 + `@wcomp/elementum/react` (113 typed wrappers) | `@shoelace-style/shoelace/dist/react` | Native React JSX | `@lit/react` manual wrappers |
 | **AI agent & design tooling** | Built-in MCP server, `@wcomp/elementum/agent`, `@wcomp/elementum/ag-ui`, Penpot/Figma DTCG | External / community | External | External |
 
 > See [`BENCHMARKS.md`](../BENCHMARKS.md) and [`size-budget.json`](../size-budget.json) for measured micro-benchmark methodology and CI-enforced entrypoint budgets.
@@ -128,7 +128,7 @@ Teams using `shadcn/ui` love owning clean, accessible primitives without fightin
 
 | `shadcn/ui` Pattern | Elementum Equivalent | Benefit |
 | :--- | :--- | :--- |
-| `npx shadcn add button dialog table` | `npm install @wcomp/elementum` + `npx @wcomp/elementum init` | 109 tree-shakeable components (`sideEffects` configured), 0 runtime deps |
+| `npx shadcn add button dialog table` | `npm install @wcomp/elementum` + `npx @wcomp/elementum init` | 113 tree-shakeable components (`sideEffects` configured), 0 runtime deps |
 | `<Button variant="destructive">` | `<el-button variant="danger">` or `<ElButton variant="danger">` | Native focus ring, WCAG 2.2 AA contrast, zero React re-render overhead |
 | `<Dialog>` + `<DialogTrigger>` + `<DialogContent>` | `<el-dialog title="...">` + `dialog.showModal()` | Native top-layer `<dialog>`, Escape dismiss, focus restoration |
 | `cn("rounded-xl", className)` | `class="[&::part(card)]:rounded-xl"` or `unstyled` | Keep Tailwind utilities directly—see [`docs/tailwind-guide.md`](./tailwind-guide.md) & [`docs/styling-reference.md`](./styling-reference.md) |

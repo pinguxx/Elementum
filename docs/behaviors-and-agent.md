@@ -26,6 +26,10 @@ Use any `<el-*>` component with the `unstyled` attribute to strip default Shadow
 | `setHostState` | Dual state reflection to `data-<state>` attributes and `ElementInternals.states` (`:state(...)`) |
 | `createHistory` | Signal-backed undo/redo state history (`push`, `undo`, `redo`, `canUndo`, `canRedo`, `limit`) |
 | `isRTL` / `formatLocaleNumber` / `formatLocaleDate` | Provider-free RTL detection and native `Intl` formatting |
+| `createSpringEasing` | Zero-dependency damped harmonic spring `linear(...)` timing generator (`snappy`, `gentle`, `bouncy`, `stiff` + custom stiffness/damping/mass) |
+| `createFlipBehavior` | WAAPI First-Last-Invert-Play (FLIP) layout transitions & sliding indicator helper (`glideIndicator`) honoring `prefers-reduced-motion` |
+| `createInViewBehavior` | `IntersectionObserver`-backed viewport reveal signal (`inView`, `data-in-view`, `once`, `AbortSignal`) with reduced-motion fallback |
+| `createPointerTracker` | Normalized pointer tracking writing `--el-pointer-x/y`, `--el-tilt-x/y`, and `--el-shift-x/y` CSS variables with auto-reset and `AbortSignal` |
 
 ### Practical Behavior Recipes
 

@@ -206,6 +206,8 @@ export function buildMcpMetadata() {
       const expectedChildren = EXPECTED_CHILDREN[tag] || [];
       const jsOnlyProperties = [...new Set(complexProps)];
       const observedAttributes = [...observedSet];
+      const category = cat.category || 'general';
+      const hasMotion = /@keyframes\b|\.animate\s*\(|prefers-reduced-motion/.test(classSlice);
 
       const a11yNotes = [];
       if (formAssociated) {
@@ -231,6 +233,8 @@ export function buildMcpMetadata() {
         : [];
 
       metadata[tag] = {
+        category,
+        hasMotion,
         variants,
         states,
         props,

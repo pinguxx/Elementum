@@ -11,14 +11,14 @@
 
 ## Summary (`@wcomp/elementum@0.8.6`)
 
-- **Total Registered Custom Elements**: **109**
-- **🟢 Production Verified**: **109**
+- **Total Registered Custom Elements**: **113**
+- **🟢 Production Verified**: **113**
 - **🔵 Stable**: **0**
 - **🟡 Experimental**: **0**
-- **Instantiated in Unit Tests**: **109 / 109**
-- **Dedicated `test()` Blocks**: **91 / 109**
-- **Direct Real-Browser Playwright E2E**: **109 / 109** (Chromium, Firefox, WebKit)
-- **`@axe-core/playwright` WCAG 2.2 AA Audited**: **109 / 109**
+- **Instantiated in Unit Tests**: **113 / 113**
+- **Dedicated `test()` Blocks**: **95 / 113**
+- **Direct Real-Browser Playwright E2E**: **113 / 113** (Chromium, Firefox, WebKit)
+- **`@axe-core/playwright` WCAG 2.2 AA Audited**: **113 / 113**
 - **One-Command Full Verification**: `npm run verify:all`
 
 ## Per-Component Evidence Matrix
@@ -27,6 +27,7 @@
 | :--- | :--- | :---: | :---: | :---: | :---: |
 | `<el-accordion>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-accordion-item>` | 🟢 Production Verified | ✅ Yes | — | ✅ Playwright | ✅ axe-core |
+| `<el-activity-grid>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-alert>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-alert-dialog>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-aspect-ratio>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
@@ -70,6 +71,7 @@
 | `<el-field>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-fieldset>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-form>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
+| `<el-hold-button>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-input>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-inset>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-insight-card>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
@@ -105,6 +107,7 @@
 | `<el-segmented-control>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-select>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-separator>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
+| `<el-shimmer-text>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-sidebar>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-sidebar-content>` | 🟢 Production Verified | ✅ Yes | — | ✅ Playwright | ✅ axe-core |
 | `<el-sidebar-footer>` | 🟢 Production Verified | ✅ Yes | — | ✅ Playwright | ✅ axe-core |
@@ -133,4 +136,5 @@
 | `<el-tooltip>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-tree-item>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-tree-view>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
+| `<el-usage-ring>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-visually-hidden>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |

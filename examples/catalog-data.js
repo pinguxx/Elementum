@@ -1387,6 +1387,16 @@ export const components = {
         ],
         "default": "overview",
         "description": "Active tab value."
+      },
+      {
+        "name": "variant",
+        "type": "select",
+        "options": [
+          "underline",
+          "pill"
+        ],
+        "default": "underline",
+        "description": "Gliding indicator visual style."
       }
     ],
     "slots": [
@@ -5469,6 +5479,100 @@ export const components = {
       {
         "title": "AI Optimization Insight",
         "code": "<el-insight-card category=\"Optimization\" variant=\"success\" title=\"Zero-CLS First Paint\" metric=\"-42ms\" delta=\"p95\" summary=\"Enable DSD SSR on edge routes.\" action-label=\"Apply Fix\"></el-insight-card>"
+      }
+    ]
+  },
+  "el-shimmer-text": {
+    "tag": "el-shimmer-text",
+    "name": "Shimmer Text",
+    "category": "ai",
+    "description": "Zero-dependency luminous sweep sheen across status or AI thinking text with solid accessible contrast.",
+    "formAssociated": false,
+    "props": [
+      { "name": "duration", "type": "number", "default": 2.2, "description": "Animation cycle duration in seconds." },
+      { "name": "spread", "type": "number", "default": 35, "description": "Shimmer band half-width percentage." },
+      { "name": "variant", "type": "select", "options": ["muted", "primary", "accent"], "default": "muted", "description": "Text color variant." },
+      { "name": "paused", "type": "boolean", "default": false, "description": "Pauses the shimmer sweep." }
+    ],
+    "slots": [{ "name": "default", "description": "Status or thinking label copy." }],
+    "events": [],
+    "examples": [
+      {
+        "title": "AI Thinking Shimmer",
+        "code": "<el-shimmer-text variant=\"primary\" duration=\"2.2\">Analyzing component accessibility tree...</el-shimmer-text>"
+      }
+    ]
+  },
+  "el-hold-button": {
+    "tag": "el-hold-button",
+    "name": "Hold Button",
+    "category": "actions",
+    "description": "Press-and-hold confirmation button for destructive or deliberate actions with pointer and keyboard progress fill.",
+    "formAssociated": false,
+    "props": [
+      { "name": "duration", "type": "number", "default": 1200, "description": "Required hold duration in milliseconds." },
+      { "name": "variant", "type": "select", "options": ["danger", "primary", "secondary"], "default": "danger", "description": "Button visual variant." },
+      { "name": "size", "type": "select", "options": ["sm", "md", "lg"], "default": "md", "description": "Button size scale." },
+      { "name": "disabled", "type": "boolean", "default": false, "description": "Disables button interactions." },
+      { "name": "confirmed-label", "type": "text", "default": "Confirmed", "description": "Label shown right after confirmation." }
+    ],
+    "slots": [{ "name": "default", "description": "Hold button action label." }],
+    "events": [
+      { "name": "confirm", "description": "Fired when hold completes: detail: { duration }" },
+      { "name": "cancel", "description": "Fired when released early: detail: { progress }" }
+    ],
+    "examples": [
+      {
+        "title": "Hold to Revoke Key",
+        "code": "<el-hold-button variant=\"danger\" duration=\"1000\" confirmed-label=\"Revoked\">Hold to Revoke Key</el-hold-button>"
+      }
+    ]
+  },
+  "el-usage-ring": {
+    "tag": "el-usage-ring",
+    "name": "Usage Ring",
+    "category": "data",
+    "description": "Segmented pure-SVG radial quota ring displaying tabular percentages with WCAG progressbar semantics.",
+    "formAssociated": false,
+    "props": [
+      { "name": "value", "type": "number", "default": 68, "description": "Current usage value." },
+      { "name": "max", "type": "number", "default": 100, "description": "Maximum capacity value." },
+      { "name": "segments", "type": "number", "default": 24, "description": "Radial segment tick count (6..60)." },
+      { "name": "size", "type": "select", "options": ["sm", "md", "lg"], "default": "md", "description": "Ring footprint size." },
+      { "name": "variant", "type": "select", "options": ["primary", "success", "warning", "danger"], "default": "primary", "description": "Active segment accent variant." },
+      { "name": "label", "type": "text", "default": "Token Quota", "description": "Accessible caption below ring." },
+      { "name": "sublabel", "type": "text", "default": "used", "description": "Secondary text inside center readout." }
+    ],
+    "slots": [],
+    "events": [],
+    "examples": [
+      {
+        "title": "API Credit Quota",
+        "code": "<el-usage-ring value=\"76\" max=\"100\" segments=\"24\" variant=\"primary\" label=\"API Credits\" sublabel=\"used\"></el-usage-ring>"
+      }
+    ]
+  },
+  "el-activity-grid": {
+    "tag": "el-activity-grid",
+    "name": "Activity Grid",
+    "category": "data",
+    "description": "Seven-row daily heatmap grid with keyboard arrow navigation, semantic intensity palettes, and optional legend.",
+    "formAssociated": false,
+    "props": [
+      { "name": "weeks", "type": "number", "default": 12, "description": "Number of week columns (4..52)." },
+      { "name": "variant", "type": "select", "options": ["success", "primary", "accent"], "default": "success", "description": "Intensity color scale." },
+      { "name": "label", "type": "text", "default": "Deploy Streak", "description": "Grid heading and accessible label." },
+      { "name": "show-legend", "type": "boolean", "default": true, "description": "Shows Less/More intensity legend." },
+      { "name": "data", "type": "text", "default": "[{\"date\":\"Mon\",\"count\":2,\"level\":1},{\"date\":\"Tue\",\"count\":5,\"level\":3},{\"date\":\"Wed\",\"count\":8,\"level\":4},{\"date\":\"Thu\",\"count\":3,\"level\":2}]", "description": "JSON dataset array of { date, count, level } entries." }
+    ],
+    "slots": [],
+    "events": [
+      { "name": "select", "description": "Fired when a cell is activated: detail: { index, date, count, level }" }
+    ],
+    "examples": [
+      {
+        "title": "Deploy Activity Matrix",
+        "code": "<el-activity-grid weeks=\"12\" variant=\"success\" label=\"Deploy Activity\" show-legend></el-activity-grid>"
       }
     ]
   }

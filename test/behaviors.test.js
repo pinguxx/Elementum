@@ -22,6 +22,10 @@ import {
   createDisclosureBehavior,
   createPopupPositioner,
   createHistory,
+  createSpringEasing,
+  createFlipBehavior,
+  createInViewBehavior,
+  createPointerTracker,
 } from '../src/behaviors/index.js';
 import '../src/components/el-command.js';
 import '../src/components/el-button.js';
@@ -789,4 +793,183 @@ test('Behaviors 21: createHistory manages undo/redo stacks, max limit, and reset
   assert.equal(h.state.value, 'fresh');
   assert.equal(h.canUndo.value, false);
   assert.equal(h.canRedo.value, false);
+});
+
+test('Behaviors 22: createSpringEasing computes presets, critical/overdamped regimes, and custom steps', () => {
+  for (const preset of ['snappy', 'gentle', 'bouncy', 'stiff']) {
+    const res = createSpringEasing({ preset });
+    assert.ok(res.easing.startsWith('linear(0, '));
+    assert.ok(res.easing.endsWith(', 1)'));
+    assert.ok(res.duration >= 100);
+    assert.equal(res.points[0], 0);
+    assert.equal(res.points.at(-1), 1);
+  }
+
+  // Critical damping (zeta === 1: stiffness=100, mass=1, damping=2*sqrt(100*1)=20)
+  const critical = createSpringEasing({ stiffness: 100, damping: 20, mass: 1, steps: 8 });
+  assert.equal(critical.points.length, 9);
+  assert.equal(critical.points[0], 0);
+  assert.equal(critical.points.at(-1), 1);
+
+  // Overdamped (zeta > 1: damping=40) + min steps clamping (min 4)
+  const overdamped = createSpringEasing({ stiffness: 100, damping: 40, mass: 1, velocity: 1.5, steps: 2 });
+  assert.equal(overdamped.points.length, 5);
+  assert.ok(overdamped.points.every((p) => Number.isFinite(p)));
+});
+
+test('Behaviors 23: createFlipBehavior animates moved elements, glides indicators, and respects reduced motion', () => {
+  const box = document.createElement('div');
+  const item = document.createElement('div');
+  const indicator = document.createElement('span');
+  const target = document.createElement('button');
+  box.append(item, indicator, target);
+  document.body.appendChild(box);
+
+  let rect = { left: 10, top: 20, width: 100, height: 40 };
+  item.getBoundingClientRect = () => rect;
+  const animateCalls = [];
+  item.animate = (keyframes, opts) => {
+    animateCalls.push({ keyframes, opts });
+    return {};
+  };
+
+  const flip = createFlipBehavior(box, { duration: 180 });
+  flip.capture([item]);
+  rect = { left: 70, top: 20, width: 120, height: 40 };
+  assert.equal(flip.play([item]), 1);
+  assert.equal(animateCalls.length, 1);
+  assert.ok(animateCalls[0].keyframes[0].transform.includes('-60px'));
+
+  // Indicator gliding with getBoundingClientRect fallback + vertical mode
+  assert.equal(flip.glideIndicator(null, target), false);
+  box.getBoundingClientRect = () => ({ left: 10, top: 10, width: 300, height: 200 });
+  target.getBoundingClientRect = () => ({ left: 50, top: 30, width: 90, height: 32 });
+  assert.equal(flip.glideIndicator(indicator, target), true);
+  assert.equal(indicator.style.width, '90px');
+  assert.equal(indicator.style.transform, 'translateX(40px)');
+  assert.equal(indicator.getAttribute('data-ready'), 'true');
+  assert.equal(flip.glideIndicator(indicator, target, { vertical: true }), true);
+  assert.equal(indicator.style.transform, 'translateY(20px)');
+
+  // Reduced motion suppresses WAAPI animation
+  const origMatchMedia = window.matchMedia;
+  window.matchMedia = () => ({ matches: true });
+  try {
+    flip.capture([item]);
+    rect = { left: 120, top: 50, width: 120, height: 40 };
+    assert.equal(flip.play([item]), 0);
+  } finally {
+    window.matchMedia = origMatchMedia;
+  }
+
+  box.remove();
+});
+
+test('Behaviors 24: createInViewBehavior observes enter/leave, honors once, reduced motion, and AbortSignal', () => {
+  const el = document.createElement('div');
+  document.body.appendChild(el);
+
+  let observerCb = null;
+  let disconnected = 0;
+  const origIO = globalThis.IntersectionObserver;
+  globalThis.IntersectionObserver = class MockIO {
+    constructor(cb) {
+      observerCb = cb;
+    }
+    observe() {}
+    disconnect() {
+      disconnected++;
+    }
+  };
+
+  try {
+    let entered = 0;
+    let left = 0;
+    const ac = new AbortController();
+    const res = createInViewBehavior(el, {
+      once: false,
+      onEnter: () => entered++,
+      onLeave: () => left++,
+      signal: ac.signal,
+    });
+    assert.equal(res.inView.value, false);
+    assert.equal(el.getAttribute('data-in-view'), 'false');
+
+    observerCb([{ isIntersecting: true }]);
+    assert.equal(res.inView.value, true);
+    assert.equal(el.getAttribute('data-in-view'), 'true');
+    assert.equal(entered, 1);
+
+    observerCb([{ isIntersecting: false }]);
+    assert.equal(res.inView.value, false);
+    assert.equal(el.getAttribute('data-in-view'), 'false');
+    assert.equal(left, 1);
+
+    ac.abort();
+    assert.equal(disconnected, 1);
+
+    // once: true disconnects upon entering
+    const elOnce = document.createElement('div');
+    const onceRes = createInViewBehavior(elOnce, { once: true });
+    observerCb([{ isIntersecting: true }]);
+    assert.equal(onceRes.inView.value, true);
+    assert.equal(disconnected, 2);
+  } finally {
+    globalThis.IntersectionObserver = origIO;
+  }
+
+  // Reduced motion resolves inView immediately
+  const origMatchMedia = window.matchMedia;
+  window.matchMedia = () => ({ matches: true });
+  try {
+    const elRM = document.createElement('div');
+    const rmRes = createInViewBehavior(elRM, { respectReducedMotion: true });
+    assert.equal(rmRes.inView.value, true);
+    assert.equal(elRM.getAttribute('data-in-view'), 'true');
+  } finally {
+    window.matchMedia = origMatchMedia;
+  }
+
+  el.remove();
+});
+
+test('Behaviors 25: createPointerTracker tracks normalized pointer variables, resets, and cleans up via AbortSignal', () => {
+  const el = document.createElement('div');
+  el.getBoundingClientRect = () => ({ left: 100, top: 50, width: 200, height: 100 });
+  document.body.appendChild(el);
+
+  const ac = new AbortController();
+  const tracker = createPointerTracker(el, { maxTilt: 10, maxShift: 12, signal: ac.signal });
+  assert.equal(tracker.active.value, false);
+  assert.equal(el.style.getPropertyValue('--el-pointer-x'), '50.0%');
+
+  el.dispatchEvent(new PointerEvent('pointermove', { clientX: 250, clientY: 125 }));
+  assert.equal(tracker.active.value, true);
+  assert.equal(el.getAttribute('data-pointer-active'), 'true');
+  assert.equal(el.style.getPropertyValue('--el-pointer-x'), '75.0%');
+  assert.equal(el.style.getPropertyValue('--el-pointer-y'), '75.0%');
+  assert.equal(el.style.getPropertyValue('--el-tilt-y'), '5.00deg');
+  assert.equal(el.style.getPropertyValue('--el-shift-x'), '6.00px');
+
+  el.dispatchEvent(new PointerEvent('pointerleave'));
+  assert.equal(tracker.active.value, false);
+  assert.equal(el.hasAttribute('data-pointer-active'), false);
+  assert.equal(el.style.getPropertyValue('--el-tilt-x'), '0.00deg');
+
+  // Reduced motion suppresses updates
+  const origMatchMedia = window.matchMedia;
+  window.matchMedia = () => ({ matches: true });
+  try {
+    el.dispatchEvent(new PointerEvent('pointermove', { clientX: 110, clientY: 60 }));
+    assert.equal(tracker.active.value, false);
+  } finally {
+    window.matchMedia = origMatchMedia;
+  }
+
+  tracker.destroy();
+  ac.abort();
+  el.dispatchEvent(new PointerEvent('pointermove', { clientX: 200, clientY: 100 }));
+  assert.equal(tracker.active.value, false);
+
+  el.remove();
 });

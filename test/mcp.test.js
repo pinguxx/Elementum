@@ -223,9 +223,9 @@ test('MCP separated component schema (variants, states, props, constraints vs ex
   assert.ok(Array.isArray(edgeDoc.variants) && edgeDoc.constraints?.formAssociated === true);
   assert.equal('examples' in edgeDoc, false);
 
-  // 7. All 109 tags in custom-elements.json have complete separated metadata
+  // 7. All 113 tags in custom-elements.json have complete separated metadata
   const allDecls = manifest.modules.flatMap((m) => m.declarations || []);
-  assert.equal(allDecls.length, 109);
+  assert.equal(allDecls.length, 113);
   for (const decl of allDecls) {
     assert.ok(metadata[decl.tagName], `Missing metadata for ${decl.tagName}`);
     const doc = handleToolCall('get_component_doc', { tag: decl.tagName });
@@ -432,7 +432,7 @@ test('MCP Edge & Core security hardening: headers, Origin DNS-rebinding guard, C
   const { createMcpHandler } = await import('../mcp/core.js');
   const bareMcp = createMcpHandler({ manifest, tokens, pkg });
   const compList = bareMcp.handleToolCall('list_components', {});
-  assert.equal(compList.count, 109);
+  assert.equal(compList.count, 113);
   const allTokens = bareMcp.handleToolCall('list_tokens', {});
   assert.ok(allTokens && typeof allTokens === 'object');
   const colorTokens = bareMcp.handleToolCall('list_tokens', { category: 'color' });
@@ -443,4 +443,144 @@ test('MCP Edge & Core security hardening: headers, Origin DNS-rebinding guard, C
   assert.ok(bareBtnDoc.variants.some((v) => v.name === 'variant'));
   assert.ok(bareBtnDoc.states.some((s) => s.name === 'disabled'));
   assert.ok(Array.isArray(bareBtnDoc.props));
+});
+
+test('MCP v2: resources, prompts, completions, setup, bundle planning, filtered list_components, and edge compatibility', async () => {
+  const fs = await import('node:fs');
+  const { createMcpHandler } = await import('../mcp/core.js');
+  const { createEdgeMcpHandler } = await import('../mcp/edge.js');
+
+  const loadJson = (rel) => JSON.parse(fs.readFileSync(new URL(rel, import.meta.url), 'utf8'));
+  const manifest = loadJson('../custom-elements.json');
+  const metadata = loadJson('../mcp/component-metadata.json');
+  const tokens = loadJson('../tokens/figma-tokens.json');
+  const pkg = loadJson('../package.json');
+  const sizeBudgets = loadJson('../size-budget.json');
+
+  const handler = createMcpHandler({ manifest, metadata, tokens, pkg, sizeBudgets });
+  const rpc = (method, params) =>
+    handler.handleJsonRpcLine(JSON.stringify({ jsonrpc: '2.0', id: 10, method, params }));
+
+  // 1. initialize exposes resources, prompts, completions, websiteUrl, icons, and valid 5-step workflow
+  const initRes = rpc('initialize', { protocolVersion: '2025-03-26' }).result;
+  assert.ok(initRes.capabilities.tools);
+  assert.ok(initRes.capabilities.resources);
+  assert.ok(initRes.capabilities.prompts);
+  assert.ok(initRes.capabilities.completions);
+  assert.equal(initRes.serverInfo.websiteUrl, 'https://elementum-sage.vercel.app/');
+  assert.ok(Array.isArray(initRes.serverInfo.icons) && initRes.serverInfo.icons.length > 0);
+  assert.ok(initRes.instructions.includes('lint_accessibility'));
+  assert.ok(initRes.instructions.includes('validate_component_usage'));
+
+  // 2. list_components filters
+  const actionsList = handler.handleToolCall('list_components', { category: 'actions' });
+  assert.ok(actionsList.components.some((c) => c.tag === 'el-hold-button'));
+  assert.ok(actionsList.components.every((c) => c.category === 'actions'));
+
+  const faceList = handler.handleToolCall('list_components', { formAssociated: true });
+  assert.equal(faceList.count, 18);
+  assert.ok(faceList.components.some((c) => c.tag === 'el-button'));
+  assert.ok(faceList.components.every((c) => c.formAssociated === true));
+
+  const motionList = handler.handleToolCall('list_components', { hasMotion: true });
+  for (const tag of ['el-hold-button', 'el-shimmer-text', 'el-tabs', 'el-segmented-control']) {
+    assert.ok(motionList.components.some((c) => c.tag === tag), `Expected motion tag ${tag}`);
+  }
+
+  // 3. get_setup
+  const allSetup = handler.handleToolCall('get_setup', {});
+  assert.ok(allSetup.frameworks?.react && allSetup.frameworks?.vanilla);
+  assert.equal(allSetup.themeContract?.darkModeAttribute, 'data-theme="dark"');
+  const reactSetup = handler.handleToolCall('get_setup', { framework: 'react' });
+  assert.equal(reactSetup.framework, 'react');
+  assert.ok(reactSetup.imports.some((i) => i.includes('@wcomp/elementum/react')));
+  const badSetup = handler.handleToolCall('get_setup', { framework: 'ember' });
+  assert.ok(typeof badSetup.error === 'string');
+
+  // 4. get_bundle_plan + Edge HTTP roundtrip
+  const plan = handler.handleToolCall('get_bundle_plan', {
+    tags: ['el-button', 'el-hold-button', 'el-button'],
+    framework: 'react',
+  });
+  assert.equal(plan.componentCount, 2);
+  assert.deepEqual(plan.tags, ['el-button', 'el-hold-button']);
+  assert.ok(plan.totalEstimatedGzipKb > 0);
+  assert.ok(plan.imports.some((i) => i.includes('ElButton') && i.includes('ElHoldButton')));
+  assert.ok(handler.handleToolCall('get_bundle_plan', { tags: [] }).error);
+  assert.ok(handler.handleToolCall('get_bundle_plan', { tags: ['el-does-not-exist'] }).error);
+
+  const edgeHandler = createEdgeMcpHandler({ manifest, metadata, tokens, pkg, sizeBudgets });
+  const edgePlanRes = await edgeHandler(new Request('https://elementum-sage.vercel.app/mcp', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      id: 77,
+      method: 'tools/call',
+      params: { name: 'get_bundle_plan', arguments: { tags: ['el-usage-ring'], framework: 'html' } },
+    }),
+  }));
+  assert.equal(edgePlanRes.status, 200);
+  const edgePlan = JSON.parse((await edgePlanRes.json()).result.content[0].text);
+  assert.equal(edgePlan.framework, 'html');
+  assert.ok(edgePlan.totalEstimatedGzipKb > 0);
+
+  // 5. resources/list, resources/templates/list, and resources/read
+  const resList = rpc('resources/list').result.resources;
+  assert.deepEqual(resList.map((r) => r.uri), [
+    'elementum://catalog',
+    'elementum://setup',
+    'elementum://tokens',
+  ]);
+  const tmplList = rpc('resources/templates/list').result.resourceTemplates;
+  assert.equal(tmplList[0].uriTemplate, 'elementum://components/{tag}');
+
+  const catalogMd = rpc('resources/read', { uri: 'elementum://catalog' }).result.contents[0].text;
+  assert.ok(catalogMd.includes('113'));
+  assert.ok(rpc('resources/read', { uri: 'elementum://setup' }).result.contents[0].text.includes('data-theme="dark"'));
+  assert.ok(rpc('resources/read', { uri: 'elementum://tokens' }).result.contents[0].text.includes('color'));
+  const tabsMd = rpc('resources/read', { uri: 'elementum://components/el-tabs' }).result.contents[0].text;
+  assert.ok(tabsMd.includes('`variant`: underline, pill'));
+  assert.equal(tabsMd.includes('`undefined`:'), false);
+  assert.equal(rpc('resources/read', { uri: 'elementum://unknown' }).error.code, -32602);
+  assert.equal(rpc('resources/read', {}).error.code, -32602);
+
+  // 6. prompts/list & prompts/get
+  const promptsList = rpc('prompts/list').result.prompts;
+  assert.deepEqual(promptsList.map((p) => p.name), ['add_component', 'build_screen', 'audit_markup']);
+  const addPrompt = rpc('prompts/get', {
+    name: 'add_component',
+    arguments: { tag: 'el-hold-button', framework: 'react' },
+  }).result.messages[0].content.text;
+  assert.ok(addPrompt.includes('lint_accessibility') && addPrompt.includes('validate_component_usage'));
+  assert.ok(rpc('prompts/get', { name: 'build_screen', arguments: { goal: 'Analytics dashboard' } }).result.messages[0].content.text.includes('Analytics dashboard'));
+  const auditPrompt = rpc('prompts/get', { name: 'audit_markup', arguments: { html: '<el-button>OK</el-button>' } }).result.messages[0].content.text;
+  assert.ok(auditPrompt.includes('lint_accessibility') && auditPrompt.includes('validate_component_usage'));
+  assert.equal(rpc('prompts/get', { name: 'nope' }).error.code, -32602);
+  assert.equal(rpc('prompts/get', { name: 'add_component', arguments: {} }).error.code, -32602);
+  const protoPromptArgs = JSON.parse('{"tag":"el-button","__proto__":{}}');
+  assert.equal(rpc('prompts/get', { name: 'add_component', arguments: protoPromptArgs }).error.code, -32602);
+
+  // 7. completion/complete
+  assert.deepEqual(
+    rpc('completion/complete', { argument: { name: 'tag', value: 'el-ho' } }).result.completion.values,
+    ['el-hold-button']
+  );
+  assert.deepEqual(
+    rpc('completion/complete', { argument: { name: 'framework', value: 're' } }).result.completion.values,
+    ['react']
+  );
+  assert.deepEqual(
+    rpc('completion/complete', { argument: { name: 'category', value: 'act' } }).result.completion.values,
+    ['actions']
+  );
+  assert.equal(rpc('completion/complete', { argument: {} }).error.code, -32602);
+
+  // 8. Vercel Edge purity checks
+  const coreSrc = fs.readFileSync(new URL('../mcp/core.js', import.meta.url), 'utf8');
+  const edgeSrc = fs.readFileSync(new URL('../mcp/edge.js', import.meta.url), 'utf8');
+  const apiMcpSrc = fs.readFileSync(new URL('../api/mcp.js', import.meta.url), 'utf8');
+  assert.equal(/from\s+['"]node:|\brequire\s*\(|\bBuffer\b|\bprocess\./.test(coreSrc), false);
+  assert.equal(/from\s+['"]node:|\brequire\s*\(|\bBuffer\b|\bprocess\./.test(edgeSrc), false);
+  assert.equal(/with\s*\{\s*type:\s*['"]json['"]/.test(apiMcpSrc), false);
 });

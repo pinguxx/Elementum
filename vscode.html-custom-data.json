@@ -44,6 +44,50 @@
       ]
     },
     {
+      "name": "el-activity-grid",
+      "description": "7-row activity heatmap matrix with keyboard arrow navigation and semantic intensity levels.",
+      "attributes": [
+        {
+          "name": "weeks",
+          "description": "Number of 7-day columns (4..52)"
+        },
+        {
+          "name": "variant",
+          "description": "Heatmap intensity palette",
+          "values": [
+            {
+              "name": "success"
+            },
+            {
+              "name": "primary"
+            },
+            {
+              "name": "accent"
+            }
+          ]
+        },
+        {
+          "name": "label",
+          "description": "Grid heading and ARIA label"
+        },
+        {
+          "name": "show-legend",
+          "description": "Display Less/More scale legend",
+          "valueSet": "v"
+        },
+        {
+          "name": "data",
+          "description": "Optional JSON array of { date, count, level } entries"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-activity-grid"
+        }
+      ]
+    },
+    {
       "name": "el-alert",
       "description": "Inline notification banner with contextual variants, dismissibility and icon slots.",
       "attributes": [
@@ -64,7 +108,7 @@
               "name": "warning"
             },
             {
-              "name": "destructive"
+              "name": "danger"
             }
           ]
         },
@@ -1110,6 +1154,61 @@
       ]
     },
     {
+      "name": "el-hold-button",
+      "description": "Press-and-hold confirmation button for deliberate actions with pointer and keyboard fill progress.",
+      "attributes": [
+        {
+          "name": "duration",
+          "description": "Hold duration in milliseconds"
+        },
+        {
+          "name": "variant",
+          "description": "Visual button variant",
+          "values": [
+            {
+              "name": "danger"
+            },
+            {
+              "name": "primary"
+            },
+            {
+              "name": "secondary"
+            }
+          ]
+        },
+        {
+          "name": "size",
+          "description": "Button size",
+          "values": [
+            {
+              "name": "sm"
+            },
+            {
+              "name": "md"
+            },
+            {
+              "name": "lg"
+            }
+          ]
+        },
+        {
+          "name": "disabled",
+          "description": "Disable interactions",
+          "valueSet": "v"
+        },
+        {
+          "name": "confirmed-label",
+          "description": "Temporary confirmed label"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-hold-button"
+        }
+      ]
+    },
+    {
       "name": "el-input",
       "description": "Form-associated text/form input with prefix/suffix slots and design token styling.",
       "attributes": [
@@ -1976,6 +2075,46 @@
       ]
     },
     {
+      "name": "el-shimmer-text",
+      "description": "Animated light-sweep sheen across status or AI thinking text with solid WCAG contrast.",
+      "attributes": [
+        {
+          "name": "duration",
+          "description": "Sweep loop duration in seconds"
+        },
+        {
+          "name": "spread",
+          "description": "Luminous band width percentage"
+        },
+        {
+          "name": "variant",
+          "description": "Foreground color tone",
+          "values": [
+            {
+              "name": "muted"
+            },
+            {
+              "name": "primary"
+            },
+            {
+              "name": "accent"
+            }
+          ]
+        },
+        {
+          "name": "paused",
+          "description": "Pause shimmer animation",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-shimmer-text"
+        }
+      ]
+    },
+    {
       "name": "el-sidebar",
       "description": "Collapsible application sidebar with off-canvas drawer mode and responsive collapse.",
       "attributes": [
@@ -2139,6 +2278,11 @@
         {
           "name": "expanded",
           "description": "expanded attribute on <el-sources>"
+        },
+        {
+          "name": "open",
+          "description": "Whether full source cards are expanded (preferred alias for expanded)",
+          "valueSet": "v"
         }
       ],
       "references": [
@@ -2294,6 +2438,15 @@
           "name": "selectable",
           "description": "selectable attribute on <el-table>",
           "valueSet": "v"
+        },
+        {
+          "name": "filter",
+          "description": "Case-insensitive search query that filters rows and highlights matching substrings in <mark part=\"highlight\">."
+        },
+        {
+          "name": "highlight-only",
+          "description": "Highlight matches for filter without removing non-matching rows (for server-side filtered data).",
+          "valueSet": "v"
         }
       ],
       "references": [
@@ -2310,6 +2463,18 @@
         {
           "name": "value",
           "description": "Active tab value"
+        },
+        {
+          "name": "variant",
+          "description": "Active indicator visual mode",
+          "values": [
+            {
+              "name": "underline"
+            },
+            {
+              "name": "pill"
+            }
+          ]
         }
       ],
       "references": [
@@ -2639,6 +2804,71 @@
         {
           "name": "Elementum Component Catalog",
           "url": "https://elementum-sage.vercel.app/examples/index.html#el-tree-view"
+        }
+      ]
+    },
+    {
+      "name": "el-usage-ring",
+      "description": "Segmented SVG radial quota meter with tabular numerals and accessible progressbar semantics.",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "Current usage value"
+        },
+        {
+          "name": "max",
+          "description": "Maximum quota capacity"
+        },
+        {
+          "name": "segments",
+          "description": "Radial segment tick count"
+        },
+        {
+          "name": "size",
+          "description": "Ring diameter preset",
+          "values": [
+            {
+              "name": "sm"
+            },
+            {
+              "name": "md"
+            },
+            {
+              "name": "lg"
+            }
+          ]
+        },
+        {
+          "name": "variant",
+          "description": "Semantic status color",
+          "values": [
+            {
+              "name": "primary"
+            },
+            {
+              "name": "success"
+            },
+            {
+              "name": "warning"
+            },
+            {
+              "name": "danger"
+            }
+          ]
+        },
+        {
+          "name": "label",
+          "description": "Accessible metric caption"
+        },
+        {
+          "name": "sublabel",
+          "description": "Subtext inside center readout"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-usage-ring"
         }
       ]
     },

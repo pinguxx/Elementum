@@ -1,6 +1,6 @@
 # Authoring Custom Components (`@wcomp/elementum`)
 
-Every team eventually needs a domain-specific component beyond the built-in 109 elements. You can author custom Web Components using the same base class (`Elementum`), micro-signals (`signal`, `computed`), design tokens (`--el-*`), and headless interaction behaviors (`@wcomp/elementum/behaviors`) that power Elementum itself.
+Every team eventually needs a domain-specific component beyond the built-in 113 elements. You can author custom Web Components using the same base class (`Elementum`), micro-signals (`signal`, `computed`), design tokens (`--el-*`), and headless interaction behaviors (`@wcomp/elementum/behaviors`) that power Elementum itself.
 
 ---
 

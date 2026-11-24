@@ -10,18 +10,18 @@
 | Field | Verified Value |
 | :--- | :--- |
 | **Package & Version** | `@wcomp/elementum@0.8.6` |
-| **Git Commit SHA (HEAD)** | `a941caa` |
+| **Git Commit SHA (HEAD)** | `a2de478` |
 | **Audit Date (UTC)** | `2026-11-24` |
 | **Runtime Dependencies** | **0 (Verified)** (optional React `peerDependencies`: `>=18.0.0`) |
-| **Registered Components** | **109** Custom Elements (`109` Production Verified · `0` Stable · `0` Experimental in [QUALITY.md](./QUALITY.md)) |
-| **Canonical MCP Endpoint** | `https://elementum-sage.vercel.app/mcp` (**109** component specs) |
-| **Gated Entrypoint Budgets** | **86** ESM entrypoints tracked in [size-budget.json](./size-budget.json) |
+| **Registered Components** | **113** Custom Elements (`113` Production Verified · `0` Stable · `0` Experimental in [QUALITY.md](./QUALITY.md)) |
+| **Canonical MCP Endpoint** | `https://elementum-sage.vercel.app/mcp` (**113** component specs) |
+| **Gated Entrypoint Budgets** | **90** ESM entrypoints tracked in [size-budget.json](./size-budget.json) |
 
 ### Toolchain Versions Used
 
 | Tool / Dependency | Version | Purpose |
 | :--- | :--- | :--- |
-| Node.js | `v22.23.5` | Unit test runner (`node:test`), V8 coverage (`--test-coverage-lines=95`), pure-Node DSD SSR |
+| Node.js | `v24.22.1` | Unit test runner (`node:test`), V8 coverage (`--test-coverage-lines=95`), pure-Node DSD SSR |
 | `@playwright/test` | `^1.65.1` | Cross-browser E2E (Chromium, Firefox, WebKit) & screenshot regression |
 | `@axe-core/playwright` | `^4.14.0` | Automated WCAG 2.0 / 2.1 / 2.2 AA accessibility audits in real browsers |
 | `typescript` | `^7.0.2` | Strict TypeScript checks (`src/index.d.ts`, `src/react/index.d.ts`, consumer compilation) |
@@ -34,7 +34,7 @@
 | Audit Area | Dedicated Report / Artifact | Automated Gate |
 | :--- | :--- | :--- |
 | **Per-Component Maturity Matrix** | [QUALITY.md](./QUALITY.md) | `npm run quality:report` & `npm run catalog:diff` |
-| **Manual Assistive-Technology Audit** | [docs/accessibility-audit.md](./docs/accessibility-audit.md) | Automated WCAG 2.2 AA `109 / 109` + pre-`1.0.0` NVDA / VoiceOver sign-off log |
+| **Manual Assistive-Technology Audit** | [docs/accessibility-audit.md](./docs/accessibility-audit.md) | Automated WCAG 2.2 AA `113 / 113` + pre-`1.0.0` NVDA / VoiceOver sign-off log |
 | **Security & MCP Threat Model** | [SECURITY.md](./SECURITY.md) & [test/security.test.js](./test/security.test.js) | GitHub CodeQL (0 alerts) + `npm test` |
 | **Performance Benchmarks** | [BENCHMARKS.md](./BENCHMARKS.md) | `npm run bench` |
 | **3-Way Framework Parity Benchmark** | [starters/framework-comparison/README.md](./starters/framework-comparison/README.md) | `npm run bench:frameworks` (React vs. Vue 3 vs. Vanilla) |
