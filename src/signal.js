@@ -33,8 +33,20 @@ export function batch(fn) {
     if (batchDepth === 0 && batchedSubscribers.size > 0) {
       const toRun = Array.from(batchedSubscribers);
       batchedSubscribers.clear();
+      let firstError;
+      let hasError = false;
       for (const sub of toRun) {
-        sub.run();
+        try {
+          sub.run();
+        } catch (err) {
+          if (!hasError) {
+            hasError = true;
+            firstError = err;
+          }
+        }
+      }
+      if (hasError) {
+        throw firstError;
       }
     }
   }
@@ -340,6 +352,11 @@ export class AsyncSignal extends Signal {
     } catch (err) {
       this.#handleFailure(runId, attempt, controller.signal, err);
       return;
+    } finally {
+      for (const ownSig of [this, this.pending, this.status, this.error]) {
+        ownSig.subscribers.delete(this._tracker);
+        this._tracker.dependencies.delete(ownSig);
+      }
     }
 
     Promise.resolve(result).then(
