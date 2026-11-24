@@ -96,7 +96,7 @@
             {
               "name": "variant",
               "type": {
-                "text": "'default' | 'info' | 'success' | 'warning' | 'destructive'"
+                "text": "'default' | 'info' | 'success' | 'warning' | 'danger'"
               },
               "default": "'default'"
             },
@@ -2909,6 +2909,14 @@
               "type": {
                 "text": "string"
               }
+            },
+            {
+              "name": "open",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether full source cards are expanded (preferred alias for expanded)"
             }
           ]
         }

@@ -27,7 +27,7 @@ function domainFromUrl(url) {
  * @fires source-select - Fired when a source pill is clicked ({ index, source })
  */
 export class ElSources extends Elementum {
-  static observedAttributes = ['sources', 'label', 'expanded'];
+  static observedAttributes = ['sources', 'label', 'open', 'expanded'];
 
   sources = signal([]);
   label = signal('Sources');
@@ -43,7 +43,9 @@ export class ElSources extends Elementum {
 
   #sync() {
     if (this.hasAttribute('label')) this.label.value = this.getAttribute('label') || 'Sources';
-    this.expanded.value = this.hasAttribute('expanded') && this.getAttribute('expanded') !== 'false';
+    const hasOpen = this.hasAttribute('open') && this.getAttribute('open') !== 'false';
+    const hasExpanded = this.hasAttribute('expanded') && this.getAttribute('expanded') !== 'false';
+    this.expanded.value = hasOpen || hasExpanded;
     const raw = this.getAttribute('sources');
     if (raw) {
       try {
@@ -58,8 +60,13 @@ export class ElSources extends Elementum {
   toggleExpanded = () => {
     const next = !this.expanded.value;
     this.expanded.value = next;
-    if (next) this.setAttribute('expanded', '');
-    else this.removeAttribute('expanded');
+    if (next) {
+      this.setAttribute('open', '');
+      this.setAttribute('expanded', '');
+    } else {
+      this.removeAttribute('open');
+      this.removeAttribute('expanded');
+    }
   };
 
   #selectSource(src, index) {

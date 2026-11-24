@@ -161,12 +161,26 @@ export class Elementum extends BaseElement {
   formResetCallback() {
     if (typeof this.formReset === 'function') {
       this.formReset();
+      return;
+    }
+    if (isSignal(this.checked)) {
+      const initialChecked = this.hasAttribute('checked');
+      this.checked.value = initialChecked;
+      this.setFormValue(initialChecked ? (this.getAttribute('value') || 'on') : null);
+    } else if (isSignal(this.value)) {
+      const initialValue = this.getAttribute('value') ?? '';
+      this.value.value = initialValue;
+      this.setFormValue(initialValue);
     }
   }
 
   formDisabledCallback(disabled) {
     if (typeof this.formDisabled === 'function') {
       this.formDisabled(disabled);
+      return;
+    }
+    if (isSignal(this.disabled)) {
+      this.disabled.value = Boolean(disabled);
     }
   }
 

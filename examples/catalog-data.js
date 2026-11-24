@@ -5324,6 +5324,12 @@ export const components = {
         "type": "boolean",
         "default": true,
         "description": "Expands the full source preview cards."
+      },
+      {
+        "name": "open",
+        "type": "boolean",
+        "default": false,
+        "description": "Whether the expanded source cards list is open (canonical alias for expanded)."
       }
     ],
     "slots": [],

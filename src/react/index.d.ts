@@ -110,7 +110,7 @@ export type ElAlertDialogProps = ElementumComponentProps<ElementFor<'el-alert-di
 export declare const ElAlertDialog: ElementumReactComponent<ElAlertDialogProps>;
 
 export type ElAlertProps = ElementumComponentProps<ElementFor<'el-alert'>, {
-  variant?: 'default' | 'info' | 'success' | 'warning' | 'destructive';
+  variant?: 'default' | 'info' | 'success' | 'warning' | 'danger';
   title?: string;
   dismissible?: boolean;
 }, {
@@ -674,6 +674,7 @@ export type ElSourcesProps = ElementumComponentProps<ElementFor<'el-sources'>, {
   sources?: string;
   label?: string;
   expanded?: string;
+  open?: boolean;
 }, {}>;
 export declare const ElSources: ElementumReactComponent<ElSourcesProps>;
 
