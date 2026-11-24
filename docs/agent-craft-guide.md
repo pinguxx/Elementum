@@ -260,17 +260,4 @@ Before shipping a screen or component, run through this 60-second check:
 
 ## 8. Ready-to-Copy Instructions for AI Coding Agents
 
-Paste this block into your `.cursorrules`, `CLAUDE.md`, `GEMINI.md`, or system prompt:
-
-```markdown
-When building user interfaces with @wcomp/elementum, follow these UI engineering guidelines:
-1. QUERY MCP FIRST: Use get_component_doc and list_tokens via elementum-mcp before writing markup; verify generated HTML with lint_accessibility.
-2. USE SEMANTIC TOKENS: Use Elementum CSS custom properties (--el-surface-card, --el-text-primary, --el-border-translucent, --el-shadow-card) so light and dark themes maintain >= 4.5:1 contrast.
-3. VISUAL HIERARCHY: Use at most one <el-button variant="primary"> per card/view; use secondary/ghost for supporting actions and tabular-nums for tables and metrics.
-4. EXACT APIS: Open dialogs with dialog.showModal()/close(); set complex vanilla props via .value (table.data.value = rows) or direct JSX props in @wcomp/elementum/react; read e.detail?.value on input/change events.
-5. DESIGN ALL STATES: Handle loading (<el-skeleton>), empty (<el-empty-state>), error (<el-alert> / toast.error), and confirmation (toast.success) states.
-6. SMOOTH METRICS & MOTION: Use <el-number-flow> for live numbers/prices and keep transitions under 300ms with ease-out easing while respecting prefers-reduced-motion.
-7. KEYBOARD & FORMS: Provide <el-command> (⌘K) for power actions, preserve :focus-visible rings, and use <el-form>/<el-field> with Form-Associated Custom Elements.
-8. DEDICATED AI PRIMITIVES: Use <el-prompt-input>, <el-reasoning-card>, <el-tool-call>, <el-streaming-text>, <el-sources>, and <el-diff-viewer> for AI interfaces.
-9. MOBILE FIRST: Test at 320px width, avoid horizontal overflow, use 100dvh, keep touch targets >= 24x24px, and use 16px input font-size on mobile.
-```
+Use the canonical rules snippet in [`docs/agent-rules-snippet.md`](./agent-rules-snippet.md) (written automatically by `npx @wcomp/elementum init`).

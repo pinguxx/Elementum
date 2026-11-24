@@ -10,7 +10,7 @@
 | Field | Verified Value |
 | :--- | :--- |
 | **Package & Version** | `@wcomp/elementum@0.8.6` |
-| **Git Commit SHA (HEAD)** | `d2d86bb` |
+| **Git Commit SHA (HEAD)** | `156a87e` |
 | **Audit Date (UTC)** | `2026-11-24` |
 | **Runtime Dependencies** | **0 (Verified)** (optional React `peerDependencies`: `>=18.0.0`) |
 | **Registered Components** | **109** Custom Elements (`109` Production Verified · `0` Stable · `0` Experimental in [QUALITY.md](./QUALITY.md)) |
