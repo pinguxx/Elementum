@@ -112,8 +112,19 @@ export class ElForm extends Elementum {
     return true;
   }
 
+  get form() {
+    return this.shadowRoot?.querySelector('form') || null;
+  }
+
+  get elements() {
+    const nativeTags = new Set(['INPUT', 'SELECT', 'TEXTAREA', 'BUTTON', 'FIELDSET', 'OUTPUT']);
+    return Array.from(this.querySelectorAll('*')).filter(
+      (el) => nativeTags.has(el.tagName) || el.constructor?.formAssociated === true
+    );
+  }
+
   #onSubmit = (e) => {
-    e.preventDefault();
+    e?.preventDefault?.();
     const data = this.getFormData();
     const isValid = this.validate();
 
@@ -125,47 +136,78 @@ export class ElForm extends Elementum {
     this.emit('form-submit', { data });
   };
 
-  validate() {
-    let allValid = true;
-    const elements = Array.from(this.querySelectorAll('*')).filter(
-      el => typeof el.checkValidity === 'function' || typeof el.reportValidity === 'function'
-    );
+  requestSubmit() {
+    this.#onSubmit({ preventDefault() {} });
+  }
 
-    for (const el of elements) {
-      if (typeof el.reportValidity === 'function') {
-        const ok = el.reportValidity();
-        if (!ok) allValid = false;
-      } else if (typeof el.checkValidity === 'function') {
-        const ok = el.checkValidity();
-        if (!ok) allValid = false;
+  checkValidity() {
+    let allValid = true;
+    for (const el of this.elements) {
+      if (typeof el.checkValidity === 'function' && !el.checkValidity()) {
+        allValid = false;
       }
     }
     return allValid;
   }
 
+  reportValidity() {
+    let allValid = true;
+    for (const el of this.elements) {
+      if (typeof el.reportValidity === 'function') {
+        if (!el.reportValidity()) allValid = false;
+      } else if (typeof el.checkValidity === 'function') {
+        if (!el.checkValidity()) allValid = false;
+      }
+    }
+    return allValid;
+  }
+
+  validate() {
+    return this.reportValidity();
+  }
+
+  #readControlEntry(el) {
+    const name = el.getAttribute('name');
+    const dis = el.hasAttribute?.('disabled') || (el.disabled?.value ?? el.disabled);
+    if (!name || dis) return null;
+
+    const unwrap = (v) => (v && typeof v === 'object' && 'value' in v ? v.value : v);
+    if (el.tagName === 'INPUT' && (el.type === 'checkbox' || el.type === 'radio')) {
+      return el.checked ? [name, el.value || 'on'] : null;
+    }
+    if (el.tagName !== 'INPUT' && el.checked !== undefined) {
+      return unwrap(el.checked) ? [name, unwrap(el.value) || el.getAttribute('value') || 'on'] : null;
+    }
+    if ('value' in el) return [name, unwrap(el.value) ?? ''];
+    return el.hasAttribute('value') ? [name, el.getAttribute('value') ?? ''] : null;
+  }
+
+  toFormData() {
+    const fd = new FormData();
+    for (const el of this.elements) {
+      const entry = this.#readControlEntry(el);
+      if (!entry) continue;
+      for (const v of Array.isArray(entry[1]) ? entry[1] : [entry[1]]) fd.append(entry[0], String(v));
+    }
+    return fd;
+  }
+
   getFormData() {
     const data = {};
-    const elements = Array.from(this.querySelectorAll('[name]'));
-    for (const el of elements) {
-      const name = el.getAttribute('name');
-      if (!name) continue;
-      if ('value' in el) {
-        data[name] = typeof el.value === 'object' && el.value !== null && 'value' in el.value ? el.value.value : el.value;
-      } else if (el.hasAttribute('value')) {
-        data[name] = el.getAttribute('value');
-      }
+    for (const el of this.elements) {
+      const entry = this.#readControlEntry(el);
+      if (entry) data[entry[0]] = entry[1];
     }
     return data;
   }
 
   reset() {
-    const elements = Array.from(this.querySelectorAll('*'));
-    for (const el of elements) {
-      if (typeof el.formReset === 'function') el.formReset();
+    for (const el of this.elements) {
       if (typeof el.formResetCallback === 'function') el.formResetCallback();
-      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
-        el.value = '';
-      }
+      else if (typeof el.formReset === 'function') el.formReset();
+      else if (el.tagName === 'INPUT' && (el.type === 'checkbox' || el.type === 'radio')) el.checked = Boolean(el.defaultChecked);
+      else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.value = el.defaultValue ?? '';
+      else if (el.tagName === 'SELECT') el.selectedIndex = 0;
     }
     this.emit('form-reset');
   }

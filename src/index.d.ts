@@ -114,6 +114,7 @@ export class Elementum extends HTMLElement {
   root: HTMLElement | ShadowRoot;
 
   get signal(): AbortSignal | undefined;
+  get form(): HTMLFormElement | ElForm | null;
   get validity(): ValidityState | undefined;
   get validationMessage(): string;
   get willValidate(): boolean;
@@ -776,7 +777,14 @@ export class ElSidebarFooter extends Elementum {}
 export class ElSidebarTrigger extends Elementum {}
 
 export class ElForm extends Elementum {
+  get form(): HTMLFormElement | null;
+  get elements(): HTMLElement[];
+  checkValidity(): boolean;
+  reportValidity(): boolean;
   validate(): boolean;
+  requestSubmit(): void;
+  toFormData(): FormData;
+  getFormData(): Record<string, any>;
   getData(): Record<string, any>;
   reset(): void;
 }

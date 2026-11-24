@@ -85,6 +85,10 @@ export class Elementum extends BaseElement {
     }
   }
 
+  get form() {
+    return this.internals?.form || (typeof this.closest === 'function' ? this.closest('form, el-form') : null);
+  }
+
   get validity() {
     return this.internals?.validity || this.#validity;
   }
