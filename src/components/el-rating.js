@@ -28,6 +28,10 @@ export class ElRating extends Elementum {
       box-sizing: border-box;
       outline: none;
     }
+    .star-btn:focus-visible {
+      outline: 2px solid var(--el-color-primary, #2563eb);
+      outline-offset: 2px;
+    }
 
     .star-btn {
       background: transparent;

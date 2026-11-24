@@ -412,6 +412,12 @@ export class ElToaster extends Elementum {
       border: 1px solid transparent;
     }
 
+    .toast-action-btn:focus-visible,
+    .toast-close-btn:focus-visible {
+      outline: 2px solid var(--el-color-primary, #2563eb);
+      outline-offset: 2px;
+    }
+
     .toast-btn.action {
       background: var(--el-color-primary, #2563eb);
       color: #ffffff;
@@ -685,18 +691,24 @@ export class ElToaster extends Elementum {
     let currentX = 0;
     let isDragging = false;
 
+    let capturedId = null;
     const onPointerDown = (e) => {
       if (e.target.closest('button')) return;
       startX = e.clientX;
       currentX = 0;
       isDragging = true;
-      cardEl.style.transition = 'none';
-      if (cardEl.setPointerCapture) cardEl.setPointerCapture(e.pointerId);
+      capturedId = null;
     };
 
     const onPointerMove = (e) => {
       if (!isDragging) return;
       currentX = e.clientX - startX;
+      if (capturedId === null && Math.abs(currentX) > 5) {
+        capturedId = e.pointerId;
+        cardEl.style.transition = 'none';
+        if (cardEl.setPointerCapture) cardEl.setPointerCapture(e.pointerId);
+      }
+      if (capturedId === null) return;
       cardEl.style.transform = `translate3d(${currentX}px, 0, 0)`;
       cardEl.style.opacity = `${Math.max(0.2, 1 - Math.abs(currentX) / 180)}`;
     };

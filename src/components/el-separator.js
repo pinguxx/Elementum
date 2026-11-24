@@ -38,9 +38,7 @@ export class ElSeparator extends Elementum {
       display: inline-block;
     }
 
-    :host-context([data-theme="dark"]) .separator,
-    :host-context([data-theme="dark"]):host([orientation="horizontal"]),
-    :host-context([data-theme="dark"]):host([orientation="vertical"]) {
+    :host-context([data-theme="dark"]) .separator {
       background: #334155;
     }
   `;

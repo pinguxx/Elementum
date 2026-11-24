@@ -38,6 +38,11 @@ export class ElSidebarTrigger extends Elementum {
       transition: background-color 0.15s ease, transform 0.15s ease;
     }
 
+    button:focus-visible {
+      outline: 2px solid var(--el-color-primary, #2563eb);
+      outline-offset: 2px;
+    }
+
     :host-context([data-theme="dark"]) button {
       background: #1e293b;
       border-color: #334155;
@@ -258,19 +263,10 @@ export class ElSidebar extends Elementum {
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
     }
 
-    :host-context([data-theme="dark"]):host([variant="floating"]) {
-      border-color: #334155 !important;
-    }
-
     /* Variant: inset */
     :host([variant="inset"]) {
       background: var(--el-surface-muted, #f8fafc);
       border-right: 1px dashed var(--el-surface-border, #cbd5e1) !important;
-    }
-
-    :host-context([data-theme="dark"]):host([variant="inset"]) {
-      background: #0f172a;
-      border-right-color: #334155 !important;
     }
 
     ::slotted(a),

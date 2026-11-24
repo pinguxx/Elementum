@@ -98,9 +98,6 @@ export class ElCardHeader extends Elementum {
       align-items: flex-end;
       text-align: right;
     }
-    :host-context([data-theme="dark"]):host([bordered]:not([bordered="false"])) {
-      border-bottom-color: #334155;
-    }
   `;
   render() {
     return html`<slot></slot>`;
@@ -155,9 +152,6 @@ export class ElCardFooter extends Elementum {
       border-top: 1px solid var(--el-surface-border, #e2e8f0);
       padding-top: 16px;
     }
-    :host-context([data-theme="dark"]):host([bordered]:not([bordered="false"])) {
-      border-top-color: #334155;
-    }
   `;
   render() {
     return html`<slot></slot>`;
@@ -204,11 +198,6 @@ export class ElCard extends Elementum {
       -webkit-backdrop-filter: blur(12px);
       border-color: rgba(148, 163, 184, 0.35);
       box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
-    }
-
-    :host-context([data-theme="dark"]):host([glass]) {
-      background: rgba(30, 41, 59, 0.68);
-      border-color: rgba(148, 163, 184, 0.25);
     }
 
     :host([hoverable]) {

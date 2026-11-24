@@ -237,6 +237,10 @@ export class ElRouteLink extends Elementum {
       box-sizing: border-box;
       outline: none;
     }
+    a:focus-visible {
+      outline: 2px solid var(--el-color-primary, #2563eb);
+      outline-offset: 2px;
+    }
 
     :host([active]) a {
       color: var(--el-route-link-active-color, var(--el-color-primary-text, #1d4ed8));

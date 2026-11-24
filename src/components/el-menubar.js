@@ -174,8 +174,8 @@ export class ElMenubar extends Elementum {
 
   #addGlobalListeners() {
     this.#removeGlobalListeners();
-    document.addEventListener('pointerdown', this.#onPointerDownOutside, true);
-    window.addEventListener('keydown', this.#onWindowKeyDown, true);
+    document.addEventListener('pointerdown', this.#onPointerDownOutside, { capture: true, signal: this.signal });
+    window.addEventListener('keydown', this.#onWindowKeyDown, { capture: true, signal: this.signal });
   }
 
   #removeGlobalListeners() {

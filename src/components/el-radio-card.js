@@ -53,21 +53,10 @@ export class ElRadioCard extends Elementum {
       background-color: var(--el-surface-muted, #f8fafc);
     }
 
-    :host-context([data-theme="dark"]):host(:hover:not([disabled])) .card {
-      background-color: #1e293b;
-      border-color: #475569;
-    }
-
     :host([checked]) .card {
       border-color: var(--el-primary, #2563eb);
       background-color: rgba(37, 99, 235, 0.04);
       box-shadow: 0 0 0 1px var(--el-primary, #2563eb);
-    }
-
-    :host-context([data-theme="dark"]):host([checked]) .card {
-      border-color: #3b82f6;
-      background-color: rgba(59, 130, 246, 0.1);
-      box-shadow: 0 0 0 1px #3b82f6;
     }
 
     :host(:focus-visible) .card {
@@ -95,11 +84,6 @@ export class ElRadioCard extends Elementum {
 
     :host-context([data-theme="dark"]) .radio-circle {
       border-color: #475569;
-    }
-
-    :host-context([data-theme="dark"]):host([checked]) .radio-circle {
-      border-color: #3b82f6;
-      background-color: #3b82f6;
     }
 
     .dot {

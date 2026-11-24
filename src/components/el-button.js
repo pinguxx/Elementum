@@ -80,9 +80,7 @@ export class ElButton extends Elementum {
     }
 
     :host-context([data-theme="dark"]) button[disabled],
-    :host-context([data-theme="dark"]) button:disabled,
-    :host-context([data-theme="dark"]):host([disabled]) button,
-    :host-context([data-theme="dark"]):host([aria-disabled="true"]) button {
+    :host-context([data-theme="dark"]) button:disabled {
       opacity: 0.38;
       filter: grayscale(0.3);
     }

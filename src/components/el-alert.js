@@ -100,80 +100,42 @@ export class ElAlert extends Elementum {
 
     /* Variants */
     :host([variant="info"]) .alert {
-      background: #eff6ff;
-      border-color: #bfdbfe;
-      color: #1e40af;
+      background: rgba(37, 99, 235, 0.1);
+      border-color: rgba(37, 99, 235, 0.3);
+      color: var(--el-color-primary-text, #1e40af);
     }
-    :host([variant="info"]) .title { color: #1e3a8a; }
-    :host([variant="info"]) .description { color: #1e40af; }
-
-    :host-context([data-theme="dark"]):host([variant="info"]) .alert {
-      background: rgba(30, 58, 138, 0.25);
-      border-color: #1e3a8a;
-      color: #bfdbfe;
-    }
-    :host-context([data-theme="dark"]):host([variant="info"]) .title { color: #93c5fd; }
-    :host-context([data-theme="dark"]):host([variant="info"]) .description { color: #bfdbfe; }
+    :host([variant="info"]) .title,
+    :host([variant="info"]) .description { color: var(--el-color-primary-text, #1e40af); }
 
     :host([variant="success"]) .alert {
-      background: #f0fdf4;
-      border-color: #bbf7d0;
-      color: #166534;
+      background: rgba(16, 185, 129, 0.1);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: var(--el-color-success-text, #166534);
     }
-    :host([variant="success"]) .title { color: #14532d; }
-    :host([variant="success"]) .description { color: #166534; }
-
-    :host-context([data-theme="dark"]):host([variant="success"]) .alert {
-      background: rgba(20, 83, 45, 0.25);
-      border-color: #166534;
-      color: #bbf7d0;
-    }
-    :host-context([data-theme="dark"]):host([variant="success"]) .title { color: #86efac; }
-    :host-context([data-theme="dark"]):host([variant="success"]) .description { color: #bbf7d0; }
+    :host([variant="success"]) .title,
+    :host([variant="success"]) .description { color: var(--el-color-success-text, #166534); }
 
     :host([variant="warning"]) .alert {
-      background: #fffbeb;
-      border-color: #fde68a;
-      color: #92400e;
+      background: rgba(245, 158, 11, 0.1);
+      border-color: rgba(245, 158, 11, 0.3);
+      color: var(--el-color-warning-text, #92400e);
     }
-    :host([variant="warning"]) .title { color: #78350f; }
-    :host([variant="warning"]) .description { color: #92400e; }
-
-    :host-context([data-theme="dark"]):host([variant="warning"]) .alert {
-      background: rgba(120, 53, 15, 0.25);
-      border-color: #92400e;
-      color: #fde68a;
-    }
-    :host-context([data-theme="dark"]):host([variant="warning"]) .title { color: #fcd34d; }
-    :host-context([data-theme="dark"]):host([variant="warning"]) .description { color: #fde68a; }
+    :host([variant="warning"]) .title,
+    :host([variant="warning"]) .description { color: var(--el-color-warning-text, #92400e); }
 
     :host([variant="destructive"]) .alert,
     :host([variant="danger"]) .alert,
     :host([variant="error"]) .alert {
-      background: #fef2f2;
-      border-color: #fecaca;
-      color: #991b1b;
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: var(--el-color-danger-text, #991b1b);
     }
     :host([variant="destructive"]) .title,
     :host([variant="danger"]) .title,
-    :host([variant="error"]) .title { color: #7f1d1d; }
+    :host([variant="error"]) .title,
     :host([variant="destructive"]) .description,
     :host([variant="danger"]) .description,
-    :host([variant="error"]) .description { color: #991b1b; }
-
-    :host-context([data-theme="dark"]):host([variant="destructive"]) .alert,
-    :host-context([data-theme="dark"]):host([variant="danger"]) .alert,
-    :host-context([data-theme="dark"]):host([variant="error"]) .alert {
-      background: rgba(127, 29, 29, 0.25);
-      border-color: #991b1b;
-      color: #fecaca;
-    }
-    :host-context([data-theme="dark"]):host([variant="destructive"]) .title,
-    :host-context([data-theme="dark"]):host([variant="danger"]) .title,
-    :host-context([data-theme="dark"]):host([variant="error"]) .title { color: #fca5a5; }
-    :host-context([data-theme="dark"]):host([variant="destructive"]) .description,
-    :host-context([data-theme="dark"]):host([variant="danger"]) .description,
-    :host-context([data-theme="dark"]):host([variant="error"]) .description { color: #fecaca; }
+    :host([variant="error"]) .description { color: var(--el-color-danger-text, #991b1b); }
   `;
 
   connected() {

@@ -263,6 +263,10 @@ export class ElNavigationMenuTrigger extends Elementum {
       transition: background-color 0.15s ease, color 0.15s ease;
       outline: none;
     }
+    button:focus-visible {
+      outline: 2px solid var(--el-color-primary, #2563eb);
+      outline-offset: 2px;
+    }
 
     button:hover, :host-context([open]) button {
       background-color: var(--el-surface-muted, #f1f5f9);
