@@ -4,6 +4,21 @@ All notable changes to `@wcomp/elementum` are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.6] - 2026-11-24
+
+### Added
+- **AG-UI Run/Surface Isolation & Patch Allowlist (`src/ag-ui.js`)**: `createAgUiStore(initialState, options)` now enforces stale `runId` and `surfaceId` rejection, optional `strictRunId`, `allowedPaths` RFC 6902 JSON Pointer prefix filtering, `rejectedEvents`, `setSurface()`, and `resetRun()`.
+- **Reactive `<el-table filter>` & Safe Match Highlighting (`src/components/el-table.js`)**: Added case-insensitive row filtering, safe DOM-node `<mark part="highlight">` substring highlighting, `highlight-only` mode for server-filtered datasets, and an empty state.
+- **Owning Form & `HTMLFormElement` Parity (`src/elementum.js`, `src/components/el-form.js`)**: Added `el.form` getter on `Elementum`, base FACE `formResetCallback()` / `formDisabledCallback()` fallbacks across all 17 controls, and `ElForm` parity (`form`, `elements`, `toFormData()`, `checkValidity()`, `reportValidity()`, `requestSubmit()`).
+- **Exhaustive Formal Invariant Verifier & API Surface Audit (`npm run verify:formal`, `npm run audit:api`)**: Added 6-invariant verifier (6,162 states/topologies across `signal.js`, `a2ui.js`, `ag-ui.js`, and `el-toast.js`) and automated 109-component API consistency audit in CI.
+- **Events & Authoring Guides (`docs/events.md`, `docs/authoring-components.md`)**: Added dedicated guides for custom event handling and authoring accessible Web Components with `@wcomp/elementum/behaviors`.
+
+### Fixed
+- **Dark-Mode Shadow DOM & WCAG 2.2 AA Contrast (0/109 violations)**: Fixed 131 dead `:root[data-theme="dark"]` Shadow DOM selectors across 33 components, calibrated dark-mode tokens and semantic foreground text tokens (`--el-color-primary-text`, etc.), and added `e2e/dark-mode-contrast.spec.js`.
+- **Signal Runtime Edge Cases (`src/signal.js`)**: Fixed `batch()` fault isolation so a throwing subscriber never drops sibling notifications, and prevented `AsyncSignal` self-subscription loops when reading own state synchronously inside a fetcher.
+- **React 19 Boolean Props (`src/react/runtime.js`)**: Synced boolean props via `setAttribute`/`removeAttribute` in `useIsomorphicLayoutEffect` so React 19 does not assign falsy empty strings to boolean Custom Element properties.
+- **WAI-ARIA Keyboard Navigation (`src/components/el-tree-view.js`, `src/components/el-calendar.js`)**: Added arrow-key navigation and `:focus-visible` rings to tree items and calendar day grids.
+
 ## [0.8.5] — 2026-11-23 ("A2UI Live Validator & CodePen Export, APG Keyboard E2E, Multi-Arm Benchmark Runner & Toast Stacking Fix")
 
 ### Added

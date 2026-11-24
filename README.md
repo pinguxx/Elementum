@@ -15,7 +15,7 @@
 
 [**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (109 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**A2UI Demo**](https://elementum-sage.vercel.app/examples/a2ui.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr) · [**Deep Dive (Dev.to)**](https://dev.to/pinguxx/elementum-an-ai-native-ui-platform-with-built-in-mcp-agent-runtime-109-zero-dep-web-components-9oi)
 
-## Verification and browser matrix (`v0.8.5`)
+## Verification and browser matrix (`v0.8.6`)
 
 - **Core release gate (`npm run verify:all`).** Runs `catalog:diff`, `check:release`, `typecheck`, `check:size`, `verify:formal` (6,147 states/topologies), `test` (unit, fuzz, and >= 95% line coverage), `verify:consumer` (packed `.tgz` tarball), `verify:react` (React 18 and 19 SSR/StrictMode), and `test:e2e` (3-browser Playwright and `axe-core`).
 - **Companion workflows.** `npm run verify:starters` builds and typechecks all framework starters, `npm run test:visual` checks light and dark screenshots, `npm run bench:frameworks` measures React/Vue/Vanilla parity, `npm run bench:agents` scores AI-agent submissions in headless Chromium, and `npm run audits:report` / `npm run quality:report` regenerate [AUDITS.md](https://github.com/pinguxx/Elementum/blob/main/AUDITS.md) and [QUALITY.md](https://github.com/pinguxx/Elementum/blob/main/QUALITY.md).
@@ -39,7 +39,7 @@ Every check below runs in CI:
 
 ### Option A: Zero-build 2-line CDN (HTML, CodePen, Claude Artifacts)
 
-Paste two lines into any HTML file or CodePen with no build step, bundler, or `npm install` required (for production, pin a version such as `@wcomp/elementum@0.8.5`):
+Paste two lines into any HTML file or CodePen with no build step, bundler, or `npm install` required (for production, pin a version such as `@wcomp/elementum@0.8.6`):
 
 ```html
 <link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />
