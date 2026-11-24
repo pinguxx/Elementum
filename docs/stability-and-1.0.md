@@ -42,20 +42,32 @@ Once `1.0.0` is tagged, **breaking changes require a major version bump (`2.0.0`
 
 ---
 
-## 4. `0.8.x` → `1.0.0` Release Gate Checklist
+## 4. Pre-1.0 Roadmap (`0.8.x` -> `0.9.x` -> `0.10.x+` -> `1.0.0`)
 
-Elementum will move from `0.8.x` to `1.0.0` only when we can confidently promise API stability, compatibility, and dependable integration across supported agent and framework ecosystems:
+`1.0.0` is not imminent. Freezing 109 components under SemVer requires multiple `0.x` minor cycles (at least 5 to 6 releases) shaped by real user feedback before tagging `1.0.0-rc.1`.
+
+### Completed baseline (`0.8.x`)
 
 - [x] Zero runtime dependencies enforced by external consumer tarball install (`npm run verify:consumer`)
-- [x] ≥ 95% automated line coverage, strict TypeScript checking (`npm run typecheck`), and per-entrypoint gzip budgets (`npm run check:size`)
-- [x] Cross-browser E2E + WCAG 2.2 AA `axe-core` checks (`npm run test:e2e`) across Chromium, Firefox, and WebKit including 50+ component zero-CLS DSD hydration, React/Vue/FACE interop (`e2e/framework-and-dsd-stress.spec.js`), and Hard-8 stress tests (`e2e/hard-8-stress.spec.js`)
-- [x] Official React wrapper entrypoint (`@wcomp/elementum/react`) verified against real React 18 & 19 consumers (`npm run verify:react`)
+- [x] >= 95% automated line coverage, strict TypeScript checking (`npm run typecheck`), and per-entrypoint gzip budgets (`npm run check:size`)
+- [x] Exhaustive formal invariant verification (`npm run verify:formal`, 6,147 states/topologies across `signal.js`, `a2ui.js`, and `el-toast.js`) enforced in CI
+- [x] Cross-browser E2E and WCAG 2.2 AA `axe-core` checks (`npm run test:e2e`) across Chromium, Firefox, and WebKit, including dark-mode contrast across all 109 components (`e2e/dark-mode-contrast.spec.js`), 10-widget WAI-ARIA APG keyboard state machines (`e2e/a11y-keyboard-apg.spec.js`), and Hard-8 stress tests (`e2e/hard-8-stress.spec.js`)
+- [x] Official React wrapper entrypoint (`@wcomp/elementum/react`) verified against React 18 and 19 consumers (`npm run verify:react`)
 - [x] Public migration guides (`docs/migration-guide.md`, `docs/tailwind-guide.md`), auto-generated `::part()` reference (`docs/styling-reference.md`), and connected platform showcase (`showcase.html`)
-- [x] Full Playwright E2E + `axe-core` audit coverage across all `109 / 109` components in [`QUALITY.md`](../QUALITY.md)
-- [ ] **External developer validation**: First-attempt integration feedback from independent teams using `npm install @wcomp/elementum && npx @wcomp/elementum init`
-- [ ] **Independent multi-model AI benchmark runs**: External runs recorded in [`benchmarks/agent-eval/RESULTS.md`](../benchmarks/agent-eval/RESULTS.md)
-- [ ] **Manual screen-reader sign-off** (NVDA / VoiceOver) in [`docs/accessibility-audit.md`](./accessibility-audit.md)
-- [ ] **Published `1.0.0-rc.1`** reviewed for any final attribute, event, or `::part()` cleanup prior to freezing `1.0.0`
+
+### Next minor cycle (`0.9.x` hardening)
+
+- [ ] **Cross-browser dark-mode parity without `:host-context()`**: Migrate remaining `:host-context([data-theme="dark"])` rules in `src/components/*.js` to `--el-*` CSS custom properties so Firefox and Safari dark mode match Chromium 1:1.
+- [ ] **API surface consistency pass**: Audit and normalize attribute, variant, event, and `FormData` naming across all 109 components (for example, `open` vs `expanded` and `danger` vs `destructive`) while breaking changes are still allowed in `0.x`.
+- [ ] **State-transition E2E coverage across all stateful components**: Expand real pointer and keyboard interaction assertions beyond mount and bounding-box checks to every overlay, form control, menu, grid, and picker.
+- [ ] **Complex widget hardening**: Deepen real-world edge-case handling in `el-table` (virtualization, column sizing, empty/loading states), `el-datepicker` / `el-date-range-picker` (locale parsing, min/max clamping), `el-autocomplete` / `el-combobox` (async error/retry states, creatable tags), `el-command` (nested sub-pages), and `el-tree-view`.
+
+### Feedback-driven runway (`0.10.x` through `0.13.x+` before `1.0.0`)
+
+- [ ] **Real-world external adoption**: Feedback from independent developers and teams running `@wcomp/elementum` in production apps across Windows, macOS, and Linux (CLI, bundlers, SSR, and framework wrappers).
+- [ ] **Independent multi-model AI benchmark runs**: External model submissions scored with `npm run bench:agents` and recorded in [`benchmarks/agent-eval/RESULTS.md`](../benchmarks/agent-eval/RESULTS.md).
+- [ ] **Manual screen-reader sign-off**: Hands-on NVDA (Windows) and VoiceOver (macOS/iOS) passes on the complex widgets recorded in [`docs/accessibility-audit.md`](./accessibility-audit.md).
+- [ ] **API freeze (`1.0.0-rc.1`)**: Published release candidate held open for review before locking `1.0.0` SemVer guarantees.
 
 ---
 
