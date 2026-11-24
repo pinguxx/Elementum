@@ -34,11 +34,11 @@ test.describe('Full Catalog Real-Browser Sweep (All 109 Components, Permutations
       let totalPermutations = 0;
       let totalExamples = 0;
 
-      const nextFrame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+      const nextTick = () => new Promise((r) => setTimeout(r, 0));
 
       for (const tag of tags) {
         window.location.hash = '#' + tag;
-        await nextFrame();
+        await nextTick();
 
         const stage = document.getElementById('live-stage');
         const codeBox = document.getElementById('generated-code-box');
@@ -83,7 +83,6 @@ test.describe('Full Catalog Real-Browser Sweep (All 109 Components, Permutations
               if (optVal === sel.value) continue;
               sel.value = optVal;
               sel.dispatchEvent(new Event('change', { bubbles: true }));
-              await nextFrame();
               totalPermutations++;
 
               if (!nonBox.has(tag)) {
@@ -99,14 +98,12 @@ test.describe('Full Catalog Real-Browser Sweep (All 109 Components, Permutations
             // Restore original select value
             sel.value = origVal;
             sel.dispatchEvent(new Event('change', { bubbles: true }));
-            await nextFrame();
           }
 
           const switches = Array.from(knobsForm.querySelectorAll('el-switch'));
           for (const sw of switches) {
             const propName = sw.dataset.prop || sw.id || 'boolean';
             sw.click();
-            await nextFrame();
             totalPermutations++;
 
             if (!nonBox.has(tag) && propName !== 'hidden' && propName !== 'open' && propName !== 'inline') {
@@ -119,7 +116,6 @@ test.describe('Full Catalog Real-Browser Sweep (All 109 Components, Permutations
               }
             }
             sw.click();
-            await nextFrame();
           }
         }
 
