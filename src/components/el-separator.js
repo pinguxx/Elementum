@@ -20,6 +20,7 @@ export class ElSeparator extends Elementum {
       box-sizing: border-box;
     }
 
+    :host(:not([orientation="vertical"])),
     :host([orientation="horizontal"]),
     .separator.horizontal {
       width: 100%;
