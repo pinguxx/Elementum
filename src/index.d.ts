@@ -781,6 +781,10 @@ export class ElSidebarFooter extends Elementum {}
 export class ElSidebarTrigger extends Elementum {}
 
 export class ElForm extends Elementum {
+  novalidate: Signal<boolean>;
+  toolname: Signal<string>;
+  tooldescription: Signal<string>;
+  toolautosubmit: Signal<boolean>;
   get form(): HTMLFormElement | null;
   get elements(): HTMLElement[];
   checkValidity(): boolean;
@@ -790,6 +794,11 @@ export class ElForm extends Elementum {
   toFormData(): FormData;
   getFormData(): Record<string, any>;
   getData(): Record<string, any>;
+  getToolSchema(): {
+    type: 'object';
+    properties: Record<string, { type: string; description?: string; enum?: string[] }>;
+    required?: string[];
+  };
   reset(): void;
 }
 
@@ -1115,14 +1124,41 @@ export function act(
   state?: Record<string, boolean | string>;
   error?: string;
 };
+export interface WebMCPClient {
+  requestUserInteraction?: <T = unknown>(callback: () => Promise<T> | T) => Promise<T>;
+}
+export interface WebMCPTool {
+  name: string;
+  description: string;
+  annotations?: { readOnlyHint?: boolean };
+  inputSchema: {
+    type: 'object';
+    properties: Record<string, unknown>;
+    required?: string[];
+  };
+  execute: (args?: Record<string, unknown>, client?: WebMCPClient | null) => unknown;
+}
+export interface WebMCPModelContext {
+  registerTool: (tool: WebMCPTool, options?: { signal?: AbortSignal }) => void;
+  unregisterTool?: (name: string) => void;
+}
+export function discoverFormTools(
+  root?: Element | Document | ShadowRoot | null
+): Array<WebMCPTool & { element: HTMLElement }>;
 export function registerWebMCP(
   root?: Element | Document | ShadowRoot | null,
   options?: {
     prefix?: string;
-    guard?: (ctx: { element: Element; action: string; command: Record<string, unknown> }) => boolean;
-    modelContext?: unknown;
+    includeForms?: boolean;
+    guard?: (ctx: {
+      element: Element;
+      action: string;
+      command: Record<string, unknown>;
+      client?: WebMCPClient | null;
+    }) => boolean | Promise<boolean>;
+    modelContext?: WebMCPModelContext | null;
   }
-): { registered: boolean; tools?: string[]; unregister: () => void };
+): { registered: boolean; tools: string[]; unregister: () => void };
 
 // WAI-ARIA, RTL, SSR & Declarative Component Testing (@wcomp/elementum/testing)
 export type AriaPattern = 'button' | 'checkbox' | 'switch' | 'dialog' | 'tabs' | 'accordion' | 'combobox' | 'slider' | 'progressbar';

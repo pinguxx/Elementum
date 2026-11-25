@@ -13,7 +13,7 @@
 | :--- | :---: | :---: | :---: | :---: |
 | **113 custom elements** | **0 runtime deps** | **4.77 KB core** · **110.7 KB all 113** | **WCAG 2.2 AA** (`@axe-core/playwright`) | **MIT** |
 
-[**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (113 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**A2UI Demo**](https://elementum-sage.vercel.app/examples/a2ui.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr) · [**Docs**](https://elementum-sage.vercel.app/docs.html)
+[**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (113 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**A2UI Demo**](https://elementum-sage.vercel.app/examples/a2ui.html) · [**WebMCP Demo**](https://elementum-sage.vercel.app/examples/webmcp.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr) · [**Docs**](https://elementum-sage.vercel.app/docs.html)
 
 ## Verification and browser matrix (`v0.8.7`)
 

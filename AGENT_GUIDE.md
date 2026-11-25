@@ -11,7 +11,7 @@
 - **Shadow DOM + Constructable Stylesheets (`src/elementum.js`)**: Every component extending `Elementum` adopts `static styles = css\`...\`` via `adoptedStyleSheets` (falling back to `<style>` when unsupported) and exposes `this.signal` (`AbortSignal`) for automatic listener/behavior cleanup on `disconnectedCallback()`.
 - **Tagged Template Engine (`src/template.js`)**: Compiles `html\`...\`` once per template literal and binds fine-grained text, attribute (`?bool`, `.prop`, `@event`), and cross-realm `Node`/`DocumentFragment` slots with zero Virtual DOM diffing.
 - **Declarative Shadow DOM SSR (`src/ssr.js`)**: Pure-Node renderer emitting `<template shadowrootmode="open">` with zero browser globals.
-- **Subpath Exports (`package.json`)**: Core (`@wcomp/elementum`), tokens (`tokens.css`), individual components (`components/*`), React wrappers (`react`), SSR (`ssr`), headless behaviors (`behaviors`), agent runtime (`agent`), AG-UI (`ag-ui`), A2UI (`a2ui`), and testing contracts (`testing`).
+- **Subpath Exports (`package.json`)**: Core (`@wcomp/elementum`), tokens (`tokens.css`), individual components (`components/*`), React wrappers (`react`), SSR (`ssr`), headless behaviors (`behaviors`), agent runtime & W3C WebMCP (`agent`: `snapshot`, `act`, `registerWebMCP`, `discoverFormTools`), AG-UI (`ag-ui`), A2UI (`a2ui`), and testing contracts (`testing`). `<el-form toolname="..." tooldescription="..." toolautosubmit>` auto-registers typed JSON Schema tools on `navigator.modelContext`.
 
 ---
 

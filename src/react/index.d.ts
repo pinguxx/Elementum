@@ -383,7 +383,12 @@ export declare const ElEmptyState: ElementumReactComponent<ElEmptyStateProps>;
 export type ElFieldProps = ElementumComponentProps<ElementFor<'el-field'>, {}, {}>;
 export declare const ElField: ElementumReactComponent<ElFieldProps>;
 
-export type ElFormProps = ElementumComponentProps<ElementFor<'el-form'>, {}, {
+export type ElFormProps = ElementumComponentProps<ElementFor<'el-form'>, {
+  novalidate?: boolean;
+  toolname?: string;
+  tooldescription?: string;
+  toolautosubmit?: boolean;
+}, {
   onSubmit?: (event: CustomEvent<any> & Event) => void;
 }>;
 export declare const ElForm: ElementumReactComponent<ElFormProps>;

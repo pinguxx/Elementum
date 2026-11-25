@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebMCP Live Playground — @wcomp/elementum</title>
+  <link rel="stylesheet" href="../src/tokens.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--el-font-sans, system-ui, -apple-system, sans-serif);
+      background: var(--el-surface-canvas, #f8fafc);
+      color: var(--el-text-primary, #0f172a);
+      min-height: 100dvh;
+    }
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 20px 64px;
+    }
+    .hero {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      margin: 0 0 6px;
+      font-size: 1.75rem;
+      line-height: 1.2;
+    }
+    .hero p {
+      margin: 0;
+      color: var(--el-text-secondary, #475569);
+      max-width: 68ch;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      align-items: start;
+    }
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    pre.log {
+      margin: 0;
+      padding: 14px;
+      border-radius: var(--el-radius-md, 8px);
+      background: var(--el-surface-subtle, #f1f5f9);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      color: var(--el-text-primary, #0f172a);
+      font-family: var(--el-font-mono, ui-monospace, monospace);
+      font-size: 0.8rem;
+      line-height: 1.5;
+      max-height: 360px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .tool-item {
+      padding: 10px 12px;
+      border-radius: var(--el-radius-md, 8px);
+      border: 1px solid var(--el-surface-border, #e2e8f0);
+      background: var(--el-surface-subtle, #f1f5f9);
+    }
+    .tool-name {
+      font-family: var(--el-font-mono, ui-monospace, monospace);
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .tool-desc {
+      margin: 4px 0 0;
+      font-size: 0.85rem;
+      color: var(--el-text-secondary, #475569);
+    }
+    a.nav-link {
+      color: var(--el-text-secondary, #475569);
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+    a.nav-link:hover { color: var(--el-text-primary, #0f172a); }
+    a.nav-link:focus-visible { outline: 2px solid var(--el-color-primary, #2563eb); outline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <el-navbar brand="Elementum" badge="WebMCP">
+    <a class="nav-link" href="../index.html">Home</a>
+    <a class="nav-link" href="./index.html">Catalog</a>
+    <a class="nav-link" href="./ag-ui.html">AG-UI</a>
+    <a class="nav-link" href="./a2ui.html">A2UI</a>
+    <a class="nav-link" href="../docs.html">Docs</a>
+    <div slot="actions">
+      <el-theme-switch></el-theme-switch>
+    </div>
+  </el-navbar>
+
+  <main>
+    <div class="hero">
+      <div>
+        <h1>W3C WebMCP Live Playground</h1>
+        <p>
+          Declarative <code>&lt;el-form toolname="..."&gt;</code> and imperative <code>registerWebMCP()</code>
+          auto-register typed JSON Schema tools on <code>navigator.modelContext</code>. Works natively in WebMCP-enabled browsers and via the built-in inspector below.
+        </p>
+      </div>
+      <el-badge id="mc-mode" variant="primary">Checking navigator.modelContext...</el-badge>
+    </div>
+
+    <div class="grid">
+      <el-card>
+        <el-card-header>
+          <el-card-title>1. Declarative WebMCP Form</el-card-title>
+          <el-card-description>
+            Adding <code>toolname</code>, <code>tooldescription</code>, and <code>toolautosubmit</code> exposes this form as a typed WebMCP tool.
+          </el-card-description>
+        </el-card-header>
+        <el-card-content>
+          <el-form
+            id="issue-form"
+            toolname="create_issue"
+            tooldescription="Create a bug report or feature request with priority and urgency"
+            toolautosubmit
+            class="stack"
+          >
+            <el-field label="Issue Title" required>
+              <el-input name="title" placeholder="Shadow DOM focus ring clipped" toolparamdescription="Short summary of the issue" required></el-input>
+            </el-field>
+            <el-field label="Priority (1-5)">
+              <el-number-field name="priority" value="2" min="1" max="5" toolparamdescription="1 is highest priority, 5 is lowest"></el-number-field>
+            </el-field>
+            <el-checkbox name="urgent" label="Page on-call engineer" toolparamdescription="Mark true for production outages"></el-checkbox>
+            <div class="row">
+              <el-button type="submit" variant="primary">Submit Issue</el-button>
+              <el-button id="reset-btn" type="button" variant="secondary">Reset</el-button>
+            </div>
+          </el-form>
+        </el-card-content>
+      </el-card>
+
+      <el-card>
+        <el-card-header>
+          <el-card-title>2. Registered WebMCP Tools</el-card-title>
+          <el-card-description>
+            Live registry on <code>navigator.modelContext</code>. Invoke any tool below to simulate an in-browser AI agent.
+          </el-card-description>
+        </el-card-header>
+        <el-card-content class="stack">
+          <div id="tool-list" class="stack"></div>
+          <div class="row">
+            <el-button id="run-snapshot" variant="secondary" size="sm">Run elementum_snapshot</el-button>
+            <el-button id="run-form-tool" variant="primary" size="sm">Run create_issue</el-button>
+            <el-button id="run-act-tool" variant="outline" size="sm">Run elementum_act</el-button>
+          </div>
+          <pre id="output" class="log" aria-live="polite">Click a button above to invoke a WebMCP tool...</pre>
+        </el-card-content>
+      </el-card>
+    </div>
+  </main>
+
+  <el-toaster></el-toaster>
+
+  <script type="module">
+    const registry = new Map();
+    const nativeMC = typeof navigator !== 'undefined' && navigator.modelContext && typeof navigator.modelContext.registerTool === 'function'
+      ? navigator.modelContext
+      : null;
+
+    // Wrap native navigator.modelContext or install an in-page inspector bridge so the demo works in every browser
+    const inspectedMC = {
+      registerTool(def, opts) {
+        registry.set(def.name, def);
+        opts?.signal?.addEventListener?.('abort', () => registry.delete(def.name), { once: true });
+        if (nativeMC) nativeMC.registerTool(def, opts);
+        renderTools();
+      },
+      unregisterTool(name) {
+        registry.delete(name);
+        if (nativeMC && typeof nativeMC.unregisterTool === 'function') nativeMC.unregisterTool(name);
+        renderTools();
+      },
+    };
+    Object.defineProperty(navigator, 'modelContext', { configurable: true, writable: true, value: inspectedMC });
+
+    import '../src/components/el-navbar.js';
+    import '../src/components/el-theme-switch.js';
+    import '../src/components/el-card.js';
+    import '../src/components/el-badge.js';
+    import '../src/components/el-button.js';
+    import '../src/components/el-field.js';
+    import '../src/components/el-form.js';
+    import '../src/components/el-input.js';
+    import '../src/components/el-number-field.js';
+    import '../src/components/el-checkbox.js';
+    import { toast } from '../src/components/el-toast.js';
+    import { registerWebMCP } from '../src/agent/index.js';
+
+    const modeBadge = document.getElementById('mc-mode');
+    modeBadge.textContent = nativeMC ? 'Native navigator.modelContext' : 'In-Page WebMCP Simulator';
+
+    const toolList = document.getElementById('tool-list');
+    const output = document.getElementById('output');
+    const form = document.getElementById('issue-form');
+
+    function renderTools() {
+      if (!toolList) return;
+      toolList.replaceChildren();
+      for (const tool of registry.values()) {
+        const item = document.createElement('div');
+        item.className = 'tool-item';
+        const title = document.createElement('div');
+        title.className = 'tool-name';
+        title.textContent = tool.name + (tool.annotations?.readOnlyHint ? ' (readOnly)' : '');
+        const desc = document.createElement('p');
+        desc.className = 'tool-desc';
+        desc.textContent = tool.description;
+        item.append(title, desc);
+        toolList.appendChild(item);
+      }
+    }
+
+    // Wait one microtask for custom elements to upgrade, then register imperative WebMCP tools
+    await Promise.resolve();
+    registerWebMCP(document.querySelector('main'), {
+      guard: async ({ action, element, client }) => {
+        if (action === 'click' && element.id === 'reset-btn' && client?.requestUserInteraction) {
+          return client.requestUserInteraction(() => true);
+        }
+        return true;
+      },
+    });
+    renderTools();
+
+    form.addEventListener('form-submit', (e) => {
+      toast.success('Issue submitted via WebMCP', { description: JSON.stringify(e.detail.data) });
+    });
+
+    document.getElementById('reset-btn').addEventListener('click', () => {
+      form.reset();
+      toast.info('Form reset');
+    });
+
+    document.getElementById('run-snapshot').addEventListener('click', () => {
+      const res = registry.get('elementum_snapshot')?.execute({ maxNodes: 20 });
+      output.textContent = JSON.stringify(res, null, 2);
+    });
+
+    document.getElementById('run-form-tool').addEventListener('click', () => {
+      const tool = registry.get('create_issue');
+      const result = tool?.execute({
+        title: 'Upgrade WebMCP declarative form support',
+        priority: 1,
+        urgent: true,
+      });
+      output.textContent = JSON.stringify({
+        tool: tool?.name,
+        inputSchema: tool?.inputSchema,
+        result,
+      }, null, 2);
+    });
+
+    document.getElementById('run-act-tool').addEventListener('click', async () => {
+      const tool = registry.get('elementum_act');
+      const result = await tool?.execute(
+        { role: 'checkbox', name: 'Page on-call engineer', action: 'toggle' },
+        { requestUserInteraction: async (cb) => cb() }
+      );
+      output.textContent = JSON.stringify(result, null, 2);
+    });
+  </script>
+</body>
+</html>

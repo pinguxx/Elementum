@@ -3,9 +3,10 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import '../test-helpers/setup.js';
 
-import { snapshot, act, registerWebMCP } from '../src/agent/index.js';
+import { snapshot, act, registerWebMCP, discoverFormTools } from '../src/agent/index.js';
 import { checkAriaPattern, checkDirection, checkServerRender, testComponent } from '../src/testing/index.js';
 import '../src/components/el-toggle.js';
+import '../src/components/el-form.js';
 
 import { ElButton } from '../src/components/el-button.js';
 import { ElInput } from '../src/components/el-input.js';
@@ -410,5 +411,168 @@ test('Distributable Agent Skill: skills.sh.json and skills/elementum/SKILL.md ar
   assert.ok(Array.isArray(manifest.skills) && manifest.skills.length >= 1);
   for (const skill of manifest.skills) {
     assert.ok(fs.existsSync(`${skill.path}/SKILL.md`), `Missing ${skill.path}/SKILL.md`);
+  }
+});
+
+test('WebMCP Declarative <el-form>: schema inference, auto-registration, execution, and AbortSignal cleanup', () => {
+  const tools = new Map();
+  const signals = new Map();
+  const prevMC = navigator.modelContext;
+  Object.defineProperty(navigator, 'modelContext', {
+    configurable: true,
+    writable: true,
+    value: {
+      registerTool(def, opts) {
+        tools.set(def.name, def);
+        if (opts?.signal) signals.set(def.name, opts.signal);
+      },
+      unregisterTool(name) {
+        tools.delete(name);
+      },
+    },
+  });
+
+  const stage = document.createElement('div');
+  stage.innerHTML = `
+    <el-form id="wf" toolname="create_ticket" tooldescription="Create a support ticket" toolautosubmit>
+      <el-input name="title" label="Ticket Title" toolparamdescription="Short summary" required></el-input>
+      <el-number-field name="priority" label="Priority"></el-number-field>
+      <el-checkbox name="urgent" label="Urgent"></el-checkbox>
+      <select name="queue" aria-label="Queue"><option value="billing">Billing</option><option value="infra">Infra</option></select>
+    </el-form>
+  `;
+  document.body.appendChild(stage);
+
+  try {
+    const form = stage.querySelector('#wf');
+    assert.equal(tools.has('create_ticket'), true);
+    const tool = tools.get('create_ticket');
+    assert.equal(tool.description, 'Create a support ticket');
+    assert.equal(tool.inputSchema.properties.title.type, 'string');
+    assert.equal(tool.inputSchema.properties.title.description, 'Short summary');
+    assert.equal(tool.inputSchema.properties.priority.type, 'number');
+    assert.equal(tool.inputSchema.properties.urgent.type, 'boolean');
+    assert.deepEqual(tool.inputSchema.properties.queue.enum, ['billing', 'infra']);
+    assert.deepEqual(tool.inputSchema.required, ['title']);
+
+    // Inner <form> forwards WebMCP attributes
+    assert.equal(form.form.getAttribute('toolname'), 'create_ticket');
+    assert.equal(form.form.getAttribute('tooldescription'), 'Create a support ticket');
+    assert.equal(form.form.hasAttribute('toolautosubmit'), true);
+
+    let submittedPayload = null;
+    form.addEventListener('form-submit', (e) => { submittedPayload = e.detail.data; });
+
+    // Execute tool with prototype-pollution key ignored
+    const res = tool.execute({
+      title: 'Edge timeout',
+      priority: 2,
+      urgent: true,
+      queue: 'infra',
+      __proto__: { polluted: true },
+    });
+    assert.equal(res.ok, true);
+    assert.equal(res.submitted, true);
+    assert.equal(submittedPayload.title, 'Edge timeout');
+    assert.equal(submittedPayload.urgent, 'on');
+    assert.equal(({}).polluted, undefined);
+
+    // Without toolautosubmit, fills and validates without auto-submitting
+    form.removeAttribute('toolautosubmit');
+    submittedPayload = null;
+    const fillOnly = tool.execute({ title: 'Draft ticket', urgent: false });
+    assert.equal(fillOnly.ok, true);
+    assert.equal(fillOnly.submitted, false);
+    assert.equal(submittedPayload, null);
+
+    // Dynamic rename re-registers under new name
+    form.setAttribute('toolname', 'open_ticket');
+    assert.equal(tools.has('create_ticket'), false);
+    assert.equal(tools.has('open_ticket'), true);
+
+    // Disconnect aborts signal and unregisters tool
+    const sig = signals.get('open_ticket');
+    stage.remove();
+    assert.equal(sig?.aborted, true);
+    assert.equal(tools.has('open_ticket'), false);
+  } finally {
+    stage.remove();
+    Object.defineProperty(navigator, 'modelContext', { configurable: true, writable: true, value: prevMC });
+  }
+});
+
+test('WebMCP Imperative: readOnlyHint, AbortSignal, async client.requestUserInteraction guard, and discoverFormTools', async () => {
+  const stage = document.createElement('div');
+  stage.innerHTML = `
+    <el-button id="danger-btn" variant="danger">Delete Workspace</el-button>
+    <form toolname="quick_search" tooldescription="Search catalog" toolautosubmit>
+      <input name="q" placeholder="Search query" required />
+      <input name="limit" type="number" />
+      <input name="exact" type="checkbox" />
+      <select name="scope"><option value="all">All</option><option value="forms">Forms</option></select>
+    </form>
+  `;
+  document.body.appendChild(stage);
+
+  try {
+    const discovered = discoverFormTools(stage);
+    assert.equal(discovered.length, 1);
+    assert.equal(discovered[0].name, 'quick_search');
+    assert.equal(discovered[0].inputSchema.properties.q.type, 'string');
+    assert.equal(discovered[0].inputSchema.properties.limit.type, 'number');
+    assert.equal(discovered[0].inputSchema.properties.exact.type, 'boolean');
+    assert.deepEqual(discovered[0].inputSchema.properties.scope.enum, ['all', 'forms']);
+
+    const tools = new Map();
+    let capturedSignal = null;
+    const mockMC = {
+      registerTool: (t, opts) => {
+        tools.set(t.name, t);
+        if (opts?.signal) capturedSignal = opts.signal;
+      },
+      unregisterTool: (n) => tools.delete(n),
+    };
+
+    let interactionRequested = false;
+    const reg = registerWebMCP(stage, {
+      modelContext: mockMC,
+      guard: async ({ action, client }) => {
+        if (action === 'click' && client?.requestUserInteraction) {
+          interactionRequested = true;
+          return client.requestUserInteraction(() => true);
+        }
+        return false;
+      },
+    });
+
+    assert.equal(reg.registered, true);
+    assert.deepEqual(reg.tools, ['elementum_snapshot', 'elementum_act', 'quick_search']);
+    assert.equal(tools.get('elementum_snapshot').annotations?.readOnlyHint, true);
+
+    // Async guard with WebMCP client.requestUserInteraction()
+    let clicked = false;
+    stage.querySelector('#danger-btn').addEventListener('click', () => { clicked = true; });
+    const actRes = await tools.get('elementum_act').execute(
+      { role: 'button', name: 'Delete Workspace', action: 'click' },
+      { requestUserInteraction: async (cb) => cb() }
+    );
+    assert.equal(interactionRequested, true);
+    assert.equal(actRes.ok, true);
+    assert.equal(clicked, true);
+
+    // Execute discovered native form tool
+    let formSubmitted = false;
+    stage.querySelector('form').addEventListener('submit', (e) => { e.preventDefault(); formSubmitted = true; });
+    const formRes = tools.get('quick_search').execute({ q: 'button', limit: 5, exact: true, scope: 'forms' });
+    assert.equal(formRes.ok, true);
+    assert.equal(formRes.submitted, true);
+    assert.equal(formSubmitted, true);
+
+    // Cleanup aborts signal and unregisters all tools
+    reg.unregister();
+    assert.equal(capturedSignal?.aborted, true);
+    assert.equal(tools.size, 0);
+  } finally {
+    stage.remove();
   }
 });

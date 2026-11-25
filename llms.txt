@@ -22,6 +22,7 @@
 - A2UI Renderer Guide (`@wcomp/elementum/a2ui`): https://github.com/pinguxx/Elementum/blob/main/docs/a2ui.md
 - A2UI Renderer Demo (with Live JSONL Stream): https://elementum-sage.vercel.app/examples/a2ui.html
 - AG-UI Streaming Demo: https://elementum-sage.vercel.app/examples/ag-ui.html
+- WebMCP Live Playground (`navigator.modelContext` + `<el-form toolname>`): https://elementum-sage.vercel.app/examples/webmcp.html
 - AI Agent Studio Demo: https://elementum-sage.vercel.app/examples/agent-studio.html
 - Live Declarative Shadow DOM SSR: https://elementum-sage.vercel.app/ssr
 
@@ -39,7 +40,7 @@
 - `@wcomp/elementum/react` — Strictly-typed React 18 & 19 wrappers for all 113 components
 - `@wcomp/elementum/ssr` — Pure Node.js Declarative Shadow DOM SSR (`renderComponentToDSD`, `renderTemplateToString`)
 - `@wcomp/elementum/behaviors` — 20 composable headless interaction, focus, motion & overlay primitives
-- `@wcomp/elementum/agent` — Shadow-DOM-piercing `snapshot(root)` and `act(root, command)`
+- `@wcomp/elementum/agent` — W3C WebMCP (`registerWebMCP`, `discoverFormTools`) + Shadow-DOM-piercing `snapshot(root)` and `act(root, command)`
 - `@wcomp/elementum/ag-ui` — AG-UI streaming event store & RFC 6902 JSON Patch state deltas
 - `@wcomp/elementum/a2ui` — Declarative A2UI JSON surface renderer with locked catalog allowlist & two-way signal bindings
 - `@wcomp/elementum/testing` — WAI-ARIA APG, RTL & DSD SSR contract validators

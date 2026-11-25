@@ -503,6 +503,7 @@
     <a href="./examples/agent-studio.html">AI Studio</a>
     <a href="./examples/ag-ui.html">AG-UI</a>
     <a href="./examples/a2ui.html">A2UI</a>
+    <a href="./examples/webmcp.html">WebMCP</a>
     <a href="./showcase.html">Showcase</a>
     <el-theme-switch slot="actions"></el-theme-switch>
   </el-navbar>
@@ -797,6 +798,7 @@ Elementum Check: scanned 4 file(s), 14 &lt;el-*&gt; tag(s) (0 error(s), 0 warnin
         <a href="./examples/agent-studio.html">AI Studio</a> &bull;
         <a href="./examples/ag-ui.html">AG-UI Demo</a> &bull;
         <a href="./examples/a2ui.html">A2UI Demo</a> &bull;
+        <a href="./examples/webmcp.html">WebMCP Demo</a> &bull;
         <a href="./examples/ledgerflow.html">LedgerFlow</a> &bull;
         <a href="./examples/app.html">Showcase</a> &bull;
         <a href="/ssr">DSD SSR</a> &bull;
@@ -1128,6 +1130,7 @@ Elementum Check: scanned 4 file(s), 14 &lt;el-*&gt; tag(s) (0 error(s), 0 warnin
 
     // Initial render
     setTimeout(updatePlayground, 50);
+    import('./src/agent/index.js').then(({ registerWebMCP }) => registerWebMCP(document.body)).catch(() => {});
   </script>
 </body>
 </html>

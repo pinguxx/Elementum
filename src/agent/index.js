@@ -423,29 +423,130 @@ export function act(root, command, options = {}) {
   return { ok: false, error: `Unsupported action: ${action}`, command };
 }
 
+const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
+function buildNativeFormSchema(form) {
+  const properties = {};
+  const required = [];
+  for (const el of Array.from(form.querySelectorAll?.('input, select, textarea') || [])) {
+    const name = el.getAttribute('name');
+    if (!name || UNSAFE_KEYS.has(name)) continue;
+    const tag = el.tagName.toLowerCase();
+    const t = (el.getAttribute('type') || '').toLowerCase();
+    const prop = {
+      type: tag === 'input' && t === 'checkbox' ? 'boolean' : tag === 'input' && (t === 'number' || t === 'range') ? 'number' : 'string',
+    };
+    const desc = el.getAttribute('toolparamdescription') || el.getAttribute('aria-label') || el.getAttribute('placeholder');
+    if (desc) prop.description = desc;
+    if (tag === 'select') {
+      const opts = Array.from(el.querySelectorAll('option')).map((o) => o.getAttribute('value') ?? o.textContent?.trim()).filter(Boolean);
+      if (opts.length) prop.enum = opts;
+    }
+    properties[name] = prop;
+    if (el.hasAttribute('required')) required.push(name);
+  }
+  const schema = { type: 'object', properties };
+  if (required.length) schema.required = required;
+  return schema;
+}
+
 /**
- * Registers `elementum_snapshot` and `elementum_act` with the browser's W3C WebMCP
- * `navigator.modelContext` API when available, returning a cleanup function.
+ * Discovers declarative WebMCP forms (`<el-form toolname="...">` and `<form toolname="...">`)
+ * inside `root` and returns structured WebMCP tool definitions with JSON Schema and `execute()`.
  *
  * @param {Element | Document | ShadowRoot} [root]
- * @param {{ prefix?: string, guard?: (ctx: { element: Element, action: string, command: object }) => boolean, modelContext?: any }} [options]
+ */
+export function discoverFormTools(root = typeof document !== 'undefined' ? document.body : null) {
+  if (!root || typeof root.querySelectorAll !== 'function') return [];
+  const tools = [];
+  const seen = new Set();
+  for (const form of root.querySelectorAll('el-form[toolname], form[toolname]')) {
+    const name = (form.getAttribute('toolname') || '').trim();
+    if (!name || seen.has(name)) continue;
+    seen.add(name);
+    const description = (form.getAttribute('tooldescription') || '').trim() || `Submit ${name} form`;
+    const isElForm = form.tagName.toLowerCase() === 'el-form';
+    const inputSchema = isElForm && typeof form.getToolSchema === 'function'
+      ? form.getToolSchema()
+      : buildNativeFormSchema(form);
+    tools.push({
+      name,
+      description,
+      inputSchema,
+      element: form,
+      execute: (args = {}) => {
+        if (args && typeof args === 'object') {
+          const controls = isElForm ? form.elements : Array.from(form.querySelectorAll('input, select, textarea'));
+          for (const el of controls) {
+            const field = el.getAttribute('name');
+            if (!field || UNSAFE_KEYS.has(field) || !Object.prototype.hasOwnProperty.call(args, field)) continue;
+            const val = args[field];
+            const isCheck = el.tagName === 'INPUT' ? (el.type === 'checkbox' || el.type === 'radio') : el.checked !== undefined;
+            if (isCheck) {
+              const b = Boolean(val);
+              if (typeof el.checked === 'object' && 'value' in el.checked) el.checked.value = b;
+              else el.checked = b;
+            } else if (el.value !== undefined) {
+              const s = val == null ? '' : String(val);
+              if (typeof el.value === 'object' && 'value' in el.value) el.value.value = s;
+              else el.value = s;
+              el.setAttribute('value', s);
+            }
+            el.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+            el.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+          }
+        }
+        const valid = isElForm
+          ? (form.hasAttribute('novalidate') ? true : form.validate())
+          : (typeof form.checkValidity === 'function' ? form.checkValidity() : true);
+        const data = isElForm
+          ? form.getFormData()
+          : Object.fromEntries(
+              Array.from(form.querySelectorAll('input, select, textarea'))
+                .filter((el) => el.getAttribute('name') && !el.disabled && (el.type !== 'checkbox' || el.checked))
+                .map((el) => [el.getAttribute('name'), el.type === 'checkbox' ? (el.value || 'on') : (el.value ?? '')])
+            );
+        const autoSubmit = form.hasAttribute('toolautosubmit');
+        const submitted = Boolean(valid && autoSubmit);
+        if (submitted) {
+          if (isElForm) form.emit('form-submit', { data });
+          else form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+        }
+        return { ok: valid, submitted, data };
+      },
+    });
+  }
+  return tools;
+}
+
+/**
+ * Registers `elementum_snapshot`, `elementum_act`, and (optionally) declarative
+ * `<el-form toolname="...">` / `<form toolname="...">` tools with the browser's
+ * W3C WebMCP `navigator.modelContext` API, returning a cleanup handle.
+ *
+ * @param {Element | Document | ShadowRoot} [root]
+ * @param {{ prefix?: string, includeForms?: boolean, guard?: (ctx: { element: Element, action: string, command: object, client?: any }) => boolean | Promise<boolean>, modelContext?: any }} [options]
  */
 export function registerWebMCP(root = typeof document !== 'undefined' ? document.body : null, options = {}) {
   const mc = options.modelContext || (typeof navigator !== 'undefined' ? navigator.modelContext : null);
   if (!mc || typeof mc.registerTool !== 'function') {
-    return { registered: false, unregister: () => {} };
+    return { registered: false, tools: [], unregister: () => {} };
   }
 
   const prefix = options.prefix || 'elementum';
   const snapshotName = `${prefix}_snapshot`;
   const actName = `${prefix}_act`;
+  const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  const regOpts = ctrl ? { signal: ctrl.signal } : undefined;
+  const registeredNames = [snapshotName, actName];
 
   mc.registerTool({
     name: snapshotName,
     description: 'Inspect interactive Elementum Web Components across open Shadow DOM.',
+    annotations: { readOnlyHint: true },
     inputSchema: { type: 'object', properties: { maxNodes: { type: 'number' } } },
     execute: (args = {}) => snapshot(root, args),
-  });
+  }, regOpts);
 
   mc.registerTool({
     name: actName,
@@ -464,16 +565,55 @@ export function registerWebMCP(root = typeof document !== 'undefined' ? document
         key: { type: 'string' },
       },
     },
-    execute: (args = {}) => act(root, args, { guard: options.guard }),
-  });
+    execute: (args = {}, client = null) => {
+      if (typeof options.guard === 'function') {
+        const lookup = findElement(root, args);
+        if (lookup.el) {
+          const decision = options.guard({
+            element: lookup.el,
+            action: String(args.action || 'click').toLowerCase(),
+            command: args,
+            client,
+          });
+          if (decision && typeof decision.then === 'function') {
+            return decision.then((ok) =>
+              ok ? act(root, args) : { ok: false, blocked: true, error: 'Blocked by action guard', action: args.action, tag: lookup.el.tagName.toLowerCase() }
+            );
+          }
+          if (!decision) {
+            return { ok: false, blocked: true, error: 'Blocked by action guard', action: args.action, tag: lookup.el.tagName.toLowerCase() };
+          }
+        }
+        return act(root, args);
+      }
+      return act(root, args);
+    },
+  }, regOpts);
+
+  if (options.includeForms !== false) {
+    for (const formTool of discoverFormTools(root)) {
+      if (registeredNames.includes(formTool.name)) continue;
+      // If using the live global navigator.modelContext, connected <el-form> already self-registers.
+      const usingGlobal = !options.modelContext && formTool.element.tagName.toLowerCase() === 'el-form';
+      if (usingGlobal) {
+        registeredNames.push(formTool.name);
+        continue;
+      }
+      const { element: _el, ...def } = formTool;
+      mc.registerTool(def, regOpts);
+      registeredNames.push(formTool.name);
+    }
+  }
 
   return {
     registered: true,
-    tools: [snapshotName, actName],
+    tools: registeredNames,
     unregister: () => {
+      ctrl?.abort();
       if (typeof mc.unregisterTool === 'function') {
-        mc.unregisterTool(snapshotName);
-        mc.unregisterTool(actName);
+        for (const name of registeredNames) {
+          try { mc.unregisterTool(name); } catch {}
+        }
       }
     },
   };

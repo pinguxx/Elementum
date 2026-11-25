@@ -1478,6 +1478,30 @@
             "name": "Elementum",
             "module": "src/index.js"
           },
+          "attributes": [
+            {
+              "name": "novalidate",
+              "type": { "text": "boolean" },
+              "default": "false",
+              "description": "Bypasses browser native constraint validation."
+            },
+            {
+              "name": "toolname",
+              "type": { "text": "string" },
+              "description": "W3C WebMCP tool name; auto-registers this form as a typed tool on navigator.modelContext."
+            },
+            {
+              "name": "tooldescription",
+              "type": { "text": "string" },
+              "description": "Human- and agent-readable description of what this WebMCP form tool does."
+            },
+            {
+              "name": "toolautosubmit",
+              "type": { "text": "boolean" },
+              "default": "false",
+              "description": "Automatically submits the form when invoked via WebMCP execute() if validation passes."
+            }
+          ],
           "events": [
             {
               "name": "submit",

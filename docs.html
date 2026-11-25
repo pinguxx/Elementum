@@ -316,6 +316,7 @@
     <a href="./examples/agent-studio.html">AI Studio</a>
     <a href="./examples/ag-ui.html">AG-UI</a>
     <a href="./examples/a2ui.html">A2UI</a>
+    <a href="./examples/webmcp.html">WebMCP</a>
     <a href="./showcase.html">Showcase</a>
     <el-theme-switch slot="actions"></el-theme-switch>
   </el-navbar>
@@ -762,7 +763,7 @@ const html = renderComponentToDSD('el-button', ElButton, { variant: 'primary' },
         </p>
         <ul>
           <li><strong><code>@wcomp/elementum/behaviors</code></strong> — 20 composable primitives: <code>createPressBehavior</code>, <code>createRovingFocus</code>, <code>createDismissableLayer</code>, <code>createFocusRecovery</code>, <code>createShortcuts</code>, <code>createDisclosureBehavior</code>, <code>createPopupPositioner</code>, <code>createPresenceBehavior</code>, <code>prefersReducedMotion</code>, <code>createSelectionBehavior</code>, <code>createReorderBehavior</code>, <code>createHistory</code>, <code>highlightMatch</code>, <code>announce</code>, <code>setHostState</code>, <code>isRTL</code>, <code>createSpringEasing</code>, <code>createFlipBehavior</code>, <code>createInViewBehavior</code>, and <code>createPointerTracker</code>.</li>
-          <li><strong><code>@wcomp/elementum/agent</code></strong> — Shadow-DOM-piercing <code>snapshot(root)</code>, <code>act(root, cmd, { guard })</code>, and <code>registerWebMCP(root)</code> for AI agents operating live interfaces.</li>
+          <li><strong><code>@wcomp/elementum/agent</code></strong> — W3C WebMCP (<code>registerWebMCP(root, { guard, includeForms })</code>, <code>discoverFormTools(root)</code>) + Shadow-DOM-piercing <code>snapshot(root)</code> and <code>act(root, cmd, { guard })</code>. Adding <code>toolname</code>, <code>tooldescription</code>, and <code>toolautosubmit</code> to <code>&lt;el-form&gt;</code> auto-registers typed JSON Schema tools on <code>navigator.modelContext</code> (<a href="./examples/webmcp.html">Live WebMCP Playground</a>).</li>
           <li><strong><code>@wcomp/elementum/testing</code></strong> — Reusable WAI-ARIA APG (<code>checkAriaPattern</code>), provider-free RTL (<code>checkDirection</code>), and DSD SSR (<code>checkServerRender</code>) contract validators.</li>
         </ul>
       </section>

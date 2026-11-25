@@ -69,9 +69,14 @@ export class ElFieldset extends Elementum {
 }
 
 export class ElForm extends Elementum {
-  static observedAttributes = ['novalidate'];
+  static observedAttributes = ['novalidate', 'toolname', 'tooldescription', 'toolautosubmit'];
 
   novalidate = signal(false);
+  toolname = signal('');
+  tooldescription = signal('');
+  toolautosubmit = signal(false);
+  #mcpCtrl = null;
+  #mcpName = '';
 
   static styles = css`
     :host {
@@ -91,15 +96,29 @@ export class ElForm extends Elementum {
 
   connected() {
     this.novalidate.value = this.hasAttribute('novalidate');
+    this.toolname.value = this.getAttribute('toolname') || '';
+    this.tooldescription.value = this.getAttribute('tooldescription') || '';
+    this.toolautosubmit.value = this.hasAttribute('toolautosubmit');
     this.addEventListener('submit', this.#onSubmit);
+    this.#syncWebMCP();
   }
 
   disconnected() {
     this.removeEventListener('submit', this.#onSubmit);
+    this.#unregisterWebMCP();
   }
 
   attributeChanged(name, oldValue, newValue) {
     if (name === 'novalidate') this.novalidate.value = newValue !== null;
+    if (name === 'toolname') {
+      this.toolname.value = newValue || '';
+      this.#syncWebMCP();
+    }
+    if (name === 'tooldescription') {
+      this.tooldescription.value = newValue || '';
+      this.#syncWebMCP();
+    }
+    if (name === 'toolautosubmit') this.toolautosubmit.value = newValue !== null;
     return true;
   }
 
@@ -203,9 +222,99 @@ export class ElForm extends Elementum {
     this.emit('form-reset');
   }
 
+  getToolSchema() {
+    const properties = {};
+    const required = [];
+    for (const el of this.elements) {
+      const name = el.getAttribute('name');
+      if (!name || name === '__proto__' || name === 'constructor' || name === 'prototype') continue;
+      const tag = el.tagName.toLowerCase();
+      const inputType = (el.getAttribute('type') || '').toLowerCase();
+      const isBool = tag === 'el-checkbox' || tag === 'el-switch' || (tag === 'input' && inputType === 'checkbox');
+      const isNum = tag === 'el-number-field' || tag === 'el-slider' || (tag === 'input' && (inputType === 'number' || inputType === 'range'));
+      const prop = { type: isBool ? 'boolean' : isNum ? 'number' : 'string' };
+      const desc = el.getAttribute('toolparamdescription') || el.getAttribute('label') || el.getAttribute('aria-label') || el.getAttribute('placeholder');
+      if (desc) prop.description = desc;
+      const opts = Array.from(el.querySelectorAll?.('option, el-option') || []).map((o) => o.getAttribute('value') ?? o.textContent?.trim()).filter(Boolean);
+      if (opts.length) prop.enum = opts;
+      properties[name] = prop;
+      if (el.hasAttribute('required') || el.closest?.('el-field')?.hasAttribute('required')) required.push(name);
+    }
+    const schema = { type: 'object', properties };
+    if (required.length) schema.required = required;
+    return schema;
+  }
+
+  #applyToolArgs(args = {}) {
+    if (!args || typeof args !== 'object') return;
+    for (const el of this.elements) {
+      const name = el.getAttribute('name');
+      if (!name || !Object.prototype.hasOwnProperty.call(args, name)) continue;
+      if (name === '__proto__' || name === 'constructor' || name === 'prototype') continue;
+      const val = args[name];
+      const isCheck = el.tagName === 'INPUT' ? (el.type === 'checkbox' || el.type === 'radio') : el.checked !== undefined;
+      if (isCheck) {
+        const b = Boolean(val);
+        if (typeof el.checked === 'object' && 'value' in el.checked) el.checked.value = b;
+        else el.checked = b;
+        if (b) el.setAttribute('checked', '');
+        else el.removeAttribute('checked');
+      } else if (el.value !== undefined) {
+        const s = val == null ? '' : String(val);
+        if (typeof el.value === 'object' && 'value' in el.value) el.value.value = s;
+        else el.value = s;
+        el.setAttribute('value', s);
+      }
+      el.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+    }
+  }
+
+  #unregisterWebMCP() {
+    this.#mcpCtrl?.abort();
+    this.#mcpCtrl = null;
+    const mc = typeof navigator !== 'undefined' ? navigator.modelContext : null;
+    if (this.#mcpName && typeof mc?.unregisterTool === 'function') {
+      try { mc.unregisterTool(this.#mcpName); } catch {}
+    }
+    this.#mcpName = '';
+  }
+
+  #syncWebMCP() {
+    this.#unregisterWebMCP();
+    const name = this.toolname.value.trim();
+    const mc = typeof navigator !== 'undefined' ? navigator.modelContext : null;
+    if (!name || !this.isConnected || typeof mc?.registerTool !== 'function') return;
+    const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    this.#mcpCtrl = ctrl;
+    this.#mcpName = name;
+    const tool = {
+      name,
+      description: this.tooldescription.value.trim() || `Submit ${name} form`,
+      inputSchema: this.getToolSchema(),
+      execute: (args = {}) => {
+        this.#applyToolArgs(args);
+        const valid = this.novalidate.value ? true : this.validate();
+        const data = this.getFormData();
+        const submitted = Boolean(valid && this.toolautosubmit.value);
+        if (submitted) this.emit('form-submit', { data });
+        else if (!valid) this.emit('form-invalid', { data });
+        return { ok: valid, submitted, data };
+      },
+    };
+    mc.registerTool(tool, ctrl ? { signal: ctrl.signal } : undefined);
+  }
+
   render() {
     return html`
-      <form part="form" ?novalidate=${() => this.novalidate.value} @submit=${this.#onSubmit}>
+      <form
+        part="form"
+        ?novalidate=${() => this.novalidate.value}
+        toolname=${() => this.toolname.value || null}
+        tooldescription=${() => this.tooldescription.value || null}
+        ?toolautosubmit=${() => this.toolautosubmit.value}
+        @submit=${this.#onSubmit}
+      >
         <slot></slot>
       </form>
     `;

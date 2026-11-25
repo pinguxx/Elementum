@@ -1145,7 +1145,26 @@
     {
       "name": "el-form",
       "description": "Form container orchestrating validation, serialization and data collection across Elementum inputs.",
-      "attributes": [],
+      "attributes": [
+        {
+          "name": "novalidate",
+          "description": "Bypasses browser native constraint validation.",
+          "valueSet": "v"
+        },
+        {
+          "name": "toolname",
+          "description": "W3C WebMCP tool name; auto-registers this form as a typed tool on navigator.modelContext."
+        },
+        {
+          "name": "tooldescription",
+          "description": "Human- and agent-readable description of what this WebMCP form tool does."
+        },
+        {
+          "name": "toolautosubmit",
+          "description": "Automatically submits the form when invoked via WebMCP execute() if validation passes.",
+          "valueSet": "v"
+        }
+      ],
       "references": [
         {
           "name": "Elementum Component Catalog",

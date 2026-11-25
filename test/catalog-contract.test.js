@@ -36,8 +36,12 @@ const componentSources = fs
   }));
 
 function findSourceForTag(tag) {
-  return componentSources.find(
-    (src) => src.content.includes(`'${tag}'`) || src.content.includes(`"${tag}"`)
+  return (
+    componentSources.find((src) => src.file === `${tag}.js`) ||
+    componentSources.find(
+      (src) => src.content.includes(`define('${tag}'`) || src.content.includes(`define("${tag}"`)
+    ) ||
+    componentSources.find((src) => src.content.includes(`'${tag}'`) || src.content.includes(`"${tag}"`))
   );
 }
 

@@ -172,22 +172,47 @@ class MyHeadlessButton extends Elementum {
 
 ---
 
-## 2. Shadow-DOM Agent Runtime (`@wcomp/elementum/agent`)
+## 2. Shadow-DOM Agent Runtime & W3C WebMCP (`@wcomp/elementum/agent`)
 
-Standard browser automation struggles with Shadow DOM encapsulation. `@wcomp/elementum/agent` provides a zero-dependency WebMCP runtime bridge:
+Standard browser automation struggles with Shadow DOM encapsulation. `@wcomp/elementum/agent` provides a zero-dependency W3C WebMCP runtime bridge (`navigator.modelContext`) plus declarative form tools:
 
 - **`snapshot(root)`** — Pierces open Shadow DOM and emits a compact, deterministic list of interactive controls (`ref` handles `@e1`, `@e2`, `tag`, `role`, `name`, `value`, `state`, and supported `actions`).
 - **`act(root, command, { guard })`** — Executes semantic actions (`click`, `type`, `toggle`, `open`, `close`, `focus`, `press`) by `ref`, CSS `selector`, or `role` + `name`, with an optional `guard` hook to gate destructive actions.
-- **`registerWebMCP(root, { guard })`** — Registers `elementum_snapshot` and `elementum_act` with the browser's `navigator.modelContext` API when available.
+- **`discoverFormTools(root)`** — Finds `<el-form toolname="...">` and native `<form toolname="...">` elements inside `root` and builds typed JSON Schema tool definitions from their controls.
+- **`registerWebMCP(root, { prefix, includeForms, guard, modelContext })`** — Registers `elementum_snapshot` (with `annotations: { readOnlyHint: true }`), `elementum_act` (supporting async `guard({ element, action, command, client })` with WebMCP `client.requestUserInteraction()`), and declarative form tools on `navigator.modelContext` using `AbortSignal` cleanup.
+
+### Imperative WebMCP (`registerWebMCP`)
 
 ```js
-import { snapshot, act } from '@wcomp/elementum/agent';
+import { registerWebMCP } from '@wcomp/elementum/agent';
 
-const tree = snapshot(document.body);
-act(document.body, { role: 'textbox', name: 'Work Email', action: 'type', value: 'ada@example.com' });
-act(document.body, { role: 'switch', name: 'Enable Alerts', action: 'toggle' });
-act(document.body, { role: 'button', name: 'Save Settings', action: 'click' });
+const reg = registerWebMCP(document.body, {
+  guard: async ({ action, element, client }) => {
+    if (action === 'click' && element.hasAttribute('data-destructive') && client?.requestUserInteraction) {
+      return client.requestUserInteraction(() => confirm('Confirm destructive action?'));
+    }
+    return true;
+  },
+});
+
+// Clean up (aborts AbortSignal and calls unregisterTool)
+reg.unregister();
 ```
+
+### Declarative WebMCP (`<el-form toolname="...">`)
+
+Adding `toolname`, `tooldescription`, and optional `toolautosubmit` to `<el-form>` forwards the W3C WebMCP attributes to the inner `<form>` and automatically registers a typed JSON Schema tool on `navigator.modelContext` (inferred from FACE controls' `name`, `type`, `required`, `label`, `options`, and `toolparamdescription`):
+
+```html
+<el-form toolname="create_ticket" tooldescription="Create a support ticket" toolautosubmit>
+  <el-input name="title" label="Title" toolparamdescription="Short summary" required></el-input>
+  <el-number-field name="priority" label="Priority"></el-number-field>
+  <el-checkbox name="urgent" label="Page on-call"></el-checkbox>
+  <el-button type="submit" variant="primary">Create</el-button>
+</el-form>
+```
+
+Try both live (with a built-in `navigator.modelContext` inspector for any browser) in [`examples/webmcp.html`](../examples/webmcp.html).
 
 ---
 

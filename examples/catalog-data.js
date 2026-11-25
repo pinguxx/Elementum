@@ -2965,6 +2965,24 @@ export const components = {
         "type": "boolean",
         "default": false,
         "description": "Bypasses browser native constraint validation tooltips."
+      },
+      {
+        "name": "toolname",
+        "type": "string",
+        "default": "",
+        "description": "W3C WebMCP tool name; auto-registers this form on navigator.modelContext."
+      },
+      {
+        "name": "tooldescription",
+        "type": "string",
+        "default": "",
+        "description": "Description exposed to AI agents via WebMCP."
+      },
+      {
+        "name": "toolautosubmit",
+        "type": "boolean",
+        "default": false,
+        "description": "Auto-submits the form on WebMCP tool invocation when valid."
       }
     ],
     "slots": [
@@ -2982,7 +3000,7 @@ export const components = {
     "examples": [
       {
         "title": "Form Container",
-        "code": "<el-form>\n  <el-field label=\"Full Name\" required>\n    <el-input placeholder=\"Ada Lovelace\"></el-input>\n  </el-field>\n  <div style=\"margin-top: 12px;\">\n    <el-button type=\"submit\" variant=\"primary\">Save Changes</el-button>\n  </div>\n</el-form>"
+        "code": "<el-form toolname=\"update_profile\" tooldescription=\"Update user profile details\" toolautosubmit>\n  <el-field label=\"Full Name\" required>\n    <el-input name=\"fullName\" placeholder=\"Ada Lovelace\"></el-input>\n  </el-field>\n  <div style=\"margin-top: 12px;\">\n    <el-button type=\"submit\" variant=\"primary\">Save Changes</el-button>\n  </div>\n</el-form>"
       }
     ]
   },

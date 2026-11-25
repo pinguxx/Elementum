@@ -10,7 +10,7 @@
 | Field | Verified Value |
 | :--- | :--- |
 | **Package & Version** | `@wcomp/elementum@0.8.7` |
-| **Git Commit SHA (HEAD)** | `d61391c` |
+| **Git Commit SHA (HEAD)** | `8c13427` |
 | **Audit Date (UTC)** | `2026-11-25` |
 | **Runtime Dependencies** | **0 (Verified)** (optional React `peerDependencies`: `>=18.0.0`) |
 | **Registered Components** | **113** Custom Elements (`113` Production Verified · `0` Stable · `0` Experimental in [QUALITY.md](./QUALITY.md)) |
@@ -21,7 +21,7 @@
 
 | Tool / Dependency | Version | Purpose |
 | :--- | :--- | :--- |
-| Node.js | `v24.22.1` | Unit test runner (`node:test`), V8 coverage (`--test-coverage-lines=95`), pure-Node DSD SSR |
+| Node.js | `v22.23.5` | Unit test runner (`node:test`), V8 coverage (`--test-coverage-lines=95`), pure-Node DSD SSR |
 | `@playwright/test` | `^1.65.1` | Cross-browser E2E (Chromium, Firefox, WebKit) & screenshot regression |
 | `@axe-core/playwright` | `^4.14.0` | Automated WCAG 2.0 / 2.1 / 2.2 AA accessibility audits in real browsers |
 | `typescript` | `^7.0.2` | Strict TypeScript checks (`src/index.d.ts`, `src/react/index.d.ts`, consumer compilation) |

@@ -139,4 +139,4 @@ export {
   createInViewBehavior,
   createPointerTracker,
 } from './behaviors/index.js';
-export { snapshot, act, registerWebMCP } from './agent/index.js';
+export { snapshot, act, registerWebMCP, discoverFormTools } from './agent/index.js';

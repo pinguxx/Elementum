@@ -1930,8 +1930,11 @@ ${optionsHtml}
       // 24f. el-form
       if (tag === 'el-form') {
         const novalidate = p.novalidate ? ' novalidate' : '';
+        const toolname = p.toolname ? ` toolname="${p.toolname}"` : '';
+        const tooldescription = p.tooldescription ? ` tooldescription="${p.tooldescription}"` : '';
+        const toolautosubmit = p.toolautosubmit ? ' toolautosubmit' : '';
         return `<div style="max-width: 440px; width: 100%;">
-  <el-form${novalidate}>
+  <el-form${novalidate}${toolname}${tooldescription}${toolautosubmit}>
     <el-fieldset legend="User Profile">
       <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
         <el-field label="Display Name" required>
@@ -3215,6 +3218,7 @@ ${optionsHtml}
     // Initial render
     renderSidebar();
     renderComponentDetail(currentTag);
+    import('../src/agent/index.js').then(({ registerWebMCP }) => registerWebMCP(document.body)).catch(() => {});
   </script>
 </body>
 </html>
