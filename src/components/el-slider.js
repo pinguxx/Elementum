@@ -73,10 +73,6 @@ export class ElSlider extends Elementum {
       height: 100%;
     }
 
-    :host-context([data-theme="dark"]) .track {
-      background: #334155;
-    }
-
     .range-fill {
       position: absolute;
       background: var(--el-color-primary, #2563eb);

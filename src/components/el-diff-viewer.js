@@ -132,7 +132,7 @@ export class ElDiffViewer extends Elementum {
     .diff-shell {
       border: 1px solid var(--el-surface-border, #e2e8f0);
       border-radius: var(--el-radius-md, 10px);
-      background: var(--el-surface-base, #ffffff);
+      background: var(--el-surface-card, #ffffff);
       overflow: hidden;
       box-shadow: var(--el-shadow-subtle, 0 1px 2px rgba(0, 0, 0, 0.04));
     }
@@ -175,15 +175,15 @@ export class ElDiffViewer extends Elementum {
     }
 
     .stat-add {
-      color: #047857;
-      background: #d1fae5;
+      color: var(--el-color-success-text, #047857);
+      background: var(--el-tint-success-bg, #d1fae5);
       padding: 2px 6px;
       border-radius: 9999px;
     }
 
     .stat-del {
-      color: #b91c1c;
-      background: #fee2e2;
+      color: var(--el-color-danger-text, #b91c1c);
+      background: var(--el-tint-danger-bg, #fee2e2);
       padding: 2px 6px;
       border-radius: 9999px;
     }
@@ -191,7 +191,7 @@ export class ElDiffViewer extends Elementum {
     .mode-switch {
       display: inline-flex;
       gap: 4px;
-      background: var(--el-surface-base, #ffffff);
+      background: var(--el-surface-card, #ffffff);
       border: 1px solid var(--el-surface-border, #e2e8f0);
       border-radius: 7px;
       padding: 2px;
@@ -317,32 +317,6 @@ export class ElDiffViewer extends Elementum {
       background: var(--el-surface-base, #ffffff);
       color: var(--el-color-danger-text, #b91c1c);
       border-color: rgba(220, 38, 38, 0.35);
-    }
-
-    :host-context([data-theme="dark"]) .diff-shell {
-      background: #0f172a;
-      border-color: #334155;
-    }
-    :host-context([data-theme="dark"]) .diff-header,
-    :host-context([data-theme="dark"]) .diff-footer {
-      background: #1e293b;
-      border-color: #334155;
-    }
-    :host-context([data-theme="dark"]) .filename,
-    :host-context([data-theme="dark"]) .code-cell {
-      color: #f8fafc;
-    }
-    :host-context([data-theme="dark"]) .mode-switch {
-      background: #0f172a;
-      border-color: #334155;
-    }
-    :host-context([data-theme="dark"]) .stat-add {
-      background: rgba(16, 185, 129, 0.2);
-      color: #6ee7b7;
-    }
-    :host-context([data-theme="dark"]) .stat-del {
-      background: rgba(239, 68, 68, 0.2);
-      color: #fca5a5;
     }
 
     @media (prefers-reduced-motion: reduce) {

@@ -48,8 +48,8 @@ export class ElCheckbox extends Elementum {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      background: var(--el-surface-base, #ffffff);
-      border: 1px solid var(--el-surface-border, #cbd5e1);
+      background: var(--el-surface-card, #ffffff);
+      border: 1px solid var(--el-step-5, #cbd5e1);
       border-radius: var(--el-radius-sm, 4px);
       transition: background-color 120ms ease, border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
       box-sizing: border-box;
@@ -80,17 +80,6 @@ export class ElCheckbox extends Elementum {
       stroke-width: 2.5;
       stroke-linecap: round;
       stroke-linejoin: round;
-    }
-
-    :host-context([data-theme="dark"]) .checkbox-box {
-      background: var(--el-surface-card, #111827);
-      border-color: #475569;
-    }
-
-    :host-context([data-theme="dark"]) .checkbox-box.checked,
-    :host-context([data-theme="dark"]) .checkbox-box.indeterminate {
-      background: var(--el-color-primary, #2563eb);
-      border-color: var(--el-color-primary, #2563eb);
     }
   `;
 

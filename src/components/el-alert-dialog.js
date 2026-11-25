@@ -46,7 +46,7 @@ export class ElAlertDialog extends Elementum {
     }
 
     .dialog-window {
-      background: var(--el-surface-base, #ffffff);
+      background: var(--el-surface-elevated, #ffffff);
       border: 1px solid var(--el-surface-border, #e2e8f0);
       border-radius: var(--el-radius-lg, 12px);
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.08);
@@ -54,15 +54,10 @@ export class ElAlertDialog extends Elementum {
       max-width: 480px;
       padding: 24px;
       box-sizing: border-box;
+      color: var(--el-text-primary, #0f172a);
       transform: scale(0.95) translateY(8px);
       opacity: 0;
       transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease;
-    }
-
-    :host-context([data-theme="dark"]) .dialog-window {
-      background: var(--el-surface-elevated, #1e293b);
-      border-color: #334155;
-      color: #f8fafc;
     }
 
     .backdrop.open .dialog-window {
@@ -89,10 +84,6 @@ export class ElAlertDialog extends Elementum {
       font-weight: 700;
       margin: 0;
       color: var(--el-text-primary, #0f172a);
-    }
-
-    :host-context([data-theme="dark"]) .dialog-title {
-      color: #f8fafc;
     }
   `;
 

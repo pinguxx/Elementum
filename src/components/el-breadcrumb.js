@@ -40,22 +40,10 @@ export class ElBreadcrumbItem extends Elementum {
       text-decoration: underline;
     }
 
-    :host-context([data-theme="dark"]) .link {
-      color: #94a3b8;
-    }
-
-    :host-context([data-theme="dark"]) .link:hover {
-      color: #f8fafc;
-    }
-
     .current {
       font-weight: 600;
       color: var(--el-text-primary, #0f172a);
       pointer-events: none;
-    }
-
-    :host-context([data-theme="dark"]) .current {
-      color: #f8fafc;
     }
 
     .separator {

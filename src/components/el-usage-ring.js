@@ -41,12 +41,10 @@ export class ElUsageRing extends Elementum {
   }
 
   #sync() {
-    const val = parseFloat(this.getAttribute('value'));
-    const max = parseFloat(this.getAttribute('max'));
-    const segs = parseInt(this.getAttribute('segments') || '', 10);
-    this.value.value = Number.isFinite(val) ? Math.max(0, val) : 68;
-    this.max.value = Number.isFinite(max) && max > 0 ? max : 100;
-    this.segments.value = Number.isFinite(segs) ? Math.max(6, Math.min(60, segs)) : 24;
+    this.value.value = this.numAttr('value', 68, 0);
+    const maxVal = this.numAttr('max', 100);
+    this.max.value = maxVal > 0 ? maxVal : 100;
+    this.segments.value = Math.round(this.numAttr('segments', 24, 6, 60));
     this.size.value = this.getAttribute('size') || 'md';
     this.variant.value = this.getAttribute('variant') || 'primary';
     this.label.value = this.getAttribute('label') || 'Quota';

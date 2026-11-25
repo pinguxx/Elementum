@@ -53,11 +53,10 @@ export class ElHoldButton extends Elementum {
   }
 
   #sync() {
-    const rawDur = parseInt(this.getAttribute('duration') || '', 10);
-    this.duration.value = Number.isFinite(rawDur) ? Math.max(200, Math.min(10000, rawDur)) : 1200;
+    this.duration.value = Math.round(this.numAttr('duration', 1200, 200, 10000));
     this.variant.value = this.getAttribute('variant') || 'danger';
     this.size.value = this.getAttribute('size') || 'md';
-    this.disabled.value = this.hasAttribute('disabled') && this.getAttribute('disabled') !== 'false';
+    this.disabled.value = this.boolAttr('disabled');
     this.confirmedLabel.value = this.getAttribute('confirmed-label') || 'Confirmed';
   }
 

@@ -34,7 +34,7 @@ export class ElToggle extends Elementum {
       font-weight: 500;
       cursor: pointer;
       border: 1px solid var(--el-surface-border, #e2e8f0);
-      background: var(--el-surface-base, #ffffff);
+      background: var(--el-surface-elevated, #ffffff);
       color: var(--el-text-secondary, #475569);
       border-radius: var(--el-radius-md, 6px);
       transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease, transform 120ms var(--el-ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
@@ -78,7 +78,7 @@ export class ElToggle extends Elementum {
     }
 
     button:hover:not(:disabled) {
-      background: var(--el-surface-muted, #f1f5f9);
+      background: var(--el-step-4, #f1f5f9);
       color: var(--el-text-primary, #0f172a);
     }
 
@@ -102,23 +102,6 @@ export class ElToggle extends Elementum {
     button:disabled {
       cursor: not-allowed;
       opacity: 0.5;
-    }
-
-    :host-context([data-theme="dark"]) button {
-      background: var(--el-surface-elevated, #1e293b);
-      border-color: #334155;
-      color: #94a3b8;
-    }
-
-    :host-context([data-theme="dark"]) button:hover:not(:disabled) {
-      background: #334155;
-      color: #f8fafc;
-    }
-
-    :host-context([data-theme="dark"]) button.pressed {
-      background: var(--el-color-primary, #2563eb);
-      color: #ffffff;
-      border-color: var(--el-color-primary, #2563eb);
     }
 
     /* Color Variants (from Figma tokens) */
@@ -269,14 +252,10 @@ export class ElToggleGroup extends Elementum {
       align-items: center;
       gap: 4px;
       padding: 3px;
-      background: var(--el-surface-muted, #f1f5f9);
+      background: var(--el-step-2, #f1f5f9);
+      border: 1px solid var(--el-step-6, transparent);
       border-radius: var(--el-radius-md, 8px);
       box-sizing: border-box;
-    }
-
-    :host-context([data-theme="dark"]) {
-      background: #0f172a;
-      border: 1px solid #1e293b;
     }
   `;
 

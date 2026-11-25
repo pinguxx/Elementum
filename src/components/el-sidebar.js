@@ -43,19 +43,9 @@ export class ElSidebarTrigger extends Elementum {
       outline-offset: 2px;
     }
 
-    :host-context([data-theme="dark"]) button {
-      background: #1e293b;
-      border-color: #334155;
-      color: #f8fafc;
-    }
-
     button:hover {
-      background: var(--el-surface-muted, #f1f5f9);
+      background: var(--el-step-4, #f1f5f9);
       transform: scale(1.05);
-    }
-
-    :host-context([data-theme="dark"]) button:hover {
-      background: #334155;
     }
   `;
 
@@ -276,7 +266,7 @@ export class ElSidebar extends Elementum {
       gap: 12px;
       padding: 8px 12px;
       border-radius: var(--el-radius-sm, 6px);
-      color: var(--el-text-secondary, #475569);
+      color: var(--el-step-11, #475569);
       text-decoration: none;
       font-size: 0.875rem;
       font-weight: 500;
@@ -294,17 +284,6 @@ export class ElSidebar extends Elementum {
     ::slotted(button:hover) {
       background: var(--el-surface-muted, #f1f5f9);
       color: var(--el-text-primary, #0f172a);
-    }
-
-    :host-context([data-theme="dark"]) ::slotted(a),
-    :host-context([data-theme="dark"]) ::slotted(button) {
-      color: #94a3b8;
-    }
-
-    :host-context([data-theme="dark"]) ::slotted(a:hover),
-    :host-context([data-theme="dark"]) ::slotted(button:hover) {
-      background: #1e293b;
-      color: #f8fafc;
     }
   `;
 

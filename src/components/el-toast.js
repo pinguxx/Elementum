@@ -163,7 +163,6 @@ export class ElToaster extends Elementum {
 
   #cards = new Map(); // id -> { el, item, exiting: bool, height: number }
   #isHovered = false;
-  #cleanupEffect = null;
 
   static #getActiveToaster() {
     let last = null;
@@ -256,7 +255,7 @@ export class ElToaster extends Elementum {
       color: var(--el-text-primary, #0f172a);
       border: 1px solid var(--el-surface-border, #e2e8f0);
       border-radius: var(--el-radius-lg, 12px);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+      box-shadow: var(--el-shadow-popover, 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08));
       cursor: grab;
       touch-action: pan-y;
       user-select: none;
@@ -288,13 +287,6 @@ export class ElToaster extends Elementum {
       right: auto;
       left: 50%;
       transform: translateX(-50%);
-    }
-
-    :host-context([data-theme="dark"]) .toast-card {
-      background: #1e293b;
-      border-color: #334155;
-      color: #f8fafc;
-      box-shadow: 0 14px 35px -4px rgba(0, 0, 0, 0.55), 0 4px 10px -2px rgba(0, 0, 0, 0.4);
     }
 
     @keyframes toastSlideUp {
@@ -389,10 +381,6 @@ export class ElToaster extends Elementum {
       word-break: break-word;
     }
 
-    :host-context([data-theme="dark"]) .toast-desc {
-      color: #94a3b8;
-    }
-
     .toast-actions {
       display: flex;
       align-items: center;
@@ -429,15 +417,9 @@ export class ElToaster extends Elementum {
     }
 
     .toast-btn.cancel {
-      background: var(--el-surface-muted, #f1f5f9);
+      background: var(--el-step-4, #f1f5f9);
       color: var(--el-text-primary, #0f172a);
-      border-color: var(--el-surface-border, #e2e8f0);
-    }
-
-    :host-context([data-theme="dark"]) .toast-btn.cancel {
-      background: #334155;
-      color: #f8fafc;
-      border-color: #475569;
+      border-color: var(--el-step-5, #e2e8f0);
     }
 
     .toast-close {
@@ -456,12 +438,7 @@ export class ElToaster extends Elementum {
 
     .toast-close:hover {
       color: var(--el-text-primary, #0f172a);
-      background: var(--el-surface-muted, rgba(0, 0, 0, 0.05));
-    }
-
-    :host-context([data-theme="dark"]) .toast-close:hover {
-      color: #f8fafc;
-      background: rgba(255, 255, 255, 0.1);
+      background: var(--el-surface-hover, rgba(0, 0, 0, 0.05));
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -485,19 +462,15 @@ export class ElToaster extends Elementum {
     viewport.addEventListener('mouseenter', this.#onMouseEnter);
     viewport.addEventListener('mouseleave', this.#onMouseLeave);
 
-    this.#cleanupEffect = effect(() => {
+    effect(() => {
       const items = toast.toasts.value;
       this.#syncToasts(items);
-    });
+    }, { signal: this.signal });
     ElToaster.#notifyInstances();
   }
 
   disconnected() {
     ElToaster.#instances.delete(this);
-    if (this.#cleanupEffect) {
-      this.#cleanupEffect();
-      this.#cleanupEffect = null;
-    }
     const viewport = this.shadowRoot.querySelector('.toaster-viewport');
     if (viewport) {
       viewport.removeEventListener('mouseenter', this.#onMouseEnter);

@@ -43,11 +43,6 @@ export class ElCheckboxCard extends Elementum {
       position: relative;
     }
 
-    :host-context([data-theme="dark"]) .card {
-      background-color: #111827;
-      border-color: #334155;
-    }
-
     :host(:hover:not([disabled])) .card {
       border-color: var(--el-primary-subtle, #93c5fd);
       background-color: var(--el-surface-muted, #f8fafc);
@@ -68,7 +63,7 @@ export class ElCheckboxCard extends Elementum {
       width: 18px;
       height: 18px;
       border-radius: var(--el-radius-sm, 4px);
-      border: 2px solid var(--el-surface-border, #cbd5e1);
+      border: 2px solid var(--el-step-5, #cbd5e1);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -85,10 +80,6 @@ export class ElCheckboxCard extends Elementum {
       background-color: var(--el-primary, #2563eb);
     }
 
-    :host-context([data-theme="dark"]) .checkbox-box {
-      border-color: #475569;
-    }
-
     .content {
       flex: 1;
       min-width: 0;
@@ -102,19 +93,11 @@ export class ElCheckboxCard extends Elementum {
       display: block;
     }
 
-    :host-context([data-theme="dark"]) ::slotted([slot="title"]) {
-      color: #f8fafc;
-    }
-
     ::slotted([slot="description"]) {
       font-size: var(--el-text-sm, 0.875rem);
       color: var(--el-text-muted, #64748b);
       line-height: 1.4;
       display: block;
-    }
-
-    :host-context([data-theme="dark"]) ::slotted([slot="description"]) {
-      color: #94a3b8;
     }
   `;
 

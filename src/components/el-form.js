@@ -31,12 +31,7 @@ export class ElFieldset extends Elementum {
       padding: 16px 20px 20px 20px;
       margin: 0;
       box-sizing: border-box;
-      background: var(--el-surface-base, #ffffff);
-    }
-
-    :host-context([data-theme="dark"]) fieldset {
-      border-color: #334155;
-      background: #1e293b;
+      background: var(--el-surface-elevated, #ffffff);
     }
 
     legend {
@@ -44,10 +39,6 @@ export class ElFieldset extends Elementum {
       font-weight: 600;
       padding: 0 6px;
       color: var(--el-text-primary, #0f172a);
-    }
-
-    :host-context([data-theme="dark"]) legend {
-      color: #f8fafc;
     }
 
     :host([disabled]) {

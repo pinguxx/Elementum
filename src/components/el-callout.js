@@ -42,14 +42,9 @@ export class ElCallout extends Elementum {
 
     /* Info & Primary */
     :host, :host([variant="info"]), :host([variant="primary"]) {
-      background-color: rgba(37, 99, 235, 0.08);
-      border-color: rgba(37, 99, 235, 0.2);
+      background-color: var(--el-tint-primary-bg, rgba(37, 99, 235, 0.08));
+      border-color: var(--el-tint-primary-border, rgba(37, 99, 235, 0.2));
       color: var(--el-color-primary-text, #1e40af);
-    }
-    :host-context([data-theme="dark"]) {
-      background-color: rgba(59, 130, 246, 0.14);
-      border-color: rgba(59, 130, 246, 0.3);
-      color: #93c5fd;
     }
 
     /* Secondary */

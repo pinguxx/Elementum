@@ -32,12 +32,8 @@ export class ElScrollArea extends Elementum {
       overflow: auto;
       box-sizing: border-box;
       scrollbar-width: thin;
-      scrollbar-color: var(--el-surface-border, #cbd5e1) transparent;
+      scrollbar-color: var(--el-step-5, #cbd5e1) transparent;
       -webkit-overflow-scrolling: touch;
-    }
-
-    :host-context([data-theme="dark"]) .viewport {
-      scrollbar-color: #475569 transparent;
     }
 
     /* WebKit sleek custom scrollbar */
@@ -51,21 +47,13 @@ export class ElScrollArea extends Elementum {
     }
 
     .viewport::-webkit-scrollbar-thumb {
-      background: var(--el-surface-border, #cbd5e1);
+      background: var(--el-step-5, #cbd5e1);
       border-radius: 9999px;
       transition: background 150ms ease;
     }
 
     .viewport::-webkit-scrollbar-thumb:hover {
-      background: var(--el-text-muted, #94a3b8);
-    }
-
-    :host-context([data-theme="dark"]) .viewport::-webkit-scrollbar-thumb {
-      background: #475569;
-    }
-
-    :host-context([data-theme="dark"]) .viewport::-webkit-scrollbar-thumb:hover {
-      background: #64748b;
+      background: var(--el-step-8, #94a3b8);
     }
 
     /* Hover-only scrollbar mode */

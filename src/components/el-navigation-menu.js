@@ -93,10 +93,10 @@ export class ElNavigationMenuItem extends Elementum {
       margin-top: 8px;
       min-width: 280px;
       padding: 16px;
-      background-color: var(--el-surface-card, #ffffff);
+      background-color: var(--el-surface-elevated, #ffffff);
       border: 1px solid var(--el-surface-border, #e2e8f0);
       border-radius: var(--el-radius-lg, 12px);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--el-shadow-popover, 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1));
       z-index: 1050;
       display: none;
       animation: el-nav-fade-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -127,12 +127,6 @@ export class ElNavigationMenuItem extends Elementum {
       height: 100%;
     }
 
-    :host-context([data-theme="dark"]) .viewport {
-      background-color: #1e293b;
-      border-color: #334155;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-    }
-
     :host([open]) .viewport {
       display: block;
     }
@@ -153,6 +147,11 @@ export class ElNavigationMenuItem extends Elementum {
     const parentMenu = this.closest('el-navigation-menu');
     if (parentMenu) {
       this.setAttribute('data-orientation', parentMenu.getAttribute('orientation') || 'horizontal');
+    }
+    if (this.hasAttribute('open')) {
+      this.open.value = true;
+      const trigger = this.querySelector('el-navigation-menu-trigger');
+      trigger?.setAttribute('data-open', '');
     }
     this.addEventListener('mouseenter', this.#onMouseEnter);
     this.addEventListener('mouseleave', this.#onMouseLeave);
@@ -202,7 +201,9 @@ export class ElNavigationMenuItem extends Elementum {
     clearTimeout(this.#closeTimer);
     this.open.value = true;
     this.setAttribute('open', '');
-    const btn = this.querySelector('el-navigation-menu-trigger')?.shadowRoot?.querySelector('button');
+    const trigger = this.querySelector('el-navigation-menu-trigger');
+    trigger?.setAttribute('data-open', '');
+    const btn = trigger?.shadowRoot?.querySelector('button');
     if (btn) btn.setAttribute('aria-expanded', 'true');
   }
 
@@ -210,7 +211,9 @@ export class ElNavigationMenuItem extends Elementum {
     clearTimeout(this.#closeTimer);
     this.open.value = false;
     this.removeAttribute('open');
-    const btn = this.querySelector('el-navigation-menu-trigger')?.shadowRoot?.querySelector('button');
+    const trigger = this.querySelector('el-navigation-menu-trigger');
+    trigger?.removeAttribute('data-open');
+    const btn = trigger?.shadowRoot?.querySelector('button');
     if (btn) btn.setAttribute('aria-expanded', 'false');
   }
 
@@ -268,19 +271,9 @@ export class ElNavigationMenuTrigger extends Elementum {
       outline-offset: 2px;
     }
 
-    button:hover, :host-context([open]) button {
+    button:hover, :host([data-open]) button {
       background-color: var(--el-surface-muted, #f1f5f9);
       color: var(--el-color-primary-text, #1d4ed8);
-    }
-
-    :host-context([data-theme="dark"]) button {
-      color: #f8fafc;
-    }
-
-    :host-context([data-theme="dark"]) button:hover,
-    :host-context([data-theme="dark"]):host-context([open]) button {
-      background-color: #1e293b;
-      color: #60a5fa;
     }
 
     .chevron {
@@ -288,7 +281,7 @@ export class ElNavigationMenuTrigger extends Elementum {
       transition: transform 0.2s ease;
     }
 
-    :host-context([open]) .chevron {
+    :host([data-open]) .chevron {
       transform: rotate(180deg);
     }
   `;

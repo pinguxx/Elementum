@@ -132,6 +132,8 @@ export class Elementum extends HTMLElement {
   formDisabled?(disabled: boolean): void;
 
   setFormValue(value: File | string | FormData | null): void;
+  boolAttr(name: string): boolean;
+  numAttr(name: string, fallback: number, min?: number, max?: number): number;
   emit<T = any>(eventName: string, detail?: T, options?: CustomEventInit<T>): boolean;
   render(): TemplateResult | void;
 }

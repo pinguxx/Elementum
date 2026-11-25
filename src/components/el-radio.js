@@ -39,8 +39,8 @@ export class ElRadio extends Elementum {
       width: 18px;
       height: 18px;
       border-radius: 50%;
-      background: var(--el-surface-base, #ffffff);
-      border: 1px solid var(--el-surface-border, #cbd5e1);
+      background: var(--el-surface-card, #ffffff);
+      border: 1px solid var(--el-step-5, #cbd5e1);
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -73,15 +73,6 @@ export class ElRadio extends Elementum {
 
     .circle.checked .dot {
       transform: scale(1);
-    }
-
-    :host-context([data-theme="dark"]) .circle {
-      background: var(--el-surface-card, #111827);
-      border-color: #475569;
-    }
-
-    :host-context([data-theme="dark"]) .circle.checked {
-      border-color: var(--el-color-primary, #2563eb);
     }
   `;
 

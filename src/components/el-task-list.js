@@ -70,7 +70,7 @@ export class ElTaskList extends Elementum {
     .task-card {
       border: 1px solid var(--el-surface-border, #e2e8f0);
       border-radius: var(--el-radius-md, 10px);
-      background: var(--el-surface-base, #ffffff);
+      background: var(--el-surface-card, #ffffff);
       overflow: hidden;
     }
 
@@ -170,23 +170,6 @@ export class ElTaskList extends Elementum {
       font-size: 0.72rem;
       color: var(--el-text-muted, #64748b);
       font-variant-numeric: tabular-nums;
-    }
-
-    :host-context([data-theme="dark"]) .task-card {
-      background: #0f172a;
-      border-color: #334155;
-    }
-    :host-context([data-theme="dark"]) .task-header {
-      background: #1e293b;
-      border-color: #334155;
-    }
-    :host-context([data-theme="dark"]) .title,
-    :host-context([data-theme="dark"]) .row-label {
-      color: #f8fafc;
-    }
-    :host-context([data-theme="dark"]) .counter,
-    :host-context([data-theme="dark"]) .row-detail {
-      color: #94a3b8;
     }
 
     @media (prefers-reduced-motion: reduce) {

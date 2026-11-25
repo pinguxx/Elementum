@@ -511,6 +511,26 @@ export class Elementum extends BaseElement {
   }
 
   /**
+   * Reads a boolean HTML attribute where present and not explicitly `"false"`.
+   * @param {string} name
+   */
+  boolAttr(name) {
+    return this.hasAttribute(name) && this.getAttribute(name) !== 'false';
+  }
+
+  /**
+   * Reads a numeric HTML attribute with fallback and optional [min, max] clamping.
+   * @param {string} name
+   * @param {number} fallback
+   * @param {number} [min]
+   * @param {number} [max]
+   */
+  numAttr(name, fallback, min = -Infinity, max = Infinity) {
+    const val = parseFloat(this.getAttribute(name));
+    return Number.isFinite(val) ? Math.max(min, Math.min(max, val)) : fallback;
+  }
+
+  /**
    * Helper to dispatch standard bubbling, composed CustomEvents
    */
   emit(eventName, detail = null, options = {}) {

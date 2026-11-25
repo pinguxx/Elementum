@@ -56,10 +56,10 @@ export class ElContextMenu extends Elementum {
       flex-direction: column;
       min-width: 180px;
       padding: 4px;
-      background: var(--el-surface-base, #ffffff);
+      background: var(--el-surface-elevated, #ffffff);
       border: 1px solid var(--el-surface-border, #e2e8f0);
       border-radius: var(--el-radius-md, 8px);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+      box-shadow: var(--el-shadow-popover, 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08));
       box-sizing: border-box;
       outline: none;
     }
@@ -74,12 +74,6 @@ export class ElContextMenu extends Elementum {
       :host([data-state="open"]) .menu {
         animation: none;
       }
-    }
-
-    :host-context([data-theme="dark"]) .menu {
-      background: #1e293b;
-      border-color: #334155;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
     }
 
     @keyframes el-fade-in {
@@ -119,15 +113,8 @@ export class ElContextMenu extends Elementum {
     ::slotted(.menu-item:hover),
     ::slotted([role="menuitem"]:focus-visible),
     ::slotted(button:focus-visible) {
-      background: var(--el-surface-muted, #f1f5f9);
-      color: var(--el-color-primary, #2563eb);
-    }
-
-    :host-context([data-theme="dark"]) ::slotted([role="menuitem"]:hover),
-    :host-context([data-theme="dark"]) ::slotted(button:hover),
-    :host-context([data-theme="dark"]) ::slotted(.menu-item:hover) {
-      background: #334155;
-      color: #93c5fd;
+      background: var(--el-step-4, #f1f5f9);
+      color: var(--el-color-primary-text, #2563eb);
     }
   `;
 

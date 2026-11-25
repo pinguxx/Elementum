@@ -31,22 +31,14 @@ export class ElKbd extends Elementum {
       align-items: center;
       justify-content: center;
       background: var(--el-surface-muted, #f1f5f9);
-      border: 1px solid var(--el-surface-border, #cbd5e1);
-      border-bottom-width: 2px;
+      border: 1px solid var(--el-step-5, #cbd5e1);
+      border-bottom: 2px solid var(--el-step-8, #94a3b8);
       border-radius: var(--el-radius-sm, 4px);
       color: var(--el-text-secondary, #475569);
       font-weight: 600;
       box-sizing: border-box;
       user-select: none;
-      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-    }
-
-    :host-context([data-theme="dark"]) .keycap {
-      background: #1e293b;
-      border-color: #475569;
-      border-bottom-color: #64748b;
-      color: #cbd5e1;
-      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+      box-shadow: var(--el-shadow-sm, 0 1px 1px rgba(0, 0, 0, 0.05));
     }
 
     /* Sizes */

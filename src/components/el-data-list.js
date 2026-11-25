@@ -71,6 +71,7 @@ export class ElDataListItem extends Elementum {
   value = signal('');
   copyable = signal(false);
   copied = signal(false);
+  #copyTimer = null;
 
   static styles = css`
     :host {
@@ -88,8 +89,7 @@ export class ElDataListItem extends Elementum {
       border-bottom: none;
     }
 
-    :host([orientation="vertical"]),
-    :host-context([orientation="vertical"]) {
+    :host([orientation="vertical"]) {
       flex-direction: column;
       align-items: flex-start;
       gap: 4px;
@@ -102,10 +102,6 @@ export class ElDataListItem extends Elementum {
       min-width: 120px;
     }
 
-    :host-context([data-theme="dark"]) .label {
-      color: #94a3b8;
-    }
-
     .value-container {
       display: inline-flex;
       align-items: center;
@@ -113,10 +109,6 @@ export class ElDataListItem extends Elementum {
       color: var(--el-text-primary, #0f172a);
       font-weight: 400;
       word-break: break-all;
-    }
-
-    :host-context([data-theme="dark"]) .value-container {
-      color: #f8fafc;
     }
 
     .copy-btn {
@@ -139,11 +131,6 @@ export class ElDataListItem extends Elementum {
       color: var(--el-text-primary, #0f172a);
     }
 
-    :host-context([data-theme="dark"]) .copy-btn:hover {
-      background-color: #1e293b;
-      color: #f8fafc;
-    }
-
     .copied-badge {
       color: #10b981;
       font-size: 0.75rem;
@@ -163,6 +150,13 @@ export class ElDataListItem extends Elementum {
     if (name === 'copyable') this.copyable.value = newValue !== null;
   }
 
+  disconnected() {
+    if (this.#copyTimer) {
+      clearTimeout(this.#copyTimer);
+      this.#copyTimer = null;
+    }
+  }
+
   async copyValue() {
     const text = this.value.value || this.textContent.trim();
     if (!text) return;
@@ -171,7 +165,9 @@ export class ElDataListItem extends Elementum {
         await navigator.clipboard.writeText(text);
       }
       this.copied.value = true;
-      setTimeout(() => {
+      if (this.#copyTimer) clearTimeout(this.#copyTimer);
+      this.#copyTimer = setTimeout(() => {
+        this.#copyTimer = null;
         this.copied.value = false;
       }, 2000);
     } catch {

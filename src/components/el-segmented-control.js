@@ -28,12 +28,12 @@ export class ElSegmentedControl extends Elementum {
 
     this.addEventListener('keydown', this.#onKeyDown);
 
-    const stopEffect = effect(() => {
+    effect(() => {
       void this.value.value;
       void this.size.value;
       void this.#options.value;
       this.#schedulePillSync();
-    });
+    }, { signal: this.signal });
     let ro = null;
     if (typeof ResizeObserver === 'function') {
       ro = new ResizeObserver(() => this.syncPill());
@@ -42,7 +42,6 @@ export class ElSegmentedControl extends Elementum {
     }
     this.signal?.addEventListener('abort', () => {
       observer.disconnect();
-      stopEffect();
       ro?.disconnect();
     });
   }

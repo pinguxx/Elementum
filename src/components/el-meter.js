@@ -78,7 +78,7 @@ export class ElMeter extends Elementum {
 
     .track {
       width: 100%;
-      background: var(--el-surface-muted, #e2e8f0);
+      background: var(--el-step-4, #e2e8f0);
       border-radius: 9999px;
       overflow: hidden;
       position: relative;
@@ -95,10 +95,6 @@ export class ElMeter extends Elementum {
 
     :host([size="lg"]) .track {
       height: 12px;
-    }
-
-    :host-context([data-theme="dark"]) .track {
-      background: #334155;
     }
 
     .fill {
@@ -121,17 +117,11 @@ export class ElMeter extends Elementum {
     }
   `;
 
-  #stopEffect = null;
-
   connected() {
     this.#syncAttributes();
-    this.#stopEffect = effect(() => {
+    effect(() => {
       this.setAttribute('data-status', this.status.value);
-    });
-  }
-
-  disconnected() {
-    this.#stopEffect?.();
+    }, { signal: this.signal });
   }
 
   attributeChanged(name, oldValue, newValue) {

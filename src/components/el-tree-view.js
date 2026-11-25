@@ -48,14 +48,6 @@ export class ElTreeItem extends Elementum {
       background: var(--el-surface-muted, #f1f5f9);
     }
 
-    :host-context([data-theme="dark"]) .item-row {
-      color: #f8fafc;
-    }
-
-    :host-context([data-theme="dark"]) .item-row:hover {
-      background: #1e293b;
-    }
-
     :host([selected]) .item-row {
       background: var(--el-surface-border, #e2e8f0);
       font-weight: 600;
@@ -110,10 +102,6 @@ export class ElTreeItem extends Elementum {
       left: 14px;
       width: 1px;
       background: var(--el-surface-border, #e2e8f0);
-    }
-
-    :host-context([data-theme="dark"]) .sub-tree::before {
-      background: #334155;
     }
 
     :host([expanded]) .sub-tree {

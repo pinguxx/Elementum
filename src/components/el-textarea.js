@@ -45,7 +45,7 @@ export class ElTextarea extends Elementum {
       font-size: 0.875rem;
       line-height: 1.5;
       color: var(--el-text-primary, #0f172a);
-      background: var(--el-surface-base, #ffffff);
+      background: var(--el-surface-elevated, #ffffff);
       border: 1px solid var(--el-surface-border, #cbd5e1);
       border-radius: var(--el-radius-md, 8px);
       box-sizing: border-box;
@@ -62,17 +62,6 @@ export class ElTextarea extends Elementum {
     textarea:focus {
       border-color: var(--el-color-primary, #2563eb);
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-    }
-
-    :host-context([data-theme="dark"]) textarea {
-      background: #1e293b;
-      border-color: #334155;
-      color: #f8fafc;
-    }
-
-    :host-context([data-theme="dark"]) textarea:focus {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
     }
 
     :host([disabled]) textarea {

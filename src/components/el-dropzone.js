@@ -35,7 +35,7 @@ export class ElDropzone extends Elementum {
       padding: 32px 20px;
       border: 2px dashed var(--el-surface-border, #cbd5e1);
       border-radius: var(--el-radius-lg, 12px);
-      background: var(--el-surface-base, #ffffff);
+      background: var(--el-surface-elevated, #ffffff);
       cursor: pointer;
       text-align: center;
       transition: border-color 0.15s ease, background-color 0.15s ease;
@@ -43,21 +43,10 @@ export class ElDropzone extends Elementum {
       box-sizing: border-box;
     }
 
-    :host-context([data-theme="dark"]) .dropzone-box {
-      background: #1e293b;
-      border-color: #334155;
-    }
-
     .dropzone-box:hover:not(.disabled),
     .dropzone-box.dragover {
       border-color: var(--el-color-primary, #2563eb);
-      background: rgba(37, 99, 235, 0.03);
-    }
-
-    :host-context([data-theme="dark"]) .dropzone-box:hover:not(.disabled),
-    :host-context([data-theme="dark"]) .dropzone-box.dragover {
-      background: rgba(59, 130, 246, 0.1);
-      border-color: #3b82f6;
+      background: var(--el-tint-primary-bg, rgba(37, 99, 235, 0.04));
     }
 
     .dropzone-box.disabled {
@@ -70,17 +59,12 @@ export class ElDropzone extends Elementum {
       width: 44px;
       height: 44px;
       border-radius: 999px;
-      background: var(--el-surface-muted, #f1f5f9);
+      background: var(--el-step-2, #f1f5f9);
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 12px;
-      color: var(--el-color-primary, #2563eb);
-    }
-
-    :host-context([data-theme="dark"]) .icon {
-      background: #0f172a;
-      color: #60a5fa;
+      color: var(--el-color-primary-text, #2563eb);
     }
 
     .headline {
@@ -88,10 +72,6 @@ export class ElDropzone extends Elementum {
       font-weight: 600;
       color: var(--el-text-primary, #0f172a);
       margin: 0 0 4px 0;
-    }
-
-    :host-context([data-theme="dark"]) .headline {
-      color: #f8fafc;
     }
 
     .subtext {
@@ -117,15 +97,10 @@ export class ElDropzone extends Elementum {
       align-items: center;
       justify-content: space-between;
       padding: 6px 12px;
-      background: var(--el-surface-muted, #f1f5f9);
+      background: var(--el-step-2, #f1f5f9);
       border-radius: var(--el-radius-sm, 6px);
       font-size: 0.8rem;
       color: var(--el-text-secondary, #334155);
-    }
-
-    :host-context([data-theme="dark"]) .file-item {
-      background: #0f172a;
-      color: #94a3b8;
     }
   `;
 

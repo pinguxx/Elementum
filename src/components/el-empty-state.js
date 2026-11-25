@@ -26,32 +26,22 @@ export class ElEmptyState extends Elementum {
       padding: 48px 24px;
       border: 2px dashed var(--el-surface-border, #e2e8f0);
       border-radius: var(--el-radius-lg, 12px);
-      background: var(--el-surface-base, #ffffff);
+      background: var(--el-surface-elevated, #ffffff);
       font-family: var(--el-font-sans, system-ui, sans-serif);
       box-sizing: border-box;
       width: 100%;
-    }
-
-    :host-context([data-theme="dark"]) {
-      background: #1e293b;
-      border-color: #334155;
     }
 
     .icon-container {
       width: 54px;
       height: 54px;
       border-radius: 999px;
-      background: var(--el-surface-muted, #f1f5f9);
+      background: var(--el-step-2, #f1f5f9);
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 16px;
       color: var(--el-text-muted, #64748b);
-    }
-
-    :host-context([data-theme="dark"]) .icon-container {
-      background: #0f172a;
-      color: #94a3b8;
     }
 
     .title {
@@ -62,20 +52,12 @@ export class ElEmptyState extends Elementum {
       letter-spacing: -0.02em;
     }
 
-    :host-context([data-theme="dark"]) .title {
-      color: #f8fafc;
-    }
-
     .description {
       font-size: 0.875rem;
       color: var(--el-text-secondary, #64748b);
       max-width: 420px;
       line-height: 1.5;
       margin: 0 0 20px 0;
-    }
-
-    :host-context([data-theme="dark"]) .description {
-      color: #94a3b8;
     }
 
     .actions {

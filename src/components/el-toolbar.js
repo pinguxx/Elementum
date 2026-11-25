@@ -28,7 +28,7 @@ export class ElToolbar extends Elementum {
       align-items: center;
       gap: var(--el-spacing-xs, 4px);
       padding: var(--el-spacing-xs, 4px);
-      background: var(--el-surface-base, #ffffff);
+      background: var(--el-surface-elevated, #ffffff);
       border: 1px solid var(--el-surface-border, #e2e8f0);
       border-radius: var(--el-radius-md, 8px);
       box-sizing: border-box;
@@ -36,11 +36,6 @@ export class ElToolbar extends Elementum {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    :host-context([data-theme="dark"]) .toolbar {
-      background: #1e293b;
-      border-color: #334155;
     }
 
     :host([orientation="vertical"]) .toolbar {

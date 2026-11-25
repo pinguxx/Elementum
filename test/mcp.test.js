@@ -579,8 +579,11 @@ test('MCP v2: resources, prompts, completions, setup, bundle planning, filtered 
   // 8. Vercel Edge purity checks
   const coreSrc = fs.readFileSync(new URL('../mcp/core.js', import.meta.url), 'utf8');
   const edgeSrc = fs.readFileSync(new URL('../mcp/edge.js', import.meta.url), 'utf8');
+  const resourcesSrc = fs.readFileSync(new URL('../mcp/resources.js', import.meta.url), 'utf8');
+  const promptsSrc = fs.readFileSync(new URL('../mcp/prompts.js', import.meta.url), 'utf8');
   const apiMcpSrc = fs.readFileSync(new URL('../api/mcp.js', import.meta.url), 'utf8');
-  assert.equal(/from\s+['"]node:|\brequire\s*\(|\bBuffer\b|\bprocess\./.test(coreSrc), false);
-  assert.equal(/from\s+['"]node:|\brequire\s*\(|\bBuffer\b|\bprocess\./.test(edgeSrc), false);
+  for (const src of [coreSrc, edgeSrc, resourcesSrc, promptsSrc]) {
+    assert.equal(/from\s+['"]node:|\brequire\s*\(|\bBuffer\b|\bprocess\./.test(src), false);
+  }
   assert.equal(/with\s*\{\s*type:\s*['"]json['"]/.test(apiMcpSrc), false);
 });

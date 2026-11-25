@@ -49,6 +49,17 @@
   --el-text-secondary: #475569;
   --el-text-muted: #6b7280;
   --el-text-inverse: #ffffff;
+  --el-color-primary-text: #1d4ed8;
+  --el-color-success-text: #065f46;
+  --el-color-warning-text: #92400e;
+  --el-color-danger-text: #991b1b;
+  --el-surface-hover: rgba(0, 0, 0, 0.05);
+  --el-tint-primary-bg: rgba(37, 99, 235, 0.08);
+  --el-tint-primary-border: rgba(37, 99, 235, 0.2);
+  --el-tint-success-bg: #d1fae5;
+  --el-tint-danger-bg: #fee2e2;
+  --el-disabled-opacity: 0.45;
+  --el-disabled-filter: grayscale(0.2);
 
   /* Font Families */
   --el-font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -155,6 +166,13 @@
   --el-color-success-text: #6ee7b7;
   --el-color-warning-text: #fcd34d;
   --el-color-danger-text: #fca5a5;
+  --el-surface-hover: rgba(255, 255, 255, 0.1);
+  --el-tint-primary-bg: rgba(59, 130, 246, 0.14);
+  --el-tint-primary-border: rgba(59, 130, 246, 0.3);
+  --el-tint-success-bg: rgba(16, 185, 129, 0.2);
+  --el-tint-danger-bg: rgba(239, 68, 68, 0.2);
+  --el-disabled-opacity: 0.38;
+  --el-disabled-filter: grayscale(0.3);
 
   /* Chart Colors (Dark Mode) */
   --el-chart-1: #3b82f6;
@@ -220,6 +238,13 @@
     --el-color-success-text: #6ee7b7;
     --el-color-warning-text: #fcd34d;
     --el-color-danger-text: #fca5a5;
+    --el-surface-hover: rgba(255, 255, 255, 0.1);
+    --el-tint-primary-bg: rgba(59, 130, 246, 0.14);
+    --el-tint-primary-border: rgba(59, 130, 246, 0.3);
+    --el-tint-success-bg: rgba(16, 185, 129, 0.2);
+    --el-tint-danger-bg: rgba(239, 68, 68, 0.2);
+    --el-disabled-opacity: 0.38;
+    --el-disabled-filter: grayscale(0.3);
 
     --el-chart-1: #3b82f6;
     --el-chart-2: #34d399;
@@ -398,6 +423,12 @@ el-dropdown:not(:defined) {
 @keyframes el-defined-in {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-dsd]) :defined {
+    animation: none;
+  }
 }
 
 /* ========================================================
@@ -612,7 +643,7 @@ el-sidebar[collapsed] el-sidebar-content div {
     ::slotted(a[active]),
     ::slotted(el-route-link:hover),
     ::slotted(el-route-link[active]) {
-      color: var(--el-color-primary, #2563eb);
+      color: var(--el-color-primary-text, #1d4ed8);
       background: var(--el-surface-muted, #f1f5f9);
       font-weight: 600;
     }
@@ -1066,14 +1097,9 @@ el-sidebar[collapsed] el-sidebar-content div {
 
     /* Info & Primary */
     :host, :host([variant="info"]), :host([variant="primary"]) {
-      background-color: rgba(37, 99, 235, 0.08);
-      border-color: rgba(37, 99, 235, 0.2);
+      background-color: var(--el-tint-primary-bg, rgba(37, 99, 235, 0.08));
+      border-color: var(--el-tint-primary-border, rgba(37, 99, 235, 0.2));
       color: var(--el-color-primary-text, #1e40af);
-    }
-    :host-context([data-theme="dark"]) {
-      background-color: rgba(59, 130, 246, 0.14);
-      border-color: rgba(59, 130, 246, 0.3);
-      color: #93c5fd;
     }
 
     /* Secondary */
@@ -1132,7 +1158,7 @@ el-sidebar[collapsed] el-sidebar-content div {
         <slot name="title"></slot>
         <slot></slot>
       </div>
-    </template><span slot="title">Rendered on the Server at 2026-11-24T01:26:34.352Z</span>
+    </template><span slot="title">Rendered on the Server at 2026-11-25T00:13:48.553Z</span>
      Every component below was serialized in pure Node.js via <code>renderComponentToDSD()</code> into standard
      <code>&lt;template shadowrootmode="open"&gt;</code>. Even with JavaScript disabled (<code>?hydrate=0</code>),
      Shadow DOM styles and slots paint immediately with zero FOUC or layout shift.</el-callout>
@@ -1142,21 +1168,15 @@ el-sidebar[collapsed] el-sidebar-content div {
     :host {
       display: flex;
       flex-direction: column;
-      background: var(--el-surface-base, #ffffff);
+      background: var(--el-surface-elevated, #ffffff);
       border: 1px solid var(--el-surface-border, #e2e8f0);
       border-radius: var(--el-radius-lg, 12px);
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+      box-shadow: var(--el-shadow-card, 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05));
       color: var(--el-text-primary, #0f172a);
       font-family: var(--el-font-sans, system-ui, sans-serif);
       box-sizing: border-box;
       overflow: hidden;
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-    }
-
-    :host-context([data-theme="dark"]) {
-      background: #1e293b;
-      border-color: #334155;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
     }
 
     :host([bordered="false"]) {
@@ -1170,11 +1190,6 @@ el-sidebar[collapsed] el-sidebar-content div {
       -webkit-backdrop-filter: blur(12px);
       border-color: rgba(148, 163, 184, 0.35);
       box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
-    }
-
-    :host-context([data-theme="dark"]):host([glass]) {
-      background: rgba(30, 41, 59, 0.68);
-      border-color: rgba(148, 163, 184, 0.25);
     }
 
     :host([hoverable]) {
@@ -1193,10 +1208,6 @@ el-sidebar[collapsed] el-sidebar-content div {
       font-weight: 700;
       letter-spacing: -0.02em;
       color: var(--el-text-primary, #0f172a);
-    }
-
-    :host-context([data-theme="dark"]) .card-auto-header {
-      color: #f8fafc;
     }
 
     .card-body {
@@ -1270,20 +1281,12 @@ el-sidebar[collapsed] el-sidebar-content div {
     button:disabled,
     :host([disabled]) button,
     :host([aria-disabled="true"]) button {
-      opacity: 0.45;
+      opacity: var(--el-disabled-opacity, 0.45);
       cursor: not-allowed !important;
       pointer-events: none !important;
       box-shadow: none !important;
       transform: none !important;
-      filter: grayscale(0.2);
-    }
-
-    :host-context([data-theme="dark"]) button[disabled],
-    :host-context([data-theme="dark"]) button:disabled,
-    :host-context([data-theme="dark"]):host([disabled]) button,
-    :host-context([data-theme="dark"]):host([aria-disabled="true"]) button {
-      opacity: 0.38;
-      filter: grayscale(0.3);
+      filter: var(--el-disabled-filter, grayscale(0.2));
     }
 
     /* Size Variants */
@@ -1422,20 +1425,12 @@ el-sidebar[collapsed] el-sidebar-content div {
     button:disabled,
     :host([disabled]) button,
     :host([aria-disabled="true"]) button {
-      opacity: 0.45;
+      opacity: var(--el-disabled-opacity, 0.45);
       cursor: not-allowed !important;
       pointer-events: none !important;
       box-shadow: none !important;
       transform: none !important;
-      filter: grayscale(0.2);
-    }
-
-    :host-context([data-theme="dark"]) button[disabled],
-    :host-context([data-theme="dark"]) button:disabled,
-    :host-context([data-theme="dark"]):host([disabled]) button,
-    :host-context([data-theme="dark"]):host([aria-disabled="true"]) button {
-      opacity: 0.38;
-      filter: grayscale(0.3);
+      filter: var(--el-disabled-filter, grayscale(0.2));
     }
 
     /* Size Variants */
@@ -1574,20 +1569,12 @@ el-sidebar[collapsed] el-sidebar-content div {
     button:disabled,
     :host([disabled]) button,
     :host([aria-disabled="true"]) button {
-      opacity: 0.45;
+      opacity: var(--el-disabled-opacity, 0.45);
       cursor: not-allowed !important;
       pointer-events: none !important;
       box-shadow: none !important;
       transform: none !important;
-      filter: grayscale(0.2);
-    }
-
-    :host-context([data-theme="dark"]) button[disabled],
-    :host-context([data-theme="dark"]) button:disabled,
-    :host-context([data-theme="dark"]):host([disabled]) button,
-    :host-context([data-theme="dark"]):host([aria-disabled="true"]) button {
-      opacity: 0.38;
-      filter: grayscale(0.3);
+      filter: var(--el-disabled-filter, grayscale(0.2));
     }
 
     /* Size Variants */
@@ -1680,21 +1667,15 @@ el-sidebar[collapsed] el-sidebar-content div {
     :host {
       display: flex;
       flex-direction: column;
-      background: var(--el-surface-base, #ffffff);
+      background: var(--el-surface-elevated, #ffffff);
       border: 1px solid var(--el-surface-border, #e2e8f0);
       border-radius: var(--el-radius-lg, 12px);
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+      box-shadow: var(--el-shadow-card, 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05));
       color: var(--el-text-primary, #0f172a);
       font-family: var(--el-font-sans, system-ui, sans-serif);
       box-sizing: border-box;
       overflow: hidden;
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-    }
-
-    :host-context([data-theme="dark"]) {
-      background: #1e293b;
-      border-color: #334155;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
     }
 
     :host([bordered="false"]) {
@@ -1708,11 +1689,6 @@ el-sidebar[collapsed] el-sidebar-content div {
       -webkit-backdrop-filter: blur(12px);
       border-color: rgba(148, 163, 184, 0.35);
       box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
-    }
-
-    :host-context([data-theme="dark"]):host([glass]) {
-      background: rgba(30, 41, 59, 0.68);
-      border-color: rgba(148, 163, 184, 0.25);
     }
 
     :host([hoverable]) {
@@ -1731,10 +1707,6 @@ el-sidebar[collapsed] el-sidebar-content div {
       font-weight: 700;
       letter-spacing: -0.02em;
       color: var(--el-text-primary, #0f172a);
-    }
-
-    :host-context([data-theme="dark"]) .card-auto-header {
-      color: #f8fafc;
     }
 
     .card-body {
@@ -2026,7 +1998,7 @@ el-sidebar[collapsed] el-sidebar-content div {
 
     .track {
       width: 100%;
-      background: var(--el-surface-muted, #e2e8f0);
+      background: var(--el-step-4, #e2e8f0);
       border-radius: 9999px;
       overflow: hidden;
       position: relative;
@@ -2043,10 +2015,6 @@ el-sidebar[collapsed] el-sidebar-content div {
 
     :host([size="lg"]) .track {
       height: 12px;
-    }
-
-    :host-context([data-theme="dark"]) .track {
-      background: #334155;
     }
 
     .fill {
@@ -2321,10 +2289,6 @@ el-sidebar[collapsed] el-sidebar-content div {
       color: var(--el-text-secondary, #475569);
     }
 
-    :host-context([data-theme="dark"]) .description {
-      color: #94a3b8;
-    }
-
     .dismiss-btn {
       flex-shrink: 0;
       background: transparent;
@@ -2341,90 +2305,47 @@ el-sidebar[collapsed] el-sidebar-content div {
 
     .dismiss-btn:hover {
       color: var(--el-text-primary, #0f172a);
-      background: rgba(0, 0, 0, 0.05);
-    }
-
-    :host-context([data-theme="dark"]) .dismiss-btn:hover {
-      color: #f8fafc;
-      background: rgba(255, 255, 255, 0.1);
+      background: var(--el-surface-hover, rgba(0, 0, 0, 0.05));
     }
 
     /* Variants */
     :host([variant="info"]) .alert {
-      background: #eff6ff;
-      border-color: #bfdbfe;
-      color: #1e40af;
+      background: rgba(37, 99, 235, 0.1);
+      border-color: rgba(37, 99, 235, 0.3);
+      color: var(--el-color-primary-text, #1e40af);
     }
-    :host([variant="info"]) .title { color: #1e3a8a; }
-    :host([variant="info"]) .description { color: #1e40af; }
-
-    :host-context([data-theme="dark"]):host([variant="info"]) .alert {
-      background: rgba(30, 58, 138, 0.25);
-      border-color: #1e3a8a;
-      color: #bfdbfe;
-    }
-    :host-context([data-theme="dark"]):host([variant="info"]) .title { color: #93c5fd; }
-    :host-context([data-theme="dark"]):host([variant="info"]) .description { color: #bfdbfe; }
+    :host([variant="info"]) .title,
+    :host([variant="info"]) .description { color: var(--el-color-primary-text, #1e40af); }
 
     :host([variant="success"]) .alert {
-      background: #f0fdf4;
-      border-color: #bbf7d0;
-      color: #166534;
+      background: rgba(16, 185, 129, 0.1);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: var(--el-color-success-text, #166534);
     }
-    :host([variant="success"]) .title { color: #14532d; }
-    :host([variant="success"]) .description { color: #166534; }
-
-    :host-context([data-theme="dark"]):host([variant="success"]) .alert {
-      background: rgba(20, 83, 45, 0.25);
-      border-color: #166534;
-      color: #bbf7d0;
-    }
-    :host-context([data-theme="dark"]):host([variant="success"]) .title { color: #86efac; }
-    :host-context([data-theme="dark"]):host([variant="success"]) .description { color: #bbf7d0; }
+    :host([variant="success"]) .title,
+    :host([variant="success"]) .description { color: var(--el-color-success-text, #166534); }
 
     :host([variant="warning"]) .alert {
-      background: #fffbeb;
-      border-color: #fde68a;
-      color: #92400e;
+      background: rgba(245, 158, 11, 0.1);
+      border-color: rgba(245, 158, 11, 0.3);
+      color: var(--el-color-warning-text, #92400e);
     }
-    :host([variant="warning"]) .title { color: #78350f; }
-    :host([variant="warning"]) .description { color: #92400e; }
-
-    :host-context([data-theme="dark"]):host([variant="warning"]) .alert {
-      background: rgba(120, 53, 15, 0.25);
-      border-color: #92400e;
-      color: #fde68a;
-    }
-    :host-context([data-theme="dark"]):host([variant="warning"]) .title { color: #fcd34d; }
-    :host-context([data-theme="dark"]):host([variant="warning"]) .description { color: #fde68a; }
+    :host([variant="warning"]) .title,
+    :host([variant="warning"]) .description { color: var(--el-color-warning-text, #92400e); }
 
     :host([variant="destructive"]) .alert,
     :host([variant="danger"]) .alert,
     :host([variant="error"]) .alert {
-      background: #fef2f2;
-      border-color: #fecaca;
-      color: #991b1b;
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: var(--el-color-danger-text, #991b1b);
     }
     :host([variant="destructive"]) .title,
     :host([variant="danger"]) .title,
-    :host([variant="error"]) .title { color: #7f1d1d; }
+    :host([variant="error"]) .title,
     :host([variant="destructive"]) .description,
     :host([variant="danger"]) .description,
-    :host([variant="error"]) .description { color: #991b1b; }
-
-    :host-context([data-theme="dark"]):host([variant="destructive"]) .alert,
-    :host-context([data-theme="dark"]):host([variant="danger"]) .alert,
-    :host-context([data-theme="dark"]):host([variant="error"]) .alert {
-      background: rgba(127, 29, 29, 0.25);
-      border-color: #991b1b;
-      color: #fecaca;
-    }
-    :host-context([data-theme="dark"]):host([variant="destructive"]) .title,
-    :host-context([data-theme="dark"]):host([variant="danger"]) .title,
-    :host-context([data-theme="dark"]):host([variant="error"]) .title { color: #fca5a5; }
-    :host-context([data-theme="dark"]):host([variant="destructive"]) .description,
-    :host-context([data-theme="dark"]):host([variant="danger"]) .description,
-    :host-context([data-theme="dark"]):host([variant="error"]) .description { color: #fecaca; }
+    :host([variant="error"]) .description { color: var(--el-color-danger-text, #991b1b); }
   </style>
       <div class="alert" part="alert" role="status">
         <div class="icon-area" part="icon">

@@ -57,7 +57,7 @@ Once `1.0.0` is tagged, **breaking changes require a major version bump (`2.0.0`
 
 ### Next minor cycle (`0.9.x` hardening)
 
-- [ ] **Cross-browser dark-mode parity without `:host-context()`**: Migrate remaining `:host-context([data-theme="dark"])` rules in `src/components/*.js` to `--el-*` CSS custom properties so Firefox and Safari dark mode match Chromium 1:1.
+- [x] **Cross-browser dark-mode parity without `:host-context()`**: Migrate remaining `:host-context([data-theme="dark"])` rules in `src/components/*.js` to `--el-*` CSS custom properties so Firefox and Safari dark mode match Chromium 1:1.
 - [ ] **API surface consistency pass**: Audit and normalize attribute, variant, event, and `FormData` naming across all 113 components (for example, `open` vs `expanded` and `danger` vs `destructive`) while breaking changes are still allowed in `0.x`.
 - [ ] **State-transition E2E coverage across all stateful components**: Expand real pointer and keyboard interaction assertions beyond mount and bounding-box checks to every overlay, form control, menu, grid, and picker.
 - [ ] **Complex widget hardening**: Deepen real-world edge-case handling in `el-table` (virtualization, column sizing, empty/loading states), `el-datepicker` / `el-date-range-picker` (locale parsing, min/max clamping), `el-autocomplete` / `el-combobox` (async error/retry states, creatable tags), `el-command` (nested sub-pages), and `el-tree-view`.

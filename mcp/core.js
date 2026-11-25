@@ -3,6 +3,9 @@
  * Zero Node built-ins so Edge isolates cold-start in ~10ms.
  */
 
+import { RESOURCES, RESOURCE_TEMPLATES, createResourceReaders } from './resources.js';
+import { PROMPTS, createPromptHandlers } from './prompts.js';
+
 const textEncoder = new TextEncoder();
 const SUPPORTED_PROTOCOL_VERSIONS = ['2025-06-18', '2025-03-26', '2024-11-05'];
 
@@ -504,10 +507,7 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {}, sizeBud
       const htmlSnippet = `<${tag}${attrStr}>${content}</${tag}>`;
 
       if (fmt === 'react') {
-        const pascal = tag
-          .split('-')
-          .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
-          .join('');
+        const pascal = toPascalCase(tag);
         return {
           format: 'react',
           snippet: `import '@wcomp/elementum/tokens.css';\nimport { ${pascal} } from '@wcomp/elementum/react';\n\nexport function Example() {\n  return <${pascal}${attrStr}>${content}</${pascal}>;\n}`,
@@ -529,7 +529,7 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {}, sizeBud
           'el-prompt-input': 'PromptInput', 'el-reasoning-card': 'ReasoningCard', 'el-tool-call': 'ToolCall',
           'el-streaming-text': 'StreamingText', 'el-sources': 'Sources',
         };
-        const a2uiType = a2uiMap[tag] || tag.replace(/^el-/, '').split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join('');
+        const a2uiType = a2uiMap[tag] || toPascalCase(tag.replace(/^el-/, ''));
         const props = {};
         if (variant) props.variant = String(variant);
         if (size) props.size = String(size);
@@ -558,10 +558,7 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {}, sizeBud
       if (!SAFE_TAG_RE.test(tag)) {
         return { error: `Invalid custom element tag name: '${tag}'. Expected lowercase kebab-case with hyphen.` };
       }
-      const derivedName = tag
-        .split('-')
-        .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
-        .join('');
+      const derivedName = toPascalCase(tag);
       const className = typeof args.name === 'string' && SAFE_CLASS_RE.test(args.name) ? args.name : derivedName;
       const formAssociated = !!args.formAssociated;
       const rawAttrs = Array.isArray(args.attributes) ? args.attributes : ['disabled', 'size'];
@@ -1128,319 +1125,23 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {}, sizeBud
     throw new Error(`Unknown tool: ${name}`);
   }
 
-  const RESOURCES = [
-    {
-      uri: 'elementum://catalog',
-      name: 'Elementum Component Catalog',
-      description: 'Complete Markdown index of registered Elementum Web Components grouped by category.',
-      mimeType: 'text/markdown',
-    },
-    {
-      uri: 'elementum://setup',
-      name: 'Elementum Setup & Theme Guide',
-      description: 'Installation commands, tree-shaken framework imports, dark-mode theme setup, and reduced-motion contract.',
-      mimeType: 'text/markdown',
-    },
-    {
-      uri: 'elementum://tokens',
-      name: 'Elementum Design Tokens (W3C DTCG)',
-      description: 'Semantic design tokens for colors, spacing, radii, typography, elevation, and motion.',
-      mimeType: 'text/markdown',
-    },
-  ];
+  const { readResource } = createResourceReaders({
+    allDeclarations,
+    declByTag,
+    getResolvedMetadata,
+    tokens,
+    pkg,
+    setupGuides: SETUP_GUIDES,
+    toPascalCase,
+    safeTagRe: SAFE_TAG_RE,
+  });
 
-  const RESOURCE_TEMPLATES = [
-    {
-      uriTemplate: 'elementum://components/{tag}',
-      name: 'Elementum Component Reference',
-      description: 'Schema, variants, attributes, events, slots, constraints, and examples for a specific <el-*> tag.',
-      mimeType: 'text/markdown',
-    },
-  ];
-
-  const PROMPTS = [
-    {
-      name: 'add_component',
-      title: 'Add Elementum component',
-      description: 'Inspect schema, accessibility rules, and tree-shaken setup for an Elementum component.',
-      arguments: [
-        {
-          name: 'tag',
-          description: 'Custom element tag name (e.g. el-hold-button, el-tabs).',
-          required: true,
-        },
-        {
-          name: 'framework',
-          description: 'Target framework: html, react, vue, or svelte.',
-          required: false,
-        },
-      ],
-    },
-    {
-      name: 'build_screen',
-      title: 'Compose UI screen',
-      description: 'Select Elementum components, tokens, and a tree-shaken bundle plan for a screen.',
-      arguments: [
-        {
-          name: 'goal',
-          description: 'Short description of the UI screen or workflow to build.',
-          required: true,
-        },
-        {
-          name: 'framework',
-          description: 'Target framework: html, react, vue, or svelte.',
-          required: false,
-        },
-      ],
-    },
-    {
-      name: 'audit_markup',
-      title: 'Audit Elementum markup',
-      description: 'Audit Elementum HTML/JSX markup for WCAG 2.2 AA accessibility and component contract errors.',
-      arguments: [
-        {
-          name: 'html',
-          description: 'Markup snippet containing Elementum custom elements.',
-          required: true,
-        },
-      ],
-    },
-  ];
-
-  function collectTokenRows(node, prefix, rows, limit = 200) {
-    if (!node || typeof node !== 'object' || rows.length >= limit) return;
-    if (Object.hasOwn(node, '$value') || Object.hasOwn(node, 'value')) {
-      const val = Object.hasOwn(node, '$value') ? node.$value : node.value;
-      const type = node.$type || node.type || '';
-      rows.push({
-        name: prefix,
-        type: String(type),
-        value: typeof val === 'object' ? JSON.stringify(val) : String(val),
-      });
-      return;
-    }
-    for (const [k, v] of Object.entries(node)) {
-      if (k.startsWith('$') || rows.length >= limit) continue;
-      collectTokenRows(v, prefix ? `${prefix}.${k}` : k, rows, limit);
-    }
-  }
-
-  function buildCatalogMarkdown() {
-    const byCategory = new Map();
-    for (const d of allDeclarations) {
-      const meta = getResolvedMetadata(d);
-      const cat = String(meta.category || 'general');
-      if (!byCategory.has(cat)) byCategory.set(cat, []);
-      byCategory.get(cat).push({ decl: d, meta });
-    }
-    const lines = [
-      `# Elementum Component Catalog (v${pkg.version})`,
-      '',
-      `Total components: **${allDeclarations.length}** | Zero runtime dependencies | WCAG 2.2 AA`,
-      '',
-    ];
-    for (const cat of [...byCategory.keys()].sort()) {
-      lines.push(`## ${cat} (${byCategory.get(cat).length})`, '');
-      for (const { decl, meta } of byCategory.get(cat)) {
-        const flags = [];
-        if (meta.hasMotion) flags.push('motion');
-        if (meta.constraints?.formAssociated) flags.push('FACE');
-        const suffix = flags.length ? ` _[${flags.join(', ')}]_` : '';
-        lines.push(`- \`<${decl.tagName}>\` — ${decl.description || ''}${suffix}`);
-      }
-      lines.push('');
-    }
-    return lines.join('\n');
-  }
-
-  function buildSetupMarkdown() {
-    const lines = [
-      `# Elementum Setup & Integration Guide (${pkg.name} v${pkg.version})`,
-      '',
-      'Zero runtime dependencies. Works with plain HTML, React 18/19, Next.js SSR (DSD), Vue 3, and Svelte.',
-      '',
-    ];
-    for (const [fw, guide] of Object.entries(SETUP_GUIDES)) {
-      lines.push(`## ${fw}`, '', `Install: \`${guide.install}\``, '', '```js', ...guide.imports, '```', '');
-    }
-    lines.push(
-      '## Dark Mode & Reduced Motion',
-      '',
-      '- Dark theme activates via `[data-theme="dark"]` on `<html>` / `:root` after loading `@wcomp/elementum/tokens.css`.',
-      '- All CSS animations and JS motion behaviors (`createSpringEasing`, `createFlipBehavior`, `createInViewBehavior`, `createPointerTracker`) honor `@media (prefers-reduced-motion: reduce)`.',
-      '',
-    );
-    return lines.join('\n');
-  }
-
-  function buildTokensMarkdown() {
-    const lines = [`# Elementum Design Tokens (${pkg.name} v${pkg.version})`, ''];
-    for (const [category, group] of Object.entries(tokens || {})) {
-      if (category.startsWith('$')) continue;
-      const rows = [];
-      collectTokenRows(group, category, rows, 80);
-      lines.push(`## ${category} (${rows.length})`, '');
-      for (const row of rows) {
-        lines.push(`- \`${row.name}\`${row.type ? ` (${row.type})` : ''}: \`${row.value}\``);
-      }
-      lines.push('');
-    }
-    return lines.join('\n');
-  }
-
-  function buildComponentMarkdown(decl) {
-    const meta = getResolvedMetadata(decl);
-    const lines = [
-      `# \`<${decl.tagName}>\` (${decl.name || toPascalCase(decl.tagName)})`,
-      '',
-      decl.description || '',
-      '',
-      `- **Category:** ${meta.category || 'general'}`,
-      `- **Motion:** ${Boolean(meta.hasMotion)}`,
-      `- **Form-associated (FACE):** ${Boolean(meta.constraints?.formAssociated)}`,
-      `- **Import:** \`import '@wcomp/elementum/components/${decl.tagName}.js';\``,
-      '',
-    ];
-    const attrs = Array.isArray(decl.attributes) ? decl.attributes : [];
-    if (attrs.length > 0) {
-      lines.push('## Attributes', '');
-      for (const attr of attrs) {
-        lines.push(`- \`${attr.name}\` (${attr.type?.text || 'string'}): ${attr.description || ''}`);
-      }
-      lines.push('');
-    }
-    if (Array.isArray(meta.variants) && meta.variants.length > 0) {
-      lines.push('## Variants', '');
-      for (const v of meta.variants) {
-        lines.push(`- \`${v.name || v.attribute}\`: ${(v.allowedValues || []).join(', ')}`);
-      }
-      lines.push('');
-    }
-    const events = Array.isArray(decl.events) ? decl.events : [];
-    if (events.length > 0) {
-      lines.push('## Events', '');
-      for (const ev of events) {
-        lines.push(`- \`${ev.name}\`: ${ev.description || ''}`);
-      }
-      lines.push('');
-    }
-    const slots = Array.isArray(decl.slots) ? decl.slots : [];
-    if (slots.length > 0) {
-      lines.push('## Slots', '');
-      for (const slot of slots) {
-        lines.push(`- \`${slot.name || '(default)'}\`: ${slot.description || ''}`);
-      }
-      lines.push('');
-    }
-    if (Array.isArray(meta.examples) && meta.examples.length > 0) {
-      lines.push('## Examples', '');
-      for (const ex of meta.examples) {
-        lines.push(`### ${ex.title || 'Example'}`, '', '```html', ex.code || '', '```', '');
-      }
-    }
-    return lines.join('\n');
-  }
-
-  function buildPromptResult(prompt, args) {
-    if (prompt.name === 'add_component') {
-      const tag = String(args.tag).trim().toLowerCase();
-      const fw = typeof args.framework === 'string' && args.framework.trim()
-        ? args.framework.trim().toLowerCase()
-        : 'html';
-      const decl = declByTag.get(tag);
-      const summary = decl
-        ? `Manifest summary: <${decl.tagName}> (${decl.description || ''}).`
-        : `Note: Inspect get_component_doc for "${tag}".`;
-      return {
-        description: prompt.description,
-        messages: [
-          {
-            role: 'user',
-            content: {
-              type: 'text',
-              text: [
-                `Add Elementum component <${tag}> for framework "${fw}".`,
-                summary,
-                `1. Call get_setup (framework: "${fw}") and get_component_doc (tag: "${tag}").`,
-                `2. Call get_bundle_plan (tags: ["${tag}"], framework: "${fw}") for tree-shaken imports.`,
-                `3. Call generate_snippet and validate final markup with lint_accessibility and validate_component_usage.`,
-              ].join('\n'),
-            },
-          },
-        ],
-      };
-    }
-
-    if (prompt.name === 'build_screen') {
-      const goal = String(args.goal).trim();
-      const fw = typeof args.framework === 'string' && args.framework.trim()
-        ? args.framework.trim().toLowerCase()
-        : 'html';
-      return {
-        description: prompt.description,
-        messages: [
-          {
-            role: 'user',
-            content: {
-              type: 'text',
-              text: [
-                `Design and assemble an Elementum UI screen (${fw}) for: ${goal}`,
-                '1. Read elementum://setup and call list_components (using category/hasMotion/formAssociated filters) to pick minimal components.',
-                '2. Inspect design tokens via elementum://tokens or list_tokens and plan imports with get_bundle_plan.',
-                '3. Verify the resulting markup using validate_component_usage and lint_accessibility.',
-              ].join('\n'),
-            },
-          },
-        ],
-      };
-    }
-
-    const html = String(args.html).trim();
-    return {
-      description: prompt.description,
-      messages: [
-        {
-          role: 'user',
-          content: {
-            type: 'text',
-            text: [
-              'Audit the following Elementum markup for WCAG 2.2 AA compliance and valid component attributes:',
-              '1. Run lint_accessibility on the markup.',
-              '2. Run validate_component_usage on the markup.',
-              '3. Summarize errors/warnings and suggest minimal fixes.',
-              '',
-              '```html',
-              html,
-              '```',
-            ].join('\n'),
-          },
-        },
-      ],
-    };
-  }
-
-  function getCompletionValues(argName, value) {
-    const prefix = typeof value === 'string' ? value.trim().toLowerCase() : '';
-    let candidates = [];
-    if (argName === 'tag') {
-      candidates = allDeclarations.map((d) => d.tagName);
-    } else if (argName === 'framework') {
-      candidates = ['html', 'react', 'vue', 'svelte', 'vanilla', 'next', 'cdn'];
-    } else if (argName === 'category') {
-      const cats = new Set();
-      for (const d of allDeclarations) {
-        cats.add(String(getResolvedMetadata(d).category || 'general'));
-      }
-      candidates = [...cats].sort();
-    }
-    const matches = candidates.filter((item) => item.toLowerCase().startsWith(prefix));
-    const values = matches.slice(0, 100);
-    return {
-      values,
-      total: matches.length,
-      hasMore: matches.length > values.length,
-    };
-  }
+  const { getPrompt, completeArgument } = createPromptHandlers({
+    allDeclarations,
+    declByTag,
+    getResolvedMetadata,
+    forbiddenProtoKeys: FORBIDDEN_PROTO_KEYS,
+  });
 
   function handleSingleRequest(request) {
     if (!request || typeof request !== 'object' || Array.isArray(request)) {
@@ -1510,56 +1211,10 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {}, sizeBud
       const params = request.params && typeof request.params === 'object' && !Array.isArray(request.params)
         ? request.params
         : {};
-      const uri = typeof params.uri === 'string' ? params.uri.trim() : '';
-      if (!uri) {
-        return {
-          jsonrpc: '2.0',
-          id: request.id,
-          error: { code: -32602, message: 'Invalid params: uri is required.' },
-        };
-      }
-      if (uri === 'elementum://catalog') {
-        return {
-          jsonrpc: '2.0',
-          id: request.id,
-          result: { contents: [{ uri, mimeType: 'text/markdown', text: buildCatalogMarkdown() }] },
-        };
-      }
-      if (uri === 'elementum://setup') {
-        return {
-          jsonrpc: '2.0',
-          id: request.id,
-          result: { contents: [{ uri, mimeType: 'text/markdown', text: buildSetupMarkdown() }] },
-        };
-      }
-      if (uri === 'elementum://tokens') {
-        return {
-          jsonrpc: '2.0',
-          id: request.id,
-          result: { contents: [{ uri, mimeType: 'text/markdown', text: buildTokensMarkdown() }] },
-        };
-      }
-      if (uri.startsWith('elementum://components/')) {
-        const tag = uri.slice('elementum://components/'.length).trim().toLowerCase();
-        const decl = SAFE_TAG_RE.test(tag) ? declByTag.get(tag) : null;
-        if (!decl) {
-          return {
-            jsonrpc: '2.0',
-            id: request.id,
-            error: { code: -32602, message: `Unknown component resource URI: ${uri}` },
-          };
-        }
-        return {
-          jsonrpc: '2.0',
-          id: request.id,
-          result: { contents: [{ uri, mimeType: 'text/markdown', text: buildComponentMarkdown(decl) }] },
-        };
-      }
-      return {
-        jsonrpc: '2.0',
-        id: request.id,
-        error: { code: -32602, message: `Unknown resource URI: ${uri}` },
-      };
+      const out = readResource(params.uri);
+      return out.error
+        ? { jsonrpc: '2.0', id: request.id, error: out.error }
+        : { jsonrpc: '2.0', id: request.id, result: out.result };
     }
 
     if (request.method === 'prompts/list') {
@@ -1574,68 +1229,20 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {}, sizeBud
       const params = request.params && typeof request.params === 'object' && !Array.isArray(request.params)
         ? request.params
         : {};
-      const name = typeof params.name === 'string' ? params.name.trim() : '';
-      const prompt = PROMPTS.find((p) => p.name === name);
-      if (!prompt) {
-        return {
-          jsonrpc: '2.0',
-          id: request.id,
-          error: { code: -32602, message: `Unknown prompt: ${name || '(empty)'}` },
-        };
-      }
-      const rawArgs = params.arguments && typeof params.arguments === 'object' && !Array.isArray(params.arguments)
-        ? params.arguments
-        : {};
-      for (const k of Object.keys(rawArgs)) {
-        if (FORBIDDEN_PROTO_KEYS.has(k)) {
-          return {
-            jsonrpc: '2.0',
-            id: request.id,
-            error: { code: -32602, message: `Invalid argument key: ${k}` },
-          };
-        }
-      }
-      for (const spec of prompt.arguments || []) {
-        if (spec.required) {
-          const val = Object.hasOwn(rawArgs, spec.name) ? rawArgs[spec.name] : undefined;
-          if (typeof val !== 'string' || !val.trim()) {
-            return {
-              jsonrpc: '2.0',
-              id: request.id,
-              error: { code: -32602, message: `Missing required prompt argument: ${spec.name}` },
-            };
-          }
-        }
-      }
-      return {
-        jsonrpc: '2.0',
-        id: request.id,
-        result: buildPromptResult(prompt, rawArgs),
-      };
+      const out = getPrompt(params);
+      return out.error
+        ? { jsonrpc: '2.0', id: request.id, error: out.error }
+        : { jsonrpc: '2.0', id: request.id, result: out.result };
     }
 
     if (request.method === 'completion/complete') {
       const params = request.params && typeof request.params === 'object' && !Array.isArray(request.params)
         ? request.params
         : {};
-      const arg = params.argument && typeof params.argument === 'object' && !Array.isArray(params.argument)
-        ? params.argument
-        : null;
-      const argName = arg && typeof arg.name === 'string' ? arg.name.trim() : '';
-      if (!argName) {
-        return {
-          jsonrpc: '2.0',
-          id: request.id,
-          error: { code: -32602, message: 'Invalid params: argument.name is required.' },
-        };
-      }
-      return {
-        jsonrpc: '2.0',
-        id: request.id,
-        result: {
-          completion: getCompletionValues(argName, arg.value),
-        },
-      };
+      const out = completeArgument(params);
+      return out.error
+        ? { jsonrpc: '2.0', id: request.id, error: out.error }
+        : { jsonrpc: '2.0', id: request.id, result: out.result };
     }
 
     if (request.method === 'ping') {

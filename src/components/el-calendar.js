@@ -108,14 +108,9 @@ export class ElCalendar extends Elementum {
     }
 
     .header-select option {
-      background: var(--el-surface-base, #ffffff);
-      color: var(--el-text-base, #111827);
+      background: var(--el-surface-elevated, #ffffff);
+      color: var(--el-text-primary, #0f172a);
       font-weight: 500;
-    }
-
-    :host-context([data-theme="dark"]) .header-select option {
-      background: #1e293b;
-      color: #f8fafc;
     }
 
     .header-title {

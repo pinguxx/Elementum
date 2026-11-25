@@ -45,8 +45,8 @@ export class ElTimelineItem extends Elementum {
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--el-surface-base, #ffffff);
-      border: 2px solid var(--el-surface-border, #cbd5e1);
+      background: var(--el-surface-elevated, #ffffff);
+      border: 2px solid var(--el-step-5, #cbd5e1);
       color: var(--el-text-muted, #64748b);
       font-size: 11px;
       z-index: 2;
@@ -72,21 +72,12 @@ export class ElTimelineItem extends Elementum {
       color: #ffffff;
     }
 
-    :host-context([data-theme="dark"]) .node {
-      background: #1e293b;
-      border-color: #475569;
-    }
-
     .line {
       width: 2px;
       flex: 1;
       background: var(--el-surface-border, #e2e8f0);
       margin-top: 4px;
       margin-bottom: -4px;
-    }
-
-    :host-context([data-theme="dark"]) .line {
-      background: #334155;
     }
 
     :host(:last-of-type) .line {
@@ -113,10 +104,6 @@ export class ElTimelineItem extends Elementum {
       margin: 0;
     }
 
-    :host-context([data-theme="dark"]) .title {
-      color: #f8fafc;
-    }
-
     .date {
       font-size: 0.75rem;
       color: var(--el-text-muted, #94a3b8);
@@ -129,11 +116,6 @@ export class ElTimelineItem extends Elementum {
       line-height: 1.45;
     }
 
-    :host-context([data-theme="dark"]) .description {
-      color: #94a3b8;
-    }
-
-    :host-context(el-timeline[orientation="horizontal"]),
     :host([orientation="horizontal"]) {
       flex-direction: column;
       padding-bottom: 0;
@@ -142,7 +124,6 @@ export class ElTimelineItem extends Elementum {
       min-width: 140px;
     }
 
-    :host-context(el-timeline[orientation="horizontal"]) .gutter,
     :host([orientation="horizontal"]) .gutter {
       flex-direction: row;
       margin-right: 0;
@@ -150,7 +131,6 @@ export class ElTimelineItem extends Elementum {
       width: 100%;
     }
 
-    :host-context(el-timeline[orientation="horizontal"]) .line,
     :host([orientation="horizontal"]) .line {
       width: 100%;
       height: 2px;
@@ -218,6 +198,16 @@ export class ElTimeline extends Elementum {
   #syncAttrs() {
     this.orientation.value = this.getAttribute('orientation') || 'vertical';
     this.reverse.value = this.hasAttribute('reverse');
+    this.#syncChildren();
+  }
+
+  #syncChildren() {
+    const orient = this.orientation.value || 'vertical';
+    this.querySelectorAll('el-timeline-item').forEach((item) => {
+      if (item.getAttribute('orientation') !== orient) {
+        item.setAttribute('orientation', orient);
+      }
+    });
   }
 
   static styles = css`
@@ -244,7 +234,7 @@ export class ElTimeline extends Elementum {
   `;
 
   render() {
-    return html`<slot></slot>`;
+    return html`<slot @slotchange=${() => this.#syncChildren()}></slot>`;
   }
 }
 

@@ -70,10 +70,6 @@ export class ElAlert extends Elementum {
       color: var(--el-text-secondary, #475569);
     }
 
-    :host-context([data-theme="dark"]) .description {
-      color: #94a3b8;
-    }
-
     .dismiss-btn {
       flex-shrink: 0;
       background: transparent;
@@ -90,12 +86,7 @@ export class ElAlert extends Elementum {
 
     .dismiss-btn:hover {
       color: var(--el-text-primary, #0f172a);
-      background: rgba(0, 0, 0, 0.05);
-    }
-
-    :host-context([data-theme="dark"]) .dismiss-btn:hover {
-      color: #f8fafc;
-      background: rgba(255, 255, 255, 0.1);
+      background: var(--el-surface-hover, rgba(0, 0, 0, 0.05));
     }
 
     /* Variants */

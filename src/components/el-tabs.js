@@ -171,12 +171,12 @@ export class ElTabs extends Elementum {
       attributes: true,
       attributeFilter: ['label', 'value', 'name', 'disabled'],
     });
-    const stopEffect = effect(() => {
+    effect(() => {
       void this.activeTab.value;
       void this.tabs.value;
       void this.variant.value;
       this.#scheduleIndicatorSync();
-    });
+    }, { signal: this.signal });
     let ro = null;
     if (typeof ResizeObserver === 'function') {
       ro = new ResizeObserver(() => this.syncIndicator());
@@ -185,7 +185,6 @@ export class ElTabs extends Elementum {
     }
     this.signal.addEventListener('abort', () => {
       observer.disconnect();
-      stopEffect();
       ro?.disconnect();
     });
   }

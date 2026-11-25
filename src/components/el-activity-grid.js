@@ -46,11 +46,10 @@ export class ElActivityGrid extends Elementum {
   }
 
   #sync() {
-    const rawWeeks = parseInt(this.getAttribute('weeks') || '', 10);
-    this.weeks.value = Number.isFinite(rawWeeks) ? Math.max(4, Math.min(52, rawWeeks)) : 12;
+    this.weeks.value = Math.round(this.numAttr('weeks', 12, 4, 52));
     this.variant.value = this.getAttribute('variant') || 'success';
     this.label.value = this.getAttribute('label') || 'Activity';
-    this.showLegend.value = this.hasAttribute('show-legend') && this.getAttribute('show-legend') !== 'false';
+    this.showLegend.value = this.boolAttr('show-legend');
     const dataAttr = this.getAttribute('data');
     if (dataAttr) {
       try {

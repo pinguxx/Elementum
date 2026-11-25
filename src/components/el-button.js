@@ -71,18 +71,12 @@ export class ElButton extends Elementum {
     button:disabled,
     :host([disabled]) button,
     :host([aria-disabled="true"]) button {
-      opacity: 0.45;
+      opacity: var(--el-disabled-opacity, 0.45);
       cursor: not-allowed !important;
       pointer-events: none !important;
       box-shadow: none !important;
       transform: none !important;
-      filter: grayscale(0.2);
-    }
-
-    :host-context([data-theme="dark"]) button[disabled],
-    :host-context([data-theme="dark"]) button:disabled {
-      opacity: 0.38;
-      filter: grayscale(0.3);
+      filter: var(--el-disabled-filter, grayscale(0.2));
     }
 
     /* Size Variants */

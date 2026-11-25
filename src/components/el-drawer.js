@@ -30,6 +30,8 @@ export class ElDrawer extends Elementum {
   #dragState = null;
   #viewportHandler = null;
   #justDragged = false;
+  #focusTimer = null;
+  #dragResetTimer = null;
 
   get open() {
     return this.isOpen.value;
@@ -79,6 +81,14 @@ export class ElDrawer extends Elementum {
     window.removeEventListener('keydown', this.#onKeyDown);
     if (this.#viewportHandler && typeof window !== 'undefined' && window.visualViewport) {
       window.visualViewport.removeEventListener('resize', this.#viewportHandler);
+    }
+    if (this.#focusTimer) {
+      clearTimeout(this.#focusTimer);
+      this.#focusTimer = null;
+    }
+    if (this.#dragResetTimer) {
+      clearTimeout(this.#dragResetTimer);
+      this.#dragResetTimer = null;
     }
     this.#applyBackgroundScale(false);
     this.#releaseBodyScroll();
@@ -175,7 +185,9 @@ export class ElDrawer extends Elementum {
       }
     }
 
-    setTimeout(() => {
+    if (this.#focusTimer) clearTimeout(this.#focusTimer);
+    this.#focusTimer = setTimeout(() => {
+      this.#focusTimer = null;
       const closeBtn = this.root?.querySelector('.close-btn');
       closeBtn?.focus?.();
     }, 50);
@@ -416,7 +428,9 @@ export class ElDrawer extends Elementum {
     }
 
     this.#justDragged = true;
-    setTimeout(() => {
+    if (this.#dragResetTimer) clearTimeout(this.#dragResetTimer);
+    this.#dragResetTimer = setTimeout(() => {
+      this.#dragResetTimer = null;
       this.#justDragged = false;
     }, 80);
 
@@ -505,9 +519,9 @@ export class ElDrawer extends Elementum {
 
     .drawer-panel {
       position: fixed;
-      background: var(--el-surface-card, #ffffff);
+      background: var(--el-surface-elevated, #ffffff);
       color: var(--el-text-primary, #0f172a);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.28);
+      box-shadow: var(--el-shadow-popover, 0 25px 50px -12px rgba(0, 0, 0, 0.28));
       display: flex;
       flex-direction: column;
       z-index: 1001;
@@ -523,12 +537,6 @@ export class ElDrawer extends Elementum {
       touch-action: none;
       user-select: none;
       will-change: transform;
-    }
-
-    :host-context([data-theme="dark"]) .drawer-panel {
-      background: var(--el-surface-elevated, #1e293b);
-      color: #f8fafc;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.65);
     }
 
     /* Placements */
@@ -573,10 +581,6 @@ export class ElDrawer extends Elementum {
       transform: translate3d(0, 100%, 0);
       border-top: 1px solid var(--el-surface-border, #e2e8f0);
       border-radius: var(--el-radius-xl, 16px) var(--el-radius-xl, 16px) 0 0;
-    }
-
-    :host-context([data-theme="dark"]) .placement-bottom {
-      border-top-color: #334155;
     }
 
     .drawer-panel.open {
@@ -624,10 +628,6 @@ export class ElDrawer extends Elementum {
       cursor: grab;
     }
 
-    :host-context([data-theme="dark"]) .drawer-header {
-      border-bottom-color: #334155;
-    }
-
     .drawer-title {
       margin: 0;
       font-size: 1.125rem;
@@ -652,13 +652,8 @@ export class ElDrawer extends Elementum {
     }
 
     .close-btn:hover {
-      background: var(--el-surface-muted, #f1f5f9);
+      background: var(--el-step-4, #f1f5f9);
       color: var(--el-text-primary, #0f172a);
-    }
-
-    :host-context([data-theme="dark"]) .close-btn:hover {
-      background: #334155;
-      color: #f8fafc;
     }
 
     .close-btn:focus-visible {
@@ -681,12 +676,7 @@ export class ElDrawer extends Elementum {
       gap: var(--el-spacing-sm, 8px);
       padding: var(--el-spacing-md, 14px) var(--el-spacing-lg, 24px);
       border-top: 1px solid var(--el-surface-border, #e2e8f0);
-      background: var(--el-surface-muted, #f8fafc);
-    }
-
-    :host-context([data-theme="dark"]) .drawer-footer {
-      background: #111827;
-      border-top-color: #334155;
+      background: var(--el-step-2, #f8fafc);
     }
 
     @media (max-width: 640px) {

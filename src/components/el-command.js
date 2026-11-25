@@ -190,6 +190,7 @@ export class ElCommand extends Elementum {
   activeIndex = signal(0);
   #emptyVisible = signal(false);
   #previouslyFocused = null;
+  #openTimer = null;
 
   get open() {
     return this.isOpen;
@@ -214,6 +215,12 @@ export class ElCommand extends Elementum {
     };
     window.addEventListener('keydown', onGlobalKey, { signal: this.signal });
     this.addEventListener('keydown', this.#onKeyDown, { signal: this.signal });
+    this.signal.addEventListener('abort', () => {
+      if (this.#openTimer) {
+        clearTimeout(this.#openTimer);
+        this.#openTimer = null;
+      }
+    }, { once: true });
   }
 
   attributeChanged(name, oldValue, newValue) {
@@ -367,13 +374,19 @@ export class ElCommand extends Elementum {
     this.query.value = '';
     this.activeIndex.value = 0;
     this.#emptyVisible.value = false;
-    setTimeout(() => {
+    if (this.#openTimer) clearTimeout(this.#openTimer);
+    this.#openTimer = setTimeout(() => {
+      this.#openTimer = null;
       this.root?.querySelector('.search-input')?.focus();
       this.#filterItems('');
     }, 50);
   }
 
   close() {
+    if (this.#openTimer) {
+      clearTimeout(this.#openTimer);
+      this.#openTimer = null;
+    }
     this.isOpen.value = false;
     if (this.#previouslyFocused && typeof this.#previouslyFocused.focus === 'function') {
       this.#previouslyFocused.focus();

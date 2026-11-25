@@ -111,4 +111,4 @@ Use standard `on<event>` handlers on `el-*` tags:
 | `el-tool-call` | `approve`, `reject` | `{ name, callId, args }` |
 | `el-sources` | `source-select` | `{ index: number, source }` |
 
-For the complete per-component event list, see `custom-elements.json` or query the MCP tool `get_component_info`.
+For the complete per-component event list, see `custom-elements.json` or query the MCP tool `get_component_doc`.

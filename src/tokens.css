@@ -42,6 +42,17 @@
   --el-text-secondary: #475569;
   --el-text-muted: #6b7280;
   --el-text-inverse: #ffffff;
+  --el-color-primary-text: #1d4ed8;
+  --el-color-success-text: #065f46;
+  --el-color-warning-text: #92400e;
+  --el-color-danger-text: #991b1b;
+  --el-surface-hover: rgba(0, 0, 0, 0.05);
+  --el-tint-primary-bg: rgba(37, 99, 235, 0.08);
+  --el-tint-primary-border: rgba(37, 99, 235, 0.2);
+  --el-tint-success-bg: #d1fae5;
+  --el-tint-danger-bg: #fee2e2;
+  --el-disabled-opacity: 0.45;
+  --el-disabled-filter: grayscale(0.2);
 
   /* Font Families */
   --el-font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -148,6 +159,13 @@
   --el-color-success-text: #6ee7b7;
   --el-color-warning-text: #fcd34d;
   --el-color-danger-text: #fca5a5;
+  --el-surface-hover: rgba(255, 255, 255, 0.1);
+  --el-tint-primary-bg: rgba(59, 130, 246, 0.14);
+  --el-tint-primary-border: rgba(59, 130, 246, 0.3);
+  --el-tint-success-bg: rgba(16, 185, 129, 0.2);
+  --el-tint-danger-bg: rgba(239, 68, 68, 0.2);
+  --el-disabled-opacity: 0.38;
+  --el-disabled-filter: grayscale(0.3);
 
   /* Chart Colors (Dark Mode) */
   --el-chart-1: #3b82f6;
@@ -213,6 +231,13 @@
     --el-color-success-text: #6ee7b7;
     --el-color-warning-text: #fcd34d;
     --el-color-danger-text: #fca5a5;
+    --el-surface-hover: rgba(255, 255, 255, 0.1);
+    --el-tint-primary-bg: rgba(59, 130, 246, 0.14);
+    --el-tint-primary-border: rgba(59, 130, 246, 0.3);
+    --el-tint-success-bg: rgba(16, 185, 129, 0.2);
+    --el-tint-danger-bg: rgba(239, 68, 68, 0.2);
+    --el-disabled-opacity: 0.38;
+    --el-disabled-filter: grayscale(0.3);
 
     --el-chart-1: #3b82f6;
     --el-chart-2: #34d399;
@@ -391,6 +416,12 @@ el-dropdown:not(:defined) {
 @keyframes el-defined-in {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-dsd]) :defined {
+    animation: none;
+  }
 }
 
 /* ========================================================

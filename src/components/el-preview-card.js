@@ -36,8 +36,9 @@ export class ElPreviewCard extends Elementum {
       z-index: 1050;
       width: max-content;
       max-width: 320px;
-      background: var(--el-surface-elevated, #ffffff);
+      background: var(--el-surface-card, #ffffff);
       border: 1px solid var(--el-surface-border, #e2e8f0);
+      color: var(--el-text-primary, #0f172a);
       border-radius: var(--el-radius-lg, 12px);
       box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.12), 0 4px 10px -2px rgba(0, 0, 0, 0.05);
       padding: 16px;
@@ -46,12 +47,6 @@ export class ElPreviewCard extends Elementum {
       pointer-events: none;
       transform: translateY(-4px) scale(0.97);
       transition: opacity 180ms cubic-bezier(0.16, 1, 0.3, 1), transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    :host-context([data-theme="dark"]) .card {
-      background: var(--el-surface-card, #111827);
-      border-color: #334155;
-      color: #f8fafc;
     }
 
     .card[data-side="bottom"] {
@@ -101,6 +96,12 @@ export class ElPreviewCard extends Elementum {
     @starting-style {
       .card.open {
         opacity: 0;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card {
+        transition: none;
       }
     }
   `;

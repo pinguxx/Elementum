@@ -31,15 +31,10 @@ export class ElMenubar extends Elementum {
       width: 100%;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
-      background: var(--el-surface-base, #ffffff);
+      background: var(--el-surface-elevated, #ffffff);
       border: 1px solid var(--el-surface-border, #e2e8f0);
       border-radius: var(--el-radius-md, 8px);
       box-sizing: border-box;
-    }
-
-    :host-context([data-theme="dark"]) .menubar {
-      background: #1e293b;
-      border-color: #334155;
     }
 
     :host([disabled]) {
@@ -71,15 +66,8 @@ export class ElMenubar extends Elementum {
     ::slotted(button:hover),
     ::slotted([role="menuitem"]:focus-visible),
     ::slotted(button:focus-visible) {
-      background: var(--el-surface-muted, #f1f5f9);
-      color: var(--el-color-primary, #2563eb);
-    }
-
-    :host-context([data-theme="dark"]) ::slotted([role="menuitem"]:hover),
-    :host-context([data-theme="dark"]) ::slotted(.menubar-item:hover),
-    :host-context([data-theme="dark"]) ::slotted(button:hover) {
-      background: #334155;
-      color: #93c5fd;
+      background: var(--el-step-4, #f1f5f9);
+      color: var(--el-color-primary-text, #2563eb);
     }
 
     ::slotted([data-state="open"]) {

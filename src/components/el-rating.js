@@ -41,14 +41,10 @@ export class ElRating extends Elementum {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: var(--el-surface-border, #cbd5e1);
+      color: var(--el-step-5, #cbd5e1);
       transition: color 0.15s ease, transform 0.1s ease;
       outline: none;
       border-radius: var(--el-radius-sm, 4px);
-    }
-
-    :host-context([data-theme="dark"]) .star-btn {
-      color: #475569;
     }
 
     .star-btn:hover:not(:disabled) {

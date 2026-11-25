@@ -67,7 +67,7 @@ export class ElInsightCard extends Elementum {
     .card {
       border: 1px solid var(--el-surface-border, #e2e8f0);
       border-radius: var(--el-radius-md, 12px);
-      background: var(--el-surface-base, #ffffff);
+      background: var(--el-surface-card, #ffffff);
       padding: 16px 18px;
       display: flex;
       flex-direction: column;
@@ -177,7 +177,7 @@ export class ElInsightCard extends Elementum {
       padding: 4px 9px;
       border-radius: 7px;
       border: 1px solid var(--el-surface-border, #e2e8f0);
-      background: var(--el-surface-base, #ffffff);
+      background: var(--el-surface-elevated, #ffffff);
       color: var(--el-text-secondary, #475569);
       font-size: 0.78rem;
     }
@@ -186,27 +186,6 @@ export class ElInsightCard extends Elementum {
       border-color: var(--el-color-primary, #2563eb);
       background: #eff6ff;
       color: #1d4ed8;
-    }
-
-    :host-context([data-theme="dark"]) .card {
-      background: #0f172a;
-      border-color: #334155;
-    }
-    :host-context([data-theme="dark"]) .heading,
-    :host-context([data-theme="dark"]) .metric-val {
-      color: #f8fafc;
-    }
-    :host-context([data-theme="dark"]) .summary,
-    :host-context([data-theme="dark"]) .metric-delta {
-      color: #94a3b8;
-    }
-    :host-context([data-theme="dark"]) .footer {
-      border-top-color: #1e293b;
-    }
-    :host-context([data-theme="dark"]) .vote-btn {
-      background: #1e293b;
-      border-color: #334155;
-      color: #cbd5e1;
     }
 
     @media (prefers-reduced-motion: reduce) {

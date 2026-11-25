@@ -31,12 +31,10 @@ export class ElShimmerText extends Elementum {
   }
 
   #sync() {
-    const rawDur = parseFloat(this.getAttribute('duration'));
-    this.duration.value = Number.isFinite(rawDur) ? Math.max(0.4, Math.min(20, rawDur)) : 2.2;
-    const rawSpread = parseFloat(this.getAttribute('spread'));
-    this.spread.value = Number.isFinite(rawSpread) ? Math.max(10, Math.min(80, rawSpread)) : 35;
+    this.duration.value = this.numAttr('duration', 2.2, 0.4, 20);
+    this.spread.value = this.numAttr('spread', 35, 10, 80);
     this.variant.value = this.getAttribute('variant') || 'muted';
-    this.paused.value = this.hasAttribute('paused') && this.getAttribute('paused') !== 'false';
+    this.paused.value = this.boolAttr('paused');
   }
 
   static styles = css`

@@ -37,10 +37,6 @@ export class ElSeparator extends Elementum {
       margin: 0 var(--el-spacing-sm, 8px);
       display: inline-block;
     }
-
-    :host-context([data-theme="dark"]) .separator {
-      background: #334155;
-    }
   `;
 
   connected() {

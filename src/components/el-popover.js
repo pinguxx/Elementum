@@ -39,7 +39,7 @@ export class ElPopover extends Elementum {
       max-width: calc(100vw - 32px);
       max-height: var(--available-height, 420px);
       overflow: visible;
-      background: var(--el-surface-elevated, #ffffff);
+      background: var(--el-surface-card, #ffffff);
       color: var(--el-text-primary, #0f172a);
       border: 1px solid var(--el-surface-border, #e2e8f0);
       border-radius: var(--el-radius-md, 8px);
@@ -51,12 +51,6 @@ export class ElPopover extends Elementum {
       transform: translateY(-4px) scale(0.97);
       transform-origin: var(--transform-origin, top center);
       transition: opacity 160ms cubic-bezier(0.16, 1, 0.3, 1), transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    :host-context([data-theme="dark"]) .popup {
-      background: var(--el-surface-card, #111827);
-      border-color: #334155;
-      color: #f8fafc;
     }
 
     /* Placements */
@@ -123,15 +117,10 @@ export class ElPopover extends Elementum {
       position: absolute;
       width: 10px;
       height: 10px;
-      background: var(--el-surface-elevated, #ffffff);
+      background: var(--el-surface-card, #ffffff);
       border: 1px solid var(--el-surface-border, #e2e8f0);
       transform: rotate(45deg);
       pointer-events: none;
-    }
-
-    :host-context([data-theme="dark"]) .arrow {
-      background: var(--el-surface-card, #111827);
-      border-color: #334155;
     }
 
     .popup[data-side="bottom"] .arrow {

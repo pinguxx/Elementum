@@ -123,7 +123,7 @@ export class ElSources extends Elementum {
       padding: 3px 9px;
       border-radius: 9999px;
       border: 1px solid var(--el-surface-border, #e2e8f0);
-      background: var(--el-surface-base, #ffffff);
+      background: var(--el-surface-elevated, #ffffff);
       color: var(--el-text-secondary, #475569);
       font-size: 0.75rem;
       font-weight: 500;
@@ -171,7 +171,7 @@ export class ElSources extends Elementum {
       padding: 10px 12px;
       border-radius: var(--el-radius-md, 8px);
       border: 1px solid var(--el-surface-border, #e2e8f0);
-      background: var(--el-surface-base, #ffffff);
+      background: var(--el-surface-elevated, #ffffff);
       text-decoration: none;
       color: inherit;
       transition: border-color 140ms ease, box-shadow 140ms ease;
@@ -198,20 +198,6 @@ export class ElSources extends Elementum {
       color: var(--el-text-secondary, #475569);
       margin: 2px 0 0;
       line-height: 1.45;
-    }
-
-    :host-context([data-theme="dark"]) .toggle-btn,
-    :host-context([data-theme="dark"]) .pill,
-    :host-context([data-theme="dark"]) .source-card {
-      background: #1e293b;
-      border-color: #334155;
-      color: #e2e8f0;
-    }
-    :host-context([data-theme="dark"]) .source-title {
-      color: #f8fafc;
-    }
-    :host-context([data-theme="dark"]) .source-snippet {
-      color: #94a3b8;
     }
 
     @media (prefers-reduced-motion: reduce) {

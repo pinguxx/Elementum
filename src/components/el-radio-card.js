@@ -43,11 +43,6 @@ export class ElRadioCard extends Elementum {
       position: relative;
     }
 
-    :host-context([data-theme="dark"]) .card {
-      background-color: #111827;
-      border-color: #334155;
-    }
-
     :host(:hover:not([disabled])) .card {
       border-color: var(--el-primary-subtle, #93c5fd);
       background-color: var(--el-surface-muted, #f8fafc);
@@ -68,7 +63,7 @@ export class ElRadioCard extends Elementum {
       width: 18px;
       height: 18px;
       border-radius: 50%;
-      border: 2px solid var(--el-surface-border, #cbd5e1);
+      border: 2px solid var(--el-step-5, #cbd5e1);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -80,10 +75,6 @@ export class ElRadioCard extends Elementum {
     :host([checked]) .radio-circle {
       border-color: var(--el-primary, #2563eb);
       background-color: var(--el-primary, #2563eb);
-    }
-
-    :host-context([data-theme="dark"]) .radio-circle {
-      border-color: #475569;
     }
 
     .dot {
@@ -114,19 +105,11 @@ export class ElRadioCard extends Elementum {
       display: block;
     }
 
-    :host-context([data-theme="dark"]) ::slotted([slot="title"]) {
-      color: #f8fafc;
-    }
-
     ::slotted([slot="description"]) {
       font-size: var(--el-text-sm, 0.875rem);
       color: var(--el-text-muted, #64748b);
       line-height: 1.4;
       display: block;
-    }
-
-    :host-context([data-theme="dark"]) ::slotted([slot="description"]) {
-      color: #94a3b8;
     }
   `;
 

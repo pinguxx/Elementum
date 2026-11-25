@@ -271,3 +271,11 @@ test('Smoke & Integrity: Elementum UI Registry page contains all blocks, customi
   assert.ok(content.includes('theme-code-dialog'), 'Must include theme code modal dialog');
   assert.ok(content.includes('data-theme="dark"'), 'Full theme export must cover both light and dark mode tokens');
 });
+
+test('Smoke & Integrity: Component stylesheets do not rely on :host-context() for dark mode or layout parity', () => {
+  const compDir = path.join(rootDir, 'src', 'components');
+  const offenders = fs.readdirSync(compDir)
+    .filter((f) => f.endsWith('.js'))
+    .filter((f) => fs.readFileSync(path.join(compDir, f), 'utf8').includes(':host-context('));
+  assert.deepEqual(offenders, [], `Components must not use :host-context(): ${offenders.join(', ')}`);
+});
