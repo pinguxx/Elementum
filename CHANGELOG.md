@@ -4,6 +4,18 @@ All notable changes to `@wcomp/elementum` are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.7] - 2026-11-24
+
+### Added
+- **4 Motion & Data-Viz Components (113 Total)**: Added `<el-shimmer-text>`, `<el-hold-button>`, `<el-usage-ring>`, and `<el-activity-grid>`, synced across CEM, TypeScript definitions, React wrappers, MCP metadata, and catalog/registry demos.
+- **Headless Motion Primitives (`@wcomp/elementum/behaviors`, `src/behaviors/motion.js`)**: Extracted `createSpringEasing()`, `createFlipBehavior()`, `createInViewBehavior()`, and `createPointerTracker()`, and added sliding indicator pills on `<el-tabs>` and `<el-segmented-control>`.
+- **Dynamic 113-Component Registry (`examples/registry.html`)**: Rebuilt `#registry-catalog-grid` and `#registry-catalog-filters` to render all 113 components dynamically from `examples/catalog-data.js`.
+- **Shared Attribute Helpers & Modular MCP (`src/elementum.js`, `mcp/resources.js`, `mcp/prompts.js`)**: Added `boolAttr()` and `numAttr()` helpers on `Elementum`, and split pure-JS MCP resources and prompts into dedicated Edge-compatible modules.
+
+### Fixed & Hardened
+- **Cross-Browser Dark-Mode Parity (Zero `:host-context()`)**: Migrated all 109 `:host-context(...)` rules across 38 component stylesheets to semantic `--el-*` custom properties and host attributes (verified 0/113 dark-mode WCAG 2.2 AA contrast violations).
+- **Edge/SSR Security & Component Lifecycle**: Hardened Edge/SSR headers, Origin/CSRF guards, timer/effect cleanup (`el-command`, `el-data-list`, `el-drawer`, `el-meter`, `el-tabs`, `el-segmented-control`, `el-toast`), reduced-motion media guards, and `<el-separator>` full-width horizontal sizing inside flex containers.
+
 ## [0.8.6] - 2026-11-24
 
 ### Added

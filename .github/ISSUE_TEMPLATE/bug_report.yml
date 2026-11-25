@@ -25,6 +25,6 @@ body:
     id: version
     attributes:
       label: Package Version & Environment
-      placeholder: "@wcomp/elementum@0.8.6 · Node 22 · Chrome 131"
+      placeholder: "@wcomp/elementum@0.8.7 · Node 22 · Chrome 131"
     validations:
       required: true
