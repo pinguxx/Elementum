@@ -989,6 +989,7 @@ button.textContent = 'Submit Order';</code></pre>
           <el-button variant="secondary" onclick="openThemeCodeModal()">View Theme Code</el-button>
           <el-button variant="secondary" onclick="exportPenpotTokens()">Copy DTCG JSON</el-button>
           <el-button variant="secondary" onclick="downloadDtcgTokens()">Download tokens.dtcg.json</el-button>
+          <el-button variant="secondary" onclick="copyDesignMd()">Copy DESIGN.md</el-button>
         </div>
       </div>
     </section>
@@ -1779,6 +1780,34 @@ button.textContent = 'Submit Order';</code></pre>
     window.exportPenpotTokens = function() {
       const dtcgJson = window.generatePenpotDtcgJson();
       copySnippet(dtcgJson, 'Penpot W3C DTCG Token JSON copied to clipboard!');
+    };
+
+    window.generateDesignMd = function() {
+      const s = getComputedStyle(document.documentElement);
+      const primary = s.getPropertyValue('--el-color-primary').trim() || '#2563eb';
+      const radMd = s.getPropertyValue('--el-radius-md').trim() || '8px';
+      const font = s.getPropertyValue('--el-font-sans').trim() || 'system-ui, -apple-system, sans-serif';
+      return `# DESIGN.md
+
+## Aesthetic Brief
+- **System:** @wcomp/elementum (zero-dependency Web Components + W3C DTCG tokens)
+- **Primary Accent:** \`${primary}\` (\`--el-color-primary\`)
+- **Radius Scale:** \`${radMd}\` (\`--el-radius-md\`)
+- **Typography:** \`${font}\` (\`--el-font-sans\`), \`tabular-nums\` for metrics & tables
+- **Surfaces:** Semantic light & dark tokens (\`--el-surface-canvas\`, \`--el-surface-card\`, \`--el-text-primary\`, \`--el-text-secondary\`)
+
+## Guardrails
+- **ALWAYS:** Use \`--el-*\` CSS custom properties, one \`variant="primary"\` CTA per view, visible \`:focus-visible\` rings, and WCAG 2.2 AA contrast in light & dark mode.
+- **ALWAYS:** Propose 2-3 layout variants for new screens before committing; run \`npx @wcomp/elementum check\` before handoff.
+- **NEVER:** Hardcode hex colors in inline styles, use \`transition: all\`, nest \`<el-card>\` inside \`<el-card>\`, or add unrequested purple gradients or placeholder copy.
+
+## Refinement Vocabulary
+- \`critique\` | \`bolder\` | \`quieter\` | \`distill\` | \`normalize\` | \`polish\`
+`;
+    };
+
+    window.copyDesignMd = function() {
+      copySnippet(window.generateDesignMd(), 'DESIGN.md copied to clipboard!');
     };
 
     window.updateCustomFont = function(fontStack) {

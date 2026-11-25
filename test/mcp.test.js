@@ -587,3 +587,25 @@ test('MCP v2: resources, prompts, completions, setup, bundle planning, filtered 
   }
   assert.equal(/with\s*\{\s*type:\s*['"]json['"]/.test(apiMcpSrc), false);
 });
+
+test('MCP lint_accessibility flags deterministic UI anti-slop patterns as warnings', async () => {
+  const { createMcpHandler } = await import('../mcp/core.js');
+  const { handleToolCall } = createMcpHandler({ manifest: { modules: [] }, metadata: {}, tokens: {}, pkg: { version: '0.8.7' } });
+  const sloppy = `
+    <style>
+      .btn { transition: all 0.2s ease; }
+      :host-context([data-theme="dark"]):host([variant="primary"]) { color: white; }
+    </style>
+    <el-card>
+      <div style="color: #334155;">Hardcoded hex</div>
+      <el-card><el-button variant="primary">Nested</el-button></el-card>
+    </el-card>
+  `;
+  const res = handleToolCall('lint_accessibility', { markup: sloppy });
+  assert.equal(res.valid, true);
+  const criteria = res.warnings.map((w) => w.criterion);
+  assert.ok(criteria.includes('UI Craft (Motion)'));
+  assert.ok(criteria.includes('UI Craft (Tokens & Dark Mode)'));
+  assert.ok(criteria.includes('UI Craft (Visual Hierarchy)'));
+  assert.ok(criteria.includes('UI Craft (Shadow DOM CSS)'));
+});

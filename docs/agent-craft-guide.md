@@ -19,7 +19,21 @@ The guidelines below turn high-craft UI habits into simple, repeatable defaults 
 
 ---
 
-## 2. Core UI Development Guidelines
+## 2. Structured Design Workflow (Avoid One-Shot AI Slop)
+
+Do not one-shot a screen with vague prompts like "make it look premium". Use a repeatable 3-step loop:
+
+1. **Keep a project `DESIGN.md` brief** (exportable directly from Theme Studio in [`examples/registry.html`](../examples/registry.html#theme-studio)):
+   - **Aesthetic brief (5 to 8 lines):** tone, density (editorial, balanced, or dense ops), typography, primary/surface tokens, and radius scale.
+   - **Reference anchor:** link to a concrete reference layout or screenshot.
+   - **Intent:** the single job the screen performs and its primary CTA.
+   - **Guardrails:** explicit `ALWAYS` constants (use `--el-*` tokens, `tabular-nums`, WCAG 2.2 AA contrast) and `NEVER` bans (no unrequested purple gradients, no card-in-card nesting, no `transition: all`, no hardcoded hex colors).
+2. **Generate 2 to 3 macro variants first:** Compare distinct layout directions in a real browser at `1440px` and `375px` (light and dark) before polishing one winner.
+3. **Iterate with a shared vocabulary:** Steer changes using concrete directives — `critique` (top 3 visual defects), `bolder` (stronger focal/type contrast), `quieter` (less chrome, more whitespace), `distill` (remove redundant blocks), `normalize` (snap to `--el-*` tokens), and `polish` (states, alignment, micro-copy) — then run `npx @wcomp/elementum check` to catch anti-slop and accessibility issues deterministically.
+
+---
+
+## 3. Core UI Development Guidelines
 
 ### 1. Anchor to a Proven Pattern Before Building
 Before composing a new screen from scratch, start from a tested layout structure:

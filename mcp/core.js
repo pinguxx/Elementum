@@ -735,6 +735,35 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {}, sizeBud
         });
       }
   
+      // UI Craft & Anti-Slop Checks (deterministic)
+      if (/transition\s*:\s*all\b/i.test(markup)) {
+        warnings.push({
+          criterion: 'UI Craft (Motion)',
+          message: 'Avoid `transition: all`; list explicit properties (transform, opacity, background-color, border-color) to prevent layout jank.',
+        });
+      }
+
+      if (/style=["'][^"']*(?:color|background(?:-color)?|border(?:-color)?)\s*:\s*#[0-9a-f]{3,8}\b/i.test(markup)) {
+        warnings.push({
+          criterion: 'UI Craft (Tokens & Dark Mode)',
+          message: 'Inline style uses a hardcoded hex color. Use semantic `--el-*` tokens (e.g. `var(--el-surface-card)`, `var(--el-text-primary)`) so dark mode stays legible.',
+        });
+      }
+
+      if (/<el-card\b[^>]*>(?:(?!<\/el-card>)[\s\S])*<el-card\b/i.test(markup)) {
+        warnings.push({
+          criterion: 'UI Craft (Visual Hierarchy)',
+          message: 'Nested `<el-card>` inside `<el-card>` detected. Use whitespace, `<el-separator>`, or subtle surface contrast instead of card-in-card borders.',
+        });
+      }
+
+      if (/:host-context\([^)]*\)\s*(?::host\(|\[)/i.test(markup)) {
+        warnings.push({
+          criterion: 'UI Craft (Shadow DOM CSS)',
+          message: 'Invalid `:host-context(...):host(...)` or `:host-context(...)[attr]` selector detected; drive dark mode via `--el-*` custom properties instead.',
+        });
+      }
+
       return {
         scope: 'static-html-lint',
         disclaimer:
