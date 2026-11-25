@@ -61,8 +61,10 @@ export function renderSsrPage({
   const catalogHref = staticMode ? './index.html' : '/examples/index.html';
   const registryHref = staticMode ? './registry.html' : '/examples/registry.html';
   const aiStudioHref = staticMode ? './agent-studio.html' : '/examples/agent-studio.html';
-  const ledgerflowHref = staticMode ? './ledgerflow.html' : '/examples/ledgerflow.html';
-  const showcaseHref = staticMode ? './app.html' : '/examples/app.html';
+  const agUiHref = staticMode ? './ag-ui.html' : '/examples/ag-ui.html';
+  const a2UiHref = staticMode ? './a2ui.html' : '/examples/a2ui.html';
+  const webMcpHref = staticMode ? './webmcp.html' : '/examples/webmcp.html';
+  const showcaseHref = staticMode ? '../showcase.html' : '/showcase.html';
 
   const themeSwitchDsd = renderComponentToDSD('el-theme-switch', ElThemeSwitch, { slot: 'actions' }, '');
 
@@ -76,7 +78,9 @@ export function renderSsrPage({
       <a href="${catalogHref}">Catalog</a>
       <a href="${registryHref}">Registry</a>
       <a href="${aiStudioHref}">AI Studio</a>
-      <a href="${ledgerflowHref}">LedgerFlow</a>
+      <a href="${agUiHref}">AG-UI</a>
+      <a href="${a2UiHref}">A2UI</a>
+      <a href="${webMcpHref}">WebMCP</a>
       <a href="${showcaseHref}">Showcase</a>
       ${themeSwitchDsd}
     `

@@ -338,6 +338,7 @@
       <option value="#mcp-server">3. MCP Server Integration</option>
       <option value="#ag-ui-protocol">— AG-UI Protocol Integration</option>
       <option value="#a2ui-protocol">— A2UI Declarative Renderer</option>
+      <option value="#webmcp">— W3C WebMCP (Browser Agents)</option>
       <option value="#design-tokens">4. Figma & Penpot Workflow</option>
       <option value="#penpot-mcp">— Penpot MCP Design System Sync</option>
       <option value="#contributing">5. How to Contribute</option>
@@ -378,6 +379,7 @@
           <li class="sidebar-item"><a href="#mcp-server">MCP Server Setup</a></li>
           <li class="sidebar-item"><a href="#ag-ui-protocol">AG-UI Protocol Integration</a></li>
           <li class="sidebar-item"><a href="#a2ui-protocol">A2UI Declarative Renderer</a></li>
+          <li class="sidebar-item"><a href="#webmcp">W3C WebMCP (Browser Agents)</a></li>
           <li class="sidebar-item"><a href="#design-tokens">Figma & Penpot Workflow</a></li>
           <li class="sidebar-item"><a href="#penpot-mcp">Penpot MCP Sync</a></li>
           <li class="sidebar-item"><a href="#contributing">How to Contribute</a></li>
@@ -1018,6 +1020,51 @@ surface.processMessages([
         </p>
         <p>
           Try the live interactive playground (including progressive JSONL stream simulation and locked-catalog enforcement) at <a href="./examples/a2ui.html">A2UI Live Playground</a>, or read the full reference in <a href="https://github.com/pinguxx/Elementum/blob/main/docs/a2ui.md" target="_blank" rel="noopener noreferrer"><code>docs/a2ui.md</code> ↗</a>.
+        </p>
+      </section>
+
+      <!-- 3d. W3C WEBMCP -->
+      <section id="webmcp" class="docs-section">
+        <h1>W3C WebMCP (Browser Agents)</h1>
+        <p>
+          Elementum supports both the <strong>Declarative</strong> and <strong>Imperative</strong> layers of the W3C WebMCP specification (<code>navigator.modelContext</code>), allowing in-browser AI agents to discover typed tools and operate Shadow DOM components without brittle CSS selectors.
+        </p>
+
+        <h2>1. Declarative WebMCP Forms (<code>&lt;el-form toolname&gt;</code>)</h2>
+        <p>
+          Adding <code>toolname</code>, <code>tooldescription</code>, and optional <code>toolautosubmit</code> to <code>&lt;el-form&gt;</code> forwards the attributes onto its inner <code>&lt;form&gt;</code> and automatically registers a typed JSON Schema tool on <code>navigator.modelContext</code>. Field types, required flags, options, and <code>toolparamdescription</code> hints are inferred from your FACE and native controls, and cleaned up automatically via <code>AbortSignal</code> on disconnect.
+        </p>
+        <el-code-block language="html">&lt;el-form toolname="create_issue" tooldescription="Create a bug report" toolautosubmit&gt;
+  &lt;el-field label="Issue Title" required&gt;
+    &lt;el-input name="title" toolparamdescription="Short summary" required&gt;&lt;/el-input&gt;
+  &lt;/el-field&gt;
+  &lt;el-field label="Priority"&gt;
+    &lt;el-number-field name="priority" value="2" min="1" max="5"&gt;&lt;/el-number-field&gt;
+  &lt;/el-field&gt;
+  &lt;el-checkbox name="urgent" label="Page on-call"&gt;&lt;/el-checkbox&gt;
+  &lt;el-button type="submit" variant="primary"&gt;Submit&lt;/el-button&gt;
+&lt;/el-form&gt;</el-code-block>
+
+        <h2>2. Imperative WebMCP (<code>registerWebMCP</code>)</h2>
+        <p>
+          <code>registerWebMCP(root, options)</code> from <code>@wcomp/elementum/agent</code> registers <code>elementum_snapshot</code> (with <code>annotations: { readOnlyHint: true }</code>), <code>elementum_act</code> (supporting async <code>guard</code> hooks with <code>client.requestUserInteraction()</code>), and any declarative forms discovered via <code>discoverFormTools(root)</code>.
+        </p>
+        <el-code-block language="javascript">import { registerWebMCP } from '@wcomp/elementum/agent';
+
+const reg = registerWebMCP(document.body, {
+  guard: async ({ action, element, client }) =&gt; {
+    if (action === 'click' &amp;&amp; element.hasAttribute('data-destructive') &amp;&amp; client?.requestUserInteraction) {
+      return client.requestUserInteraction(() =&gt; confirm('Confirm action?'));
+    }
+    return true;
+  },
+});
+
+// Clean up (aborts AbortSignal and calls unregisterTool)
+reg.unregister();</el-code-block>
+
+        <p>
+          Try both live (with a built-in <code>navigator.modelContext</code> simulator for any browser) at <a href="./examples/webmcp.html">WebMCP Live Playground</a>, or read the full reference in <a href="https://github.com/pinguxx/Elementum/blob/main/docs/behaviors-and-agent.md" target="_blank" rel="noopener noreferrer"><code>docs/behaviors-and-agent.md</code> ↗</a>.
         </p>
       </section>
 

@@ -85,27 +85,20 @@
       font-size: 0.85rem;
       color: var(--el-text-secondary, #475569);
     }
-    a.nav-link {
-      color: var(--el-text-secondary, #475569);
-      text-decoration: none;
-      font-size: 0.9rem;
-      padding: 6px 10px;
-      border-radius: 6px;
-    }
-    a.nav-link:hover { color: var(--el-text-primary, #0f172a); }
-    a.nav-link:focus-visible { outline: 2px solid var(--el-color-primary, #2563eb); outline-offset: 2px; }
   </style>
 </head>
 <body>
-  <el-navbar brand="Elementum" badge="WebMCP">
-    <a class="nav-link" href="../index.html">Home</a>
-    <a class="nav-link" href="./index.html">Catalog</a>
-    <a class="nav-link" href="./ag-ui.html">AG-UI</a>
-    <a class="nav-link" href="./a2ui.html">A2UI</a>
-    <a class="nav-link" href="../docs.html">Docs</a>
-    <div slot="actions">
-      <el-theme-switch></el-theme-switch>
-    </div>
+  <el-navbar sticky brand="⚡ Elementum" badge="WebMCP" badge-variant="primary" href="../index.html">
+    <a href="../index.html">Home</a>
+    <a href="../docs.html">Docs</a>
+    <a href="./index.html">Catalog</a>
+    <a href="./registry.html">Registry</a>
+    <a href="./agent-studio.html">AI Studio</a>
+    <a href="./ag-ui.html">AG-UI</a>
+    <a href="./a2ui.html">A2UI</a>
+    <a href="./webmcp.html" active>WebMCP</a>
+    <a href="../showcase.html">Showcase</a>
+    <el-theme-switch slot="actions"></el-theme-switch>
   </el-navbar>
 
   <main>
