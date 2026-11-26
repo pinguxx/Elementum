@@ -70,7 +70,7 @@ export class ElSpinner extends Elementum {
     }
 
     .variant-primary {
-      color: var(--el-color-primary, #2563eb);
+      color: var(--el-color-primary-text, #1d4ed8);
     }
 
     .variant-secondary {
@@ -78,19 +78,19 @@ export class ElSpinner extends Elementum {
     }
 
     .variant-success {
-      color: var(--el-color-success, #16a34a);
+      color: var(--el-color-success-text, #065f46);
     }
 
     .variant-danger {
-      color: var(--el-color-danger, #dc2626);
+      color: var(--el-color-danger-text, #991b1b);
     }
 
     .variant-warning {
-      color: var(--el-color-warning, #d97706);
+      color: var(--el-color-warning-text, #92400e);
     }
 
     .variant-info {
-      color: var(--el-color-info, #0284c7);
+      color: var(--el-color-info-text, #0369a1);
     }
 
     .variant-muted {

@@ -218,14 +218,14 @@ export class ElAutocomplete extends Elementum {
     }
 
     .option-item.is-selected {
-      background-color: rgba(37, 99, 235, 0.08);
-      color: var(--el-color-primary, #2563eb);
+      background-color: var(--el-tint-primary-bg, rgba(37, 99, 235, 0.08));
+      color: var(--el-color-primary-text, #1d4ed8);
       font-weight: 600;
     }
 
     .check-icon {
       font-weight: bold;
-      color: var(--el-color-primary, #2563eb);
+      color: var(--el-color-primary-text, #1d4ed8);
       margin-right: 6px;
     }
 
@@ -257,7 +257,7 @@ export class ElAutocomplete extends Elementum {
 
     .match-highlight {
       background: color-mix(in srgb, var(--el-color-primary, #2563eb) 14%, transparent);
-      color: var(--el-color-primary-hover, #1d4ed8);
+      color: var(--el-color-primary-text, #1d4ed8);
       font-weight: 700;
       border-radius: 3px;
       padding: 0 2px;

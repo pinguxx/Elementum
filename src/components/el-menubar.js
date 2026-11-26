@@ -72,7 +72,7 @@ export class ElMenubar extends Elementum {
 
     ::slotted([data-state="open"]) {
       background: var(--el-surface-muted, #f1f5f9) !important;
-      color: var(--el-color-primary, #2563eb) !important;
+      color: var(--el-color-primary-text, #1d4ed8) !important;
     }
   `;
 

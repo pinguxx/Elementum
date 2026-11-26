@@ -114,8 +114,8 @@ export class ElNumberField extends Elementum {
     }
 
     .stepper-btn:active:not(:disabled) {
-      background: rgba(37, 99, 235, 0.15);
-      color: var(--el-color-primary, #2563eb);
+      background: var(--el-tint-primary-bg, rgba(37, 99, 235, 0.15));
+      color: var(--el-color-primary-text, #1d4ed8);
     }
 
     .stepper-btn:disabled {
@@ -158,7 +158,7 @@ export class ElNumberField extends Elementum {
 
     .affix.prefix.scrubbable:hover {
       background: var(--el-surface-muted, #f1f5f9);
-      color: var(--el-color-primary, #2563eb);
+      color: var(--el-color-primary-text, #1d4ed8);
     }
 
     input {

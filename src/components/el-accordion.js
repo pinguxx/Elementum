@@ -48,7 +48,7 @@ export class ElAccordionItem extends Elementum {
     }
 
     .header-btn:hover:not(:disabled) {
-      color: var(--el-color-primary, #2563eb);
+      color: var(--el-color-primary-text, #1d4ed8);
     }
 
     .header-btn:focus-visible {

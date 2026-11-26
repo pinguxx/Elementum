@@ -68,7 +68,7 @@ export class ElField extends Elementum {
     }
 
     .required-indicator {
-      color: var(--el-color-danger, #ef4444);
+      color: var(--el-color-danger-text, #991b1b);
       font-weight: 700;
       font-size: 0.875rem;
       line-height: 1;
@@ -83,7 +83,7 @@ export class ElField extends Elementum {
 
     .field-error {
       font-size: 0.75rem;
-      color: var(--el-color-danger, #ef4444);
+      color: var(--el-color-danger-text, #991b1b);
       font-weight: 500;
       line-height: 1.4;
       display: flex;
@@ -106,7 +106,7 @@ export class ElField extends Elementum {
 
     /* State reflections */
     :host([data-invalid]) .field-label {
-      color: var(--el-color-danger, #ef4444);
+      color: var(--el-color-danger-text, #991b1b);
     }
 
     :host([data-disabled]) {

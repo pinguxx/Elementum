@@ -170,9 +170,9 @@ export class ElToggle extends Elementum {
     }
     :host([variant="outline"]) button.pressed,
     :host([variant="outline"][data-state="on"]) button {
-      background-color: rgba(37, 99, 235, 0.08);
+      background-color: var(--el-tint-primary-bg, rgba(37, 99, 235, 0.08));
       border-color: var(--el-color-primary, #2563eb);
-      color: var(--el-color-primary, #2563eb);
+      color: var(--el-color-primary-text, #1d4ed8);
     }
   `;
 

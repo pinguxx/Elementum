@@ -145,11 +145,11 @@ export class ElButton extends Elementum {
 
     :host([variant="ghost"]) button {
       background-color: transparent;
-      color: var(--el-color-primary, #2563eb);
+      color: var(--el-color-primary-text, #1d4ed8);
     }
     :host([variant="ghost"]:not([disabled])) button:not([disabled]):hover {
       background-color: var(--el-step-3, var(--el-surface-muted, #f1f5f9));
-      color: var(--el-color-primary-hover, #1d4ed8);
+      color: var(--el-color-primary-text, #1d4ed8);
     }
   `;
 

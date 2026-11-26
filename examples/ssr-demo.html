@@ -17,7 +17,7 @@
   --el-color-primary-hover: #1d4ed8;
   --el-color-secondary: #4b5563;
   --el-color-danger: #dc2626;
-  --el-color-success: #16a34a;
+  --el-color-success: #15803d;
   --el-color-warning: #d97706;
   --el-color-info: #0284c7;
   --el-color-accent: #7c3aed;
@@ -47,12 +47,13 @@
   --el-text-base: #111827;
   --el-text-primary: #0f172a;
   --el-text-secondary: #475569;
-  --el-text-muted: #6b7280;
+  --el-text-muted: #5c6370;
   --el-text-inverse: #ffffff;
   --el-color-primary-text: #1d4ed8;
   --el-color-success-text: #065f46;
   --el-color-warning-text: #92400e;
   --el-color-danger-text: #991b1b;
+  --el-color-info-text: #0369a1;
   --el-surface-hover: rgba(0, 0, 0, 0.05);
   --el-tint-primary-bg: rgba(37, 99, 235, 0.08);
   --el-tint-primary-border: rgba(37, 99, 235, 0.2);
@@ -166,6 +167,7 @@
   --el-color-success-text: #6ee7b7;
   --el-color-warning-text: #fcd34d;
   --el-color-danger-text: #fca5a5;
+  --el-color-info-text: #7dd3fc;
   --el-surface-hover: rgba(255, 255, 255, 0.1);
   --el-tint-primary-bg: rgba(59, 130, 246, 0.14);
   --el-tint-primary-border: rgba(59, 130, 246, 0.3);
@@ -238,6 +240,7 @@
     --el-color-success-text: #6ee7b7;
     --el-color-warning-text: #fcd34d;
     --el-color-danger-text: #fca5a5;
+  --el-color-info-text: #7dd3fc;
     --el-surface-hover: rgba(255, 255, 255, 0.1);
     --el-tint-primary-bg: rgba(59, 130, 246, 0.14);
     --el-tint-primary-border: rgba(59, 130, 246, 0.3);
@@ -1160,7 +1163,7 @@ el-sidebar[collapsed] el-sidebar-content div {
         <slot name="title"></slot>
         <slot></slot>
       </div>
-    </template><span slot="title">Rendered on the Server at 2026-11-25T14:33:38.085Z</span>
+    </template><span slot="title">Rendered on the Server at 2026-11-26T23:47:03.933Z</span>
      Every component below was serialized in pure Node.js via <code>renderComponentToDSD()</code> into standard
      <code>&lt;template shadowrootmode="open"&gt;</code>. Even with JavaScript disabled (<code>?hydrate=0</code>),
      Shadow DOM styles and slots paint immediately with zero FOUC or layout shift.</el-callout>
@@ -1357,11 +1360,11 @@ el-sidebar[collapsed] el-sidebar-content div {
 
     :host([variant="ghost"]) button {
       background-color: transparent;
-      color: var(--el-color-primary, #2563eb);
+      color: var(--el-color-primary-text, #1d4ed8);
     }
     :host([variant="ghost"]:not([disabled])) button:not([disabled]):hover {
       background-color: var(--el-step-3, var(--el-surface-muted, #f1f5f9));
-      color: var(--el-color-primary-hover, #1d4ed8);
+      color: var(--el-color-primary-text, #1d4ed8);
     }
   </style>
       <button
@@ -1501,11 +1504,11 @@ el-sidebar[collapsed] el-sidebar-content div {
 
     :host([variant="ghost"]) button {
       background-color: transparent;
-      color: var(--el-color-primary, #2563eb);
+      color: var(--el-color-primary-text, #1d4ed8);
     }
     :host([variant="ghost"]:not([disabled])) button:not([disabled]):hover {
       background-color: var(--el-step-3, var(--el-surface-muted, #f1f5f9));
-      color: var(--el-color-primary-hover, #1d4ed8);
+      color: var(--el-color-primary-text, #1d4ed8);
     }
   </style>
       <button
@@ -1645,11 +1648,11 @@ el-sidebar[collapsed] el-sidebar-content div {
 
     :host([variant="ghost"]) button {
       background-color: transparent;
-      color: var(--el-color-primary, #2563eb);
+      color: var(--el-color-primary-text, #1d4ed8);
     }
     :host([variant="ghost"]:not([disabled])) button:not([disabled]):hover {
       background-color: var(--el-step-3, var(--el-surface-muted, #f1f5f9));
-      color: var(--el-color-primary-hover, #1d4ed8);
+      color: var(--el-color-primary-text, #1d4ed8);
     }
   </style>
       <button

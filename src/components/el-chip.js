@@ -150,33 +150,33 @@ export class ElChip extends Elementum {
     }
 
     .variant-primary {
-      background: #eff6ff;
-      color: var(--el-color-primary, #2563eb);
-      border-color: #bfdbfe;
+      background: color-mix(in srgb, var(--el-color-primary, #2563eb) 12%, transparent);
+      color: var(--el-color-primary-text, #1d4ed8);
+      border-color: color-mix(in srgb, var(--el-color-primary, #2563eb) 32%, transparent);
     }
 
     .variant-success {
-      background: #ecfdf5;
-      color: #059669;
-      border-color: #a7f3d0;
+      background: color-mix(in srgb, var(--el-color-success, #15803d) 12%, transparent);
+      color: var(--el-color-success-text, #065f46);
+      border-color: color-mix(in srgb, var(--el-color-success, #15803d) 32%, transparent);
     }
 
     .variant-info {
-      background: #f0f9ff;
-      color: #0284c7;
-      border-color: #bae6fd;
+      background: color-mix(in srgb, var(--el-color-info, #0284c7) 12%, transparent);
+      color: var(--el-color-info-text, #0369a1);
+      border-color: color-mix(in srgb, var(--el-color-info, #0284c7) 32%, transparent);
     }
 
     .variant-warning {
-      background: #fffbeb;
-      color: #d97706;
-      border-color: #fde68a;
+      background: color-mix(in srgb, var(--el-color-warning, #d97706) 14%, transparent);
+      color: var(--el-color-warning-text, #92400e);
+      border-color: color-mix(in srgb, var(--el-color-warning, #d97706) 34%, transparent);
     }
 
     .variant-danger {
-      background: #fef2f2;
-      color: var(--el-color-danger, #ef4444);
-      border-color: #fecaca;
+      background: color-mix(in srgb, var(--el-color-danger, #dc2626) 12%, transparent);
+      color: var(--el-color-danger-text, #991b1b);
+      border-color: color-mix(in srgb, var(--el-color-danger, #dc2626) 32%, transparent);
     }
 
     /* Selectable */

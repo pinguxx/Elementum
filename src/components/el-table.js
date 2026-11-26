@@ -178,7 +178,7 @@ export class ElTable extends Elementum {
     }
 
     .sort-icon.active {
-      color: var(--el-color-primary, #2563eb);
+      color: var(--el-color-primary-text, #1d4ed8);
     }
 
     td {

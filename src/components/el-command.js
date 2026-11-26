@@ -63,7 +63,7 @@ export class ElCommandItem extends Elementum {
     :host(:hover),
     :host([data-active="true"]) {
       background-color: var(--el-surface-muted, #f1f5f9);
-      color: var(--el-color-primary, #2563eb);
+      color: var(--el-color-primary-text, #1d4ed8);
     }
 
     :host([disabled]) {
@@ -92,7 +92,7 @@ export class ElCommandItem extends Elementum {
 
     .match-highlight {
       background: color-mix(in srgb, var(--el-color-primary, #2563eb) 18%, transparent);
-      color: var(--el-color-primary, #1d4ed8);
+      color: var(--el-color-primary-text, #1d4ed8);
       font-weight: 700;
       border-radius: 3px;
       padding: 0 2px;
