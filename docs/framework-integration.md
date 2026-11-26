@@ -126,7 +126,68 @@ Svelte treats custom elements natively without special wrappers:
 
 ---
 
-## 4. TypeScript Autocomplete (`tsconfig.json`)
+## 4. Angular 19+ (Standalone Components)
+
+Angular has native Web Components support via `CUSTOM_ELEMENTS_SCHEMA`.
+
+1. **Import tokens & register components** (in `src/styles.css` and `src/main.ts`):
+
+```css
+/* src/styles.css */
+@import '@wcomp/elementum/tokens.css';
+```
+
+```ts
+// src/main.ts
+import '@wcomp/elementum';
+```
+
+2. **Add `CUSTOM_ELEMENTS_SCHEMA` to your standalone component:**
+
+```ts
+import { Component, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { toast } from '@wcomp/elementum';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  template: `
+    <el-card bordered>
+      <div slot="header" style="display:flex;justify-content:space-between;align-items:center;">
+        <strong>Elementum + Angular</strong>
+        <el-theme-switch></el-theme-switch>
+      </div>
+      <el-input
+        name="email"
+        label="Work Email"
+        placeholder="ada@example.com"
+        ngDefaultControl
+        [(ngModel)]="email"
+      ></el-input>
+      <el-button variant="primary" (click)="save()">Save</el-button>
+    </el-card>
+    <el-toaster></el-toaster>
+  `,
+})
+export class AppComponent {
+  email = signal('ada@example.com');
+
+  save() {
+    toast.success('Saved', { description: this.email() });
+  }
+}
+```
+
+- **Events:** Bind Elementum custom events with standard Angular syntax: `(change)="onChange($event)"`, `(form-submit)="onSubmit($event)"`. Read values via `($event as CustomEvent).detail?.value ?? ($event.target as HTMLInputElement).value`.
+- **Reactive / Template Forms:** Add `ngDefaultControl` on Form-Associated Custom Elements (`<el-input>`, `<el-textarea>`, `<el-select>`, `<el-checkbox>`, `<el-switch>`) when using `formControlName` or `[(ngModel)]`.
+- **Complex Props:** Bind arrays/objects as DOM properties (`[columns]="cols"`, `[data]="rows"` on `<el-table>`).
+
+---
+
+## 5. TypeScript Autocomplete (`tsconfig.json`)
 
 `@wcomp/elementum` includes ambient typings for `HTMLElementTagNameMap` and `JSX.IntrinsicElements`. Ensure your `tsconfig.json` includes:
 
@@ -142,7 +203,7 @@ Now, `document.querySelector('el-button')` will automatically be typed as `ElBut
 
 ---
 
-## 5. Declarative Shadow DOM (DSD) SSR (Node.js / Next.js)
+## 6. Declarative Shadow DOM (DSD) SSR (Node.js / Next.js)
 
 Prevent layout shift (CLS) by pre-rendering shadow boundaries on the server using pure Node.js Declarative Shadow DOM helpers:
 
@@ -161,7 +222,7 @@ console.log(html);
 
 ---
 
-## 6. Starter Projects
+## 7. Starter Projects
 
 Tested, minimal copy-paste starter templates are available in the repository under [`starters/`](../starters):
 - [**Vanilla HTML (Zero-Build CDN)**](../starters/vanilla-html)
@@ -169,6 +230,7 @@ Tested, minimal copy-paste starter templates are available in the repository und
 - [**React 19 + TypeScript + Vite**](../starters/react-19)
 - [**Vue 3 + Vite**](../starters/vue-3)
 - [**Svelte 5 + Vite**](../starters/svelte-5)
+- [**Angular 19+ (Standalone)**](../starters/angular)
 - [**AI Chat UI**](../starters/ai-chat)
 - [**3-Way Framework Comparison (React vs. Vue 3 vs. Vanilla)**](../starters/framework-comparison)
 

@@ -590,7 +590,14 @@ test('MCP v2: resources, prompts, completions, setup, bundle planning, filtered 
 
 test('MCP lint_accessibility flags deterministic UI anti-slop patterns as warnings', async () => {
   const { createMcpHandler } = await import('../mcp/core.js');
-  const { handleToolCall } = createMcpHandler({ manifest: { modules: [] }, metadata: {}, tokens: {}, pkg: { version: '0.8.7' } });
+  const { handleToolCall } = createMcpHandler({
+    manifest: {
+      modules: [{ path: 'src/components/el-button.js', declarations: [{ kind: 'class', name: 'ElButton', tagName: 'el-button' }] }],
+    },
+    metadata: {},
+    tokens: {},
+    pkg: { version: '0.8.7' },
+  });
   const sloppy = `
     <style>
       .btn { transition: all 0.2s ease; }
@@ -608,4 +615,12 @@ test('MCP lint_accessibility flags deterministic UI anti-slop patterns as warnin
   assert.ok(criteria.includes('UI Craft (Tokens & Dark Mode)'));
   assert.ok(criteria.includes('UI Craft (Visual Hierarchy)'));
   assert.ok(criteria.includes('UI Craft (Shadow DOM CSS)'));
+
+  const ngSetup = handleToolCall('get_setup', { framework: 'angular' });
+  assert.equal(ngSetup.framework, 'angular');
+  assert.ok(ngSetup.imports.some((i) => i.includes('CUSTOM_ELEMENTS_SCHEMA')));
+
+  const ngPlan = handleToolCall('get_bundle_plan', { tags: ['el-button'], framework: 'angular' });
+  assert.equal(ngPlan.framework, 'angular');
+  assert.ok(Array.isArray(ngPlan.imports) && ngPlan.imports.length > 0);
 });

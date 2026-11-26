@@ -21,6 +21,7 @@ export function detectFramework(projectDir) {
     const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
     const deps = { ...pkg.dependencies, ...pkg.devDependencies };
     if (deps.next) return 'next';
+    if (deps['@angular/core']) return 'angular';
     if (deps.svelte || deps['@sveltejs/kit']) return 'svelte';
     if (deps.vue || deps.nuxt) return 'vue';
     if (deps.react) return 'react';
@@ -275,6 +276,41 @@ function notify() {
   </el-card>
   <el-toaster></el-toaster>
 </div>
+`,
+    };
+  }
+  if (framework === 'angular') {
+    return {
+      filename: 'elementum-demo.component.ts',
+      code: `import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import '@wcomp/elementum/tokens.css';
+import { toast } from '@wcomp/elementum';
+
+@Component({
+  selector: 'app-elementum-demo',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  template: \`
+    <div style="max-width: 640px; margin: 32px auto; display: grid; gap: 16px;">
+      <el-card bordered>
+        <div slot="header" style="display: flex; justify-content: space-between; align-items: center;">
+          <strong>⚡ Elementum Ready</strong>
+          <el-theme-switch></el-theme-switch>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <el-input placeholder="Type a notification..." aria-label="Notification text"></el-input>
+          <el-button variant="primary" (click)="notify()">Trigger Toast</el-button>
+        </div>
+      </el-card>
+      <el-toaster></el-toaster>
+    </div>
+  \`,
+})
+export class ElementumDemoComponent {
+  notify() {
+    toast.success('Elementum is live in Angular!');
+  }
+}
 `,
     };
   }

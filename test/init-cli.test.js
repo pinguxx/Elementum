@@ -28,6 +28,9 @@ test('detectFramework identifies Next.js, React, Vue, Svelte, Vite, and Vanilla 
     fs.writeFileSync(path.join(tmp, 'package.json'), JSON.stringify({ dependencies: { vue: '^3.5.0' } }));
     assert.equal(detectFramework(tmp), 'vue');
 
+    fs.writeFileSync(path.join(tmp, 'package.json'), JSON.stringify({ dependencies: { '@angular/core': '^19.2.0' } }));
+    assert.equal(detectFramework(tmp), 'angular');
+
     fs.writeFileSync(path.join(tmp, 'package.json'), JSON.stringify({ devDependencies: { svelte: '^5.0.0' } }));
     assert.equal(detectFramework(tmp), 'svelte');
 

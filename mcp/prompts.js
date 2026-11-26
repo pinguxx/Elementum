@@ -168,7 +168,7 @@ export function createPromptHandlers({ allDeclarations, declByTag, getResolvedMe
     if (argName === 'tag') {
       candidates = allDeclarations.map((d) => d.tagName);
     } else if (argName === 'framework') {
-      candidates = ['html', 'react', 'vue', 'svelte', 'vanilla', 'next', 'cdn'];
+      candidates = ['html', 'react', 'vue', 'svelte', 'angular', 'vanilla', 'next', 'cdn'];
     } else if (argName === 'category') {
       const cats = new Set();
       for (const d of allDeclarations) {

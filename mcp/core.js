@@ -172,6 +172,15 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {}, sizeBud
       install: 'npm install @wcomp/elementum',
       imports: ["import '@wcomp/elementum/tokens.css';", "import '@wcomp/elementum';"],
     },
+    angular: {
+      install: 'npm install @wcomp/elementum',
+      imports: [
+        "import '@wcomp/elementum/tokens.css';",
+        "import '@wcomp/elementum';",
+        "import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';",
+      ],
+      notes: 'Add CUSTOM_ELEMENTS_SCHEMA to your standalone component schemas array. Use ngDefaultControl when binding FACE inputs with formControlName or [(ngModel)].',
+    },
   };
   
   const TOOLS = [
@@ -370,7 +379,7 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {}, sizeBud
         properties: {
           framework: {
             type: 'string',
-            enum: ['vanilla', 'react', 'next', 'vue', 'svelte', 'cdn'],
+            enum: ['vanilla', 'react', 'next', 'vue', 'svelte', 'angular', 'cdn'],
             description: 'Target framework or CDN workflow (optional; omits to return all).',
           },
         },
@@ -392,7 +401,7 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {}, sizeBud
           },
           framework: {
             type: 'string',
-            enum: ['html', 'react', 'vue', 'svelte'],
+            enum: ['html', 'react', 'vue', 'svelte', 'angular'],
             description: 'Target framework for import code (default: "html").',
           },
         },
@@ -1068,8 +1077,8 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {}, sizeBud
       const fw = typeof args.framework === 'string' && args.framework.trim()
         ? args.framework.trim().toLowerCase()
         : 'html';
-      if (!['html', 'react', 'vue', 'svelte'].includes(fw)) {
-        return { error: `Unsupported framework '${fw}'. Expected html, react, vue, or svelte.` };
+      if (!['html', 'react', 'vue', 'svelte', 'angular'].includes(fw)) {
+        return { error: `Unsupported framework '${fw}'. Expected html, react, vue, svelte, or angular.` };
       }
 
       const uniqueTags = [];
