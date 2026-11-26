@@ -176,7 +176,7 @@ export class AppComponent {
   email = signal('ada@example.com');
 
   save() {
-    toast.success('Saved', { description: this.email() });
+    toast.success(`Saved ${this.email()}`);
   }
 }
 ```

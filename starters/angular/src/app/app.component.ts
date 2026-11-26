@@ -50,8 +50,7 @@ export class AppComponent {
 
   onSubmit(event: Event) {
     const detail = (event as CustomEvent<{ data?: Record<string, unknown> }>).detail;
-    toast.success('Workspace saved in Angular 19', {
-      description: JSON.stringify(detail?.data ?? { workspace: this.workspace() }),
-    });
+    const name = String(detail?.data?.['workspace'] ?? this.workspace());
+    toast.success(`Workspace "${name}" saved in Angular 19`);
   }
 }
