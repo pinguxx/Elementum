@@ -95,6 +95,7 @@ Copy-paste starter projects verified in CI (`npm run verify:starters`):
 | Next.js App Router (DSD SSR) | Server Components + Declarative Shadow DOM | [`starters/next-app-router/`](./starters/next-app-router) |
 | Vue 3 + Vite + TypeScript | Native `el-*` custom elements | [`starters/vue-3/`](./starters/vue-3) |
 | Svelte 5 + Vite + TypeScript | Native `el-*` with Runes | [`starters/svelte-5/`](./starters/svelte-5) |
+| Angular 19+ (Standalone) | `CUSTOM_ELEMENTS_SCHEMA` + `ngDefaultControl` + WebMCP | [`starters/angular/`](./starters/angular) · [Live Demo](https://angular-wc-e102.vercel.app) |
 | Vanilla HTML / AI Chat | Zero-build ES modules + AG-UI | [`starters/vanilla-html/`](./starters/vanilla-html), [`starters/ai-chat/`](./starters/ai-chat) |
 | Framework comparison | React 19 vs Vue 3 vs Vanilla LOC & gzip | [`starters/framework-comparison/`](./starters/framework-comparison) |
 
@@ -107,7 +108,7 @@ Copy-paste starter projects verified in CI (`npm run verify:starters`):
 | [`docs/theming.md`](./docs/theming.md) | Light/dark theme activation and `--el-*` token overrides |
 | [`docs/styling-reference.md`](./docs/styling-reference.md) | Auto-generated `::part()` and CSS custom property reference for all 113 elements |
 | [`docs/tailwind-guide.md`](./docs/tailwind-guide.md) | Tailwind CSS `[&::part(...)]:` styling and `unstyled` mode |
-| [`docs/framework-integration.md`](./docs/framework-integration.md) | React 18/19, Next.js, Vue 3, Svelte 5, and Vanilla HTML setup |
+| [`docs/framework-integration.md`](./docs/framework-integration.md) | React 18/19, Next.js, Vue 3, Svelte 5, Angular 19+, and Vanilla HTML setup |
 | [`docs/migration-guide.md`](./docs/migration-guide.md) | Migrating from Shoelace, Radix, and shadcn/ui |
 | [`docs/behaviors-and-agent.md`](./docs/behaviors-and-agent.md) | Headless behaviors (`@wcomp/elementum/behaviors`) and agent runtime (`@wcomp/elementum/agent`) |
 | [`docs/a2ui.md`](./docs/a2ui.md) | Declarative A2UI JSON surface renderer and security boundaries |

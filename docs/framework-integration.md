@@ -230,7 +230,7 @@ Tested, minimal copy-paste starter templates are available in the repository und
 - [**React 19 + TypeScript + Vite**](../starters/react-19)
 - [**Vue 3 + Vite**](../starters/vue-3)
 - [**Svelte 5 + Vite**](../starters/svelte-5)
-- [**Angular 19+ (Standalone)**](../starters/angular)
+- [**Angular 19+ (Standalone)**](../starters/angular) · [Live Demo](https://angular-wc-e102.vercel.app)
 - [**AI Chat UI**](../starters/ai-chat)
 - [**3-Way Framework Comparison (React vs. Vue 3 vs. Vanilla)**](../starters/framework-comparison)
 

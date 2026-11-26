@@ -25,6 +25,7 @@
 - WebMCP Live Playground (`navigator.modelContext` + `<el-form toolname>`): https://elementum-sage.vercel.app/examples/webmcp.html
 - AI Agent Studio Demo: https://elementum-sage.vercel.app/examples/agent-studio.html
 - Live Declarative Shadow DOM SSR: https://elementum-sage.vercel.app/ssr
+- Angular 19+ Standalone Starter Demo: https://angular-wc-e102.vercel.app
 
 ## Quick Install & MCP
 - npm + init CLI: `npm install @wcomp/elementum && npx @wcomp/elementum init`
