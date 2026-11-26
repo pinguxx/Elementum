@@ -4,6 +4,17 @@ All notable changes to `@wcomp/elementum` are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.8] - 2026-11-26
+
+### Added
+- **W3C WebMCP Declarative Forms & Imperative Spec Parity (`src/components/el-form.js`, `src/agent/index.js`, `examples/webmcp.html`)**: Added `toolname`, `tooldescription`, `toolautosubmit`, and `getToolSchema()` to `<el-form>` (auto-registering typed JSON Schema tools on `navigator.modelContext` with `AbortSignal` cleanup and prototype-pollution guards), `discoverFormTools(root)`, `annotations: { readOnlyHint: true }` on `elementum_snapshot`, async `client.requestUserInteraction()` guard support in `registerWebMCP()`, and an interactive WebMCP Playground.
+- **Angular 19+ Standalone Support (`starters/angular/`, `bin/elementum.js`, `mcp/core.js`, `docs/framework-integration.md`)**: Added standalone Angular 19 starter (`CUSTOM_ELEMENTS_SCHEMA`, `ngDefaultControl`, WebMCP `<el-form>`, live demo at `https://angular-wc-e102.vercel.app`), `@angular/core` auto-detection in `npx @wcomp/elementum init`, and `angular` support in MCP `get_setup`, `get_bundle_plan`, and completions.
+- **Deterministic UI Anti-Slop Checks & Theme Studio `DESIGN.md` Export (`mcp/core.js`, `examples/registry.html`, `docs/agent-craft-guide.md`)**: Added deterministic craft warnings (`transition: all`, hardcoded inline hex colors, nested `<el-card>`, invalid `:host-context()` chains) to `lint_accessibility` / `npx @wcomp/elementum check`, plus one-click `Copy DESIGN.md` export in Theme Studio.
+
+### Fixed
+- **Full Light & Dark Mode WCAG 2.2 AA Contrast Calibration (`src/tokens.css`, 13 components)**: Fixed dark-mode ghost button visibility (`2.18:1` → `8.11:1–9.84:1`) and switched all 13 components using solid-fill tokens as foreground text/icons (`el-button`, `el-chip`, `el-field`, `el-accordion`, `el-autocomplete`, `el-command`, `el-menubar`, `el-number-field`, `el-table`, `el-toast`, `el-toggle`, `el-spinner`, `el-usage-ring`) to semantic `--el-color-*-text` tokens. Calibrated light-mode `--el-color-success` (`#15803d`, `5.02:1`), `--el-text-muted` (`#5c6370`, `5.36:1`), and added `--el-color-info-text`.
+- **Unified Site Header & Sharpened Homepage (`index.html`, `docs.html`, `showcase.html`, `examples/*.html`)**: Standardized the 9-link `<el-navbar>` across all pages, added a dedicated `#webmcp` docs section, and updated the homepage hero.
+
 ## [0.8.7] - 2026-11-24
 
 ### Added

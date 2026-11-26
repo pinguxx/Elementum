@@ -596,7 +596,7 @@ test('MCP lint_accessibility flags deterministic UI anti-slop patterns as warnin
     },
     metadata: {},
     tokens: {},
-    pkg: { version: '0.8.7' },
+    pkg: { version: '0.8.8' },
   });
   const sloppy = `
     <style>

@@ -9,9 +9,9 @@
 
 | Field | Verified Value |
 | :--- | :--- |
-| **Package & Version** | `@wcomp/elementum@0.8.7` |
-| **Git Commit SHA (HEAD)** | `8c13427` |
-| **Audit Date (UTC)** | `2026-11-25` |
+| **Package & Version** | `@wcomp/elementum@0.8.8` |
+| **Git Commit SHA (HEAD)** | `c87f4da` |
+| **Audit Date (UTC)** | `2026-11-26` |
 | **Runtime Dependencies** | **0 (Verified)** (optional React `peerDependencies`: `>=18.0.0`) |
 | **Registered Components** | **113** Custom Elements (`113` Production Verified · `0` Stable · `0` Experimental in [QUALITY.md](./QUALITY.md)) |
 | **Canonical MCP Endpoint** | `https://elementum-sage.vercel.app/mcp` (**113** component specs) |

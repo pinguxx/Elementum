@@ -15,7 +15,7 @@
 
 [**Live Showcase**](https://elementum-sage.vercel.app/) · [**Catalog (113 elements)**](https://elementum-sage.vercel.app/examples/index.html) · [**AG-UI Demo**](https://elementum-sage.vercel.app/examples/ag-ui.html) · [**A2UI Demo**](https://elementum-sage.vercel.app/examples/a2ui.html) · [**WebMCP Demo**](https://elementum-sage.vercel.app/examples/webmcp.html) · [**Live DSD SSR**](https://elementum-sage.vercel.app/ssr) · [**Docs**](https://elementum-sage.vercel.app/docs.html)
 
-## Verification and browser matrix (`v0.8.7`)
+## Verification and browser matrix (`v0.8.8`)
 
 - **Core release gate (`npm run verify:all`).** Runs `catalog:diff`, `check:release`, `typecheck`, `check:size`, `verify:formal`, `test` (unit, fuzz, and >= 95% line coverage), `verify:consumer` (packed `.tgz`), `verify:react` (React 18 and 19 SSR/StrictMode), and `test:e2e` (Chromium, Firefox, WebKit Playwright + `axe-core`).
 - **Companion workflows.** `npm run audit:api`, `npm run verify:starters`, `npm run test:visual`, `npm run bench:frameworks`, `npm run bench:agents`, `npm run quality:report` ([QUALITY.md](./QUALITY.md)), and `npm run audits:report` ([AUDITS.md](./AUDITS.md)).
@@ -33,7 +33,7 @@
 
 ### Option A: Zero-build 2-line CDN (HTML, CodePen, Claude Artifacts)
 
-Paste two lines into any HTML file or CodePen with no bundler or `npm install` (pin `@wcomp/elementum@0.8.7` in production):
+Paste two lines into any HTML file or CodePen with no bundler or `npm install` (pin `@wcomp/elementum@0.8.8` in production):
 
 ```html
 <link rel="stylesheet" href="https://unpkg.com/@wcomp/elementum/tokens.css" />
