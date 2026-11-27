@@ -27,11 +27,11 @@ Whenever you modify a surface in the left column, **update and run everything in
 | If You Change... | You MUST Also Update / Run... |
 | :--- | :--- |
 | **Any component (`src/components/el-*.js`)** | 1. Update `custom-elements.json`, `examples/catalog-data.js`, and `src/index.d.ts` if public attributes, events, slots, or signals changed.<br>2. Run `npm run react:generate` (regenerates `src/react/index.js` & `src/react/index.d.ts`).<br>3. Run `npm run mcp:metadata` (regenerates `mcp/component-metadata.json`).<br>4. Run `npm run catalog:diff && npm run check:size && npm test`.<br>5. Add/update Playwright E2E + `axe-core` coverage in `e2e/` and run `npm run quality:report`. |
-| **Design tokens (`src/tokens.css`, `tokens/*.json`)** | 1. Run `npm run tokens:sync` (if editing DTCG JSON).<br>2. Run `npm run ssr:static` (refreshes `examples/ssr-demo.html`).<br>3. Run `npm run test:visual` (verify light/dark screenshot snapshots). |
+| **Design tokens (`src/tokens.css`, `tokens/*.json`)** | 1. Run `npm run tokens:sync` (if editing DTCG JSON).<br>2. Run `npm run check:contrast` (verifies light/dark WCAG 2.2 AA pairs and blocks fill-as-text leaks).<br>3. Run `npm run ssr:static` (refreshes `examples/ssr-demo.html`).<br>4. Run `npm run test:visual` (verify light/dark screenshot snapshots). |
 | **MCP server (`mcp/core.js`, `mcp/edge.js`, `mcp/server.js`, `api/mcp.js`)** | 1. Keep `mcp/core.js` & `mcp/edge.js` pure JS (no Node built-ins) and keep `api/mcp.js` free of `with { type: 'json' }`.<br>2. Run `node --test test/mcp.test.js test/security.test.js`.<br>3. If remote URL or version changed, sync `server.json` and `llms.txt`. |
 | **React wrapper runtime or generator (`src/react/runtime.js`, `tools/generate-react-wrappers.js`)** | 1. Run `npm run react:generate`.<br>2. Run `node --test test/react-wrapper.test.js`.<br>3. Run `npm run verify:react` (packs real `.tgz` and verifies React 18 & 19 SSR, StrictMode, prop removal, and strict TSX). |
 | **SSR / AG-UI / A2UI / Behaviors / Agent / Testing subpaths** | 1. Update `package.json` `exports` + `sideEffects` (`./src/index.js`, `./src/react/index.js`, `./src/components/*.js`, and `./src/tokens.css` have side effects).<br>2. Add/update `.d.ts` definitions and verify with `npm run typecheck`.<br>3. Update `llms.txt`, `README.md`, `AGENT_GUIDE.md`, and `tools/verify-consumer.js`.<br>4. Run `npm run verify:consumer`. |
-| **Starter projects (`starters/*`)** | 1. Run `npm run verify:starters` (installs, typechecks, and builds all framework starters).<br>2. Run `npm run bench:frameworks -- --write` (updates measured LOC & gzip table in `starters/framework-comparison/README.md`).<br>3. Keep `starters/README.md`, `README.md`, and `docs/framework-integration.md` synced.<br>4. Keep `vite` and `next` at current patched versions to avoid Dependabot alerts. |
+| **Starter projects (`starters/*`)** | 1. When adding a starter, register it in `tools/verify-starters.js`, `.github/workflows/ci.yml`, and add a starter-scoped `vercel.json` (`ignoreCommand`).<br>2. Run `npm run verify:starters` (installs, typechecks, and builds all framework starters).<br>3. Run `npm run bench:frameworks -- --write` (updates measured LOC & gzip table in `starters/framework-comparison/README.md`).<br>4. Keep `starters/README.md`, `README.md`, and `docs/framework-integration.md` synced.<br>5. Keep `vite` and `next` at current patched versions to avoid Dependabot alerts. |
 | **Homepage / Examples (`index.html`, `showcase.html`, `examples/*.html`)** | 1. Run `node --test test/pages-smoke.test.js`.<br>2. If adding a major demo, link it from `index.html`, `README.md`, and `llms.txt`. |
 | **AI-Agent Benchmark (`benchmarks/agent-eval/*`)** | 1. Score submissions with `node benchmarks/agent-eval/score.js <file.html> --arm="<Label>"`.<br>2. Record reproducible rows in `benchmarks/agent-eval/RESULTS.md`. |
 
@@ -61,13 +61,13 @@ Before tagging and publishing a new version `X.Y.Z`:
    npm run quality:report
    npm run audits:report
    ```
-4. Run all gates:
+5. Run all gates:
    ```bash
    npm run check:release
    npm run verify:all
    npm run verify:starters
    ```
-5. Commit, push `main`, and publish the GitHub Release:
+6. Commit, push `main`, and publish the GitHub Release:
    ```bash
    gh release create vX.Y.Z --title "vX.Y.Z — <Summary>" --notes "<Release Notes>"
    ```

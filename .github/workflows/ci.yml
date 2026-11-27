@@ -61,6 +61,9 @@ jobs:
       - name: Check release version & doc sync
         run: npm run check:release
 
+      - name: Check light/dark WCAG 2.2 AA contrast matrix & token leaks
+        run: npm run check:contrast
+
       - name: Enforce >= 95% line coverage threshold
         run: node --test --experimental-test-coverage --test-coverage-lines=95
 
@@ -72,7 +75,7 @@ jobs:
       - name: Check per-component gzipped size budgets
         run: npm run check:size
 
-      - name: Run exhaustive formal invariant verifier (6,147 states/topologies)
+      - name: Run exhaustive formal invariant verifier (6,162 states/topologies)
         run: npm run verify:formal
 
       - name: Audit API surface consistency across all 113 components
@@ -120,6 +123,7 @@ jobs:
           - react-19
           - vue-3
           - svelte-5
+          - angular
           - framework-comparison/react
           - framework-comparison/vue
     steps:

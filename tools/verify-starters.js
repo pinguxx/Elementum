@@ -27,6 +27,7 @@ const ALL_STARTERS = [
   'react-19',
   'vue-3',
   'svelte-5',
+  'angular',
   'framework-comparison/react',
   'framework-comparison/vue',
 ];
@@ -86,7 +87,7 @@ try {
       recursive: true,
       filter: (p) => {
         const base = path.basename(p);
-        return base !== 'node_modules' && base !== 'dist';
+        return base !== 'node_modules' && base !== 'dist' && base !== '.angular';
       },
     });
 
