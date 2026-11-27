@@ -104,7 +104,15 @@ export function render(result: TemplateResult, container: HTMLElement | ShadowRo
 // Elementum Base Class
 // ==========================================
 
+export const VERSION: string;
+export const version: string;
+
+declare global {
+  var elementum: { readonly version: string } | undefined;
+}
+
 export class Elementum extends HTMLElement {
+  static readonly version: string;
   static shadowRoot: boolean;
   static formAssociated: boolean;
   static styles: CSSResult | CSSResult[] | null;

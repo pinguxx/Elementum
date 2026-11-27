@@ -6,8 +6,9 @@
 import { render, CSSResult, html, css } from './template.js';
 import { signal, isSignal, effect } from './signal.js';
 import { setHostState } from './behaviors/index.js';
+import { VERSION, version } from './version.js';
 
-export { html, css };
+export { html, css, VERSION, version };
 
 const BaseElement = typeof HTMLElement !== 'undefined' ? HTMLElement : class {};
 
@@ -32,6 +33,8 @@ function hasCustomSubclassAccessor(instance, prop) {
 }
 
 export class Elementum extends BaseElement {
+  static version = VERSION;
+
   /**
    * Set to false to disable Shadow DOM and render into Light DOM
    */
@@ -543,4 +546,8 @@ export class Elementum extends BaseElement {
       })
     );
   }
+}
+
+if (typeof globalThis !== 'undefined' && typeof globalThis.elementum === 'undefined') {
+  globalThis.elementum = Object.freeze({ version: VERSION });
 }

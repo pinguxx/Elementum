@@ -71,6 +71,10 @@ assert.equal(typeof main.signal, 'function');
 assert.equal(typeof main.computed, 'function');
 assert.equal(typeof main.effect, 'function');
 assert.equal(typeof main.Elementum, 'function');
+assert.equal(typeof main.version, 'string');
+assert.equal(main.version, main.VERSION);
+assert.equal(main.Elementum.version, main.version);
+assert.equal(globalThis.elementum?.version, main.version);
 assert.equal(typeof createPressBehavior, 'function');
 assert.equal(typeof createRovingFocus, 'function');
 assert.equal(typeof createSelectionBehavior, 'function');
@@ -106,6 +110,9 @@ console.log('✔ All 7 ESM subpath exports & pure-Node SSR/AG-UI/Behaviors verif
     tsFile,
     `
 import {
+  Elementum,
+  version,
+  VERSION,
   signal,
   computed,
   ElButton,
@@ -114,6 +121,12 @@ import {
   createSelectionBehavior,
   renderComponentToDSD,
 } from '@wcomp/elementum';
+
+const ver: string = version;
+const verUpper: string = VERSION;
+const clsVer: string = Elementum.version;
+const globalVer: string | undefined = globalThis.elementum?.version;
+void [ver, verUpper, clsVer, globalVer];
 
 const count = signal<number>(1);
 const doubled = computed(() => count.value * 2);

@@ -3,6 +3,7 @@
  */
 
 export { Elementum } from './elementum.js';
+export { VERSION, version } from './version.js';
 export { html, svg, css, render, CSSResult, TemplateResult } from './template.js';
 export {
   signal,

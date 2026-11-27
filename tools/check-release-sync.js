@@ -172,11 +172,19 @@ check(
   `missing package version reference "\`@wcomp/elementum@${version}\`"`
 );
 
+// 11. src/version.js (runtime version export & globalThis.elementum.version)
+const versionMod = readText('src/version.js');
+check(
+  'src/version.js',
+  versionMod.includes(`export const VERSION = '${version}';`),
+  `missing runtime version constant "export const VERSION = '${version}';"`
+);
+
 if (failures.length > 0) {
   console.error(`❌ Release sync check FAILED for @wcomp/elementum@${version}:\n${failures.join('\n')}`);
   process.exit(1);
 }
 
 console.log(
-  `✔ Release sync check PASSED: @wcomp/elementum@${version} (${minorLine}) synced across lockfile, server.json, CHANGELOG, README, QUALITY, SECURITY, stability docs, HTML badges, and Penpot tools.`
+  `✔ Release sync check PASSED: @wcomp/elementum@${version} (${minorLine}) synced across lockfile, src/version.js, server.json, CHANGELOG, README, QUALITY, SECURITY, stability docs, HTML badges, and Penpot tools.`
 );

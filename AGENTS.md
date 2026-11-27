@@ -44,6 +44,7 @@ Publishing to npm is automated via `.github/workflows/publish.yml` (OIDC Trusted
 Before tagging and publishing a new version `X.Y.Z`:
 1. Bump version: `npm version X.Y.Z --no-git-tag-version` (updates `package.json` and `package-lock.json`).
 2. Update version references in **all** release-synced files:
+   - `src/version.js` (`export const VERSION = 'X.Y.Z';`)
    - `server.json` (`version` and `packages[0].version`)
    - `CHANGELOG.md` (add `## [X.Y.Z]` section)
    - `README.md` (`` `vX.Y.Z` `` header)

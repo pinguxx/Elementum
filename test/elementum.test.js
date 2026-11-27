@@ -262,3 +262,15 @@ test('Elementum handles synchronous pre-mount property assignment', () => {
 
   document.body.removeChild(b);
 });
+
+test('Elementum exposes runtime version on class, module exports, and globalThis.elementum', async () => {
+  const fs = await import('node:fs');
+  const pkg = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+  const { version, VERSION } = await import('../src/index.js');
+
+  assert.equal(version, pkg.version);
+  assert.equal(VERSION, pkg.version);
+  assert.equal(Elementum.version, pkg.version);
+  assert.equal(globalThis.elementum?.version, pkg.version);
+  assert.equal(Object.isFrozen(globalThis.elementum), true);
+});
