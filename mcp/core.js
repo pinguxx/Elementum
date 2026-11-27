@@ -773,6 +773,27 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {}, sizeBud
         });
       }
 
+      if (/scale\(\s*0(?:\.0+)?\s*\)/i.test(markup)) {
+        warnings.push({
+          criterion: 'UI Craft (Motion)',
+          message: 'Avoid `scale(0)` pops on overlays/modals; enter from `scale(0.95)` to `scale(0.98)` for natural physical motion.',
+        });
+      }
+
+      if (/transition\s*:\s*[^;{}]*\b(?:width|height|top|left)\b/i.test(markup)) {
+        warnings.push({
+          criterion: 'UI Craft (Motion Performance)',
+          message: 'Avoid transitioning layout properties (`width`, `height`, `top`, `left`); animate GPU-composited `transform` and `opacity` instead.',
+        });
+      }
+
+      if (/\b100vh\b/i.test(markup) && !/\b100dvh\b/i.test(markup)) {
+        warnings.push({
+          criterion: 'UI Craft (Mobile Viewport)',
+          message: 'Bare `100vh` clips behind mobile browser toolbars; pair with `100dvh` (`height: 100vh; height: 100dvh;`).',
+        });
+      }
+
       return {
         scope: 'static-html-lint',
         disclaimer:

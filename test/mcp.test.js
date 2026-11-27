@@ -601,6 +601,7 @@ test('MCP lint_accessibility flags deterministic UI anti-slop patterns as warnin
   const sloppy = `
     <style>
       .btn { transition: all 0.2s ease; }
+      .panel { transition: width 0.2s ease; transform: scale(0); height: 100vh; }
       :host-context([data-theme="dark"]):host([variant="primary"]) { color: white; }
     </style>
     <el-card>
@@ -612,6 +613,8 @@ test('MCP lint_accessibility flags deterministic UI anti-slop patterns as warnin
   assert.equal(res.valid, true);
   const criteria = res.warnings.map((w) => w.criterion);
   assert.ok(criteria.includes('UI Craft (Motion)'));
+  assert.ok(criteria.includes('UI Craft (Motion Performance)'));
+  assert.ok(criteria.includes('UI Craft (Mobile Viewport)'));
   assert.ok(criteria.includes('UI Craft (Tokens & Dark Mode)'));
   assert.ok(criteria.includes('UI Craft (Visual Hierarchy)'));
   assert.ok(criteria.includes('UI Craft (Shadow DOM CSS)'));
