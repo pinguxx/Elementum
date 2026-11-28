@@ -20,8 +20,11 @@ export class ElSeparator extends Elementum {
       box-sizing: border-box;
     }
 
-    :host(:not([orientation="vertical"])),
-    :host([orientation="horizontal"]),
+    :host([orientation="vertical"]) {
+      display: inline-block;
+      align-self: stretch;
+    }
+
     .separator.horizontal {
       width: 100%;
       height: 1px;
@@ -29,14 +32,13 @@ export class ElSeparator extends Elementum {
       margin: var(--el-spacing-sm, 8px) 0;
     }
 
-    :host([orientation="vertical"]),
     .separator.vertical {
       width: 1px;
       height: 100%;
       min-height: 20px;
       background: var(--el-surface-border, #e2e8f0);
       margin: 0 var(--el-spacing-sm, 8px);
-      display: inline-block;
+      display: block;
     }
   `;
 

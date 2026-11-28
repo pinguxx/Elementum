@@ -39,8 +39,8 @@ function contrastRatio(a, b) {
 }
 
 const css = fs.readFileSync(path.join(rootDir, 'src/tokens.css'), 'utf8');
-const lightBlock = css.match(/:root,\s*:root\[data-theme="light"\]\s*\{([\s\S]*?)\n\}/)?.[1] || '';
-const darkBlock = css.match(/\[data-theme="dark"\],\s*:root\[data-theme="dark"\]\s*\{([\s\S]*?)\n\}/)?.[1] || '';
+const lightBlock = css.match(/:root,\s*:root\[data-theme="light"\]\s*\{([\s\S]*?)\n\s*\}/)?.[1] || '';
+const darkBlock = css.match(/\[data-theme="dark"\],\s*:root\[data-theme="dark"\]\s*\{([\s\S]*?)\n\s*\}/)?.[1] || '';
 
 if (!lightBlock || !darkBlock) {
   console.error('Could not parse light/dark token blocks in src/tokens.css');
@@ -53,9 +53,9 @@ const themes = {
 };
 
 const PAIRS = [
-  ['#ffffff', '--el-color-primary', 4.5, 'white on primary fill'],
-  ['#ffffff', '--el-color-primary-hover', 4.5, 'white on primary-hover fill'],
-  ['#ffffff', '--el-color-danger', 4.5, 'white on danger fill'],
+  ['--el-color-primary-contrast', '--el-color-primary', 4.5, 'primary-contrast on primary fill'],
+  ['--el-color-primary-contrast', '--el-color-primary-hover', 4.5, 'primary-contrast on primary-hover fill'],
+  ['--el-color-danger-contrast', '--el-color-danger', 4.5, 'danger-contrast on danger fill'],
   ['#ffffff', '--el-color-success', 4.5, 'white on success fill'],
   ['--el-text-primary', '--el-surface-base', 4.5, 'text-primary on surface-base'],
   ['--el-text-primary', '--el-surface-card', 4.5, 'text-primary on surface-card'],
@@ -95,7 +95,7 @@ for (const [mode, tokens] of Object.entries(themes)) {
 
 // Scan all components to ensure solid-fill tokens are never reused as foreground color:
 const compDir = path.join(rootDir, 'src/components');
-const fillAsTextRe = /color:\s*var\(--el-color-(primary|primary-hover|danger|success|warning|info|accent)(?!-text)\b|color:\s*var\(--el-step-(9|10)\b/;
+const fillAsTextRe = /color:\s*var\(--el-color-(primary|primary-hover|danger|success|warning|info|accent)(?!-text|-contrast)\b|color:\s*var\(--el-step-(9|10)\b/;
 for (const file of fs.readdirSync(compDir).filter((f) => f.endsWith('.js')).sort()) {
   const lines = fs.readFileSync(path.join(compDir, file), 'utf8').split('\n');
   lines.forEach((line, idx) => {

@@ -150,3 +150,25 @@ test('Craft Contract 8: <el-tooltip> skips open delay when switching immediately
   tipA.remove();
   tipB.remove();
 });
+
+test('Craft Contract 9: Layered tokens, scoped :defined, single-line separator, contrast/focus tokens, and hover gating (#4-#8)', () => {
+  const tokensCss = fs.readFileSync(path.join(rootDir, 'src/tokens.css'), 'utf8');
+  // #4: :defined must be scoped inside :where(...) and never match bare :root:not([data-dsd]) :defined {
+  assert.doesNotMatch(tokensCss, /:root:not\(\[data-dsd\]\)\s+:defined\s*\{/);
+  assert.match(tokensCss, /:where\(:root:not\(\[data-dsd\]\)\s+:defined:is\(/);
+  // #7: default light/dark token blocks live inside @layer elementum.tokens
+  assert.match(tokensCss, /@layer\s+elementum\.tokens\s*\{/);
+  // #6: contrast & focus tokens exist in tokens.css and are used by el-button & el-switch
+  assert.match(tokensCss, /--el-color-primary-contrast:/);
+  assert.match(tokensCss, /--el-focus-ring:/);
+  const btnSrc = readComponent('el-button.js');
+  const switchSrc = readComponent('el-switch.js');
+  assert.match(btnSrc, /var\(--el-color-primary-contrast/);
+  assert.match(btnSrc, /var\(--el-focus-ring/);
+  assert.match(switchSrc, /var\(--el-focus-ring/);
+  // #8: el-button :hover rules are gated by @media (hover: hover) and (pointer: fine)
+  assert.match(btnSrc, /@media\s*\(hover:\s*hover\)\s+and\s+\(pointer:\s*fine\)/);
+  // #5: el-separator does not apply height/background to :host
+  const sepSrc = readComponent('el-separator.js');
+  assert.doesNotMatch(sepSrc, /:host\([^)]*\),\s*\.separator/);
+});

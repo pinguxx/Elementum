@@ -3,214 +3,147 @@
  * Auto-generated from penpot-tokens.json (Unified Penpot & Figma parser)
  */
 
-:root,
-:root[data-theme="light"] {
-  /* Brand Colors */
-  --el-color-primary: #2563eb;
-  --el-color-primary-hover: #1d4ed8;
-  --el-color-secondary: #4b5563;
-  --el-color-danger: #dc2626;
-  --el-color-success: #15803d;
-  --el-color-warning: #d97706;
-  --el-color-info: #0284c7;
-  --el-color-accent: #7c3aed;
-
-  /* Surfaces & Elevation */
-  --el-surface-base: #ffffff;
-  --el-surface-card: #ffffff;
-  --el-surface-elevated: #ffffff;
-  --el-surface-muted: #f3f4f6;
-  --el-surface-border: #e5e7eb;
-  --el-border-translucent: rgba(15, 23, 42, 0.08);
-
-  /* Subtle Ambient Shadows (Layered Elevation) */
-  --el-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --el-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --el-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 8px 16px -4px rgba(0, 0, 0, 0.04);
-  --el-shadow-popover: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-  --el-shadow-glow: 0 0 20px -5px rgba(37, 99, 235, 0.25);
-
-  /* Physical Motion & Natural Easing Curves */
-  --el-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --el-ease-in-fast: cubic-bezier(0.7, 0, 0.84, 0);
-  --el-transition-snappy: 150ms var(--el-ease-in-fast);
-  --el-transition-fluid: 280ms var(--el-ease-out-expo);
-
-  /* Typography Colors */
-  --el-text-base: #111827;
-  --el-text-primary: #0f172a;
-  --el-text-secondary: #475569;
-  --el-text-muted: #5c6370;
-  --el-text-inverse: #ffffff;
-  --el-color-primary-text: #1d4ed8;
-  --el-color-success-text: #065f46;
-  --el-color-warning-text: #92400e;
-  --el-color-danger-text: #991b1b;
-  --el-color-info-text: #0369a1;
-  --el-surface-hover: rgba(0, 0, 0, 0.05);
-  --el-tint-primary-bg: rgba(37, 99, 235, 0.08);
-  --el-tint-primary-border: rgba(37, 99, 235, 0.2);
-  --el-tint-success-bg: #d1fae5;
-  --el-tint-danger-bg: #fee2e2;
-  --el-disabled-opacity: 0.45;
-  --el-disabled-filter: grayscale(0.2);
-
-  /* Font Families */
-  --el-font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --el-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-
-  /* Spacing */
-  --el-spacing-xs: 4px;
-  --el-spacing-sm: 8px;
-  --el-spacing-md: 16px;
-  --el-spacing-lg: 24px;
-  --el-spacing-xl: 32px;
-
-  /* Radii */
-  --el-radius-sm: 4px;
-  --el-radius-md: 8px;
-  --el-radius-lg: 16px;
-  --el-radius-xl: 24px;
-  --el-radius-full: 9999px;
-
-  /* Chart Data Series Tokens */
-  --el-chart-1: #2563eb;
-  --el-chart-2: #10b981;
-  --el-chart-3: #f59e0b;
-  --el-chart-4: #8b5cf6;
-  --el-chart-5: #ec4899;
-
-  /* Code Syntax & Surface Tokens */
-  --el-code-bg: #0f172a;
-  --el-code-fg: #e2e8f0;
-  --el-code-border: #1e293b;
-  --el-code-header-bg: rgba(15, 23, 42, 0.85);
-  --el-code-comment: #94a3b8;
-  --el-code-string: #86efac;
-  --el-code-keyword: #c084fc;
-  --el-code-number: #fbbf24;
-  --el-code-tag: #f472b6;
-  --el-code-attr: #7dd3fc;
-  --el-code-fn: #60a5fa;
-
-  /* Typographic Rhythm Tokens */
-  --el-typeset-size: 1rem;
-  --el-typeset-leading: 1.75;
-  --el-typeset-flow: 1.25em;
-  --el-typeset-font-body: var(--el-font-sans);
-
-  /* Radix Colors 12-Step Accessible Scale (Light Theme) */
-  --el-step-1: #fbfcfd;  /* App canvas background */
-  --el-step-2: #f8fafc;  /* Subtle component background */
-  --el-step-3: #f1f5f9;  /* Normal component surface */
-  --el-step-4: #e2e8f0;  /* Hovered component surface */
-  --el-step-5: #cbd5e1;  /* Active/selected surface */
-  --el-step-6: #e2e8f0;  /* Subtle borders / dividers */
-  --el-step-7: #cbd5e1;  /* Interactive borders */
-  --el-step-8: #94a3b8;  /* Focus rings & hover borders */
-  --el-step-9: #2563eb;  /* Solid primary accent */
-  --el-step-10: #1d4ed8; /* Hovered solid primary */
-  --el-step-11: #475569; /* Secondary/muted text */
-  --el-step-12: #0f172a; /* High-contrast primary text */
-  --el-typeset-font-heading: var(--el-font-sans);
-
-  /* Component specific tokens (Light) */
-  --el-tooltip-bg: #0f172a;
-  --el-tooltip-text: #ffffff;
-  --el-tooltip-border: rgba(255, 255, 255, 0.12);
-  --el-skeleton-bg: #e2e8f0;
-  --el-skeleton-shimmer: rgba(255, 255, 255, 0.6);
-
-  color-scheme: light;
-}
-
-[data-theme="dark"],
-:root[data-theme="dark"] {
-  /* Brand Colors (WCAG AA >= 4.5:1 with white text) */
-  --el-color-primary: #2563eb;
-  --el-color-primary-hover: #1d4ed8;
-  --el-color-secondary: #9ca3af;
-  --el-color-danger: #dc2626;
-  --el-color-success: #15803d;
-  --el-color-warning: #d97706;
-  --el-color-info: #0284c7;
-  --el-color-accent: #7c3aed;
-
-  /* Surfaces (Dark Mode) */
-  --el-surface-base: #0b0f19;
-  --el-surface-card: #111827;
-  --el-surface-elevated: #1e293b;
-  --el-surface-muted: #1e293b;
-  --el-surface-border: #334155;
-  --el-border-translucent: rgba(255, 255, 255, 0.08);
-
-  --el-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --el-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --el-shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
-  --el-shadow-popover: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
-  --el-shadow-glow: 0 0 25px -5px rgba(59, 130, 246, 0.35);
-
-  /* Typography Colors (Dark Mode, WCAG AA >= 4.5:1 on #1e293b) */
-  --el-text-base: #f9fafb;
-  --el-text-primary: #f8fafc;
-  --el-text-secondary: #cbd5e1;
-  --el-text-muted: #94a3b8;
-  --el-text-inverse: #0f172a;
-  --el-color-primary-text: #93c5fd;
-  --el-color-success-text: #6ee7b7;
-  --el-color-warning-text: #fcd34d;
-  --el-color-danger-text: #fca5a5;
-  --el-color-info-text: #7dd3fc;
-  --el-surface-hover: rgba(255, 255, 255, 0.1);
-  --el-tint-primary-bg: rgba(59, 130, 246, 0.14);
-  --el-tint-primary-border: rgba(59, 130, 246, 0.3);
-  --el-tint-success-bg: rgba(16, 185, 129, 0.2);
-  --el-tint-danger-bg: rgba(239, 68, 68, 0.2);
-  --el-disabled-opacity: 0.38;
-  --el-disabled-filter: grayscale(0.3);
-
-  /* Chart Colors (Dark Mode) */
-  --el-chart-1: #3b82f6;
-  --el-chart-2: #34d399;
-  --el-chart-3: #fbbf24;
-  --el-chart-4: #a78bfa;
-  --el-chart-5: #f472b6;
-
-  /* Radix Colors 12-Step Accessible Scale (Dark Theme) */
-  --el-step-1: #090d16;  /* App canvas background */
-  --el-step-2: #0f172a;  /* Subtle component background */
-  --el-step-3: #1e293b;  /* Normal component surface */
-  --el-step-4: #334155;  /* Hovered component surface */
-  --el-step-5: #475569;  /* Active/selected surface */
-  --el-step-6: #1e293b;  /* Subtle borders / dividers */
-  --el-step-7: #334155;  /* Interactive borders */
-  --el-step-8: #64748b;  /* Focus rings & hover borders */
-  --el-step-9: #2563eb;  /* Solid primary accent */
-  --el-step-10: #1d4ed8; /* Hovered solid primary */
-  --el-step-11: #94a3b8; /* Secondary/muted text */
-  --el-step-12: #f8fafc; /* High-contrast primary text */
-
-  /* Component specific tokens (Dark) */
-  --el-tooltip-bg: #1e293b;
-  --el-tooltip-text: #f8fafc;
-  --el-tooltip-border: #475569;
-  --el-skeleton-bg: #334155;
-  --el-skeleton-shimmer: rgba(255, 255, 255, 0.15);
-
-  color-scheme: dark;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+@layer elementum.tokens {
+  :root,
+  :root[data-theme="light"] {
+    /* Brand Colors */
     --el-color-primary: #2563eb;
     --el-color-primary-hover: #1d4ed8;
-    --el-color-secondary: #9ca3af;
+    --el-color-primary-contrast: #ffffff;
+    --el-color-secondary: #4b5563;
     --el-color-danger: #dc2626;
+    --el-color-danger-contrast: #ffffff;
     --el-color-success: #15803d;
     --el-color-warning: #d97706;
     --el-color-info: #0284c7;
     --el-color-accent: #7c3aed;
+    --el-focus-ring: rgba(37, 99, 235, 0.4);
 
+    /* Surfaces & Elevation */
+    --el-surface-base: #ffffff;
+    --el-surface-card: #ffffff;
+    --el-surface-elevated: #ffffff;
+    --el-surface-muted: #f3f4f6;
+    --el-surface-border: #e5e7eb;
+    --el-border-translucent: rgba(15, 23, 42, 0.08);
+
+    /* Subtle Ambient Shadows (Layered Elevation) */
+    --el-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --el-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --el-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 8px 16px -4px rgba(0, 0, 0, 0.04);
+    --el-shadow-popover: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    --el-shadow-glow: 0 0 20px -5px rgba(37, 99, 235, 0.25);
+
+    /* Physical Motion & Natural Easing Curves */
+    --el-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --el-ease-in-fast: cubic-bezier(0.7, 0, 0.84, 0);
+    --el-transition-snappy: 150ms var(--el-ease-in-fast);
+    --el-transition-fluid: 280ms var(--el-ease-out-expo);
+
+    /* Typography Colors */
+    --el-text-base: #111827;
+    --el-text-primary: #0f172a;
+    --el-text-secondary: #475569;
+    --el-text-muted: #5c6370;
+    --el-text-inverse: #ffffff;
+    --el-color-primary-text: #1d4ed8;
+    --el-color-success-text: #065f46;
+    --el-color-warning-text: #92400e;
+    --el-color-danger-text: #991b1b;
+    --el-color-info-text: #0369a1;
+    --el-surface-hover: rgba(0, 0, 0, 0.05);
+    --el-tint-primary-bg: rgba(37, 99, 235, 0.08);
+    --el-tint-primary-border: rgba(37, 99, 235, 0.2);
+    --el-tint-success-bg: #d1fae5;
+    --el-tint-danger-bg: #fee2e2;
+    --el-disabled-opacity: 0.45;
+    --el-disabled-filter: grayscale(0.2);
+
+    /* Font Families */
+    --el-font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --el-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    /* Spacing */
+    --el-spacing-xs: 4px;
+    --el-spacing-sm: 8px;
+    --el-spacing-md: 16px;
+    --el-spacing-lg: 24px;
+    --el-spacing-xl: 32px;
+
+    /* Radii */
+    --el-radius-sm: 4px;
+    --el-radius-md: 8px;
+    --el-radius-lg: 16px;
+    --el-radius-xl: 24px;
+    --el-radius-full: 9999px;
+
+    /* Chart Data Series Tokens */
+    --el-chart-1: #2563eb;
+    --el-chart-2: #10b981;
+    --el-chart-3: #f59e0b;
+    --el-chart-4: #8b5cf6;
+    --el-chart-5: #ec4899;
+
+    /* Code Syntax & Surface Tokens */
+    --el-code-bg: #0f172a;
+    --el-code-fg: #e2e8f0;
+    --el-code-border: #1e293b;
+    --el-code-header-bg: rgba(15, 23, 42, 0.85);
+    --el-code-comment: #94a3b8;
+    --el-code-string: #86efac;
+    --el-code-keyword: #c084fc;
+    --el-code-number: #fbbf24;
+    --el-code-tag: #f472b6;
+    --el-code-attr: #7dd3fc;
+    --el-code-fn: #60a5fa;
+
+    /* Typographic Rhythm Tokens */
+    --el-typeset-size: 1rem;
+    --el-typeset-leading: 1.75;
+    --el-typeset-flow: 1.25em;
+    --el-typeset-font-body: var(--el-font-sans);
+
+    /* Radix Colors 12-Step Accessible Scale (Light Theme) */
+    --el-step-1: #fbfcfd;  /* App canvas background */
+    --el-step-2: #f8fafc;  /* Subtle component background */
+    --el-step-3: #f1f5f9;  /* Normal component surface */
+    --el-step-4: #e2e8f0;  /* Hovered component surface */
+    --el-step-5: #cbd5e1;  /* Active/selected surface */
+    --el-step-6: #e2e8f0;  /* Subtle borders / dividers */
+    --el-step-7: #cbd5e1;  /* Interactive borders */
+    --el-step-8: #94a3b8;  /* Focus rings & hover borders */
+    --el-step-9: #2563eb;  /* Solid primary accent */
+    --el-step-10: #1d4ed8; /* Hovered solid primary */
+    --el-step-11: #475569; /* Secondary/muted text */
+    --el-step-12: #0f172a; /* High-contrast primary text */
+    --el-typeset-font-heading: var(--el-font-sans);
+
+    /* Component specific tokens (Light) */
+    --el-tooltip-bg: #0f172a;
+    --el-tooltip-text: #ffffff;
+    --el-tooltip-border: rgba(255, 255, 255, 0.12);
+    --el-skeleton-bg: #e2e8f0;
+    --el-skeleton-shimmer: rgba(255, 255, 255, 0.6);
+
+    color-scheme: light;
+  }
+
+  [data-theme="dark"],
+  :root[data-theme="dark"] {
+    /* Brand Colors (WCAG AA >= 4.5:1 with white text) */
+    --el-color-primary: #2563eb;
+    --el-color-primary-hover: #1d4ed8;
+    --el-color-primary-contrast: #ffffff;
+    --el-color-secondary: #9ca3af;
+    --el-color-danger: #dc2626;
+    --el-color-danger-contrast: #ffffff;
+    --el-color-success: #15803d;
+    --el-color-warning: #d97706;
+    --el-color-info: #0284c7;
+    --el-color-accent: #7c3aed;
+    --el-focus-ring: rgba(96, 165, 250, 0.45);
+
+    /* Surfaces (Dark Mode) */
     --el-surface-base: #0b0f19;
     --el-surface-card: #111827;
     --el-surface-elevated: #1e293b;
@@ -224,6 +157,7 @@
     --el-shadow-popover: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
     --el-shadow-glow: 0 0 25px -5px rgba(59, 130, 246, 0.35);
 
+    /* Typography Colors (Dark Mode, WCAG AA >= 4.5:1 on #1e293b) */
     --el-text-base: #f9fafb;
     --el-text-primary: #f8fafc;
     --el-text-secondary: #cbd5e1;
@@ -233,7 +167,7 @@
     --el-color-success-text: #6ee7b7;
     --el-color-warning-text: #fcd34d;
     --el-color-danger-text: #fca5a5;
-  --el-color-info-text: #7dd3fc;
+    --el-color-info-text: #7dd3fc;
     --el-surface-hover: rgba(255, 255, 255, 0.1);
     --el-tint-primary-bg: rgba(59, 130, 246, 0.14);
     --el-tint-primary-border: rgba(59, 130, 246, 0.3);
@@ -242,6 +176,7 @@
     --el-disabled-opacity: 0.38;
     --el-disabled-filter: grayscale(0.3);
 
+    /* Chart Colors (Dark Mode) */
     --el-chart-1: #3b82f6;
     --el-chart-2: #34d399;
     --el-chart-3: #fbbf24;
@@ -249,20 +184,20 @@
     --el-chart-5: #f472b6;
 
     /* Radix Colors 12-Step Accessible Scale (Dark Theme) */
-    --el-step-1: #090d16;
-    --el-step-2: #0f172a;
-    --el-step-3: #1e293b;
-    --el-step-4: #334155;
-    --el-step-5: #475569;
-    --el-step-6: #1e293b;
-    --el-step-7: #334155;
-    --el-step-8: #64748b;
-    --el-step-9: #3b82f6;
-    --el-step-10: #2563eb;
-    --el-step-11: #94a3b8;
-    --el-step-12: #f8fafc;
+    --el-step-1: #090d16;  /* App canvas background */
+    --el-step-2: #0f172a;  /* Subtle component background */
+    --el-step-3: #1e293b;  /* Normal component surface */
+    --el-step-4: #334155;  /* Hovered component surface */
+    --el-step-5: #475569;  /* Active/selected surface */
+    --el-step-6: #1e293b;  /* Subtle borders / dividers */
+    --el-step-7: #334155;  /* Interactive borders */
+    --el-step-8: #64748b;  /* Focus rings & hover borders */
+    --el-step-9: #2563eb;  /* Solid primary accent */
+    --el-step-10: #1d4ed8; /* Hovered solid primary */
+    --el-step-11: #94a3b8; /* Secondary/muted text */
+    --el-step-12: #f8fafc; /* High-contrast primary text */
 
-    /* Component specific tokens (Dark Media) */
+    /* Component specific tokens (Dark) */
     --el-tooltip-bg: #1e293b;
     --el-tooltip-text: #f8fafc;
     --el-tooltip-border: #475569;
@@ -270,6 +205,82 @@
     --el-skeleton-shimmer: rgba(255, 255, 255, 0.15);
 
     color-scheme: dark;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]):not([data-theme="dark"]) {
+      --el-color-primary: #2563eb;
+      --el-color-primary-hover: #1d4ed8;
+      --el-color-primary-contrast: #ffffff;
+      --el-color-secondary: #9ca3af;
+      --el-color-danger: #dc2626;
+      --el-color-danger-contrast: #ffffff;
+      --el-color-success: #15803d;
+      --el-color-warning: #d97706;
+      --el-color-info: #0284c7;
+      --el-color-accent: #7c3aed;
+      --el-focus-ring: rgba(96, 165, 250, 0.45);
+
+      --el-surface-base: #0b0f19;
+      --el-surface-card: #111827;
+      --el-surface-elevated: #1e293b;
+      --el-surface-muted: #1e293b;
+      --el-surface-border: #334155;
+      --el-border-translucent: rgba(255, 255, 255, 0.08);
+
+      --el-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+      --el-shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+      --el-shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+      --el-shadow-popover: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+      --el-shadow-glow: 0 0 25px -5px rgba(59, 130, 246, 0.35);
+
+      --el-text-base: #f9fafb;
+      --el-text-primary: #f8fafc;
+      --el-text-secondary: #cbd5e1;
+      --el-text-muted: #94a3b8;
+      --el-text-inverse: #0f172a;
+      --el-color-primary-text: #93c5fd;
+      --el-color-success-text: #6ee7b7;
+      --el-color-warning-text: #fcd34d;
+      --el-color-danger-text: #fca5a5;
+      --el-color-info-text: #7dd3fc;
+      --el-surface-hover: rgba(255, 255, 255, 0.1);
+      --el-tint-primary-bg: rgba(59, 130, 246, 0.14);
+      --el-tint-primary-border: rgba(59, 130, 246, 0.3);
+      --el-tint-success-bg: rgba(16, 185, 129, 0.2);
+      --el-tint-danger-bg: rgba(239, 68, 68, 0.2);
+      --el-disabled-opacity: 0.38;
+      --el-disabled-filter: grayscale(0.3);
+
+      --el-chart-1: #3b82f6;
+      --el-chart-2: #34d399;
+      --el-chart-3: #fbbf24;
+      --el-chart-4: #a78bfa;
+      --el-chart-5: #f472b6;
+
+      /* Radix Colors 12-Step Accessible Scale (Dark Theme) */
+      --el-step-1: #090d16;
+      --el-step-2: #0f172a;
+      --el-step-3: #1e293b;
+      --el-step-4: #334155;
+      --el-step-5: #475569;
+      --el-step-6: #1e293b;
+      --el-step-7: #334155;
+      --el-step-8: #64748b;
+      --el-step-9: #3b82f6;
+      --el-step-10: #2563eb;
+      --el-step-11: #94a3b8;
+      --el-step-12: #f8fafc;
+
+      /* Component specific tokens (Dark Media) */
+      --el-tooltip-bg: #1e293b;
+      --el-tooltip-text: #f8fafc;
+      --el-tooltip-border: #475569;
+      --el-skeleton-bg: #334155;
+      --el-skeleton-shimmer: rgba(255, 255, 255, 0.15);
+
+      color-scheme: dark;
+    }
   }
 }
 
@@ -412,7 +423,37 @@ el-dropdown:not(:defined) {
   opacity: 0;
 }
 
-:root:not([data-dsd]) :defined {
+:where(:root:not([data-dsd]) :defined:is(
+  el-button,
+  el-badge,
+  el-input,
+  el-calendar,
+  el-datepicker,
+  el-tabs,
+  el-tab,
+  el-select,
+  el-switch,
+  el-tooltip,
+  el-accordion,
+  el-accordion-item,
+  el-table,
+  el-progress,
+  el-spinner,
+  el-avatar,
+  el-avatar-group,
+  el-segmented-control,
+  el-pagination,
+  el-chip,
+  el-autocomplete,
+  el-number-flow,
+  el-otp-input,
+  el-prompt-input,
+  el-reasoning-card,
+  el-border-beam,
+  el-streaming-text,
+  el-chart,
+  el-theme-switch
+)) {
   animation: el-defined-in 120ms var(--el-ease-out-expo, cubic-bezier(0.16, 1, 0.3, 1));
 }
 
@@ -422,7 +463,37 @@ el-dropdown:not(:defined) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :root:not([data-dsd]) :defined {
+  :where(:root:not([data-dsd]) :defined:is(
+    el-button,
+    el-badge,
+    el-input,
+    el-calendar,
+    el-datepicker,
+    el-tabs,
+    el-tab,
+    el-select,
+    el-switch,
+    el-tooltip,
+    el-accordion,
+    el-accordion-item,
+    el-table,
+    el-progress,
+    el-spinner,
+    el-avatar,
+    el-avatar-group,
+    el-segmented-control,
+    el-pagination,
+    el-chip,
+    el-autocomplete,
+    el-number-flow,
+    el-otp-input,
+    el-prompt-input,
+    el-reasoning-card,
+    el-border-beam,
+    el-streaming-text,
+    el-chart,
+    el-theme-switch
+  )) {
     animation: none;
   }
 }
@@ -458,26 +529,30 @@ el-sidebar[collapsed] el-sidebar-content div {
 /* ========================================================
    High-Contrast Button & Theme Switch Shadow Part Overrides
    ======================================================== */
-:root[data-theme="dark"] el-button[variant="secondary"]::part(button) {
-  background-color: #1e293b;
-  color: #f8fafc;
-  border-color: #334155;
-}
+@layer elementum.tokens {
+  :root[data-theme="dark"] el-button[variant="secondary"]::part(button) {
+    background-color: #1e293b;
+    color: #f8fafc;
+    border-color: #334155;
+  }
 
-:root[data-theme="dark"] el-button[variant="secondary"]::part(button):hover {
-  background-color: #334155;
-  color: #f8fafc;
-  border-color: #475569;
-}
+  :root[data-theme="dark"] el-theme-switch::part(button) {
+    background-color: #1e293b;
+    color: #f8fafc;
+    border-color: #334155;
+  }
 
-:root[data-theme="dark"] el-theme-switch::part(button) {
-  background-color: #1e293b;
-  color: #f8fafc;
-  border-color: #334155;
-}
+  @media (hover: hover) and (pointer: fine) {
+    :root[data-theme="dark"] el-button[variant="secondary"]::part(button):hover {
+      background-color: #334155;
+      color: #f8fafc;
+      border-color: #475569;
+    }
 
-:root[data-theme="dark"] el-theme-switch::part(button):hover {
-  background-color: #334155;
-  color: #f8fafc;
-  border-color: var(--el-color-primary, #3b82f6);
+    :root[data-theme="dark"] el-theme-switch::part(button):hover {
+      background-color: #334155;
+      color: #f8fafc;
+      border-color: var(--el-color-primary, #3b82f6);
+    }
+  }
 }

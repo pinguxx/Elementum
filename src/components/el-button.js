@@ -50,7 +50,7 @@ export class ElButton extends Elementum {
     }
 
     button:focus-visible {
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4);
+      box-shadow: 0 0 0 3px var(--el-focus-ring, rgba(37, 99, 235, 0.4));
     }
 
     button:not([disabled]):active {
@@ -106,11 +106,7 @@ export class ElButton extends Elementum {
     :host([variant="primary"]) button,
     :host(:not([variant])) button {
       background-color: var(--el-color-primary, #2563eb);
-      color: #ffffff;
-    }
-    :host([variant="primary"]:not([disabled])) button:not([disabled]):hover,
-    :host(:not([variant]):not([disabled])) button:not([disabled]):hover {
-      background-color: var(--el-color-primary-hover, #1d4ed8);
+      color: var(--el-color-primary-contrast, #ffffff);
     }
 
     :host([variant="secondary"]) button {
@@ -118,38 +114,49 @@ export class ElButton extends Elementum {
       color: var(--el-text-primary, #0f172a);
       border-color: var(--el-surface-border, #e5e7eb);
     }
-    :host([variant="secondary"]:not([disabled])) button:not([disabled]):hover {
-      background-color: var(--el-step-4, var(--el-surface-border, #e2e8f0));
-      color: var(--el-text-primary, #0f172a);
-      border-color: var(--el-step-7, var(--el-surface-border, #cbd5e1));
-    }
 
     :host([variant="outline"]) button {
       background-color: transparent;
       color: var(--el-text-primary, #0f172a);
       border-color: var(--el-surface-border, #cbd5e1);
     }
-    :host([variant="outline"]:not([disabled])) button:not([disabled]):hover {
-      background-color: var(--el-step-4, var(--el-surface-border, #e2e8f0));
-      color: var(--el-text-primary, #0f172a);
-      border-color: var(--el-step-7, var(--el-surface-border, #94a3b8));
-    }
 
     :host([variant="danger"]) button {
       background-color: var(--el-color-danger, #dc2626);
-      color: #ffffff;
-    }
-    :host([variant="danger"]:not([disabled])) button:not([disabled]):hover {
-      background-color: #b91c1c;
+      color: var(--el-color-danger-contrast, #ffffff);
     }
 
     :host([variant="ghost"]) button {
       background-color: transparent;
       color: var(--el-color-primary-text, #1d4ed8);
     }
-    :host([variant="ghost"]:not([disabled])) button:not([disabled]):hover {
-      background-color: var(--el-step-3, var(--el-surface-muted, #f1f5f9));
-      color: var(--el-color-primary-text, #1d4ed8);
+
+    @media (hover: hover) and (pointer: fine) {
+      :host([variant="primary"]:not([disabled])) button:not([disabled]):hover,
+      :host(:not([variant]):not([disabled])) button:not([disabled]):hover {
+        background-color: var(--el-color-primary-hover, #1d4ed8);
+      }
+
+      :host([variant="secondary"]:not([disabled])) button:not([disabled]):hover {
+        background-color: var(--el-step-4, var(--el-surface-border, #e2e8f0));
+        color: var(--el-text-primary, #0f172a);
+        border-color: var(--el-step-7, var(--el-surface-border, #cbd5e1));
+      }
+
+      :host([variant="outline"]:not([disabled])) button:not([disabled]):hover {
+        background-color: var(--el-step-4, var(--el-surface-border, #e2e8f0));
+        color: var(--el-text-primary, #0f172a);
+        border-color: var(--el-step-7, var(--el-surface-border, #94a3b8));
+      }
+
+      :host([variant="danger"]:not([disabled])) button:not([disabled]):hover {
+        background-color: #b91c1c;
+      }
+
+      :host([variant="ghost"]:not([disabled])) button:not([disabled]):hover {
+        background-color: var(--el-step-3, var(--el-surface-muted, #f1f5f9));
+        color: var(--el-color-primary-text, #1d4ed8);
+      }
     }
   `;
 

@@ -49,7 +49,7 @@ export class ElSwitch extends Elementum {
 
     :host(:focus-visible) .track,
     .track:focus-visible {
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+      box-shadow: 0 0 0 3px var(--el-focus-ring, rgba(37, 99, 235, 0.4));
     }
 
     .track.checked {
@@ -58,7 +58,7 @@ export class ElSwitch extends Elementum {
 
     .thumb {
       position: absolute;
-      background: #ffffff;
+      background: var(--el-color-primary-contrast, #ffffff);
       border-radius: 50%;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
       transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
