@@ -225,7 +225,7 @@ test('MCP separated component schema (variants, states, props, constraints vs ex
 
   // 7. All 113 tags in custom-elements.json have complete separated metadata
   const allDecls = manifest.modules.flatMap((m) => m.declarations || []);
-  assert.equal(allDecls.length, 113);
+  assert.equal(allDecls.length, 115);
   for (const decl of allDecls) {
     assert.ok(metadata[decl.tagName], `Missing metadata for ${decl.tagName}`);
     const doc = handleToolCall('get_component_doc', { tag: decl.tagName });
@@ -432,7 +432,7 @@ test('MCP Edge & Core security hardening: headers, Origin DNS-rebinding guard, C
   const { createMcpHandler } = await import('../mcp/core.js');
   const bareMcp = createMcpHandler({ manifest, tokens, pkg });
   const compList = bareMcp.handleToolCall('list_components', {});
-  assert.equal(compList.count, 113);
+  assert.equal(compList.count, 115);
   const allTokens = bareMcp.handleToolCall('list_tokens', {});
   assert.ok(allTokens && typeof allTokens === 'object');
   const colorTokens = bareMcp.handleToolCall('list_tokens', { category: 'color' });
@@ -536,7 +536,7 @@ test('MCP v2: resources, prompts, completions, setup, bundle planning, filtered 
   assert.equal(tmplList[0].uriTemplate, 'elementum://components/{tag}');
 
   const catalogMd = rpc('resources/read', { uri: 'elementum://catalog' }).result.contents[0].text;
-  assert.ok(catalogMd.includes('113'));
+  assert.ok(catalogMd.includes('115'));
   assert.ok(rpc('resources/read', { uri: 'elementum://setup' }).result.contents[0].text.includes('data-theme="dark"'));
   assert.ok(rpc('resources/read', { uri: 'elementum://tokens' }).result.contents[0].text.includes('color'));
   const tabsMd = rpc('resources/read', { uri: 'elementum://components/el-tabs' }).result.contents[0].text;

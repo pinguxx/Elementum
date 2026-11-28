@@ -108,6 +108,7 @@ export { ElShimmerText } from './components/el-shimmer-text.js';
 export { ElHoldButton } from './components/el-hold-button.js';
 export { ElUsageRing } from './components/el-usage-ring.js';
 export { ElActivityGrid } from './components/el-activity-grid.js';
+export { ElBottomNav, ElBottomNavItem } from './components/el-bottom-nav.js';
 
 // AG-UI Protocol Adapter (Streaming Events, State Deltas, & Signal Bindings)
 export { createAgUiStore, applyJsonPatch, getByPointer } from './ag-ui.js';

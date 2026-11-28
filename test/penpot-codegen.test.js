@@ -146,7 +146,7 @@ test('Penpot Codegen: renderElementumNode & generatePageHtml compile all 113 com
   const catalogList = Array.isArray(catalogComponents)
     ? catalogComponents
     : Object.values(catalogComponents);
-  assert.equal(catalogList.length, 113);
+  assert.equal(catalogList.length, 114);
 
   for (const comp of catalogList) {
     const parsed = parsePenpotLayerName(comp.tag);

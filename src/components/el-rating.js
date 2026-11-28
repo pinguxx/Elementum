@@ -102,7 +102,7 @@ export class ElRating extends Elementum {
   }
 
   formReset() {
-    this.value.value = parseFloat(this.getAttribute('value') || '0');
+    this.value.value = parseFloat(this.defaultValue || '0');
     this.setFormValue(String(this.value.value));
   }
 

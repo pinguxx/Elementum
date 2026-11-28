@@ -347,7 +347,9 @@ export class ElAutocomplete extends Elementum {
       this.#syncFormValue();
       this.validate();
     } else if (name === 'value') {
-      this.value.value = newValue;
+      if (String(this.value.value ?? '') !== String(newValue ?? '')) {
+        this.value.value = newValue;
+      }
       this.#syncFormValue();
       this.validate();
     } else if (name === 'options' || name === 'data') {

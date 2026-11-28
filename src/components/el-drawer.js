@@ -15,9 +15,10 @@ import { signal } from '../signal.js';
  * - Mobile virtual viewport / software keyboard adaptation
  */
 export class ElDrawer extends Elementum {
-  static observedAttributes = ['open', 'placement', 'title', 'heading', 'scale-background', 'snap-points', 'handle'];
+  static observedAttributes = ['open', 'placement', 'title', 'heading', 'scale-background', 'snap-points', 'handle', 'inline-at', 'mode'];
 
   isOpen = signal(false);
+  isInline = signal(false);
   placement = signal('right'); // 'right' | 'left' | 'top' | 'bottom'
   titleText = signal('');
   activeSnapIndex = signal(-1);
@@ -32,6 +33,7 @@ export class ElDrawer extends Elementum {
   #justDragged = false;
   #focusTimer = null;
   #dragResetTimer = null;
+  #inlineMqlCleanups = [];
 
   get open() {
     return this.isOpen.value;
@@ -54,6 +56,7 @@ export class ElDrawer extends Elementum {
     this.setAttribute('data-side', this.placement.value);
 
     this.#parseSnapPoints();
+    this.#setupInlineMode();
 
     window.addEventListener('keydown', this.#onKeyDown);
 
@@ -62,7 +65,7 @@ export class ElDrawer extends Elementum {
       window.visualViewport.addEventListener('resize', this.#viewportHandler);
     }
 
-    if (this.isOpen.value) {
+    if (this.isOpen.value && !this.isInline.value) {
       if (typeof document !== 'undefined' && document.body) {
         document.body.style.overflow = 'hidden';
       }
@@ -71,7 +74,7 @@ export class ElDrawer extends Elementum {
   }
 
   rendered() {
-    if (this.isOpen.value && this.placement.value === 'bottom' && this.#parsedSnapPoints.length > 0) {
+    if (this.isOpen.value && !this.isInline.value && this.placement.value === 'bottom' && this.#parsedSnapPoints.length > 0) {
       const idx = this.activeSnapIndex.value >= 0 ? this.activeSnapIndex.value : 0;
       this.#setSheetHeight(this.#parsedSnapPoints[idx]);
     }
@@ -82,6 +85,7 @@ export class ElDrawer extends Elementum {
     if (this.#viewportHandler && typeof window !== 'undefined' && window.visualViewport) {
       window.visualViewport.removeEventListener('resize', this.#viewportHandler);
     }
+    this.#cleanupInlineMqls();
     if (this.#focusTimer) {
       clearTimeout(this.#focusTimer);
       this.#focusTimer = null;
@@ -94,11 +98,70 @@ export class ElDrawer extends Elementum {
     this.#releaseBodyScroll();
   }
 
+  #cleanupInlineMqls() {
+    for (const off of this.#inlineMqlCleanups) off();
+    this.#inlineMqlCleanups = [];
+  }
+
+  #setupInlineMode() {
+    this.#cleanupInlineMqls();
+    const mode = (this.getAttribute('mode') || '').toLowerCase();
+    const inlineAt = (this.getAttribute('inline-at') || '').trim();
+
+    if (mode === 'inline') {
+      this.#applyInlineState(true);
+      return;
+    }
+    if (mode === 'overlay' || (!inlineAt && mode !== 'auto')) {
+      this.#applyInlineState(false);
+      return;
+    }
+
+    const queries = [];
+    if (inlineAt && /^\d+(?:\.\d+)?(?:px|rem|em|vw)$/.test(inlineAt)) {
+      queries.push(`(min-width: ${inlineAt})`);
+    }
+    if (mode === 'auto') {
+      queries.push('(horizontal-viewport-segments: 2)');
+    }
+
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function' || queries.length === 0) {
+      this.#applyInlineState(false);
+      return;
+    }
+
+    const mqls = queries.map((q) => window.matchMedia(q));
+    const evaluate = () => this.#applyInlineState(mqls.some((m) => Boolean(m.matches)));
+    for (const mql of mqls) {
+      if (typeof mql.addEventListener === 'function') {
+        mql.addEventListener('change', evaluate);
+        this.#inlineMqlCleanups.push(() => mql.removeEventListener('change', evaluate));
+      }
+    }
+    evaluate();
+  }
+
+  #applyInlineState(inline) {
+    const next = Boolean(inline);
+    const prev = this.isInline.value;
+    this.isInline.value = next;
+    this.setAttribute('data-mode', next ? 'inline' : 'overlay');
+    if (next) {
+      this.#applyBackgroundScale(false);
+      this.#releaseBodyScroll();
+    }
+    if (prev !== next) {
+      this.emit('modechange', { mode: next ? 'inline' : 'overlay' });
+    }
+  }
+
   attributeChanged(name, oldValue, newValue) {
     if (name === 'open') {
       const shouldOpen = newValue !== null && newValue !== 'false';
       if (shouldOpen) this.show();
       else this.close();
+    } else if (name === 'inline-at' || name === 'mode') {
+      this.#setupInlineMode();
     } else if (name === 'placement') {
       this.placement.value = newValue || 'right';
       this.setAttribute('data-side', this.placement.value);
@@ -692,6 +755,35 @@ export class ElDrawer extends Elementum {
         padding-left: var(--el-spacing-md, 16px);
         padding-right: var(--el-spacing-md, 16px);
       }
+    }
+
+    :host([data-mode="inline"]) {
+      display: block;
+    }
+
+    :host([data-mode="inline"]) .backdrop,
+    :host([data-mode="inline"]) .drawer-handle-bar,
+    :host([data-mode="inline"]) .close-btn {
+      display: none !important;
+    }
+
+    :host([data-mode="inline"]) .drawer-panel {
+      position: sticky;
+      top: 0;
+      left: auto;
+      right: auto;
+      bottom: auto;
+      transform: none !important;
+      opacity: 1;
+      pointer-events: auto;
+      z-index: auto;
+      box-shadow: none;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      max-height: 100dvh;
+      border: 1px solid var(--el-surface-border, #e5e7eb);
+      border-radius: var(--el-radius-md, 8px);
     }
   `;
 

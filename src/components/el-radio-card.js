@@ -312,7 +312,7 @@ export class ElRadioCardGroup extends Elementum {
   };
 
   formReset() {
-    const initial = this.getAttribute('value') || '';
+    const initial = this.defaultValue;
     this.setValue(initial);
   }
 

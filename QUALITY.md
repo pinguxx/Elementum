@@ -11,14 +11,14 @@
 
 ## Summary (`@wcomp/elementum@0.8.8`)
 
-- **Total Registered Custom Elements**: **113**
-- **🟢 Production Verified**: **113**
+- **Total Registered Custom Elements**: **115**
+- **🟢 Production Verified**: **114**
 - **🔵 Stable**: **0**
-- **🟡 Experimental**: **0**
-- **Instantiated in Unit Tests**: **113 / 113**
-- **Dedicated `test()` Blocks**: **95 / 113**
-- **Direct Real-Browser Playwright E2E**: **113 / 113** (Chromium, Firefox, WebKit)
-- **`@axe-core/playwright` WCAG 2.2 AA Audited**: **113 / 113**
+- **🟡 Experimental**: **1**
+- **Instantiated in Unit Tests**: **115 / 115**
+- **Dedicated `test()` Blocks**: **97 / 115**
+- **Direct Real-Browser Playwright E2E**: **115 / 115** (Chromium, Firefox, WebKit)
+- **`@axe-core/playwright` WCAG 2.2 AA Audited**: **115 / 115**
 - **One-Command Full Verification**: `npm run verify:all`
 
 ## Per-Component Evidence Matrix
@@ -36,6 +36,8 @@
 | `<el-avatar-group>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-badge>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-border-beam>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
+| `<el-bottom-nav>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
+| `<el-bottom-nav-item>` | 🟡 Experimental | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-breadcrumb>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-breadcrumb-item>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |
 | `<el-button>` | 🟢 Production Verified | ✅ Yes | ✅ Yes | ✅ Playwright | ✅ axe-core |

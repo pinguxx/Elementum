@@ -895,6 +895,20 @@ export class ElActivityGrid extends Elementum {
   data: Signal<Array<{ date?: string; count?: number; level?: 0 | 1 | 2 | 3 | 4 }>>;
   selectedIndex: Signal<number>;
 }
+export class ElBottomNav extends Elementum {
+  value: Signal<string>;
+  label: Signal<string>;
+  fixed: Signal<boolean>;
+}
+export class ElBottomNavItem extends Elementum {
+  value: Signal<string>;
+  label: Signal<string>;
+  href: Signal<string>;
+  badge: Signal<string>;
+  active: Signal<boolean>;
+  disabled: Signal<boolean>;
+  focusItem(): void;
+}
 
 // ==========================================
 // SSR (Declarative Shadow DOM)
@@ -1339,6 +1353,8 @@ declare global {
     'el-hold-button': ElHoldButton;
     'el-usage-ring': ElUsageRing;
     'el-activity-grid': ElActivityGrid;
+    'el-bottom-nav': ElBottomNav;
+    'el-bottom-nav-item': ElBottomNavItem;
   }
 
   namespace JSX {
@@ -1455,6 +1471,8 @@ declare global {
       'el-hold-button': any;
       'el-usage-ring': any;
       'el-activity-grid': any;
+      'el-bottom-nav': any;
+      'el-bottom-nav-item': any;
     }
   }
 }

@@ -17,6 +17,8 @@ declare module "vue" {
     'el-avatar-group': HTMLElementTagNameMap['el-avatar-group'] & Record<string, any>;
     'el-badge': HTMLElementTagNameMap['el-badge'] & Record<string, any>;
     'el-border-beam': HTMLElementTagNameMap['el-border-beam'] & Record<string, any>;
+    'el-bottom-nav': HTMLElementTagNameMap['el-bottom-nav'] & Record<string, any>;
+    'el-bottom-nav-item': HTMLElementTagNameMap['el-bottom-nav-item'] & Record<string, any>;
     'el-breadcrumb': HTMLElementTagNameMap['el-breadcrumb'] & Record<string, any>;
     'el-breadcrumb-item': HTMLElementTagNameMap['el-breadcrumb-item'] & Record<string, any>;
     'el-button': HTMLElementTagNameMap['el-button'] & Record<string, any>;
@@ -135,6 +137,8 @@ declare namespace svelteHTML {
     'el-avatar-group': Partial<HTMLElementTagNameMap['el-avatar-group']> & Record<string, any>;
     'el-badge': Partial<HTMLElementTagNameMap['el-badge']> & Record<string, any>;
     'el-border-beam': Partial<HTMLElementTagNameMap['el-border-beam']> & Record<string, any>;
+    'el-bottom-nav': Partial<HTMLElementTagNameMap['el-bottom-nav']> & Record<string, any>;
+    'el-bottom-nav-item': Partial<HTMLElementTagNameMap['el-bottom-nav-item']> & Record<string, any>;
     'el-breadcrumb': Partial<HTMLElementTagNameMap['el-breadcrumb']> & Record<string, any>;
     'el-breadcrumb-item': Partial<HTMLElementTagNameMap['el-breadcrumb-item']> & Record<string, any>;
     'el-button': Partial<HTMLElementTagNameMap['el-button']> & Record<string, any>;

@@ -16,6 +16,7 @@
   "@wcomp/elementum/components/el-avatar": 2624,
   "@wcomp/elementum/components/el-badge": 1664,
   "@wcomp/elementum/components/el-border-beam": 1984,
+  "@wcomp/elementum/components/el-bottom-nav": 3200,
   "@wcomp/elementum/components/el-breadcrumb": 2176,
   "@wcomp/elementum/components/el-button": 2688,
   "@wcomp/elementum/components/el-calendar": 3904,

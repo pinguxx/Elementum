@@ -11,13 +11,18 @@ import { signal } from '../signal.js';
 import { createPresenceBehavior } from '../behaviors/index.js';
 
 export class ElPopover extends Elementum {
-  static observedAttributes = ['open', 'placement', 'offset', 'arrow'];
+  static observedAttributes = ['open', 'placement', 'offset', 'arrow', 'trigger'];
 
   isOpen = signal(false);
   placement = signal('bottom');
   offset = signal(8);
   hasArrow = signal(false);
+  triggerMode = signal('click'); // 'click' | 'hover' | 'hover long-press'
   #presence = null;
+  #hoverCloseTimer = null;
+  #longPressTimer = null;
+  #pressStart = null;
+  #openedByLongPress = false;
 
   static styles = css`
     :host {
@@ -175,6 +180,11 @@ export class ElPopover extends Elementum {
     document.addEventListener('keydown', onDocKeyDown, { signal: this.signal });
   }
 
+  disconnected() {
+    this.#clearHoverTimer();
+    this.#cancelLongPress();
+  }
+
   rendered() {
     if (this.isOpen.value) {
       this.#updateAnchorMetrics();
@@ -194,6 +204,8 @@ export class ElPopover extends Elementum {
       this.style.setProperty('--popover-offset', `${this.offset.value}px`);
     } else if (name === 'arrow') {
       this.hasArrow.value = newValue !== null && newValue !== 'false';
+    } else if (name === 'trigger') {
+      this.triggerMode.value = (newValue || 'click').trim().toLowerCase();
     }
     return true;
   }
@@ -207,7 +219,87 @@ export class ElPopover extends Elementum {
     }
     this.style.setProperty('--popover-offset', `${this.offset.value}px`);
     this.hasArrow.value = this.hasAttribute('arrow') && this.getAttribute('arrow') !== 'false';
+    this.triggerMode.value = (this.getAttribute('trigger') || 'click').trim().toLowerCase();
   }
+
+  #hasTrigger(mode) {
+    return this.triggerMode.value.split(/\s+/).includes(mode);
+  }
+
+  #isFineHover(e) {
+    if (e && e.pointerType && e.pointerType !== 'mouse') return false;
+    if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+      return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    }
+    return true;
+  }
+
+  #clearHoverTimer() {
+    if (this.#hoverCloseTimer) {
+      clearTimeout(this.#hoverCloseTimer);
+      this.#hoverCloseTimer = null;
+    }
+  }
+
+  #cancelLongPress() {
+    if (this.#longPressTimer) {
+      clearTimeout(this.#longPressTimer);
+      this.#longPressTimer = null;
+    }
+    this.#pressStart = null;
+  }
+
+  #onPointerEnter = (e) => {
+    if (!this.#hasTrigger('hover') || !this.#isFineHover(e)) return;
+    this.#clearHoverTimer();
+    this.open();
+  };
+
+  #onPointerLeave = (e) => {
+    if (!this.#hasTrigger('hover') || !this.#isFineHover(e)) return;
+    this.#clearHoverTimer();
+    this.#hoverCloseTimer = setTimeout(() => {
+      this.#hoverCloseTimer = null;
+      this.close();
+    }, 120);
+  };
+
+  #onTriggerPointerDown = (e) => {
+    if (!this.#hasTrigger('long-press') || e.pointerType === 'mouse') return;
+    this.#cancelLongPress();
+    this.#pressStart = { x: e.clientX ?? 0, y: e.clientY ?? 0 };
+    this.#longPressTimer = setTimeout(() => {
+      this.#longPressTimer = null;
+      this.#pressStart = null;
+      this.#openedByLongPress = true;
+      this.open();
+    }, 380);
+  };
+
+  #onTriggerPointerMove = (e) => {
+    if (!this.#longPressTimer || !this.#pressStart) return;
+    const dx = (e.clientX ?? 0) - this.#pressStart.x;
+    const dy = (e.clientY ?? 0) - this.#pressStart.y;
+    if (Math.hypot(dx, dy) > 10) {
+      this.#cancelLongPress();
+    }
+  };
+
+  #onTriggerPointerUp = () => {
+    this.#cancelLongPress();
+  };
+
+  #onTriggerClick = (e) => {
+    if (this.#openedByLongPress) {
+      this.#openedByLongPress = false;
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    if (this.#hasTrigger('click')) {
+      this.toggle();
+    }
+  };
 
   #updateAnchorMetrics() {
     if (typeof window === 'undefined') return;
@@ -260,7 +352,13 @@ export class ElPopover extends Elementum {
       <div
         class="trigger-wrapper"
         part="trigger"
-        @click=${() => this.toggle()}
+        @click=${this.#onTriggerClick}
+        @pointerenter=${this.#onPointerEnter}
+        @pointerleave=${this.#onPointerLeave}
+        @pointerdown=${this.#onTriggerPointerDown}
+        @pointermove=${this.#onTriggerPointerMove}
+        @pointerup=${this.#onTriggerPointerUp}
+        @pointercancel=${this.#onTriggerPointerUp}
       >
         <slot name="trigger"></slot>
       </div>
@@ -272,6 +370,8 @@ export class ElPopover extends Elementum {
         part="popup"
         role="dialog"
         aria-hidden=${() => !this.isOpen.value}
+        @pointerenter=${this.#onPointerEnter}
+        @pointerleave=${this.#onPointerLeave}
       >
         ${() => (this.hasArrow.value ? html`<div class="arrow" part="arrow"></div>` : '')}
         <slot name="content"></slot>

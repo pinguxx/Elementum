@@ -74,9 +74,11 @@
 | `<el-avatar-group>` | `ElAvatarGroup` | — | — | — | Clustered avatar stack with overlapping borders. |
 | `<el-badge>` | `ElBadge` | variant: 'default' \| 'success' \| 'danger', count: string | — | — | Minimal status indicator and notification badge. |
 | `<el-border-beam>` | `ElBorderBeam` | size: number, duration: number, color-from: string, color-to: string, border-width: number, reverse: boolean | — | — | Luminous animated border ray highlight that circles any container perimeter. |
+| `<el-bottom-nav>` | `ElBottomNav` | value: string, label: string, fixed: boolean | change | (default) | Mobile-first bottom tab navigation bar with env(safe-area-inset-bottom) padding, aria-current="page" state, and keyboard arrow roving focus. |
+| `<el-bottom-nav-item>` | `ElBottomNavItem` | value: string, label: string, href: string, badge: string, active: boolean, disabled: boolean, haptic: boolean | — | icon, (default) | Individual tab item inside <el-bottom-nav> with optional href, icon slot, aria-current="page", and 99+ capped badge pill. |
 | `<el-breadcrumb>` | `ElBreadcrumb` | separator: string | — | — | Semantic navigation trail container with configurable separators. |
 | `<el-breadcrumb-item>` | `ElBreadcrumbItem` | href: string, current: boolean | — | — | Individual breadcrumb link or terminal item. |
-| `<el-button>` | `ElButton` | variant: 'primary' \| 'secondary' \| 'danger' \| 'ghost', size: 'sm' \| 'md' \| 'lg', disabled: boolean | click | (default), prefix, suffix | Frameworkless, signal-driven button component with 1:1 Figma variant parity. |
+| `<el-button>` | `ElButton` | variant: 'primary' \| 'secondary' \| 'danger' \| 'ghost', size: 'sm' \| 'md' \| 'lg', disabled: boolean, haptic: boolean | click | (default), prefix, suffix | Frameworkless, signal-driven button component with 1:1 Figma variant parity. |
 | `<el-calendar>` | `ElCalendar` | value: string | select | — | Standalone accessible calendar month-grid component. |
 | `<el-callout>` | `ElCallout` | variant: string, size: string | — | — | ElCallout Web Component (<el-callout>). |
 | `<el-card>` | `ElCard` | hoverable: boolean | — | — | Structured card container with header, title, description, content and footer subcomponents. |
@@ -102,7 +104,7 @@
 | `<el-datepicker>` | `ElDatepicker` | value: string, placeholder: string, disabled: boolean, required: boolean | change | — | Form-associated composite Datepicker combining dropdown, input, and calendar. |
 | `<el-dialog>` | `ElDialog` | open: boolean, title: string | open, close | header, (default), footer | Accessible modal dialog powered by native <dialog> with overscroll containment. |
 | `<el-diff-viewer>` | `ElDiffViewer` | filename: string, before: string, after: string, mode: string, approval: string | — | — | ElDiffViewer Web Component (<el-diff-viewer>). |
-| `<el-drawer>` | `ElDrawer` | open: boolean, placement: 'left' \| 'right' \| 'top' \| 'bottom', title: string | open, close | — | Accessible slide-over drawer panel with backdrop light-dismiss and keyboard traps. |
+| `<el-drawer>` | `ElDrawer` | open: boolean, placement: 'left' \| 'right' \| 'top' \| 'bottom', title: string, inline-at: string, mode: 'overlay' \| 'inline' \| 'auto' | open, close | — | Accessible slide-over drawer panel with backdrop light-dismiss and keyboard traps. |
 | `<el-dropdown>` | `ElDropdown` | open: boolean | open, close | — | Accessible overlay container with light-dismiss and trigger slot. |
 | `<el-dropzone>` | `ElDropzone` | accept: string, max-size: number, multiple: boolean, disabled: boolean | files-selected | — | Drag and drop file upload target with type filtering and size constraint validation. |
 | `<el-empty-state>` | `ElEmptyState` | title: string, description: string | — | — | Zero-data placeholder graphic with title, description, and action CTA slots. |
@@ -125,7 +127,7 @@
 | `<el-number-flow>` | `ElNumberFlow` | value: number \| string, prefix: string, suffix: string, duration: number, animated: boolean | — | — | Smooth vertical rolling odometer number reel with prefix/suffix support and reduced-motion fallback. |
 | `<el-otp-input>` | `ElOtpInput` | length: number, value: string, type: 'text' \| 'password', disabled: boolean, required: boolean | complete, change | — | Segmented one-time-password and PIN verification box with auto-advance, backspace retreat, and paste splitting. |
 | `<el-pagination>` | `ElPagination` | page: number, total: number, page-size: number, sibling-count: number | pagechange | — | Accessible pagination component with dynamic page windowing, ellipsis, and W3C navigation semantics. |
-| `<el-popover>` | `ElPopover` | — | — | — | Non-modal floating overlay anchored to a trigger with light-dismiss. |
+| `<el-popover>` | `ElPopover` | trigger: 'click' \| 'hover' \| 'hover long-press' | — | — | Non-modal floating overlay anchored to a trigger with light-dismiss. |
 | `<el-preview-card>` | `ElPreviewCard` | — | — | — | Hover card popup showing rich preview content with hover intent delays. |
 | `<el-progress>` | `ElProgress` | value: number, max: number, variant: 'primary' \| 'success' \| 'danger', size: 'sm' \| 'md' \| 'lg', indeterminate: boolean, striped: boolean | — | — | Accessible progress bar with determinate and indeterminate states and WCAG role='progressbar'. |
 | `<el-prompt-input>` | `ElPromptInput` | value: string, placeholder: string, disabled: boolean, loading: boolean, max-rows: number, min-rows: number, clear-on-submit: boolean | submit, input, change | — | Auto-expanding AI prompt composer with action bar slots and Enter-to-submit keyboard shortcuts. |
@@ -142,7 +144,7 @@
 | `<el-route-link>` | `ElRouteLink` | to: string, exact: string | — | — | ElRouteLink Web Component (<el-route-link>). |
 | `<el-router>` | `ElRouter` | default: string | — | — | ElRouter Web Component (<el-router>). |
 | `<el-scroll-area>` | `ElScrollArea` | — | — | — | Custom cross-browser scrollbar container avoiding OS layout shifts. |
-| `<el-segmented-control>` | `ElSegmentedControl` | value: string, disabled: boolean, size: 'sm' \| 'md' \| 'lg' | change | — | Form-associated pill segment switcher with arrow key navigation and ARIA radiogroup semantics. |
+| `<el-segmented-control>` | `ElSegmentedControl` | value: string, disabled: boolean, size: 'sm' \| 'md' \| 'lg', haptic: boolean | change | — | Form-associated pill segment switcher with arrow key navigation and ARIA radiogroup semantics. |
 | `<el-select>` | `ElSelect` | value: string, placeholder: string, disabled: boolean, required: boolean | change | — | Form-associated custom select dropdown with option list. |
 | `<el-separator>` | `ElSeparator` | — | — | — | Visual or semantic horizontal/vertical content divider. |
 | `<el-shimmer-text>` | `ElShimmerText` | duration: number, spread: number, variant: 'muted' \| 'primary' \| 'accent', paused: boolean | — | default | Animated light-sweep sheen across status or AI thinking text with solid WCAG contrast. |
@@ -156,7 +158,7 @@
 | `<el-sources>` | `ElSources` | sources: string, label: string, expanded: string, open: boolean | — | — | ElSources Web Component (<el-sources>). |
 | `<el-spinner>` | `ElSpinner` | size: 'sm' \| 'md' \| 'lg', variant: 'primary' \| 'muted' \| 'white', label: string | — | — | Smooth SVG loading spinner with accessible status role. |
 | `<el-streaming-text>` | `ElStreamingText` | text: string, speed: number, cursor: boolean, auto-start: boolean | stream-start, stream-end, stream-tick | — | Simulated token-by-token streaming typewriter text with organic jitter, blinking cursor, and completion events. |
-| `<el-switch>` | `ElSwitch` | checked: boolean, disabled: boolean, required: boolean, size: 'sm' \| 'md' \| 'lg' | change | — | Form-associated accessible toggle switch with keyboard support and token styling. |
+| `<el-switch>` | `ElSwitch` | checked: boolean, disabled: boolean, required: boolean, size: 'sm' \| 'md' \| 'lg', haptic: boolean | change | — | Form-associated accessible toggle switch with keyboard support and token styling. |
 | `<el-tab>` | `ElTab` | label: string, value: string | — | — | Individual tab panel inside <el-tabs>. |
 | `<el-table>` | `ElTable` | selectable: boolean, filter: string, highlight-only: boolean | sort, selectionchange | — | Fine-grained reactive data table with column sorting and row selection. |
 | `<el-tabs>` | `ElTabs` | value: string, variant: 'underline' \| 'pill' | tabchange | — | Accessible tablist and tab panel container with keyboard navigation. |

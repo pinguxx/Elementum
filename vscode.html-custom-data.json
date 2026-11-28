@@ -383,6 +383,74 @@
       ]
     },
     {
+      "name": "el-bottom-nav",
+      "description": "Mobile-first bottom tab navigation bar with env(safe-area-inset-bottom) padding, aria-current=\"page\" state, and keyboard arrow roving focus.",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "Active navigation item value."
+        },
+        {
+          "name": "label",
+          "description": "Accessible navigation landmark label."
+        },
+        {
+          "name": "fixed",
+          "description": "Fixes the bar to the bottom of the viewport.",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-bottom-nav"
+        }
+      ]
+    },
+    {
+      "name": "el-bottom-nav-item",
+      "description": "Individual tab item inside <el-bottom-nav> with optional href, icon slot, aria-current=\"page\", and 99+ capped badge pill.",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "Item identifier value."
+        },
+        {
+          "name": "label",
+          "description": "Visible label text."
+        },
+        {
+          "name": "href",
+          "description": "Optional link URL (renders <a> instead of <button>)."
+        },
+        {
+          "name": "badge",
+          "description": "Optional badge text or numeric count (values > 99 cap at 99+)."
+        },
+        {
+          "name": "active",
+          "description": "Marks this item as current (aria-current=\"page\").",
+          "valueSet": "v"
+        },
+        {
+          "name": "disabled",
+          "description": "Disables activation.",
+          "valueSet": "v"
+        },
+        {
+          "name": "haptic",
+          "description": "Triggers brief tactile vibration on coarse-pointer mobile devices.",
+          "valueSet": "v"
+        }
+      ],
+      "references": [
+        {
+          "name": "Elementum Component Catalog",
+          "url": "https://elementum-sage.vercel.app/examples/index.html#el-bottom-nav-item"
+        }
+      ]
+    },
+    {
       "name": "el-breadcrumb",
       "description": "Semantic navigation trail container with configurable separators.",
       "attributes": [
@@ -459,6 +527,11 @@
         {
           "name": "disabled",
           "description": "disabled attribute on <el-button>",
+          "valueSet": "v"
+        },
+        {
+          "name": "haptic",
+          "description": "Triggers brief tactile vibration on coarse-pointer mobile devices when activated.",
           "valueSet": "v"
         }
       ],
@@ -1034,6 +1107,25 @@
         {
           "name": "title",
           "description": "title attribute on <el-drawer>"
+        },
+        {
+          "name": "inline-at",
+          "description": "CSS min-width breakpoint (e.g. \"680px\") above which the drawer pins inline as a side-pane."
+        },
+        {
+          "name": "mode",
+          "description": "Display mode; \"auto\" also switches inline on dual-segment foldables.",
+          "values": [
+            {
+              "name": "overlay"
+            },
+            {
+              "name": "inline"
+            },
+            {
+              "name": "auto"
+            }
+          ]
         }
       ],
       "references": [
@@ -1600,7 +1692,23 @@
     {
       "name": "el-popover",
       "description": "Non-modal floating overlay anchored to a trigger with light-dismiss.",
-      "attributes": [],
+      "attributes": [
+        {
+          "name": "trigger",
+          "description": "Interaction trigger mode; \"hover long-press\" uses fine-pointer hover on desktop and 380ms scroll-safe long-press on touch.",
+          "values": [
+            {
+              "name": "click"
+            },
+            {
+              "name": "hover"
+            },
+            {
+              "name": "hover long-press"
+            }
+          ]
+        }
+      ],
       "references": [
         {
           "name": "Elementum Component Catalog",
@@ -2043,6 +2151,11 @@
               "name": "lg"
             }
           ]
+        },
+        {
+          "name": "haptic",
+          "description": "Triggers brief tactile vibration on coarse-pointer mobile devices when switching segments.",
+          "valueSet": "v"
         }
       ],
       "references": [
@@ -2420,6 +2533,11 @@
               "name": "lg"
             }
           ]
+        },
+        {
+          "name": "haptic",
+          "description": "Triggers brief tactile vibration on coarse-pointer mobile devices when toggled.",
+          "valueSet": "v"
         }
       ],
       "references": [

@@ -1,5 +1,5 @@
 /**
- * Auto-generated strict TypeScript definitions for @wcomp/elementum/react (113 components).
+ * Auto-generated strict TypeScript definitions for @wcomp/elementum/react (115 components).
  * Self-contained React-compatible types (no @types/react dependency required).
  */
 
@@ -189,6 +189,7 @@ export type ElButtonProps = ElementumComponentProps<ElementFor<'el-button'>, {
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
+  haptic?: boolean;
 }, {}>;
 export declare const ElButton: ElementumReactComponent<ElButtonProps>;
 
@@ -350,6 +351,8 @@ export type ElDrawerProps = ElementumComponentProps<ElementFor<'el-drawer'>, {
   open?: boolean;
   placement?: 'left' | 'right' | 'top' | 'bottom';
   title?: string;
+  'inline-at'?: string;
+  mode?: 'overlay' | 'inline' | 'auto';
 }, {
   onOpen?: (event: CustomEvent<any> & Event) => void;
   onClose?: (event: CustomEvent<any> & Event) => void;
@@ -501,7 +504,9 @@ export type ElPaginationProps = ElementumComponentProps<ElementFor<'el-paginatio
 }>;
 export declare const ElPagination: ElementumReactComponent<ElPaginationProps>;
 
-export type ElPopoverProps = ElementumComponentProps<ElementFor<'el-popover'>, {}, {}>;
+export type ElPopoverProps = ElementumComponentProps<ElementFor<'el-popover'>, {
+  trigger?: 'click' | 'hover' | 'hover long-press';
+}, {}>;
 export declare const ElPopover: ElementumReactComponent<ElPopoverProps>;
 
 export type ElPreviewCardProps = ElementumComponentProps<ElementFor<'el-preview-card'>, {}, {}>;
@@ -624,6 +629,7 @@ export type ElSegmentedControlProps = ElementumComponentProps<ElementFor<'el-seg
   value?: string;
   disabled?: boolean;
   size?: 'sm' | 'md' | 'lg';
+  haptic?: boolean;
 }, {
   onChange?: (event: CustomEvent<any> & Event) => void;
 }>;
@@ -707,6 +713,7 @@ export type ElSwitchProps = ElementumComponentProps<ElementFor<'el-switch'>, {
   disabled?: boolean;
   required?: boolean;
   size?: 'sm' | 'md' | 'lg';
+  haptic?: boolean;
 }, {
   onChange?: (event: CustomEvent<any> & Event) => void;
 }>;
@@ -868,3 +875,23 @@ export type ElActivityGridProps = ElementumComponentProps<ElementFor<'el-activit
   onSelect?: (event: CustomEvent<any> & Event) => void;
 }>;
 export declare const ElActivityGrid: ElementumReactComponent<ElActivityGridProps>;
+
+export type ElBottomNavProps = ElementumComponentProps<ElementFor<'el-bottom-nav'>, {
+  value?: string;
+  label?: string;
+  fixed?: boolean;
+}, {
+  onChange?: (event: CustomEvent<any> & Event) => void;
+}>;
+export declare const ElBottomNav: ElementumReactComponent<ElBottomNavProps>;
+
+export type ElBottomNavItemProps = ElementumComponentProps<ElementFor<'el-bottom-nav-item'>, {
+  value?: string;
+  label?: string;
+  href?: string;
+  badge?: string;
+  active?: boolean;
+  disabled?: boolean;
+  haptic?: boolean;
+}, {}>;
+export declare const ElBottomNavItem: ElementumReactComponent<ElBottomNavItemProps>;

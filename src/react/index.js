@@ -1,5 +1,5 @@
 /**
- * Auto-generated React wrappers for all 113 @wcomp/elementum Web Components.
+ * Auto-generated React wrappers for all 115 @wcomp/elementum Web Components.
  * Generated from custom-elements.json via tools/generate-react-wrappers.js.
  */
 
@@ -123,6 +123,8 @@ export const ELEMENTUM_REACT_TAGS = Object.freeze([
   'el-hold-button',
   'el-usage-ring',
   'el-activity-grid',
+  'el-bottom-nav',
+  'el-bottom-nav-item',
 ]);
 
 export const ElAccordion = createElementumReactComponent(React, 'el-accordion', { onChange: 'change' });
@@ -238,3 +240,5 @@ export const ElShimmerText = createElementumReactComponent(React, 'el-shimmer-te
 export const ElHoldButton = createElementumReactComponent(React, 'el-hold-button', { onConfirm: 'confirm', onCancel: 'cancel' });
 export const ElUsageRing = createElementumReactComponent(React, 'el-usage-ring', {});
 export const ElActivityGrid = createElementumReactComponent(React, 'el-activity-grid', { onSelect: 'select' });
+export const ElBottomNav = createElementumReactComponent(React, 'el-bottom-nav', { onChange: 'change' });
+export const ElBottomNavItem = createElementumReactComponent(React, 'el-bottom-nav-item', {});

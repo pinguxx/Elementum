@@ -519,4 +519,54 @@ test.describe('Real-Browser Interactive Component Suite (Playwright + axe-core)'
     expect(res.clicks).toBe(1);
     expect(res.allOk).toBe(true);
   });
+
+  test('<el-bottom-nav>, <el-bottom-nav-item>, <el-drawer inline-at>, and <el-popover trigger> pass interaction & axe-core AA', async ({ page }) => {
+    await page.goto('/examples/index.html');
+    await page.waitForLoadState('networkidle');
+
+    const res = await page.evaluate(async () => {
+      await Promise.all([
+        import('/src/components/el-bottom-nav.js'),
+        import('/src/components/el-drawer.js'),
+        import('/src/components/el-popover.js'),
+      ]);
+
+      const stage = document.createElement('div');
+      stage.id = 'e2e-mobile-stage';
+      stage.innerHTML = `
+        <el-bottom-nav id="e2e-bnav" value="home" label="App tabs">
+          <el-bottom-nav-item value="home" label="Home"></el-bottom-nav-item>
+          <el-bottom-nav-item value="inbox" label="Inbox" badge="150"></el-bottom-nav-item>
+        </el-bottom-nav>
+        <el-drawer id="e2e-inline-drawer" heading="Filters" mode="inline">Inline content</el-drawer>
+      `;
+      document.body.appendChild(stage);
+      await new Promise((r) => setTimeout(r, 40));
+
+      const nav = document.getElementById('e2e-bnav');
+      const items = nav.querySelectorAll('el-bottom-nav-item');
+      const badge = items[1].shadowRoot.querySelector('.badge')?.textContent;
+      items[1].shadowRoot.querySelector('.nav-item')?.click();
+      await new Promise((r) => setTimeout(r, 20));
+
+      return {
+        badge,
+        selected: nav.getAttribute('value'),
+        ariaCurrent: items[1].shadowRoot.querySelector('.nav-item')?.getAttribute('aria-current'),
+        drawerMode: document.getElementById('e2e-inline-drawer').getAttribute('data-mode'),
+      };
+    });
+
+    expect(res.badge).toBe('99+');
+    expect(res.selected).toBe('inbox');
+    expect(res.ariaCurrent).toBe('page');
+    expect(res.drawerMode).toBe('inline');
+
+    const axe = await new AxeBuilder({ page })
+      .include('#e2e-mobile-stage')
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+      .analyze();
+    const severe = axe.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious');
+    expect(severe).toEqual([]);
+  });
 });

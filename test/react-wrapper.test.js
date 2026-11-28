@@ -183,7 +183,7 @@ test('@wcomp/elementum/react generated wrappers cover all 113 custom-elements.js
   const reactJs = fs.readFileSync(new URL('../src/react/index.js', import.meta.url), 'utf8');
   const reactDts = fs.readFileSync(new URL('../src/react/index.d.ts', import.meta.url), 'utf8');
 
-  assert.equal(decls.length, 113);
+  assert.equal(decls.length, 115);
   for (const decl of decls) {
     assert.ok(reactJs.includes(`export const ${decl.name} =`), `Missing JS export ${decl.name}`);
     assert.ok(reactJs.includes(`'${decl.tagName}'`), `Missing tag '${decl.tagName}' in JS`);

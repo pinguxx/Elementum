@@ -109,7 +109,7 @@ export class ElTextarea extends Elementum {
   }
 
   formReset() {
-    this.value.value = this.getAttribute('value') || '';
+    this.value.value = this.defaultValue;
     this.setFormValue(this.value.value);
     const textarea = this.shadowRoot?.querySelector('textarea');
     if (textarea) textarea.value = this.value.value;

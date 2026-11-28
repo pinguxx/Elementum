@@ -1403,6 +1403,7 @@
         if (p.variant) attrs.push(`variant="${p.variant}"`);
         if (p.size) attrs.push(`size="${p.size}"`);
         if (p.disabled) attrs.push('disabled');
+        if (p.haptic) attrs.push('haptic');
         if (p.type && p.type !== 'button') attrs.push(`type="${p.type}"`);
         const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
         const label = p.label !== undefined && p.label !== '' ? p.label : 'Interactive Button';
@@ -1427,6 +1428,7 @@
         const attrs = [];
         if (p.checked) attrs.push('checked');
         if (p.disabled) attrs.push('disabled');
+        if (p.haptic) attrs.push('haptic');
         if (p.size) attrs.push(`size="${p.size}"`);
         if (p.name) attrs.push(`name="${escapeHtml(p.name)}"`);
         if (p.value) attrs.push(`value="${escapeHtml(p.value)}"`);
@@ -1497,9 +1499,11 @@
         const openAttr = p.open ? ' open' : '';
         const handleAttr = p.handle !== false ? ' handle' : ' handle="false"';
         const scaleAttr = p['scale-background'] !== false ? ' scale-background' : '';
+        const inlineAtAttr = p['inline-at'] ? ` inline-at="${escapeHtml(p['inline-at'])}"` : '';
+        const modeAttr = p.mode && p.mode !== 'overlay' ? ` mode="${escapeHtml(p.mode)}"` : '';
         return `<div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
   <el-button variant="primary" onclick="document.getElementById('demo-drawer-inst').show()">Open Drawer (${placement})</el-button>
-  <el-drawer id="demo-drawer-inst" placement="${placement}"${scaleAttr} snap-points="${snap}"${handleAttr} title="${escapeHtml(title)}"${openAttr}>
+  <el-drawer id="demo-drawer-inst" placement="${placement}"${scaleAttr} snap-points="${snap}"${handleAttr}${inlineAtAttr}${modeAttr} title="${escapeHtml(title)}"${openAttr}>
     <div style="max-width: 480px; margin: 0 auto; text-align: left;">
       <p style="margin: 0; color: var(--el-text-muted); font-size: 0.95rem; line-height: 1.5;">
         Features fluid drag-to-dismiss gestures, rubberband resistance, multi-stop snap points, and escape key support.
@@ -1600,8 +1604,9 @@
         const openAttr = p.open ? ' open' : '';
         const offsetVal = p.offset !== undefined && p.offset !== '' ? p.offset : 8;
         const arrowAttr = p.arrow ? ' arrow' : '';
+        const triggerAttr = p.trigger && p.trigger !== 'click' ? ` trigger="${escapeHtml(p.trigger)}"` : '';
         return `<div style="padding: 48px 0;">
-  <el-popover placement="${placement}" offset="${offsetVal}"${openAttr}${arrowAttr}>
+  <el-popover placement="${placement}" offset="${offsetVal}"${openAttr}${arrowAttr}${triggerAttr}>
     <el-button slot="trigger" variant="secondary">Open Popover ▾</el-button>
     <div slot="content" style="padding: 4px; max-width: 220px;">
       <h4 style="margin:0 0 6px 0; font-size:0.925rem; font-weight:600;">Popover Surface</h4>
@@ -1804,6 +1809,7 @@ ${optionsHtml}
         if (p.size) attrs.push(`size="${p.size}"`);
         if (p.name) attrs.push(`name="${escapeHtml(p.name)}"`);
         if (p.disabled) attrs.push('disabled');
+        if (p.haptic) attrs.push('haptic');
         if (p.options) attrs.push(`options="${escapeHtml(typeof p.options === 'string' ? p.options : JSON.stringify(p.options))}"`);
         const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
         const defaultOptions = ['analytics', 'reports', 'monitoring', 'settings'];

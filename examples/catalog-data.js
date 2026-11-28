@@ -103,6 +103,12 @@ export const components = {
         "type": "text",
         "default": "Interactive Button",
         "description": "Button text rendered via slot or label attribute fallback."
+      },
+      {
+        "name": "haptic",
+        "type": "boolean",
+        "default": false,
+        "description": "Opt-in coarse-pointer tactile vibration on activation."
       }
     ],
     "slots": [
@@ -504,6 +510,12 @@ export const components = {
         "type": "text",
         "default": "on",
         "description": "Form value when checked."
+      },
+      {
+        "name": "haptic",
+        "type": "boolean",
+        "default": false,
+        "description": "Opt-in coarse-pointer tactile vibration on toggle."
       }
     ],
     "slots": [
@@ -641,6 +653,12 @@ export const components = {
         "type": "text",
         "default": "",
         "description": "Form submission name."
+      },
+      {
+        "name": "haptic",
+        "type": "boolean",
+        "default": false,
+        "description": "Opt-in coarse-pointer tactile vibration on selection."
       }
     ],
     "slots": [
@@ -1239,6 +1257,23 @@ export const components = {
         "type": "text",
         "default": "",
         "description": "Configures heading attribute."
+      },
+      {
+        "name": "inline-at",
+        "type": "text",
+        "default": "",
+        "description": "Min-width breakpoint (e.g. 680px) above which the drawer pins inline."
+      },
+      {
+        "name": "mode",
+        "type": "select",
+        "options": [
+          "overlay",
+          "inline",
+          "auto"
+        ],
+        "default": "overlay",
+        "description": "Display mode (auto supports dual-segment foldables)."
       }
     ],
     "slots": [
@@ -3280,6 +3315,17 @@ export const components = {
         "type": "boolean",
         "default": true,
         "description": "Renders directional arrow pointing to trigger."
+      },
+      {
+        "name": "trigger",
+        "type": "select",
+        "options": [
+          "click",
+          "hover",
+          "hover long-press"
+        ],
+        "default": "click",
+        "description": "Trigger interaction mode."
       }
     ],
     "slots": [
@@ -5507,12 +5553,42 @@ export const components = {
     "description": "Zero-dependency luminous sweep sheen across status or AI thinking text with solid accessible contrast.",
     "formAssociated": false,
     "props": [
-      { "name": "duration", "type": "number", "default": 2.2, "description": "Animation cycle duration in seconds." },
-      { "name": "spread", "type": "number", "default": 35, "description": "Shimmer band half-width percentage." },
-      { "name": "variant", "type": "select", "options": ["muted", "primary", "accent"], "default": "muted", "description": "Text color variant." },
-      { "name": "paused", "type": "boolean", "default": false, "description": "Pauses the shimmer sweep." }
+      {
+        "name": "duration",
+        "type": "number",
+        "default": 2.2,
+        "description": "Animation cycle duration in seconds."
+      },
+      {
+        "name": "spread",
+        "type": "number",
+        "default": 35,
+        "description": "Shimmer band half-width percentage."
+      },
+      {
+        "name": "variant",
+        "type": "select",
+        "options": [
+          "muted",
+          "primary",
+          "accent"
+        ],
+        "default": "muted",
+        "description": "Text color variant."
+      },
+      {
+        "name": "paused",
+        "type": "boolean",
+        "default": false,
+        "description": "Pauses the shimmer sweep."
+      }
     ],
-    "slots": [{ "name": "default", "description": "Status or thinking label copy." }],
+    "slots": [
+      {
+        "name": "default",
+        "description": "Status or thinking label copy."
+      }
+    ],
     "events": [],
     "examples": [
       {
@@ -5528,16 +5604,62 @@ export const components = {
     "description": "Press-and-hold confirmation button for destructive or deliberate actions with pointer and keyboard progress fill.",
     "formAssociated": false,
     "props": [
-      { "name": "duration", "type": "number", "default": 1200, "description": "Required hold duration in milliseconds." },
-      { "name": "variant", "type": "select", "options": ["danger", "primary", "secondary"], "default": "danger", "description": "Button visual variant." },
-      { "name": "size", "type": "select", "options": ["sm", "md", "lg"], "default": "md", "description": "Button size scale." },
-      { "name": "disabled", "type": "boolean", "default": false, "description": "Disables button interactions." },
-      { "name": "confirmed-label", "type": "text", "default": "Confirmed", "description": "Label shown right after confirmation." }
+      {
+        "name": "duration",
+        "type": "number",
+        "default": 1200,
+        "description": "Required hold duration in milliseconds."
+      },
+      {
+        "name": "variant",
+        "type": "select",
+        "options": [
+          "danger",
+          "primary",
+          "secondary"
+        ],
+        "default": "danger",
+        "description": "Button visual variant."
+      },
+      {
+        "name": "size",
+        "type": "select",
+        "options": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "default": "md",
+        "description": "Button size scale."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "default": false,
+        "description": "Disables button interactions."
+      },
+      {
+        "name": "confirmed-label",
+        "type": "text",
+        "default": "Confirmed",
+        "description": "Label shown right after confirmation."
+      }
     ],
-    "slots": [{ "name": "default", "description": "Hold button action label." }],
+    "slots": [
+      {
+        "name": "default",
+        "description": "Hold button action label."
+      }
+    ],
     "events": [
-      { "name": "confirm", "description": "Fired when hold completes: detail: { duration }" },
-      { "name": "cancel", "description": "Fired when released early: detail: { progress }" }
+      {
+        "name": "confirm",
+        "description": "Fired when hold completes: detail: { duration }"
+      },
+      {
+        "name": "cancel",
+        "description": "Fired when released early: detail: { progress }"
+      }
     ],
     "examples": [
       {
@@ -5553,13 +5675,59 @@ export const components = {
     "description": "Segmented pure-SVG radial quota ring displaying tabular percentages with WCAG progressbar semantics.",
     "formAssociated": false,
     "props": [
-      { "name": "value", "type": "number", "default": 68, "description": "Current usage value." },
-      { "name": "max", "type": "number", "default": 100, "description": "Maximum capacity value." },
-      { "name": "segments", "type": "number", "default": 24, "description": "Radial segment tick count (6..60)." },
-      { "name": "size", "type": "select", "options": ["sm", "md", "lg"], "default": "md", "description": "Ring footprint size." },
-      { "name": "variant", "type": "select", "options": ["primary", "success", "warning", "danger"], "default": "primary", "description": "Active segment accent variant." },
-      { "name": "label", "type": "text", "default": "Token Quota", "description": "Accessible caption below ring." },
-      { "name": "sublabel", "type": "text", "default": "used", "description": "Secondary text inside center readout." }
+      {
+        "name": "value",
+        "type": "number",
+        "default": 68,
+        "description": "Current usage value."
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "default": 100,
+        "description": "Maximum capacity value."
+      },
+      {
+        "name": "segments",
+        "type": "number",
+        "default": 24,
+        "description": "Radial segment tick count (6..60)."
+      },
+      {
+        "name": "size",
+        "type": "select",
+        "options": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "default": "md",
+        "description": "Ring footprint size."
+      },
+      {
+        "name": "variant",
+        "type": "select",
+        "options": [
+          "primary",
+          "success",
+          "warning",
+          "danger"
+        ],
+        "default": "primary",
+        "description": "Active segment accent variant."
+      },
+      {
+        "name": "label",
+        "type": "text",
+        "default": "Token Quota",
+        "description": "Accessible caption below ring."
+      },
+      {
+        "name": "sublabel",
+        "type": "text",
+        "default": "used",
+        "description": "Secondary text inside center readout."
+      }
     ],
     "slots": [],
     "events": [],
@@ -5577,20 +5745,103 @@ export const components = {
     "description": "Seven-row daily heatmap grid with keyboard arrow navigation, semantic intensity palettes, and optional legend.",
     "formAssociated": false,
     "props": [
-      { "name": "weeks", "type": "number", "default": 12, "description": "Number of week columns (4..52)." },
-      { "name": "variant", "type": "select", "options": ["success", "primary", "accent"], "default": "success", "description": "Intensity color scale." },
-      { "name": "label", "type": "text", "default": "Deploy Streak", "description": "Grid heading and accessible label." },
-      { "name": "show-legend", "type": "boolean", "default": true, "description": "Shows Less/More intensity legend." },
-      { "name": "data", "type": "text", "default": "[{\"date\":\"Mon\",\"count\":2,\"level\":1},{\"date\":\"Tue\",\"count\":5,\"level\":3},{\"date\":\"Wed\",\"count\":8,\"level\":4},{\"date\":\"Thu\",\"count\":3,\"level\":2}]", "description": "JSON dataset array of { date, count, level } entries." }
+      {
+        "name": "weeks",
+        "type": "number",
+        "default": 12,
+        "description": "Number of week columns (4..52)."
+      },
+      {
+        "name": "variant",
+        "type": "select",
+        "options": [
+          "success",
+          "primary",
+          "accent"
+        ],
+        "default": "success",
+        "description": "Intensity color scale."
+      },
+      {
+        "name": "label",
+        "type": "text",
+        "default": "Deploy Streak",
+        "description": "Grid heading and accessible label."
+      },
+      {
+        "name": "show-legend",
+        "type": "boolean",
+        "default": true,
+        "description": "Shows Less/More intensity legend."
+      },
+      {
+        "name": "data",
+        "type": "text",
+        "default": "[{\"date\":\"Mon\",\"count\":2,\"level\":1},{\"date\":\"Tue\",\"count\":5,\"level\":3},{\"date\":\"Wed\",\"count\":8,\"level\":4},{\"date\":\"Thu\",\"count\":3,\"level\":2}]",
+        "description": "JSON dataset array of { date, count, level } entries."
+      }
     ],
     "slots": [],
     "events": [
-      { "name": "select", "description": "Fired when a cell is activated: detail: { index, date, count, level }" }
+      {
+        "name": "select",
+        "description": "Fired when a cell is activated: detail: { index, date, count, level }"
+      }
     ],
     "examples": [
       {
         "title": "Deploy Activity Matrix",
         "code": "<el-activity-grid weeks=\"12\" variant=\"success\" label=\"Deploy Activity\" show-legend></el-activity-grid>"
+      }
+    ]
+  },
+  "el-bottom-nav": {
+    "tag": "el-bottom-nav",
+    "name": "Bottom Nav",
+    "category": "navigation",
+    "description": "Mobile-first bottom tab navigation bar with env(safe-area-inset-bottom) padding, aria-current=\"page\" state, and 99+ capped badge pills.",
+    "formAssociated": false,
+    "props": [
+      {
+        "name": "value",
+        "type": "select",
+        "options": [
+          "home",
+          "inbox",
+          "profile"
+        ],
+        "default": "home",
+        "description": "Active navigation item value."
+      },
+      {
+        "name": "label",
+        "type": "text",
+        "default": "Primary navigation",
+        "description": "Accessible landmark label."
+      },
+      {
+        "name": "fixed",
+        "type": "boolean",
+        "default": false,
+        "description": "Docks the bar fixed to the bottom of the viewport."
+      }
+    ],
+    "slots": [
+      {
+        "name": "default",
+        "description": "<el-bottom-nav-item> children."
+      }
+    ],
+    "events": [
+      {
+        "name": "change",
+        "description": "Fired when the active item changes: detail: { value }"
+      }
+    ],
+    "examples": [
+      {
+        "title": "Mobile PWA Bottom Navigation",
+        "code": "<el-bottom-nav value=\"home\">\n  <el-bottom-nav-item value=\"home\" label=\"Home\"></el-bottom-nav-item>\n  <el-bottom-nav-item value=\"inbox\" label=\"Inbox\" badge=\"128\"></el-bottom-nav-item>\n  <el-bottom-nav-item value=\"profile\" label=\"Profile\"></el-bottom-nav-item>\n</el-bottom-nav>"
       }
     ]
   }

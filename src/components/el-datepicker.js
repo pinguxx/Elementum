@@ -35,7 +35,7 @@ export class ElDatepicker extends Elementum {
   }
 
   formReset() {
-    this.value.value = this.getAttribute('value') || '';
+    this.value.value = this.defaultValue;
     this.setFormValue(this.value.value);
     this.validate();
   }
