@@ -1,10 +1,11 @@
 import { Elementum } from '../elementum.js';
 import { html, css } from '../template.js';
 import { signal, effect } from '../signal.js';
+import { triggerHaptic } from '../behaviors/motion.js';
 
 export class ElSegmentedControl extends Elementum {
   static formAssociated = true;
-  static observedAttributes = ['value', 'disabled', 'size', 'name', 'options'];
+  static observedAttributes = ['value', 'disabled', 'size', 'name', 'options', 'haptic'];
 
   value = signal('');
   disabled = signal(false);
@@ -89,7 +90,7 @@ export class ElSegmentedControl extends Elementum {
   }
 
   formReset() {
-    const initial = this.getAttribute('value') || this.#options.value[0]?.value || '';
+    const initial = this.defaultValue || this.#options.value[0]?.value || '';
     this.value.value = initial;
     this.setFormValue(initial);
   }
@@ -147,6 +148,7 @@ export class ElSegmentedControl extends Elementum {
     if (this.disabled.value) return;
     const opt = this.#options.value.find((o) => o.value === val);
     if (opt && !opt.disabled && this.value.value !== val) {
+      if (this.boolAttr('haptic')) triggerHaptic();
       this.value.value = val;
       this.setFormValue(val);
       this.emit('change', { value: val });

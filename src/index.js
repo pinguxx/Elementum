@@ -139,5 +139,7 @@ export {
   createFlipBehavior,
   createInViewBehavior,
   createPointerTracker,
+  triggerHaptic,
 } from './behaviors/index.js';
+export { bindAttr, bindClass, bindText } from './dom-bind.js';
 export { snapshot, act, registerWebMCP, discoverFormTools } from './agent/index.js';

@@ -165,17 +165,28 @@ export class Elementum extends BaseElement {
     }
   }
 
+  #initialFormChecked = null;
+  #initialFormValue = null;
+
+  get defaultChecked() {
+    return this.#initialFormChecked !== null ? this.#initialFormChecked : this.hasAttribute('checked');
+  }
+
+  get defaultValue() {
+    return this.#initialFormValue !== null ? this.#initialFormValue : (this.getAttribute('value') ?? '');
+  }
+
   formResetCallback() {
     if (typeof this.formReset === 'function') {
       this.formReset();
       return;
     }
     if (isSignal(this.checked)) {
-      const initialChecked = this.hasAttribute('checked');
+      const initialChecked = this.defaultChecked;
       this.checked.value = initialChecked;
-      this.setFormValue(initialChecked ? (this.getAttribute('value') || 'on') : null);
+      this.setFormValue(initialChecked ? (this.defaultValue || 'on') : null);
     } else if (isSignal(this.value)) {
-      const initialValue = this.getAttribute('value') ?? '';
+      const initialValue = this.defaultValue;
       this.value.value = initialValue;
       this.setFormValue(initialValue);
     }
@@ -198,7 +209,6 @@ export class Elementum extends BaseElement {
   #reflectToAttribute(attrName, val, initialBoolDefault = false) {
     if (this.#syncingAttr || !attrName) return;
     if (typeof val === 'object' && val !== null) return;
-    if (this.constructor.formAssociated && (attrName === 'value' || attrName === 'checked')) return;
 
     if (typeof val === 'boolean' || initialBoolDefault) {
       const boolVal = typeof val === 'boolean' ? val : (val === 'false' ? false : Boolean(val));
@@ -435,6 +445,11 @@ export class Elementum extends BaseElement {
 
     // 3. Ensure reactive properties are initialized before syncing attributes or rendering
     this.#setupReactiveProperties();
+
+    if (this.constructor.formAssociated && this.#initialFormChecked === null) {
+      this.#initialFormChecked = this.hasAttribute('checked');
+      this.#initialFormValue = this.getAttribute('value') ?? '';
+    }
 
     // Sync initial HTML attributes into signals or properties
     const observed = this.constructor.observedAttributes;

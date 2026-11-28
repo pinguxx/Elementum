@@ -6,10 +6,11 @@
 import { Elementum } from '../elementum.js';
 import { html, css } from '../template.js';
 import { signal } from '../signal.js';
+import { triggerHaptic } from '../behaviors/motion.js';
 
 export class ElSwitch extends Elementum {
   static formAssociated = true;
-  static observedAttributes = ['checked', 'disabled', 'name', 'value', 'size', 'required', 'label'];
+  static observedAttributes = ['checked', 'disabled', 'name', 'value', 'size', 'required', 'label', 'haptic'];
 
   checked = signal(false);
   disabled = signal(false);
@@ -156,7 +157,7 @@ export class ElSwitch extends Elementum {
   }
 
   formReset() {
-    this.checked.value = this.hasAttribute('checked');
+    this.checked.value = this.defaultChecked;
     this.setAttribute('aria-checked', String(this.checked.value));
     this.#syncForm();
     this.validate();
@@ -183,6 +184,7 @@ export class ElSwitch extends Elementum {
 
   toggle() {
     if (this.disabled.value) return;
+    if (this.boolAttr('haptic')) triggerHaptic();
     this.checked.value = !this.checked.value;
     this.setAttribute('aria-checked', String(this.checked.value));
     this.#syncForm();

@@ -10,6 +10,25 @@ function isReducedMotionNow() {
     : false;
 }
 
+/**
+ * Triggers a brief tactile vibration on coarse-pointer mobile devices.
+ * Automatically skipped on desktop fine pointers and when prefers-reduced-motion is active.
+ * @param {number|number[]} [pattern=10]
+ * @returns {boolean}
+ */
+export function triggerHaptic(pattern = 10) {
+  if (isReducedMotionNow()) return false;
+  if (typeof navigator === 'undefined' || typeof navigator.vibrate !== 'function') return false;
+  if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+    if (!window.matchMedia('(pointer: coarse)').matches) return false;
+  }
+  try {
+    return Boolean(navigator.vibrate(pattern));
+  } catch {
+    return false;
+  }
+}
+
 const SPRING_PRESETS = {
   snappy: { stiffness: 320, damping: 28, mass: 1 },
   gentle: { stiffness: 160, damping: 22, mass: 1 },

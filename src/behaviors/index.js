@@ -1373,4 +1373,5 @@ export {
   createFlipBehavior,
   createInViewBehavior,
   createPointerTracker,
+  triggerHaptic,
 } from './motion.js';

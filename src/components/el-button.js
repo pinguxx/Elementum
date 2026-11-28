@@ -6,11 +6,11 @@
 import { Elementum } from '../elementum.js';
 import { html, css } from '../template.js';
 import { signal } from '../signal.js';
-import { createPressBehavior } from '../behaviors/index.js';
+import { createPressBehavior, triggerHaptic } from '../behaviors/index.js';
 
 export class ElButton extends Elementum {
   static formAssociated = true;
-  static observedAttributes = ['variant', 'size', 'disabled', 'type', 'label'];
+  static observedAttributes = ['variant', 'size', 'disabled', 'type', 'label', 'haptic'];
 
   // Figma Variant mappings as reactive signals
   variant = signal('primary'); // 'primary' | 'secondary' | 'danger' | 'ghost'
@@ -210,6 +210,7 @@ export class ElButton extends Elementum {
             e.stopPropagation();
             return;
           }
+          if (this.boolAttr('haptic')) triggerHaptic();
 
           const btnType = this.getAttribute('type') || this.type.value;
           if (btnType === 'submit') {

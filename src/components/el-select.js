@@ -106,7 +106,7 @@ export class ElSelect extends Elementum {
   }
 
   formReset() {
-    const initial = this.getAttribute('value') || '';
+    const initial = this.defaultValue;
     this.value.value = initial;
     this.setFormValue(initial);
     this.validate();

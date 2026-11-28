@@ -274,3 +274,110 @@ test('Elementum exposes runtime version on class, module exports, and globalThis
   assert.equal(globalThis.elementum?.version, pkg.version);
   assert.equal(Object.isFrozen(globalThis.elementum), true);
 });
+
+test('Form controls reflect .checked, .value, and .disabled bidirectionally while preserving formReset() (#12)', async () => {
+  await import('../src/components/el-switch.js');
+  await import('../src/components/el-checkbox.js');
+  await import('../src/components/el-segmented-control.js');
+  await import('../src/components/el-select.js');
+  await import('../src/components/el-input.js');
+
+  const sw = document.createElement('el-switch');
+  document.body.appendChild(sw);
+  sw.checked = true;
+  assert.equal(sw.hasAttribute('checked'), true);
+  assert.equal(sw.getAttribute('aria-checked'), 'true');
+  sw.formResetCallback();
+  assert.equal(sw.checked.value, false);
+  assert.equal(sw.hasAttribute('checked'), false);
+
+  const seg = document.createElement('el-segmented-control');
+  seg.setAttribute('options', '1,2,3');
+  seg.setAttribute('value', '1');
+  document.body.appendChild(seg);
+  seg.value = '2';
+  assert.equal(seg.getAttribute('value'), '2');
+  seg.formResetCallback();
+  assert.equal(seg.value.value, '1');
+
+  const inp = document.createElement('el-input');
+  inp.setAttribute('value', 'initial');
+  document.body.appendChild(inp);
+  inp.value = 'updated';
+  assert.equal(inp.getAttribute('value'), 'updated');
+  inp.disabled = true;
+  assert.equal(inp.hasAttribute('disabled'), true);
+  inp.formResetCallback();
+  assert.equal(inp.value.value, 'initial');
+
+  sw.remove();
+  seg.remove();
+  inp.remove();
+});
+
+test('bindAttr, bindClass, and bindText reactively sync DOM and clean up on dispose (#13)', async () => {
+  const { bindAttr, bindClass, bindText } = await import('../src/index.js');
+  const el = document.createElement('div');
+  const active = signal(false);
+  const label = signal('Ready');
+  const count = signal(0);
+
+  const stopAttr = bindAttr(el, 'data-active', active);
+  const stopCls = bindClass(el, 'is-active', active);
+  const stopText = bindText(el, () => `${label.value}: ${count.value}`);
+
+  assert.equal(el.hasAttribute('data-active'), false);
+  assert.equal(el.classList.contains('is-active'), false);
+  assert.equal(el.textContent, 'Ready: 0');
+
+  active.value = true;
+  count.value = 3;
+  assert.equal(el.hasAttribute('data-active'), true);
+  assert.equal(el.classList.contains('is-active'), true);
+  assert.equal(el.textContent, 'Ready: 3');
+
+  stopAttr();
+  stopCls();
+  stopText();
+  active.value = false;
+  count.value = 9;
+  assert.equal(el.hasAttribute('data-active'), true);
+  assert.equal(el.textContent, 'Ready: 3');
+});
+
+test('triggerHaptic respects coarse pointer, reduced motion, and opt-in haptic attribute (#14)', async () => {
+  const { triggerHaptic } = await import('../src/index.js');
+  const origMatchMedia = window.matchMedia;
+  const origVibrate = navigator.vibrate;
+  let vibrated = 0;
+
+  try {
+    navigator.vibrate = (p) => { vibrated += Number(p); return true; };
+    // Desktop fine pointer -> skipped
+    window.matchMedia = (q) => ({ matches: false });
+    assert.equal(triggerHaptic(10), false);
+    assert.equal(vibrated, 0);
+
+    // Coarse pointer, normal motion -> triggers
+    window.matchMedia = (q) => ({ matches: q.includes('pointer: coarse') });
+    assert.equal(triggerHaptic(10), true);
+    assert.equal(vibrated, 10);
+
+    // Reduced motion -> skipped even on coarse pointer
+    window.matchMedia = () => ({ matches: true });
+    assert.equal(triggerHaptic(10), false);
+    assert.equal(vibrated, 10);
+
+    // Opt-in haptic attribute on el-switch
+    window.matchMedia = (q) => ({ matches: q.includes('pointer: coarse') });
+    const sw = document.createElement('el-switch');
+    sw.setAttribute('haptic', '');
+    document.body.appendChild(sw);
+    sw.toggle();
+    assert.equal(vibrated, 20);
+    sw.remove();
+  } finally {
+    window.matchMedia = origMatchMedia;
+    navigator.vibrate = origVibrate;
+  }
+});

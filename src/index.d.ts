@@ -111,6 +111,25 @@ declare global {
   var elementum: { readonly version: string } | undefined;
 }
 
+export function bindAttr(
+  el: Element | null | undefined,
+  name: string,
+  source: Signal<any> | (() => unknown) | unknown,
+  options?: AbortableOptions
+): () => void;
+export function bindClass(
+  el: Element | null | undefined,
+  className: string,
+  source: Signal<any> | (() => unknown) | unknown,
+  options?: AbortableOptions
+): () => void;
+export function bindText(
+  el: Node | null | undefined,
+  source: Signal<any> | (() => unknown) | unknown,
+  options?: AbortableOptions
+): () => void;
+export function triggerHaptic(pattern?: number | number[]): boolean;
+
 export class Elementum extends HTMLElement {
   static readonly version: string;
   static shadowRoot: boolean;
@@ -122,6 +141,8 @@ export class Elementum extends HTMLElement {
   root: HTMLElement | ShadowRoot;
 
   get signal(): AbortSignal | undefined;
+  get defaultChecked(): boolean;
+  get defaultValue(): string;
   get form(): HTMLFormElement | ElForm | null;
   get validity(): ValidityState | undefined;
   get validationMessage(): string;
