@@ -12,7 +12,13 @@ Copy the block below into your project's `CLAUDE.md`, `.cursorrules`, `.github/c
    - Before finishing, call `validate_component_usage` and `lint_accessibility` on the generated HTML.
 
 2. **Imports**:
-   - Plain HTML / Vue / Svelte / Lit:
+   - Granular per-component imports (recommended when using `< 15` components for ~5x smaller bundles):
+     ```js
+     import '@wcomp/elementum/tokens.css';
+     import '@wcomp/elementum/components/el-button.js';
+     import '@wcomp/elementum/components/el-input.js';
+     ```
+   - Full barrel (Plain HTML / Vue / Svelte / Lit):
      ```js
      import '@wcomp/elementum/tokens.css';
      import '@wcomp/elementum';
@@ -30,7 +36,7 @@ Copy the block below into your project's `CLAUDE.md`, `.cursorrules`, `.github/c
 
 3. **Exact Component Conventions**:
    - **Dialogs**: Open/close `<el-dialog>` with `dialog.showModal()` and `dialog.close()` (never assign `dialog.open = true`).
-   - **Inputs & Textareas**: Read `e.detail?.value ?? e.target.value` on `input` / `change`.
+   - **Boolean vs. Value Events**: Read `e.detail?.checked` on `<el-switch>` / `<el-checkbox>`, and `e.detail?.value ?? e.target.value` on `<el-input>`, `<el-textarea>`, `<el-select>`, and `<el-segmented-control>`.
    - **Tables**: Pass `.columns` and `.data` as JS array properties (or React props on `<ElTable>`).
    - **Badges**: Put text inside the `count` attribute (`<el-badge variant="success" count="Active"></el-badge>`) or default slot.
    - **Styling**: Override `--el-*` design tokens or target `::part(...)` selectors (see `docs/styling-reference.md`). Add `unstyled` to strip default Shadow DOM styles while preserving ARIA & keyboard behavior.

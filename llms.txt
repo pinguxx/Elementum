@@ -36,7 +36,8 @@
 - Installable Agent Skills: `npx skills@latest add pinguxx/Elementum --skill elementum`
 
 ## Package Subpath Exports
-- `@wcomp/elementum` — 113 Custom Elements + micro-signals (`signal`, `computed`, `effect`, `batch`, `asyncSignal`)
+- `@wcomp/elementum` — Full barrel (all 113 Custom Elements + micro-signals: `signal`, `computed`, `effect`, `batch`, `asyncSignal`)
+- `@wcomp/elementum/components/*.js` — **Granular per-component imports** (recommended for tree-shaking when using `< 15` components, e.g. `import '@wcomp/elementum/components/el-button.js'` — ~5x smaller bundles)
 - `@wcomp/elementum/tokens.css` — Light & Dark W3C DTCG CSS custom properties
 - `@wcomp/elementum/react` — Strictly-typed React 18 & 19 wrappers for all 113 components
 - `@wcomp/elementum/ssr` — Pure Node.js Declarative Shadow DOM SSR (`renderComponentToDSD`, `renderTemplateToString`)
@@ -49,8 +50,9 @@
 
 ## Exact API Rules for AI Coding Agents
 1. Use the 13 read-only MCP tools (`get_setup`, `list_components`, `get_component_doc`, `get_bundle_plan`, `list_tokens`, etc.), `elementum://` resources, `prompts/get`, and `completion/complete` before writing markup; validate with `validate_component_usage` and `lint_accessibility`.
-2. Open/close `<el-dialog>` with `dialog.showModal()` / `dialog.close()` (not `dialog.open = true`).
-3. Complex array/object props in Vanilla/Vue use `.value` signals (`table.columns.value = cols; table.data.value = rows;`); in `@wcomp/elementum/react` pass them directly as JSX props (`<ElTable columns={cols} data={rows} />`).
-4. Read `e.detail?.value` on `input` / `change` / `submit` events.
-5. Add `<html data-dsd>` whenever pre-rendering with `renderComponentToDSD`.
-6. Use `<el-prompt-input>`, `<el-reasoning-card>`, `<el-tool-call>`, `<el-streaming-text>`, `<el-sources>`, and `<el-diff-viewer>` for AI interfaces.
+2. Prefer per-component imports (`import '@wcomp/elementum/components/el-button.js'`) when using fewer than ~15 components instead of importing the full `@wcomp/elementum` barrel.
+3. Open/close `<el-dialog>` with `dialog.showModal()` / `dialog.close()` (never assign `dialog.open = true`).
+4. Complex array/object props in Vanilla/Vue use `.value` signals (`table.columns.value = cols; table.data.value = rows;`); in `@wcomp/elementum/react` pass them directly as JSX props (`<ElTable columns={cols} data={rows} />`).
+5. Event payloads: read `e.detail?.checked` on boolean controls (`<el-switch>`, `<el-checkbox>`) and `e.detail?.value` on value controls (`<el-input>`, `<el-select>`, `<el-textarea>`, `<el-segmented-control>`, `<el-slider>`, `<el-form>`).
+6. Add `<html data-dsd>` whenever pre-rendering with `renderComponentToDSD`.
+7. Use `<el-prompt-input>`, `<el-reasoning-card>`, `<el-tool-call>`, `<el-streaming-text>`, `<el-sources>`, and `<el-diff-viewer>` for AI interfaces.

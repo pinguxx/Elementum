@@ -93,6 +93,7 @@ export function buildStarterIndexHtml() {
     body {
       margin: 0;
       min-height: 100vh;
+      min-height: 100dvh;
       font-family: var(--el-font-sans, system-ui, sans-serif);
       background: var(--el-step-1, var(--el-surface-base, #f8fafc));
       color: var(--el-text-primary, #0f172a);
@@ -403,7 +404,7 @@ export function runInit(argv = process.argv.slice(2), cwd = process.cwd()) {
   return { framework, targetDir, dryRun, written };
 }
 
-const CHECK_EXTENSIONS = new Set(['.html', '.htm', '.jsx', '.tsx', '.vue', '.svelte']);
+const CHECK_EXTENSIONS = new Set(['.html', '.htm', '.js', '.mjs', '.ts', '.jsx', '.tsx', '.vue', '.svelte']);
 const IGNORE_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.next', '.vercel', 'coverage', 'test-results', 'playwright-report']);
 
 function collectSourceFiles(targetPath, acc = []) {
@@ -435,21 +436,84 @@ export async function runCheck(argv = [], cwd = process.cwd()) {
   }
 
   let totalTagsChecked = 0;
+  const distinctTags = new Set();
+  const barrelImportFiles = [];
   const fileReports = [];
 
   for (const file of files) {
     const content = fs.readFileSync(file, 'utf8');
-    if (!content.includes('<el-')) continue;
-    const usage = handleToolCall('validate_component_usage', { markup: content });
-    const a11y = handleToolCall('lint_accessibility', { markup: content });
-    totalTagsChecked += usage.checkedCount || 0;
-    const usageIssues = Array.isArray(usage.issues) ? usage.issues : [];
-    const a11yIssues = Array.isArray(a11y.issues) ? a11y.issues : [];
+    const relFile = path.relative(cwd, file) || path.basename(file);
+    const hasElTag = content.includes('<el-');
+    const hasElementumImport = /@wcomp\/elementum/.test(content);
+
+    for (const m of content.matchAll(/<(el-[a-z][a-z0-9-]*)\b/gi)) {
+      distinctTags.add(m[1].toLowerCase());
+    }
+
+    if (/import\s+(?:[^'"]*from\s+)?['"]@wcomp\/elementum['"]/.test(content)) {
+      barrelImportFiles.push(relFile);
+    }
+
+    if (!hasElTag && !hasElementumImport && !/\bdialog\w*\.open\s*=\s*true\b/i.test(content)) continue;
+
+    let usageIssues = [];
+    let a11yIssues = [];
+
+    if (hasElTag) {
+      const usage = handleToolCall('validate_component_usage', { markup: content });
+      const a11y = handleToolCall('lint_accessibility', { markup: content });
+      totalTagsChecked += usage.checkedCount || 0;
+      usageIssues = Array.isArray(usage.issues) ? usage.issues : [];
+      const violations = Array.isArray(a11y.violations)
+        ? a11y.violations.map((v) => ({ severity: 'error', ...v }))
+        : [];
+      const warnings = Array.isArray(a11y.warnings)
+        ? a11y.warnings.map((w) => ({ severity: 'warning', ...w }))
+        : [];
+      a11yIssues = [...violations, ...warnings];
+    } else {
+      // Pure JS/TS files without inline <el-*> markup still get API convention checks (#17)
+      if (/(?:el-switch|el-checkbox|switchEl|checkboxEl)[\s\S]{0,240}\b(?:e|ev|evt|event)\.detail\??\.value\b/i.test(content)) {
+        a11yIssues.push({
+          severity: 'warning',
+          criterion: 'API Convention (Boolean Event Payload)',
+          message: '`<el-switch>` and `<el-checkbox>` emit `e.detail?.checked` for their boolean state, not `e.detail.value`.',
+        });
+      }
+      if (/\b\w*dialog\w*\.open\s*=\s*true\b/i.test(content) || /querySelector\(\s*['"]el-dialog[^'"]*['"]\s*\)\.open\s*=\s*true/i.test(content)) {
+        a11yIssues.push({
+          severity: 'warning',
+          criterion: 'API Convention (Dialog Modal)',
+          message: 'Open `<el-dialog>` with `dialog.showModal()` instead of `dialog.open = true` so backdrop, focus trap, and Escape handling work.',
+        });
+      }
+    }
+
     if (usageIssues.length > 0 || a11yIssues.length > 0) {
       fileReports.push({
-        file: path.relative(cwd, file) || path.basename(file),
+        file: relFile,
         usageIssues,
         a11yIssues,
+      });
+    }
+  }
+
+  // Flag full barrel import when fewer than 15 distinct el-* tags are used in the project (#17)
+  if (barrelImportFiles.length > 0 && distinctTags.size < 15) {
+    const sampleTags = [...distinctTags].slice(0, 3).map((t) => `'@wcomp/elementum/components/${t}.js'`).join(', ');
+    const hint = sampleTags
+      ? `Import only what you use (e.g. ${sampleTags}) for ~5x smaller bundles.`
+      : `Import granular '@wcomp/elementum/components/el-*.js' subpaths for ~5x smaller bundles.`;
+    for (const relFile of barrelImportFiles) {
+      let entry = fileReports.find((r) => r.file === relFile);
+      if (!entry) {
+        entry = { file: relFile, usageIssues: [], a11yIssues: [] };
+        fileReports.push(entry);
+      }
+      entry.a11yIssues.push({
+        severity: 'warning',
+        criterion: 'Bundle Size (Barrel Import)',
+        message: `Full '@wcomp/elementum' barrel imported with only ${distinctTags.size} distinct <el-*> tag(s) detected. ${hint}`,
       });
     }
   }

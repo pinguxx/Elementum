@@ -794,6 +794,20 @@ export function createMcpHandler({ manifest, tokens, pkg, metadata = {}, sizeBud
         });
       }
 
+      if (/(?:el-switch|el-checkbox|switchEl|checkboxEl)[\s\S]{0,240}\b(?:e|ev|evt|event)\.detail\??\.value\b/i.test(markup)) {
+        warnings.push({
+          criterion: 'API Convention (Boolean Event Payload)',
+          message: '`<el-switch>` and `<el-checkbox>` emit `e.detail?.checked` for their boolean state, not `e.detail.value`.',
+        });
+      }
+
+      if (/\b\w*dialog\w*\.open\s*=\s*true\b/i.test(markup) || /querySelector\(\s*['"]el-dialog[^'"]*['"]\s*\)\.open\s*=\s*true/i.test(markup)) {
+        warnings.push({
+          criterion: 'API Convention (Dialog Modal)',
+          message: 'Open `<el-dialog>` with `dialog.showModal()` instead of `dialog.open = true` so backdrop, focus trap, and Escape handling work.',
+        });
+      }
+
       return {
         scope: 'static-html-lint',
         disclaimer:

@@ -154,6 +154,32 @@ test('runCheck scans HTML/TSX files and reports invalid component usage or passe
   }
 });
 
+test('runCheck flags common AI mistakes: el-switch e.detail.value, dialog.open = true, and small-app barrel import (#17)', async () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'el-check-ai-'));
+  try {
+    fs.writeFileSync(
+      path.join(tmp, 'app.js'),
+      `import '@wcomp/elementum';
+const switchEl = document.querySelector('el-switch');
+switchEl.addEventListener('change', (e) => console.log(e.detail.value));
+const dialog = document.querySelector('el-dialog');
+dialog.open = true;
+`
+    );
+    fs.writeFileSync(
+      path.join(tmp, 'index.html'),
+      `<el-switch label="Dark"></el-switch><el-dialog title="Confirm">Body</el-dialog>`
+    );
+    const report = await runCheck([], tmp);
+    const messages = report.fileReports.flatMap((r) => r.a11yIssues.map((i) => i.message)).join('\n');
+    assert.ok(messages.includes('e.detail?.checked'), 'should flag e.detail.value on el-switch');
+    assert.ok(messages.includes('showModal()'), 'should flag dialog.open = true');
+    assert.ok(messages.includes('barrel imported'), 'should flag barrel import when < 15 tags used');
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
 test('ElDialog supports dialog.open = true / false property assignment as an alias for showModal() and close()', async () => {
   await import('../test-helpers/setup.js');
   await import('../src/components/el-dialog.js');
